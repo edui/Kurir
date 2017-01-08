@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent" android:layout_marginBottom="10dp"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+        <ImageView
+            android:id="@+id/ivProductImage" android:layout_weight=".1"
+            android:gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="50dp" android:src="@drawable/nds_icon_1"/>
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_weight=".8"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvProductTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="ProductTitle"/>
+            <TextView
+                android:id="@+id/tvProductPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="Price"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:weightSum="1" android:gravity="center" >
+                <android.support.v7.widget.AppCompatButton
+                    style="@style/QuantityPickerButtonStyle"
+                    android:text="-" android:textColor="@color/white" android:textSize="24dp" android:textAlignment="center"
+                    android:id="@+id/decrementBtn"
+                    />
+                <TextView
+                    android:id="@+id/quantityStr"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp" android:textStyle="bold" android:textSize="18dp" android:textColor="@color/colorPrimaryDark"
+                    android:gravity="center"
+                    android:text="1"/>
+                <android.support.v7.widget.AppCompatButton
+                    style="@style/QuantityPickerButtonStyle"
+                    android:text="+" android:textColor="@color/white" android:textSize="24dp" android:textAlignment="center"
+                    android:id="@+id/incrementBtn" android:hint="Catatan"
+                    />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/input_special_request" android:textStyle="italic" android:textSize="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_weight=".1"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/viewBtn" android:layout_gravity="center_vertical|right"
+                android:layout_width="40dp"
+                android:layout_height="40dp" android:src="@drawable/ic_event_black" android:background="@color/white"/>
+            <ImageButton
+                android:id="@+id/deleteBtn"
+                android:layout_width="40dp" android:layout_gravity="center_vertical|right"
+                android:layout_height="40dp" android:src="@drawable/bin" android:background="@color/white"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

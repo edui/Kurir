@@ -1,0 +1,60 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'material-stepper'
+
+    publishedGroupId = 'com.stepstone.stepper'
+    libraryName = 'Android Material Stepper'
+    artifact = 'material-stepper'
+
+    libraryDescription = 'This library allows to use Material steppers inside Android applications.'
+
+    siteUrl = 'https://github.com/stepstone-tech/android-material-stepper'
+    gitUrl = 'https://github.com/stepstone-tech/android-material-stepper.git'
+
+    libraryVersion = '1.1.1'
+
+    developerId = 'zawadz88'
+    developerName = 'Piotr Zawadzki'
+    developerEmail = 'piotr.zawadzki@stepstone.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:23.0.1'
+}
+
+gradle.taskGraph.beforeTask { Task task ->
+    if (task instanceof Javadoc) {
+        def releaseVariant = android.libraryVariants.find { it.buildType.name == 'release' }
+        Javadoc javadocTask = (Javadoc) task
+        javadocTask.source = android.sourceSets.main.java.srcDirs
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        javadocTask.classpath = files(releaseVariant.javaCompile.classpath.files) + files(ext.androidJar)
+    }
+}

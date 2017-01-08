@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:visibility="visible"
+        android:layout_alignTop="@+id/slider1"
+        android:layout_alignBottom="@+id/slider1" android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp" />
+
+    <com.daimajia.slider.library.SliderLayout
+            android:id="@+id/slider1" android:padding="0dp" android:layout_marginBottom="15dp"
+            android:layout_width="match_parent" android:layout_below="@id/topupLayout"
+            android:layout_height="150dp" android:layout_gravity="top"
+            />
+        <com.daimajia.slider.library.SliderLayout
+            android:id="@+id/slider2" android:padding="0dp" android:layout_marginBottom="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" android:layout_gravity="top"
+            android:layout_below="@id/slider1"
+            />
+        <com.daimajia.slider.library.SliderLayout
+            android:id="@+id/slider3" android:padding="0dp" android:layout_marginBottom="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" android:layout_gravity="top"
+            android:layout_below="@id/slider2"
+            />
+
+
+</RelativeLayout>

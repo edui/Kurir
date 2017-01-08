@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <item android:title="Home"
+          android:id="@+id/nav_item_home"
+          android:icon="@drawable/ic_home_black_18dp"/>
+
+    <item android:title="Kiriman Dalam Kota"
+          android:id="@+id/nav_item_kiriman_dalam_kota"
+          android:icon="@drawable/ic_shop_black_18dp"/>
+
+    <item android:title="Kiriman Luar Kota"
+          android:id="@+id/nav_item_kiriman_luar_kota"
+          android:icon="@drawable/draft" android:visible="false"/>
+
+    <item android:title="Cek Resi Kiriman"
+        android:id="@+id/nav_item_cek_resi"
+        android:icon="@drawable/ic_find_in_page_black" android:visible="false"/>
+
+    <group android:id="@+id/group_kurir_id">
+        <item android:title="Kurir">
+        <menu>
+        <item android:title="Monitor Paket"
+            android:id="@+id/nav_item_kurir_monitor_paket"
+            android:icon="@drawable/ic_assignment_black"/>
+        </menu>
+        </item>
+    </group>
+    <group android:id="@+id/group_admin_id">
+        <item android:title="Admin">
+            <menu>
+                <item android:title="Monitor Pesanan"
+                    android:id="@+id/nav_item_admin_monitor"
+                    android:icon="@drawable/ic_assignment_black"/>
+                <item android:title="Monitor Paket KURIR"
+                    android:id="@+id/nav_item_admin_monitor_paket_kurir"
+                    android:icon="@drawable/ic_dashboard_black_18dp"/>
+                <item android:title="Calon KURIR"
+                    android:id="@+id/nav_item_admin_daftar_kurir"
+                    android:icon="@drawable/ic_person_black"/>
+            </menu>
+        </item>
+    </group>
+    <group android:id="@+id/group_agent_id">
+        <item android:title="Agen">
+        <menu>
+        <item android:title="Manage Kiriman"
+            android:id="@+id/nav_item_manage_order"
+            android:icon="@drawable/draft"/>
+        </menu>
+        </item>
+    </group>
+    <group android:id="@+id/group_customer_id">
+        <item android:title="Pelanggan">
+            <menu>
+                <item android:title="Histori Pesanan"
+                    android:id="@+id/nav_item_history_order"
+                    android:icon="@drawable/ic_assignment_black"/>
+                <item android:title="Jadwal Kiriman Rutin"
+                    android:id="@+id/nav_item_pelanggan_jadwal" android:visible="false"
+                    android:icon="@drawable/draft"/>
+            </menu>
+        </item>
+    </group>
+    <item android:title="Informasi">
+        <menu>
+            <item
+                android:title="Syarat &amp; Ketentuan"
+                android:id="@+id/nav_item_syarat"
+                android:icon="@drawable/ic_event_note_black_18dp"/>
+            <item
+                android:title="Kerjasama &amp; Berlangganan"
+                android:id="@+id/nav_item_kerjasam"
+                android:icon="@drawable/ic_create_black_18dp"/>
+            <item
+                android:title="Tentang Kami"
+                android:id="@+id/nav_item_aboutus"
+                android:icon="@drawable/ic_person_pin_black"/>
+        </menu>
+    </item>
+    <group android:id="@+id/group_settings_id">
+        <item android:title="Settings"
+            android:id="@+id/nav_item_settings"
+            android:icon="@drawable/ic_settings_black" android:visible="false"/>
+        <item android:title="Logout"
+            android:id="@+id/nav_item_logout"
+            android:icon="@drawable/help"/>
+    </group>
+
+
+</menu>

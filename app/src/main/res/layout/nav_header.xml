@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="192dp"
+    android:background="?attr/colorPrimaryDark"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:orientation="vertical"
+    android:gravity="bottom">
+
+    <ImageView android:src="@drawable/logo_kurindo"
+        android:id="@+id/headerImg"
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
+        android:layout_margin="5dp"
+        android:layout_gravity="center_horizontal" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Header" android:textAlignment="center"
+        android:id="@+id/headerTxt"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/mainLoginBtn"
+        android:layout_width="70dp"
+        android:layout_height="35dp"
+        android:layout_margin="10dp"
+        android:background="@color/colorAccent"
+        android:layout_gravity="center"
+        android:text="Login"/>
+
+
+</LinearLayout>

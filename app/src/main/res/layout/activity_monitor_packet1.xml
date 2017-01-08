@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="12dp" android:background="@color/white"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/filterLayout"
+        android:layout_width="match_parent" android:visibility="gone"
+        android:layout_height="wrap_content" android:orientation="horizontal" >
+        <CheckBox
+            android:id="@+id/checkBox1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/do_send_icon" />
+        <CheckBox
+            android:id="@+id/checkBox2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/do_jek_icon"/>
+        <CheckBox
+            android:id="@+id/checkBox3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/do_wash_icon"/>
+        <CheckBox
+            android:id="@+id/checkBox4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/icon_sds"/>
+        <CheckBox
+            android:id="@+id/checkBox5"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/icon_nds"/>
+    </android.support.v7.widget.LinearLayoutCompat>
+    <android.support.v7.widget.LinearLayoutCompat
+    android:id="@+id/lineLayout1"
+        android:layout_below="@id/filterLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+    <TextView
+        android:id="@+id/TextViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Realtime Packet Order" android:layout_weight=".75"
+        android:textSize="8pt">
+    </TextView>
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/RefreshBtn"
+        android:layout_width="wrap_content" android:layout_weight=".25"
+        android:layout_height="wrap_content" android:text="Refresh"/>
+
+</android.support.v7.widget.LinearLayoutCompat>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:listSelector="@drawable/list_color_selector" android:background="@color/white"
+        android:layout_centerInParent="true" android:layout_below="@id/lineLayout1"/>
+
+
+</RelativeLayout>

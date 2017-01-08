@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<android.support.v7.widget.LinearLayoutCompat
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:background="@color/white"
+        android:paddingTop="10dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
+
+        <android.support.v7.widget.LinearLayoutCompat
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <ImageView android:src="@drawable/doclient_icon"
+                android:id="@+id/ivProductImage"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal" />
+            <TextView
+                android:id="@+id/tvProductName" android:textSize="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pesan Ojek Antar">
+            </TextView>
+
+        </android.support.v7.widget.LinearLayoutCompat>
+
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <android.support.v7.widget.LinearLayoutCompat
+            android:orientation="horizontal"
+            android:layout_width="match_parent" android:weightSum="5" android:gravity="center_vertical"
+            android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+            android:text="Data Pengguna">
+        </TextView>
+        <RadioGroup
+            android:id="@+id/rdogrpInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="5"
+            android:weightSum="1"
+            android:gravity="left"
+            android:orientation="horizontal" >
+            <RadioButton
+                android:id="@+id/radio_inputbaru"
+                android:layout_width="60dp" android:padding="1dp"
+                android:background="@drawable/btn_pilih_baru_selector" android:button="@null" android:gravity="center" android:layout_weight=".5"
+                android:layout_height="30dp" android:text=" " android:textSize="12sp" />
+            <RadioButton
+                android:id="@+id/radio_pilihlist"
+                android:layout_width="60dp" android:padding="1dp" android:layout_weight=".5"
+                android:background="@drawable/btn_pilih_lama_selector" android:button="@null" android:gravity="center"
+                android:layout_height="30dp" android:text=" " android:checked="true" android:textSize="12sp" />
+        </RadioGroup>
+    </android.support.v7.widget.LinearLayoutCompat>
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/layout_inputbaru"
+        android:orientation="vertical" android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <!-- Email Label -->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textLongMessage"
+                android:hint="Nama Anda" />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <net.rimoto.intlphoneinput.IntlPhoneInput
+                android:id="@+id/input_telepon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_phone_black"
+                android:hint="Telepon Anda" />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_alamat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textLongMessage"
+                android:hint="Alamat Anda" />
+        </android.support.design.widget.TextInputLayout>
+        <Spinner
+            android:id="@+id/input_kota"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </android.support.v7.widget.LinearLayoutCompat>
+    <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/layout_pilihlist"
+            android:orientation="vertical" android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:padding="1dp" android:divider="#b5b5b5" android:dividerHeight="1dp"
+            android:listSelector="@drawable/states_selector_list" android:background="@drawable/list_border"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </android.support.v7.widget.LinearLayoutCompat>
+    </android.support.v7.widget.LinearLayoutCompat>
+</android.support.v7.widget.LinearLayoutCompat>
+
+    <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:textStyle="bold"
+            android:text="Tuliskan secara detail pesanan anda">
+        </TextView>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_pesan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:hint="Pesanan Anda" />
+        </android.support.design.widget.TextInputLayout>
+    <TextView
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textStyle="bold"
+        android:text="Informasi:"/>
+    <TextView
+        android:id="@+id/tvProductDesc"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="">
+    </TextView>
+    <TextView
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textStyle="bold"
+        android:text="Setelah pesanan kami terima, KURINDO akan segera menghubungi anda untuk informasi selengkapnya.">
+    </TextView>
+    <TextView
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Menu ini sudah bisa digunakan untuk booking/request pesanan.\nMenu Aplikasi ini sedang dalam pengembangan. Fitur selengkapnya akan kami hadirkan segera.">
+    </TextView>
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="horizontal" android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:weightSum="10">
+        <CheckBox
+            android:id="@+id/chkAgrement"
+            android:layout_width="wrap_content" android:text="Saya SETUJU dengan syarat dan ketentuan ini"
+            android:layout_height="wrap_content" android:layout_weight="7">
+        </CheckBox>
+
+        <ImageView android:src="@drawable/ic_info_outline_black_18dp"
+            android:id="@+id/ivAgrement"
+            android:layout_width="wrap_content" android:layout_weight="3"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal" />
+    </android.support.v7.widget.LinearLayoutCompat>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_notify"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:padding="12dp"
+            android:background="@color/colorPrimaryDark" android:textColor="@color/white"
+            android:text="Kirim Pesanan"/>
+</android.support.v7.widget.LinearLayoutCompat>
+</ScrollView>

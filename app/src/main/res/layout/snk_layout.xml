@@ -1,0 +1,40 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent" android:padding="15dp" android:gravity="center" android:background="@color/white"
+    android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/ivProductImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/icon_syarat_ketentuan"/>
+    <TextView
+        android:layout_below="@+id/ivProductImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:id="@+id/textView"
+        android:layout_centerHorizontal="true" android:textStyle="bold"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="Syarat &amp; Ketentuan "/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"
+        android:text="kurindo.co.id"
+        android:id="@+id/contentText"
+        android:textColor="#000"
+        android:layout_below="@+id/textView"
+        android:textStyle="normal"/>
+
+</RelativeLayout>
+</ScrollView>

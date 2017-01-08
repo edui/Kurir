@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" android:gravity="left"
+    android:padding="5dp" >
+    <RadioButton
+        android:id="@+id/radio_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" android:gravity="left"
+        android:padding="5dp" >
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="2dp"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/telepon_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="2dp"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/address_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="2dp"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/city_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="2dp"
+            android:textSize="14sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/approvedBtn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/yes" android:visibility="gone"/>
+    </LinearLayout>
+</LinearLayout>

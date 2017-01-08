@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "644668497858",
+    "firebase_url": "https://kurindo-dcc27.firebaseio.com",
+    "project_id": "kurindo-dcc27",
+    "storage_bucket": "kurindo-dcc27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644668497858:android:0954a01b9fdf6d07",
+        "android_client_info": {
+          "package_name": "id.co.kurindo.kurindo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "644668497858-hujf7ip1ohedfuf3or7989cmaf7kl0e5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOaqioQ4zXHZidcsVjo978mu6bAjAeFek"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

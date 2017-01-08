@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:background="#ECEFF1"
+    android:baselineAligned="false"
+    android:orientation="vertical"  >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:baselineAligned="false"
+    android:orientation="horizontal"  >
+    <ImageView
+        android:id="@+id/item_service"
+        android:layout_width="64dp"
+        android:layout_height="64dp"   android:layout_gravity="top"
+        android:scaleType="centerCrop"  />
+    <LinearLayout
+        android:layout_width="wrap_content" android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:orientation="vertical"  >
+        <TextView
+            android:id="@+id/tv_awb"
+            style="style/TextAppearance.Medium"  android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv_nama_pengirim"
+            style="style/TextAppearance.Medium"  android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv_telepon_pengirim"
+            style="style/TextAppearance.Medium"  android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_kota_asal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/tv_kota_tujuan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"/>
+
+        <TextView
+            android:id="@+id/tv_status"
+            style="style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_created"
+            style="style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:background="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/updateBtn"
+                android:layout_width="wrap_content" android:background="@color/white"
+                android:layout_height="wrap_content"
+                android:src="@drawable/detail_order_40"/>
+            <ImageButton
+                android:id="@+id/kur101Btn"
+                android:layout_width="wrap_content" android:background="@color/white"
+                android:layout_height="wrap_content"
+                android:src="@drawable/booking_order_40" android:visibility="gone"/>
+            <ImageButton
+                android:id="@+id/waBtn"
+                android:layout_width="wrap_content" android:background="@color/white"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_phone_black" android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center"
+        android:layout_height="wrap_content" android:background="@color/white"
+        android:orientation="horizontal"  >
+        <ImageButton
+            android:id="@+id/kur100Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur200Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/accept_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur300Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/status01_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur310Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/status03_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur350Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/status02_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur400Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/status02_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur500Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/status04_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur900Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur910Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/transfer" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur999Btn"
+            android:layout_width="wrap_content" android:background="@color/white" android:layout_margin="2dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+    </LinearLayout>
+</LinearLayout>
+

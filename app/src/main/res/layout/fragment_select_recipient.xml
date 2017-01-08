@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="fill_parent" android:background="@color/white"
+    android:layout_height="fill_parent">
+    <TextView
+        android:id="@+id/tv_jenis_pengiriman"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" android:layout_marginBottom="10dp"
+        android:textSize="15sp" android:textStyle="bold" android:text="Layanan Pengiriman"/>
+    <RadioGroup
+        android:id="@+id/rdogrpJenisPengiriman"
+        android:layout_width="wrap_content" android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:weightSum="1"
+        android:gravity="center"
+        android:orientation="horizontal" >
+        <RadioButton
+            android:id="@+id/radio_sds"
+            android:layout_width="wrap_content" android:padding="10dp" android:layout_weight=".5"
+            android:background="@drawable/btn_sds_selector" android:button="@null" android:gravity="center"
+            android:layout_height="wrap_content" android:text="" android:textSize="12sp" />
+        <RadioButton
+            android:id="@+id/radio_nds"
+            android:layout_width="wrap_content" android:padding="10dp" android:layout_weight=".5"
+            android:background="@drawable/btn_nds_selector" android:button="@null" android:gravity="center" android:checked="true"
+            android:layout_height="wrap_content" android:text="" android:textSize="12sp" />
+    </RadioGroup>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:weightSum="10">
+    <TextView
+        android:id="@+id/input_alamat_pengiriman_text"
+        android:layout_width="match_parent" android:padding="10dp"
+        android:layout_height="wrap_content" android:layout_weight="6"
+        android:gravity="left"
+        android:textSize="15sp" android:textStyle="bold" android:text="Jumlah Alamat Pengiriman"/>
+    <RadioGroup
+        android:id="@+id/rdogrp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp" android:layout_weight="4"
+        android:weightSum="1"
+        android:gravity="center" android:layout_gravity="center"
+        android:orientation="horizontal" >
+        <RadioButton
+            android:id="@+id/radio_input_satu"
+            android:layout_width="wrap_content" android:padding="10dp" android:layout_weight=".5"
+            android:background="@drawable/btn_one_address_selector" android:button="@null" android:gravity="center"
+            android:layout_height="wrap_content" android:text=" " android:checked="true" android:textSize="12sp" />
+        <RadioButton
+            android:id="@+id/radio_input_banyak"
+            android:layout_width="wrap_content" android:padding="10dp" android:layout_weight=".5"
+            android:background="@drawable/btn_multi_address_selector" android:button="@null" android:gravity="center"
+            android:layout_height="wrap_content" android:text=" " android:textSize="12sp" />
+    </RadioGroup>
+</android.support.v7.widget.LinearLayoutCompat>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:weightSum="10">
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_weight="2" android:layout_marginTop="20dp"
+        android:layout_height="wrap_content" android:weightSum="10">
+        <TextView
+            android:layout_weight="6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="10dp"
+            android:gravity="left"
+            android:textSize="15sp" android:textStyle="bold" android:text="Data Penerima"/>
+            <RadioGroup
+                android:id="@+id/rdogrpInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="4"
+                android:weightSum="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
+                <RadioButton
+                    android:id="@+id/radio_inputbaru"
+                    android:layout_width="60dp" android:padding="1dp"
+                    android:background="@drawable/btn_pilih_baru_selector" android:button="@null" android:gravity="center" android:layout_weight=".5"
+                    android:layout_height="30dp" android:text=" " android:textSize="12sp" />
+                <RadioButton
+                    android:id="@+id/radio_pilihlist"
+                    android:layout_width="60dp" android:padding="1dp" android:layout_weight=".5"
+                    android:background="@drawable/btn_pilih_lama_selector" android:button="@null" android:gravity="center"
+                    android:layout_height="30dp" android:text=" " android:checked="true" android:textSize="12sp" />
+            </RadioGroup>
+        </android.support.v7.widget.LinearLayoutCompat>
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_weight="8"
+        android:layout_width="match_parent"  android:id="@+id/input_layout"
+        android:layout_height="wrap_content" >
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/layout_inputbaru"
+        android:layout_width="match_parent" android:visibility="gone" android:layout_marginBottom="100dp"
+        android:layout_height="fill_parent" android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inlay_nama_penerima"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_nama_penerima"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_person_pin_black"
+                android:hint="Nama Penerima" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inlay_telepon_penerima"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_telepon_penerima"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_phone_black"
+                android:hint="Telepon Penerima" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inlay_alamat_penerima"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_alamat_penerima"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_pin_drop_black"
+                android:hint="Alamat Penerima" />
+        </android.support.design.widget.TextInputLayout>
+        <Spinner
+            android:id="@+id/input_kota_penerima"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/ButtonAddRecipient"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorPrimaryDark"
+            android:elevation="4dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textColor="#fff"
+            android:text="Tambahkan ke Daftar" android:visibility="gone"/>
+
+    </android.support.v7.widget.LinearLayoutCompat>
+    </android.support.v7.widget.LinearLayoutCompat>
+        <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/layout_pilihlist"
+            android:orientation="vertical" android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <LinearLayout
+                android:layout_width="match_parent" android:padding="5dp"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+                <TextView
+                    android:id="@+id/alamat_pengiriman_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:padding="1dp"
+                    android:textSize="12sp" android:text="atau Pilih Alamat dari daftar berikut:" android:layout_weight=".7"/>
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/deleteBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Clear" android:layout_weight=".3"/>
+            </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_below="@+id/alamat_pengiriman_text" android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:padding="1dp" android:divider="#b5b5b5" android:dividerHeight="1dp"
+                android:listSelector="@drawable/states_selector_list" android:background="@drawable/list_border"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </android.support.v7.widget.LinearLayoutCompat>
+    </android.support.v7.widget.LinearLayoutCompat>
+
+
+</android.support.v7.widget.LinearLayoutCompat>
+</ScrollView>

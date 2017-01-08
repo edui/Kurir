@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Kurindo.iml" filepath="$PROJECT_DIR$/Kurindo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/glide-slider-0.1.1/glide-slider-0.1.1.iml" filepath="$PROJECT_DIR$/glide-slider-0.1.1/glide-slider-0.1.1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intlphoneinput/intlphoneinput.iml" filepath="$PROJECT_DIR$/intlphoneinput/intlphoneinput.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/material-stepper/material-stepper.iml" filepath="$PROJECT_DIR$/material-stepper/material-stepper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/timelineview/timelineview.iml" filepath="$PROJECT_DIR$/timelineview/timelineview.iml" />
+    </modules>
+  </component>
+</project>
