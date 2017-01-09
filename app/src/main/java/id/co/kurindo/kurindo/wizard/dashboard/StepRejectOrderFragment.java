@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo.wizard.dashboard;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -49,6 +50,8 @@ import id.co.kurindo.kurindo.model.User;
 import id.co.kurindo.kurindo.wizard.AcceptOrderActivity;
 import id.co.kurindo.kurindo.wizard.RejectOrderActivity;
 import id.co.kurindo.kurindo.wizard.checkout.BaseStepFragment;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by aspire on 12/15/2016.
@@ -129,6 +132,10 @@ public class StepRejectOrderFragment extends BaseStepFragment implements Step {
                     String message = jObj.getString("message");
                     if (!error) {
                         //success
+                        order.setStatus(AppConfig.KEY_KUR999);
+                        Intent intent = new Intent();
+                        intent.putExtra("order", order);
+                        getActivity().setResult(RESULT_OK, intent);
                         verify[0] = null;
                     }else{
                         verify[0] = new VerificationError("Error: "+message);

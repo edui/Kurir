@@ -65,10 +65,12 @@ public class MonitorPacketAdapter extends RecyclerView.Adapter<RecyclerView.View
         ((MyItemHolder) holder).statusText.setText(packet.getStatusText());
         ((MyItemHolder) holder).createdText.setText(packet.getCreatedDate());
         //String color = bgColors[position % bgColors.length];
-        if(packet.getServiceCode().equalsIgnoreCase("NDS")){
-            ((MyItemHolder) holder).item_service.setImageResource(R.drawable.icon_nds);
-        }else {
+        if(packet.getServiceCode().equalsIgnoreCase("SDS")){
             ((MyItemHolder) holder).item_service.setImageResource(R.drawable.icon_sds);
+        }else if(packet.getServiceCode().equalsIgnoreCase("ENS")){
+            ((MyItemHolder) holder).item_service.setImageResource(R.drawable.icon_ens);
+        }else {
+            ((MyItemHolder) holder).item_service.setImageResource(R.drawable.icon_nds);
         }
         if(packet.getOrder() != null){
             if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOWASH)){

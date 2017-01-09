@@ -11,6 +11,7 @@ import java.util.Set;
 import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Order;
+import id.co.kurindo.kurindo.model.Packet;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.ShippingCost;
@@ -30,6 +31,7 @@ public class CheckoutHelper {
     private Order order;
     private String packetType;
     Map<Integer, ShippingCost> shippingCost;
+    private Set<Packet> packets;
 
     private static CheckoutHelper helper;
     public static CheckoutHelper getInstance(){
@@ -104,6 +106,14 @@ public class CheckoutHelper {
         this.packetType = packetType;
     }
 
+    public Set<Packet> getPackets() {
+        return packets;
+    }
+
+    public void setPackets(Set<Packet> packets) {
+        this.packets = packets;
+    }
+
     public Set<Product> getProducts() {
         Set<Product> products = new LinkedHashSet<>() ;
         for (Map.Entry<Saleable, Integer> entry : CartHelper.getCart().getItemWithQuantity().entrySet()) {
@@ -171,6 +181,7 @@ public class CheckoutHelper {
         this.products.clear();
         this.recipients.clear();
         this.selectedItems.clear();
+        this.packets.clear();
 
         CartHelper.getCart().clear();
     }

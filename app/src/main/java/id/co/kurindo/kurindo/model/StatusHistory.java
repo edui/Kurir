@@ -100,4 +100,15 @@ public class StatusHistory implements Parcelable {
         this.created_date = created_date;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb =new StringBuilder();
+        sb.append(getCreated_date()+" \nby "+getCreated_by()==null? "":getCreated_by().getFirstname()+"\n");
+        sb.append(getRemarks()+"\n");
+        if(getPic()!=null){
+            sb.append(getPic() +" at "+(getLocation()==null? getLocation():"")+"\n");
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
 }

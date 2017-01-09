@@ -92,98 +92,101 @@ public class OrderAllIncomingFragment extends BaseOrderMonitoringFragment implem
 
     public void check_order(final String... params) {
         doSendCount = doJekCount = doServiceCount = doHijamahCount = doCarCount = doMoveCount = 0;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        if(getActivity() != null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String param = params[0].toString();
+                    String URI = AppConfig.URL_ORDER_REALTIME;
+                    //URI = URI.replace("/{filter}", "/"+param);
 
-                String param = params[0].toString();
-                String URI = AppConfig.URL_ORDER_REALTIME;
-                //URI = URI.replace("/{filter}", "/"+param);
+                    progressBar.setVisibility(View.VISIBLE);
+                    refreshBtn.setVisibility(View.GONE);
 
-                progressBar.setVisibility(View.VISIBLE);
-                refreshBtn.setVisibility(View.GONE);
+                    String tag_string_req = "req_monitor_order_all";
+                    StringRequest strReq = new StringRequest(Request.Method.POST,
+                            URI, new Response.Listener<String>() {
 
-                String tag_string_req = "req_monitor_order_all";
-                StringRequest strReq = new StringRequest(Request.Method.POST,
-                        URI, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
+                            //hideDialog();
 
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
-                        //hideDialog();
+                            try {
+                                JSONObject jObj = new JSONObject(response);
+                                boolean error = jObj.getBoolean("error");
 
-                        try {
-                            JSONObject jObj = new JSONObject(response);
-                            boolean error = jObj.getBoolean("error");
-
-                            // Check for error node in json
-                            if (!error) {
-                                Bundle bundle = parseOrders(orders, jObj);
-                                adapter.notifyDataSetChanged();
-                                if(bundle != null){
-                                    doSendCount = bundle.getInt(AppConfig.KEY_DOSEND);
-                                    doJekCount = bundle.getInt(AppConfig.KEY_DOJEK);
-                                    doWashCount = bundle.getInt(AppConfig.KEY_DOWASH);
-                                    doServiceCount = bundle.getInt(AppConfig.KEY_DOSERVICE);
-                                    doHijamahCount = bundle.getInt(AppConfig.KEY_DOHIJAMAH);
-                                    doCarCount = bundle.getInt(AppConfig.KEY_DOCAR);
-                                    doMoveCount = bundle.getInt(AppConfig.KEY_DOMOVE);
-                                    doShopCount = bundle.getInt(AppConfig.KEY_DOSHOP);
+                                // Check for error node in json
+                                if (!error) {
+                                    Bundle bundle = parseOrders(orders, jObj);
+                                    adapter.notifyDataSetChanged();
+                                    if(bundle != null){
+                                        doSendCount = bundle.getInt(AppConfig.KEY_DOSEND);
+                                        doJekCount = bundle.getInt(AppConfig.KEY_DOJEK);
+                                        doWashCount = bundle.getInt(AppConfig.KEY_DOWASH);
+                                        doServiceCount = bundle.getInt(AppConfig.KEY_DOSERVICE);
+                                        doHijamahCount = bundle.getInt(AppConfig.KEY_DOHIJAMAH);
+                                        doCarCount = bundle.getInt(AppConfig.KEY_DOCAR);
+                                        doMoveCount = bundle.getInt(AppConfig.KEY_DOMOVE);
+                                        doShopCount = bundle.getInt(AppConfig.KEY_DOSHOP);
+                                    }
+                                    doSendChk.setText(doSendCount > 0 ? ""+doSendCount : "");
+                                    doJekChk.setText(doJekCount > 0 ? ""+doJekCount:"");
+                                    doWashChk.setText(doWashCount > 0 ? ""+doWashCount:"");
+                                    doServiceChk.setText(doServiceCount > 0 ? ""+doServiceCount:"");
+                                    doHijamahChk.setText(doHijamahCount > 0 ? ""+doHijamahCount:"");
+                                    doCarChk.setText(doCarCount > 0 ? ""+doCarCount:"");
+                                    doMoveChk.setText(doMoveCount > 0 ? ""+doMoveCount:"");
+                                } else {
+                                    // Error in login. Get the error message
+                                    String errorMsg = jObj.getString("message");
+                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
                                 }
-                                doSendChk.setText(doSendCount > 0 ? ""+doSendCount : "");
-                                doJekChk.setText(doJekCount > 0 ? ""+doJekCount:"");
-                                doWashChk.setText(doWashCount > 0 ? ""+doWashCount:"");
-                                doServiceChk.setText(doServiceCount > 0 ? ""+doServiceCount:"");
-                                doHijamahChk.setText(doHijamahCount > 0 ? ""+doHijamahCount:"");
-                                doCarChk.setText(doCarCount > 0 ? ""+doCarCount:"");
-                                doMoveChk.setText(doMoveCount > 0 ? ""+doMoveCount:"");
-                            } else {
-                                // Error in login. Get the error message
-                                String errorMsg = jObj.getString("message");
-                                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                            } catch (JSONException e) {
+                                // JSON error
+                                e.printStackTrace();
+                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                        } catch (JSONException e) {
-                            // JSON error
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                            refreshBtn.setVisibility(View.VISIBLE);
                         }
-                        progressBar.setVisibility(View.GONE);
-                        refreshBtn.setVisibility(View.VISIBLE);
-                    }
-                }, new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                        refreshBtn.setVisibility(View.VISIBLE);
-                    }
-                }) {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
+                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                            refreshBtn.setVisibility(View.VISIBLE);
+                        }
+                    }) {
 
-                    @Override
-                    protected Map<String, String> getParams() {
-                        // Posting parameters to  url
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("form-type", "json");
+                        @Override
+                        protected Map<String, String> getParams() {
+                            // Posting parameters to  url
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("form-type", "json");
 
-                        return params;
-                    }
+                            return params;
+                        }
 
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        String api = db.getUserApi();
-                        params.put("Api", api);
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            String api = db.getUserApi();
+                            params.put("Api", api);
 
-                        return params;
-                    }
-                };
+                            return params;
+                        }
+                    };
 
-                // Adding request to request queue
-                AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-            }
-        });
+                    // Adding request to request queue
+                    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+                }
+            });
+
+        }
+
     }
 
     @Override

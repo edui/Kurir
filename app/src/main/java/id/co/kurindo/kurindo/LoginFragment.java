@@ -633,8 +633,8 @@ public class LoginFragment extends BaseFragment {
                     if (!error) {
                         // user successfully logged in
                         db.onUpgrade(db.getWritableDatabase(), 0, 1);
-                        db.onCreateTableRecipient(db.getWritableDatabase());
-                        //db.onUpgradeTableRecipient(db.getWritableDatabase(),0,1);
+                        //db.onCreateTableRecipient(db.getWritableDatabase());
+                        db.onUpgradeTableRecipient(db.getWritableDatabase(),0,1);
 
                         // Now store the user in SQLite
                         String uid = jObj.getString("user");

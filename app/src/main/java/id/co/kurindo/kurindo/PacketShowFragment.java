@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
+import id.co.kurindo.kurindo.adapter.MonitorPacketAdapter;
 import id.co.kurindo.kurindo.adapter.PacketTimelineViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
@@ -46,7 +48,24 @@ import id.co.kurindo.kurindo.model.StatusHistory;
 public class PacketShowFragment extends BaseFragment{
     private static final String TAG = "PacketShowFragment";
     Packet packet;
-
+    @Bind(R.id.kur200Btn)
+    ImageButton kur200Btn;
+    @Bind(R.id.kur300Btn)
+    ImageButton kur300Btn;
+    @Bind(R.id.kur310Btn)
+    ImageButton kur310Btn;
+    @Bind(R.id.kur350Btn)
+    ImageButton kur350Btn;
+    @Bind(R.id.kur400Btn)
+    ImageButton kur400Btn;
+    @Bind(R.id.kur500Btn)
+    ImageButton kur500Btn;
+    @Bind(R.id.kur900Btn)
+    ImageButton kur900Btn;
+    @Bind(R.id.kur910Btn)
+    ImageButton kur910Btn;
+    @Bind(R.id.kur999Btn)
+    ImageButton kur999Btn;
     @Bind(R.id.text_nama_pengirim) TextView _namaPengirimText;
     @Bind(R.id.text_alamat_pengirim)    TextView _alamatPengirimText;
     @Bind(R.id.text_telepon_pengirim)    TextView _teleponPengirimText;
@@ -104,6 +123,7 @@ public class PacketShowFragment extends BaseFragment{
                             histList.add(hist);
                         }
                         packet.setStatusHistoryList(histList);
+                        adapter.updateData(histList);
                         if(adapter != null) adapter.notifyDataSetChanged();
                     }
                 } catch (JSONException e) {
@@ -149,7 +169,100 @@ public class PacketShowFragment extends BaseFragment{
         View view = inflateAndBind(inflater, container, R.layout.activity_packet_show);
         setup_view(view);
         setup_timeline();
+        setup_status();
         return view;
+    }
+
+    private void setup_status() {
+        if(packet != null){
+        if(packet.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR101)){
+            kur200Btn.setImageResource(R.drawable.status01_0_icon);
+            kur200Btn.setVisibility(View.VISIBLE);
+            kur300Btn.setVisibility(View.GONE);
+            kur310Btn.setVisibility(View.GONE);
+            kur350Btn.setVisibility(View.GONE);
+            kur400Btn.setVisibility(View.GONE);
+            kur500Btn.setVisibility(View.GONE);
+
+        }else if(packet.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR200)){
+            kur300Btn.setVisibility(View.VISIBLE);
+            kur300Btn.setImageResource(R.drawable.status01_1_icon);
+
+            kur200Btn.setVisibility(View.GONE);
+            kur350Btn.setVisibility(View.GONE);
+            kur400Btn.setVisibility(View.GONE);
+
+            kur310Btn.setImageResource(R.drawable.status03_0_icon);
+            kur310Btn.setVisibility(View.VISIBLE);
+
+            kur500Btn.setImageResource(R.drawable.status04_0_icon);
+            kur500Btn.setVisibility(View.VISIBLE);
+        }else if(packet.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR300)){
+            kur310Btn.setImageResource(R.drawable.status03_1_icon);
+            kur310Btn.setVisibility(View.VISIBLE);
+            kur200Btn.setVisibility(View.GONE);
+            kur350Btn.setVisibility(View.GONE);
+            kur400Btn.setVisibility(View.GONE);
+
+            kur300Btn.setImageResource(R.drawable.status01_2_icon);
+            kur300Btn.setVisibility(View.VISIBLE);
+
+            kur500Btn.setImageResource(R.drawable.status04_0_icon);
+            kur500Btn.setVisibility(View.VISIBLE);
+
+        }else if(packet.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR310) || packet.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR350)){
+            kur400Btn.setImageResource(R.drawable.status05_1_icon);
+            kur400Btn.setVisibility(View.VISIBLE);
+
+            kur500Btn.setImageResource(R.drawable.status04_1_icon);
+            kur500Btn.setVisibility(View.VISIBLE);
+            kur200Btn.setVisibility(View.GONE);
+            kur350Btn.setVisibility(View.GONE);
+
+            kur300Btn.setImageResource(R.drawable.status01_2_icon);
+            kur300Btn.setVisibility(View.VISIBLE);
+            kur300Btn.setEnabled(false);
+
+            kur310Btn.setImageResource(R.drawable.status03_2_icon);
+            kur310Btn.setVisibility(View.VISIBLE);
+            kur310Btn.setEnabled(false);
+
+        }else if(packet.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR400)){
+            kur350Btn.setImageResource(R.drawable.status06_1_icon);
+            kur350Btn.setVisibility(View.VISIBLE);
+            kur200Btn.setVisibility(View.GONE);
+            kur400Btn.setVisibility(View.GONE);
+            kur500Btn.setVisibility(View.GONE);
+
+            kur300Btn.setImageResource(R.drawable.status01_2_icon);
+            kur300Btn.setVisibility(View.VISIBLE);
+
+            kur310Btn.setImageResource(R.drawable.status03_2_icon);
+            kur310Btn.setVisibility(View.VISIBLE);
+
+        }else if(packet.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR500)){
+            kur500Btn.setImageResource(R.drawable.status04_2_icon);
+            kur500Btn.setVisibility(View.VISIBLE);
+            kur200Btn.setVisibility(View.GONE);
+            kur350Btn.setVisibility(View.GONE);
+            kur400Btn.setVisibility(View.GONE);
+
+            kur300Btn.setImageResource(R.drawable.status01_2_icon);
+            kur300Btn.setVisibility(View.VISIBLE);
+
+            kur310Btn.setImageResource(R.drawable.status03_2_icon);
+            kur310Btn.setVisibility(View.VISIBLE);
+
+        }else{
+            kur200Btn.setEnabled(false);
+            kur300Btn.setEnabled(false);
+            kur310Btn.setEnabled(false);
+            kur350Btn.setEnabled(false);
+            kur400Btn.setEnabled(false);
+            kur500Btn.setEnabled(false);
+        }
+        }
+
     }
 
     private void setup_timeline() {
@@ -177,7 +290,7 @@ public class PacketShowFragment extends BaseFragment{
                 }else if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
                     ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
                 }else if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {
-                    ivServiceIcon.setImageResource(R.drawable.ic_store_black_18dp);
+                    ivServiceIcon.setImageResource(R.drawable.do_shop_icon);
                 }
             }
             _infoPaketText.setText(packet.getInfoPaket() +(packet.isViaMobil()? "\npakai Mobil = YES":""));

@@ -179,6 +179,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                         Bundle bundle = new Bundle();
                         Product product = new Product();
                         product.setId(1);
+                        product.setShopid(1);
                         product.setType("A");
                         product.setName("Ojek Antar");
                         product.setDescription(
@@ -198,6 +199,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                         Bundle bundle = new Bundle();
                         Product product = new Product();
                         product.setId(4);
+                        product.setShopid(1);
                         product.setType("A");
                         product.setName("Jasa Cuci");
                         product.setCode(AppConfig.KEY_DOWASH);
@@ -217,6 +219,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                         Bundle bundle = new Bundle();
                         Product product = new Product();
                         product.setId(5);
+                        product.setShopid(1);
                         product.setType("A");
                         product.setName("Servis AC");
                         product.setCode(AppConfig.KEY_DOSERVICE);
@@ -237,6 +240,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                         Bundle bundle = new Bundle();
                         Product product = new Product();
                         product.setId(6);
+                        product.setShopid(1);
                         product.setType("A");
                         product.setName("Terapi Hijamah");
                         product.setCode(AppConfig.KEY_DOHIJAMAH);
@@ -252,6 +256,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                         Bundle bundle = new Bundle();
                         Product product = new Product();
                         product.setId(2);
+                        product.setShopid(1);
                         product.setType("A");
                         product.setName("Rental Mobil");
                         product.setCode(AppConfig.KEY_DOCAR);
@@ -273,6 +278,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                         Bundle bundle = new Bundle();
                         Product product = new Product();
                         product.setId(7);
+                        product.setShopid(1);
                         product.setType("A");
                         product.setName("Jasa Pindah");
                         product.setCode(AppConfig.KEY_DOMOVE);

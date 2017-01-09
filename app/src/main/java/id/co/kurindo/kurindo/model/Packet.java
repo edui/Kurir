@@ -12,30 +12,30 @@ import java.util.Map;
  * Created by DwiM on 11/12/2016.
  */
 public class Packet implements Parcelable{
-    private String resi;
+    private String awb_number;
 
-    private String namaPengirim;
-    private String teleponPengirim;
-    private String alamatPengirim;
-    private String kotaPengirim;
-    private String kotaPengirimText;
+    private String nama_pengirim;
+    private String telepon_pengirim;
+    private String alamat_pengirim;
+    private String kota_pengirim;
+    private String kota_pengirim_text;
 
-    private String namaPenerima;
-    private String teleponPenerima;
-    private String alamatPenerima;
-    private String kotaPenerima;
-    private String kotaPenerimaText;
+    private String nama_penerima;
+    private String telepon_penerima;
+    private String alamat_penerima;
+    private String kota_penerima;
+    private String kota_penerima_text;
 
-    private int berat;
-    private String infoPaket;
-    private boolean viaMobil;
+    private int berat_kiriman;
+    private String isi_kiriman;
+    private boolean via_mobil;
     private double biaya;
-    private String serviceCode;
+    private String service_code;
 
     private String status;
-    private String statusText;
-    private String createdDate;
-    private String updatedDate;
+    private String status_text;
+    private String created_date;
+    private String updated_date;
 
     private User kurir;
     private Order order;
@@ -45,25 +45,25 @@ public class Packet implements Parcelable{
 
     }
     protected Packet(Parcel in) {
-        resi = in.readString();
-        namaPengirim = in.readString();
-        teleponPengirim = in.readString();
-        alamatPengirim = in.readString();
-        kotaPengirim = in.readString();
-        kotaPengirimText = in.readString();
-        namaPenerima = in.readString();
-        teleponPenerima = in.readString();
-        alamatPenerima = in.readString();
-        kotaPenerima = in.readString();
-        kotaPenerimaText = in.readString();
-        berat = in.readInt();
-        infoPaket = in.readString();
-        viaMobil = Boolean.parseBoolean( in.readString() );
-        serviceCode= in.readString();
+        awb_number = in.readString();
+        nama_pengirim = in.readString();
+        telepon_pengirim = in.readString();
+        alamat_pengirim = in.readString();
+        kota_pengirim = in.readString();
+        kota_pengirim_text = in.readString();
+        nama_penerima = in.readString();
+        telepon_penerima = in.readString();
+        alamat_penerima = in.readString();
+        kota_penerima = in.readString();
+        kota_penerima_text = in.readString();
+        berat_kiriman = in.readInt();
+        isi_kiriman = in.readString();
+        via_mobil = Boolean.parseBoolean( in.readString() );
+        service_code = in.readString();
         status = in.readString();
-        statusText = in.readString();
+        status_text = in.readString();
         biaya= in.readDouble();
-        createdDate= in.readString();
+        created_date = in.readString();
         try {
             order = in.readParcelable(Order.class.getClassLoader());
         }catch (Exception e){}
@@ -72,7 +72,7 @@ public class Packet implements Parcelable{
         try {
             kurir = in.readParcelable(User.class.getClassLoader());
         }catch (Exception e){}
-        updatedDate= in.readString();
+        updated_date = in.readString();
 
     }
 
@@ -89,107 +89,107 @@ public class Packet implements Parcelable{
     };
 
     public String getResi() {
-        return resi;
+        return awb_number;
     }
 
     public void setResi(String resi) {
-        this.resi = resi;
+        this.awb_number = resi;
     }
 
     public String getNamaPengirim() {
-        return namaPengirim;
+        return nama_pengirim;
     }
 
     public void setNamaPengirim(String namaPengirim) {
-        this.namaPengirim = namaPengirim;
+        this.nama_pengirim = namaPengirim;
     }
 
     public String getTeleponPengirim() {
-        return teleponPengirim;
+        return telepon_pengirim;
     }
 
     public void setTeleponPengirim(String teleponPengirim) {
-        this.teleponPengirim = teleponPengirim;
+        this.telepon_pengirim = teleponPengirim;
     }
 
     public String getAlamatPengirim() {
-        return alamatPengirim;
+        return alamat_pengirim;
     }
 
     public void setAlamatPengirim(String alamatPengirim) {
-        this.alamatPengirim = alamatPengirim;
+        this.alamat_pengirim = alamatPengirim;
     }
 
     public String getKotaPengirim() {
-        return kotaPengirim;
+        return kota_pengirim;
     }
 
     public void setKotaPengirim(String kotaPengirim) {
-        this.kotaPengirim = kotaPengirim;
+        this.kota_pengirim = kotaPengirim;
     }
 
     public String getNamaPenerima() {
-        return namaPenerima;
+        return nama_penerima;
     }
 
     public void setNamaPenerima(String namaPenerima) {
-        this.namaPenerima = namaPenerima;
+        this.nama_penerima = namaPenerima;
     }
 
     public String getTeleponPenerima() {
-        return teleponPenerima;
+        return telepon_penerima;
     }
 
     public void setTeleponPenerima(String teleponPenerima) {
-        this.teleponPenerima = teleponPenerima;
+        this.telepon_penerima = teleponPenerima;
     }
 
     public String getAlamatPenerima() {
-        return alamatPenerima;
+        return alamat_penerima;
     }
 
     public void setAlamatPenerima(String alamatPenerima) {
-        this.alamatPenerima = alamatPenerima;
+        this.alamat_penerima = alamatPenerima;
     }
 
     public String getKotaPenerima() {
-        return kotaPenerima;
+        return kota_penerima;
     }
 
     public void setKotaPenerima(String kotaPenerima) {
-        this.kotaPenerima = kotaPenerima;
+        this.kota_penerima = kotaPenerima;
     }
 
     public int getBerat() {
-        return berat;
+        return berat_kiriman;
     }
 
     public void setBerat(int berat) {
-        this.berat = berat;
+        this.berat_kiriman = berat;
     }
 
     public String getInfoPaket() {
-        return infoPaket;
+        return isi_kiriman;
     }
 
     public void setInfoPaket(String infoPaket) {
-        this.infoPaket = infoPaket;
+        this.isi_kiriman = infoPaket;
     }
 
     public boolean isViaMobil() {
-        return viaMobil;
+        return via_mobil;
     }
 
     public void setViaMobil(boolean viaMobil) {
-        this.viaMobil = viaMobil;
+        this.via_mobil = viaMobil;
     }
 
     public String getServiceCode() {
-        return serviceCode;
+        return service_code;
     }
 
     public void setServiceCode(String serviceCode) {
-        this.serviceCode = serviceCode;
+        this.service_code = serviceCode;
     }
 
     public String getStatus() {
@@ -201,43 +201,43 @@ public class Packet implements Parcelable{
     }
 
     public String getCreatedDate() {
-        return createdDate;
+        return created_date;
     }
 
     public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
+        this.created_date = createdDate;
     }
 
     public String getKotaPengirimText() {
-        return kotaPengirimText;
+        return kota_pengirim_text;
     }
 
     public void setKotaPengirimText(String kotaPengirimText) {
-        this.kotaPengirimText = kotaPengirimText;
+        this.kota_pengirim_text = kotaPengirimText;
     }
 
     public String getKotaPenerimaText() {
-        return kotaPenerimaText;
+        return kota_penerima_text;
     }
 
     public void setKotaPenerimaText(String kotaPenerimaText) {
-        this.kotaPenerimaText = kotaPenerimaText;
+        this.kota_penerima_text = kotaPenerimaText;
     }
 
     public String getUpdatedDate() {
-        return updatedDate;
+        return updated_date;
     }
 
     public void setUpdatedDate(String updatedDate) {
-        this.updatedDate = updatedDate;
+        this.updated_date = updatedDate;
     }
 
     public String getStatusText() {
-        return statusText;
+        return status_text;
     }
 
     public void setStatusText(String statusText) {
-        this.statusText = statusText;
+        this.status_text = statusText;
     }
 
     public User getKurir() {
@@ -274,19 +274,19 @@ public class Packet implements Parcelable{
 
     public Map<String, String> getAsParams(){
         Map<String, String> params = new HashMap<String, String>();
-        params.put("nama_pengirim", namaPengirim);
-        params.put("telepon_pengirim", teleponPengirim);
-        params.put("alamat_pengirim", alamatPengirim);
-        params.put("kota_pengirim", kotaPengirim);
-        params.put("nama_penerima", namaPenerima);
-        params.put("telepon_penerima", teleponPenerima);
-        params.put("alamat_penerima", alamatPenerima);
-        params.put("kota_penerima", kotaPenerima);
+        params.put("nama_pengirim", nama_pengirim);
+        params.put("telepon_pengirim", telepon_pengirim);
+        params.put("alamat_pengirim", alamat_pengirim);
+        params.put("kota_pengirim", kota_pengirim);
+        params.put("nama_penerima", nama_penerima);
+        params.put("telepon_penerima", telepon_penerima);
+        params.put("alamat_penerima", alamat_penerima);
+        params.put("kota_penerima", kota_penerima);
 
-        params.put("service_code", serviceCode);
-        params.put("berat_barang", ""+berat);
-        params.put("info_barang", infoPaket);
-        params.put("via_mobil", ""+viaMobil);
+        params.put("service_code", service_code);
+        params.put("berat_barang", ""+ berat_kiriman);
+        params.put("info_barang", isi_kiriman);
+        params.put("via_mobil", ""+ via_mobil);
 
         return params;
     }
@@ -298,29 +298,29 @@ public class Packet implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString( resi);
-        dest.writeString( namaPengirim);
-        dest.writeString(teleponPengirim);
-        dest.writeString(alamatPengirim);
-        dest.writeString(kotaPengirim);
-        dest.writeString(kotaPengirimText);
-        dest.writeString(namaPenerima);
-        dest.writeString(teleponPenerima);
-        dest.writeString(alamatPenerima);
-        dest.writeString(kotaPenerima);
-        dest.writeString(kotaPenerimaText);
-        dest.writeInt( berat);
-        dest.writeString(infoPaket);
-        dest.writeString( Boolean.toString( viaMobil ));
-        dest.writeString(serviceCode);
+        dest.writeString(awb_number);
+        dest.writeString(nama_pengirim);
+        dest.writeString(telepon_pengirim);
+        dest.writeString(alamat_pengirim);
+        dest.writeString(kota_pengirim);
+        dest.writeString(kota_pengirim_text);
+        dest.writeString(nama_penerima);
+        dest.writeString(telepon_penerima);
+        dest.writeString(alamat_penerima);
+        dest.writeString(kota_penerima);
+        dest.writeString(kota_penerima_text);
+        dest.writeInt(berat_kiriman);
+        dest.writeString(isi_kiriman);
+        dest.writeString( Boolean.toString(via_mobil));
+        dest.writeString(service_code);
         dest.writeString(status);
-        dest.writeString(statusText);
+        dest.writeString(status_text);
         dest.writeDouble(biaya);
-        dest.writeString(createdDate);
+        dest.writeString(created_date);
 
         dest.writeParcelable( order , flags);
         dest.writeTypedList(statusHistoryList);
         dest.writeParcelable(kurir, flags);
-        dest.writeString(updatedDate);
+        dest.writeString(updated_date);
     }
 }

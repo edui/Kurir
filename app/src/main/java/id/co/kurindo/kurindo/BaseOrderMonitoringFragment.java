@@ -134,7 +134,7 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
     public void onUpdateButtonClick(View view, int position) {
         selectedOrder = orders.get(position);
         Bundle bundle = new Bundle();
-        bundle.setClassLoader(Order.class.getClassLoader());
+        //bundle.setClassLoader(Order.class.getClassLoader());
         bundle.putParcelable("order", selectedOrder);
         ((BaseActivity)getActivity()).showActivity(OrderShowActivity.class, bundle);
     }
@@ -164,81 +164,85 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
     }
 
     private void action_order(final Order p, final int position, final String status, final Handler handler) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.VISIBLE);
-                String tag_string_req = "req_monitor_open_order";
-                StringRequest strReq = new StringRequest(Request.Method.POST,
-                        AppConfig.URL_ORDER_ACTION, new Response.Listener<String>() {
+        if(getActivity() != null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.VISIBLE);
+                    String tag_string_req = "req_monitor_open_order";
+                    StringRequest strReq = new StringRequest(Request.Method.POST,
+                            AppConfig.URL_ORDER_ACTION, new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "MonitorOrder > BOOKING CANCEL : Response: " + response.toString());
-                        //hideDialog();
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d(TAG, "MonitorOrder > BOOKING CANCEL : Response: " + response.toString());
+                            //hideDialog();
 
-                        try {
-                            JSONObject jObj = new JSONObject(response);
-                            boolean error = jObj.getBoolean("error");
+                            try {
+                                JSONObject jObj = new JSONObject(response);
+                                boolean error = jObj.getBoolean("error");
 
-                            // Check for error node in json
-                            if (!error) {
-                                //check_order();
-                                if(status.equalsIgnoreCase(AppConfig.KEY_KUR100) || status.equalsIgnoreCase(AppConfig.KEY_KUR101) || status.equalsIgnoreCase(AppConfig.KEY_KUR500))
-                                    orders.remove(position);
-                                adapter.notifyDataSetChanged();
-                                String msg = jObj.getString("message");
-                                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                                progressBar.setVisibility(View.GONE);
-                            } else {
-                                // Error in login. Get the error message
-                                String errorMsg = jObj.getString("message");
-                                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                // Check for error node in json
+                                if (!error) {
+                                    //check_order();
+                                    Order order = orders.get(position);
+                                    order.setStatus(status);
+                                    if(status.equalsIgnoreCase(AppConfig.KEY_KUR100) || status.equalsIgnoreCase(AppConfig.KEY_KUR101) || status.equalsIgnoreCase(AppConfig.KEY_KUR500))
+                                        orders.remove(position);
+                                    adapter.notifyDataSetChanged();
+                                    String msg = jObj.getString("message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                    progressBar.setVisibility(View.GONE);
+                                } else {
+                                    // Error in login. Get the error message
+                                    String errorMsg = jObj.getString("message");
+                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                // JSON error
+                                e.printStackTrace();
+                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                        } catch (JSONException e) {
-                            // JSON error
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
+                            handler.handleMessage(null);
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(TAG, "Booking Error: " + error.getMessage());
+                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                            handler.handleMessage(null);
+                        }
+                    }) {
+
+                        @Override
+                        protected Map<String, String> getParams() {
+                            // Posting parameters to  url
+                            Map<String, String> params = getRequestParams();
+                            params.put("awb", p.getAwb());
+                            params.put("action", status);
+
+                            return params;
+                        }
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            String api = db.getUserApi();
+                            params.put("Api", api);
+
+                            return params;
                         }
 
-                        handler.handleMessage(null);
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }, new Response.ErrorListener() {
+                    };
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Booking Error: " + error.getMessage());
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                        handler.handleMessage(null);
-                    }
-                }) {
-
-                    @Override
-                    protected Map<String, String> getParams() {
-                        // Posting parameters to  url
-                        Map<String, String> params = getRequestParams();
-                        params.put("awb", p.getAwb());
-                        params.put("action", status);
-
-                        return params;
-                    }
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        String api = db.getUserApi();
-                        params.put("Api", api);
-
-                        return params;
-                    }
-
-                };
-
-                // Adding request to request queue
-                AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-            }
-        });
+                    // Adding request to request queue
+                    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+                }
+            });
+        }
     }
 
     protected Map<String, String> getRequestParams(){
@@ -379,7 +383,7 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
                 order.setTotalQuantity(totalQuantity);
                 order.setBuyer(pembeli);
                 order.setItems(items);
-                try{
+/*                try{
                     Set<Recipient> recipients = gson.fromJson(data.getString("recipients"), new TypeToken<LinkedHashSet<Recipient>>(){}.getType());
                     /*Set<Recipient> recipients = new LinkedHashSet<Recipient>();
                     JSONArray recps = data.getJSONArray("recipients");
@@ -388,14 +392,22 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
                         Recipient recp = gson.fromJson(rec.toString(), Recipient.class);
                         recipients.add(recp);
                     }
-                    */
                     order.setRecipients(recipients);
                 }catch (Exception e){}
+                    */
 
                 try{
-                    Set<Packet> packets = gson.fromJson(data.getString("packets"), new TypeToken<LinkedHashSet<Packet>>(){}.getType());
+                    Set<Packet> packets= new LinkedHashSet<Packet>();
+                    JSONArray pkt = data.getJSONArray("packets");
+                    for (int j = 0; j < pkt.length(); j++) {
+                        JSONObject prod = pkt.optJSONObject(j);
+                        Log.d("dd", prod.toString());
+                        Packet packet = gson.fromJson(pkt.getString(j), Packet.class);
+                        packets.add(packet);
+                    }
+                    //Set<Packet> packets = gson.fromJson(data.getString("packets"), new TypeToken<LinkedHashSet<Packet>>(){}.getType());
                     order.setPackets(packets);
-                }catch (Exception e){}
+                }catch (Exception e){e.printStackTrace();}
 
                 orders.add(order);
             }

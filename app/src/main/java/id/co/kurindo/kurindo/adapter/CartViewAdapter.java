@@ -75,13 +75,20 @@ public class CartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof VHItem){
-            final Cart cart = CartHelper.getCart();
+            //final Cart cart = CartHelper.getCart();
             final CartItem cartItem = getItem(position);
             if(cartItem.getProduct() != null){
-                ((VHItem) holder).tvName.setText(cartItem.getProduct().getName());
+                ((VHItem) holder).tvName.setText(cartItem.getProduct().getName() );
                 ((VHItem) holder).tvUnitPrice.setText(AppConfig.formatCurrency(cartItem.getProduct().getPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
                 ((VHItem) holder).tvQuantity.setText(String.valueOf(cartItem.getQuantity()));
                 ((VHItem) holder).tvPrice.setText(AppConfig.formatCurrency(cartItem.getProduct().getPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+                if(cartItem.getProduct().getNotes() == null || cartItem.getProduct().getNotes().isEmpty()){
+                    ((VHItem) holder).tvNotes.setVisibility(View.GONE);
+                }else{
+                    ((VHItem) holder).tvNotes.setVisibility(View.VISIBLE);
+                    ((VHItem) holder).tvNotes.setText("Note: "+cartItem.getProduct().getNotes());
+                }
+
             }
         }
     }
@@ -93,6 +100,7 @@ public class CartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     class VHItem extends RecyclerView.ViewHolder {
         TextView tvName;
+        TextView tvNotes;
         TextView tvUnitPrice;
         TextView tvQuantity;
         TextView tvPrice;
@@ -100,6 +108,7 @@ public class CartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public VHItem(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tvCartItemName);
+            tvNotes = (TextView) itemView.findViewById(R.id.tvCartItemNotes);
             tvUnitPrice = (TextView) itemView.findViewById(R.id.tvCartItemUnitPrice);
             tvQuantity = (TextView) itemView.findViewById(R.id.tvCartItemQuantity);
             tvPrice = (TextView) itemView.findViewById(R.id.tvCartItemPrice);

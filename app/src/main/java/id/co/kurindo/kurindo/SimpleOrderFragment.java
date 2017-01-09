@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.tonyvu.sc.util.CartHelper;
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -402,6 +403,15 @@ public class SimpleOrderFragment extends BaseFragment {
                 params.put("type", product.getCode());
                 params.put("remarks", remarks);
                 //Log.d("PARAMS",gson.toJson(params));
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String api = db.getUserApi();
+                params.put("Api", api);
+
                 return params;
             }
         };

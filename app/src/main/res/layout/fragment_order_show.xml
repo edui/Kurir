@@ -21,6 +21,88 @@
             android:gravity="center" android:layout_marginBottom="5dp"
             android:textSize="15sp" android:text="AWB" android:visibility="gone"/>
     </LinearLayout>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_alignParentBottom="true" android:background="@color/white"
+        android:layout_width="match_parent" android:weightSum="10"
+        android:layout_height="wrap_content" android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/kur999Btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_weight="5"
+            android:background="@color/white"
+            android:src="@drawable/reject_booking_icon"/>
+
+        <ImageButton
+            android:id="@+id/kur200Btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_weight="5"
+            android:background="@color/white"
+            android:src="@drawable/accept_booking_icon"/>
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center"
+        android:layout_height="wrap_content" android:background="@color/white"
+        android:orientation="horizontal"  >
+        <ImageButton
+            android:id="@+id/kur100Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone" />
+        <ImageButton
+            android:id="@+id/kur200BtnS"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/accept_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur300Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status01_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur310Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status03_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur350Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status06_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur500Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status04_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur400Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status05_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur900Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur910Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/transfer" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur999BtnS"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/infoStatus"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/ic_info_outline_black_18dp" />
+
+    </LinearLayout>
+
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,7 +125,7 @@
                 android:id="@+id/tvPembeliStr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
+                android:background="@color/colorPrimary" android:textColor="@color/white"
                 android:gravity="center"
                 android:paddingBottom="@dimen/common_padding"
                 android:paddingTop="@dimen/common_padding"
@@ -75,7 +157,7 @@
                 android:id="@+id/tvCartHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
+                android:background="@color/colorPrimary" android:textColor="@color/white"
                 android:gravity="center"
                 android:paddingBottom="@dimen/common_padding"
                 android:paddingTop="@dimen/common_padding"
@@ -168,11 +250,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="7"
-                android:background="@color/colorAccent"
+                android:background="@color/colorPrimary" android:textColor="@color/white"
                 android:gravity="center"
                 android:paddingBottom="@dimen/common_padding"
                 android:paddingTop="@dimen/common_padding"
-                android:text="Tujuan Pengiriman"
+                android:text="Paket Pengiriman"
                 android:textAllCaps="true"
                 android:textSize="@dimen/header_text_size"
                 android:textStyle="bold"/>
@@ -192,43 +274,6 @@
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.LinearLayoutCompat
-        android:layout_alignParentBottom="true" android:background="@color/white"
-        android:layout_width="match_parent" android:weightSum="10"
-        android:layout_height="wrap_content" android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/kur999Btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_weight="5"
-            android:background="@color/white"
-            android:src="@drawable/reject_booking_icon"/>
-
-        <ImageButton
-            android:id="@+id/kur200Btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_weight="5"
-            android:background="@color/white"
-            android:src="@drawable/accept_booking_icon"/>
-    </android.support.v7.widget.LinearLayoutCompat>
-
-    <android.support.v7.widget.LinearLayoutCompat
-        android:layout_marginBottom="50dp"
-        android:layout_alignParentBottom="true" android:background="@color/white"
-        android:layout_width="match_parent" android:weightSum="10" android:visibility="gone"
-        android:layout_height="wrap_content" android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/kur201Btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_weight="5"
-            android:src="@drawable/status01_0_icon"/>
-
-        <ImageButton
-            android:id="@+id/kur300Btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_weight="5"
-            android:src="@drawable/status02_0_icon"/>
-    </android.support.v7.widget.LinearLayoutCompat>
 
 </LinearLayout>
 

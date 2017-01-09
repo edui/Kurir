@@ -502,6 +502,7 @@ public class PacketOrderFragment extends BaseFragment {
                             hist.setStatus(status);
                             hist.setRemarks(remarks);
                             hist.setLocation(location);
+                            packet.setStatus(status);
                             packet.setStatusText(remarks);
                             //*/
                             packet.getStatusHistoryList().add(hist);

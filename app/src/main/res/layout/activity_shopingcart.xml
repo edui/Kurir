@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="0.75" android:textSize="18dp"
+            android:layout_weight="0.55" android:textSize="18dp"
             android:gravity="center_vertical|end"
             android:text="@string/total_price"
             android:textStyle="bold"/>
@@ -51,7 +51,7 @@
             android:id="@+id/tvTotalPrice"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
+            android:layout_weight="0.45"
             android:gravity="center"
             android:text="" android:textSize="18dp"
             android:textStyle="bold"/>

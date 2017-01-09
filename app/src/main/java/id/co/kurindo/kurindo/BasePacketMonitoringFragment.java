@@ -165,82 +165,87 @@ public abstract class BasePacketMonitoringFragment extends BaseFragment implemen
     }
 
     private void action_packet(final Packet p, final int position, final String status, final String statusBefore, final Handler handler) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.VISIBLE);
-                String tag_string_req = "req_monitor_open_packet";
-                StringRequest strReq = new StringRequest(Request.Method.POST,
-                        AppConfig.URL_PACKET_ACTION, new Response.Listener<String>() {
+        if(getActivity() != null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.VISIBLE);
+                    String tag_string_req = "req_monitor_open_packet";
+                    StringRequest strReq = new StringRequest(Request.Method.POST,
+                            AppConfig.URL_PACKET_ACTION, new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "MonitorOrder > PACKET ACTION  : Response: " + response.toString());
-                        //hideDialog();
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d(TAG, "MonitorOrder > PACKET ACTION  : Response: " + response.toString());
+                            //hideDialog();
 
-                        try {
-                            JSONObject jObj = new JSONObject(response);
-                            boolean error = jObj.getBoolean("error");
+                            try {
+                                JSONObject jObj = new JSONObject(response);
+                                boolean error = jObj.getBoolean("error");
 
-                            // Check for error node in json
-                            if (!error) {
-                                //check_order();
-                                if(status.equalsIgnoreCase(AppConfig.KEY_KUR100) || status.equalsIgnoreCase(AppConfig.KEY_KUR101) || status.equalsIgnoreCase(AppConfig.KEY_KUR500))
-                                    packets.remove(position);
-                                adapter.notifyDataSetChanged();
-                                String msg = jObj.getString("message");
-                                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                                progressBar.setVisibility(View.GONE);
-                            } else {
-                                //Get the error message
-                                String errorMsg = jObj.getString("message");
-                                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                // Check for error node in json
+                                if (!error) {
+                                    //check_order();
+                                    Packet packet = packets.get(position);
+                                    packet.setStatus(status);
+                                    if(status.equalsIgnoreCase(AppConfig.KEY_KUR100) || status.equalsIgnoreCase(AppConfig.KEY_KUR101) || status.equalsIgnoreCase(AppConfig.KEY_KUR500))
+                                        packets.remove(position);
+                                    adapter.notifyDataSetChanged();
+                                    String msg = jObj.getString("message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                    progressBar.setVisibility(View.GONE);
+                                } else {
+                                    //Get the error message
+                                    String errorMsg = jObj.getString("message");
+                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                // JSON error
+                                e.printStackTrace();
+                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                        } catch (JSONException e) {
-                            // JSON error
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
+                            progressBar.setVisibility(View.GONE);
+                            handler.handleMessage(null);
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(TAG, "Booking Error: " + error.getMessage());
+                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                            handler.handleMessage(null);
+                        }
+                    }) {
+
+                        @Override
+                        protected Map<String, String> getParams() {
+                            // Posting parameters to  url
+                            Map<String, String> params = getRequestParams();
+                            params.put("awb", p.getResi());
+                            params.put("action", status);
+                            params.put("filter", statusBefore);
+
+                            return params;
+                        }
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            String api = db.getUserApi();
+                            params.put("Api", api);
+
+                            return params;
                         }
 
-                        progressBar.setVisibility(View.GONE);
-                        handler.handleMessage(null);
-                    }
-                }, new Response.ErrorListener() {
+                    };
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Booking Error: " + error.getMessage());
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                        handler.handleMessage(null);
-                    }
-                }) {
+                    // Adding request to request queue
+                    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+                }
+            });
+        }
 
-                    @Override
-                    protected Map<String, String> getParams() {
-                        // Posting parameters to  url
-                        Map<String, String> params = getRequestParams();
-                        params.put("awb", p.getResi());
-                        params.put("action", status);
-                        params.put("filter", statusBefore);
-
-                        return params;
-                    }
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        String api = db.getUserApi();
-                        params.put("Api", api);
-
-                        return params;
-                    }
-
-                };
-
-                // Adding request to request queue
-                AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-            }
-        });
     }
 
     protected Map<String, String> getRequestParams(){

@@ -41,72 +41,74 @@ public class PacketAllIncomingFragment extends BasePacketMonitoringFragment {
 
 
     public void check_order() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setVisibility(View.VISIBLE);
-                String tag_string_req = "req_monitor_order_all";
-                StringRequest strReq = new StringRequest(Request.Method.POST,
-                        AppConfig.URL_PACKET_REALTIME , new Response.Listener<String>() {
+        if(getActivity() != null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.VISIBLE);
+                    String tag_string_req = "req_monitor_order_all";
+                    StringRequest strReq = new StringRequest(Request.Method.POST,
+                            AppConfig.URL_PACKET_REALTIME , new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
-                        //hideDialog();
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
+                            //hideDialog();
 
-                        try {
-                            JSONObject jObj = new JSONObject(response);
-                            boolean error = jObj.getBoolean("error");
+                            try {
+                                JSONObject jObj = new JSONObject(response);
+                                boolean error = jObj.getBoolean("error");
 
-                            // Check for error node in json
-                            if (!error) {
-                                parsePackets(packets, jObj);
-                                adapter.notifyDataSetChanged();
-                            } else {
-                                // Error in login. Get the error message
-                                String errorMsg = jObj.getString("message");
-                                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                // Check for error node in json
+                                if (!error) {
+                                    parsePackets(packets, jObj);
+                                    adapter.notifyDataSetChanged();
+                                } else {
+                                    // Error in login. Get the error message
+                                    String errorMsg = jObj.getString("message");
+                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                // JSON error
+                                e.printStackTrace();
+                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                        } catch (JSONException e) {
-                            // JSON error
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
                         }
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }, new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }) {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
+                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }) {
 
-                    @Override
-                    protected Map<String, String> getParams() {
-                        // Posting parameters to  url
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("form-type", "json");
+                        @Override
+                        protected Map<String, String> getParams() {
+                            // Posting parameters to  url
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("form-type", "json");
 
-                        return params;
-                    }
+                            return params;
+                        }
 
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        String api = db.getUserApi();
-                        params.put("Api", api);
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            String api = db.getUserApi();
+                            params.put("Api", api);
 
-                        return params;
-                    }
-                };
+                            return params;
+                        }
+                    };
 
-                // Adding request to request queue
-                AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-            }
-        });
+                    // Adding request to request queue
+                    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+                }
+            });
+        }
     }
 
 }

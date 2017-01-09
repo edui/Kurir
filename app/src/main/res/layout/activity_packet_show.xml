@@ -59,153 +59,69 @@
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     >
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent" android:background="@color/white"
         android:layout_height="wrap_content" android:orientation="vertical"
     android:padding="10dp">
+
+    <include layout="@layout/fragment_packet_view" />
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center_horizontal"
-        >
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Detil Paket" android:textStyle="italic"
-            android:textSize="16dp" android:layout_marginTop="10dp"
-            />
-
-        <TextView
-            android:id="@+id/text_info_paket"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Packet"
-            android:textSize="16dp"></TextView>
-
+        android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center"
+        android:layout_height="wrap_content" android:background="@color/white"
+        android:orientation="horizontal"  >
+        <ImageButton
+            android:id="@+id/kur100Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur200Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/accept_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur300Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status01_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur310Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status03_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur350Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status06_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur500Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status04_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur400Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/status05_0_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur900Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur910Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/transfer" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/kur999Btn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent" android:layout_marginTop="20dp" android:background="@color/colorPrimary"
-        android:layout_height="wrap_content" android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
-            <TextView
-                android:id="@+id/text_berat_paket"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16dp" android:textColor="@color/white"
-                android:text="Berat paket" android:layout_weight=".5"
-                />
-
-            <TextView
-                android:id="@+id/text_ongkos_paket"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16dp" android:textColor="@color/white"
-                android:text="Ongkos Paket" android:layout_weight=".5"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent" android:layout_margin="2dp" android:background="@color/white"
-            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
-            <TextView
-                android:id="@+id/text_kota_pengirim" android:layout_weight=".5" android:layout_margin="3dp"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="Kota Asal" android:textSize="16dp" android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/text_kota_penerima" android:layout_weight=".5" android:layout_margin="3dp"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="Kota Tujuan" android:textSize="16dp" android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent" android:layout_margin="2dp" android:background="@color/white"
-            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
-            <LinearLayout
-                android:layout_width="match_parent" android:layout_marginTop="10dp" android:layout_weight=".5"
-                android:layout_height="wrap_content" android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Pengirim" android:layout_gravity="center_horizontal" android:textStyle="italic|bold"
-                    android:textSize="12dp">
-                </TextView>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-                    <TextView
-                        android:id="@+id/text_nama_pengirim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nama Pengirim"
-                        android:textSize="12dp">
-                    </TextView>
-                    <TextView
-                        android:id="@+id/text_telepon_pengirim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="021"
-                        android:autoLink="phone"
-                        android:textSize="12dp">
-                    </TextView>
-                    <TextView
-                        android:id="@+id/text_alamat_pengirim"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Alamat Pengirim"
-                        android:textSize="12dp">
-                    </TextView>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent" android:gravity="right" android:layout_marginTop="10dp"
-                android:layout_height="wrap_content" android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Penerima" android:layout_gravity="center_horizontal" android:textStyle="italic|bold"
-                    android:textSize="12dp">
-                </TextView>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-                    <TextView
-                        android:id="@+id/text_nama_penerima"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nama Penerima"
-                        android:textSize="12dp">
-                    </TextView>
-                    <TextView
-                        android:id="@+id/text_telepon_penerima"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="021"
-                        android:autoLink="phone"
-                        android:textSize="12dp">
-                    </TextView>
-                    <TextView
-                        android:id="@+id/text_alamat_penerima"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Alamat Penerima"
-                        android:textSize="12dp">
-                    </TextView>
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"

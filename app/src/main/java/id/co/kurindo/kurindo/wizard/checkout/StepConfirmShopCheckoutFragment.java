@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.IntegerRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -39,6 +38,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,19 +46,18 @@ import java.util.Set;
 import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.adapter.CartViewAdapter;
+import id.co.kurindo.kurindo.adapter.PacketViewAdapter;
 import id.co.kurindo.kurindo.adapter.RecipientViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
-import id.co.kurindo.kurindo.app.Constant;
 import id.co.kurindo.kurindo.helper.CheckoutHelper;
 import id.co.kurindo.kurindo.model.CartItem;
-import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Order;
+import id.co.kurindo.kurindo.model.Packet;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.ShippingCost;
 import id.co.kurindo.kurindo.model.Shop;
-import id.co.kurindo.kurindo.model.User;
 import id.co.kurindo.kurindo.util.DummyContent;
 
 
@@ -68,7 +67,7 @@ import id.co.kurindo.kurindo.util.DummyContent;
 
 public class StepConfirmShopCheckoutFragment extends BaseStepFragment implements Step{
     private static final String TAG = "StepConfirmShopCheckout";
-    VerificationError valid = null;
+    VerificationError invalid = null;
 
     @Bind(R.id.tvPayment)
     TextView tvPayment;
@@ -81,7 +80,7 @@ public class StepConfirmShopCheckoutFragment extends BaseStepFragment implements
 
     @Bind(R.id.ivPacketType)
     ImageView ivPacketType;
-
+    PacketViewAdapter packetViewAdapter;
     RecipientViewAdapter recipientAdapter;
     List<Recipient> recipients;
     ProgressDialog progressDialog;
@@ -114,11 +113,20 @@ public class StepConfirmShopCheckoutFragment extends BaseStepFragment implements
         lvRecipientItems.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         lvRecipientItems.setHasFixedSize(true);
 
-        recipients = getRecipientItems(CheckoutHelper.getInstance().getRecipients());
-        recipientAdapter = new RecipientViewAdapter(getActivity(), recipients);
-        lvRecipientItems.setAdapter(recipientAdapter );
-
         calc_shipping_cost();
+
+        //if(CheckoutHelper.getInstance().getPackets() != null && CheckoutHelper.getInstance().getPackets().size() > 0){
+        List<Packet> packets = new ArrayList<>();
+        if(CheckoutHelper.getInstance().getPackets() != null){
+            packets.addAll(CheckoutHelper.getInstance().getPackets());
+        }
+        packetViewAdapter = new PacketViewAdapter(getContext(), packets);
+        lvRecipientItems.setAdapter(packetViewAdapter);
+        /*}else{
+            recipients = getRecipientItems(CheckoutHelper.getInstance().getRecipients());
+            recipientAdapter = new RecipientViewAdapter(getActivity(), recipients);
+            lvRecipientItems.setAdapter(recipientAdapter );*/
+        //}
     }
 
     private void calc_shipping_cost() {
@@ -140,9 +148,41 @@ public class StepConfirmShopCheckoutFragment extends BaseStepFragment implements
                 shippingCostMap.put(shop.getId(), cost);
             }
         }
+
         request_shipping_cost();
     }
+    private void setup_packet(){
+        Set<Saleable> products = CartHelper.getCart().getProducts();
+        Set<Packet> packets = new LinkedHashSet<>();
+        for (Saleable saleable : products) {
+            Product product = (Product) saleable;
+            Shop shop = DummyContent.SHOP_MAP.get(""+product.getShopid());
+            for (Recipient rec : CheckoutHelper.getInstance().getRecipients()) {
+                ShippingCost cost = shippingCostMap.get(shop.getId());
+                if(cost != null){
+                    Packet p =new Packet();
+                    p.setNamaPenerima(rec.getName());
+                    p.setKotaPenerima(cost.getDestination().getCode());
+                    p.setKotaPenerimaText(cost.getDestination().getText());
+                    p.setAlamatPenerima(rec.getAddress().getAlamat());
 
+                    p.setNamaPengirim(shop.getName());
+                    p.setAlamatPengirim(shop.getAddress().getAlamat());
+                    p.setKotaPengirim(cost.getOrigin().getCode());
+                    p.setKotaPengirimText(cost.getOrigin().getText());
+                    p.setServiceCode(cost.getServiceCode());
+                    p.setInfoPaket(product.getName());
+
+                    p.setBiaya(cost.getCost());
+                    p.setBerat(cost.getWeight());
+                    packets.add(p);
+                }
+            }
+        }
+        CheckoutHelper.getInstance().setPackets(packets);
+        packetViewAdapter.updateData(new ArrayList<Packet>(packets));
+        packetViewAdapter.notifyDataSetChanged();
+    }
     private void request_shipping_cost() {
 
         String tag_string_req = "req_packet_price_group";
@@ -166,6 +206,7 @@ public class StepConfirmShopCheckoutFragment extends BaseStepFragment implements
                             totalCost += cost.getCost();
                         }
                         tvShippingPrice.setText(AppConfig.formatCurrency(totalCost));
+                        setup_packet();
                     }
                     //}else{
                     //    String message= jObj.getString("message");
@@ -266,19 +307,19 @@ public class StepConfirmShopCheckoutFragment extends BaseStepFragment implements
                         CheckoutHelper.getInstance().setFinishOrder(order);
                     }
                     progressDialog.dismiss();
-                    handler.handleMessage(null);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    valid = new VerificationError("Json error: " + e.getMessage());
+                    invalid = new VerificationError("Json error: " + e.getMessage());
                     progressDialog.dismiss();
-                    handler.handleMessage(null);
                 }
+
+                handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Process_order Error: " + error.getMessage());
-                valid = new VerificationError(error.getMessage());
+                invalid = new VerificationError(error.getMessage());
                 progressDialog.dismiss();
                 handler.handleMessage(null);
             }

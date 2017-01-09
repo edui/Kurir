@@ -10,8 +10,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.tonyvu.sc.model.Saleable;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
@@ -70,6 +74,20 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).item_service.setImageResource(R.drawable.do_car_icon);
         }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOSEND) || order.getType().equalsIgnoreCase("KURIR")) {
             ((MyItemHolder) holder).item_service.setImageResource(R.drawable.do_send_icon);
+            if(order.getPackets() != null && order.getPackets().size() > 0){
+                for (Packet packet:order.getPackets()) {
+                    if(packet.getServiceCode().equalsIgnoreCase("SDS")){
+                        ((MyItemHolder) holder).item_serviceType.setImageResource(R.drawable.icon_sds);
+                    }else if(packet.getServiceCode().equalsIgnoreCase("ENS")){
+                        ((MyItemHolder) holder).item_serviceType.setImageResource(R.drawable.icon_ens);
+                    }else {
+                        ((MyItemHolder) holder).item_serviceType.setImageResource(R.drawable.icon_nds);
+                    }
+                    ((MyItemHolder) holder).item_serviceType.setVisibility(View.VISIBLE);
+                }
+            }else{
+                ((MyItemHolder) holder).item_serviceType.setVisibility(View.GONE);
+            }
         }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOMOVE)) {
             ((MyItemHolder) holder).item_service.setImageResource(R.drawable.do_move_icon);
         }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOSERVICE)) {
@@ -244,6 +262,7 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         protected TextView kotaTujuanText;
         //protected TextView serviceCodeText;
         protected ImageView item_service;
+        protected ImageView item_serviceType;
         protected TextView statusText;
         protected TextView createdText;
         protected  ImageButton updateBtn;
@@ -269,6 +288,7 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.createdText = (TextView) itemView.findViewById(R.id.tv_created);
             //this.packetGrid = (GridLayout)itemView.findViewById(R.id.packet_grid);
             this.item_service = (ImageView) itemView.findViewById(R.id.item_service);
+            this.item_serviceType = (ImageView) itemView.findViewById(R.id.item_service_type);
             //this.serviceCodeText= (TextView) itemView.findViewById(R.id.packet_service);
             this.updateBtn= (ImageButton) itemView.findViewById(R.id.updateBtn);
             this.kur101Btn= (ImageButton) itemView.findViewById(R.id.kur101Btn);

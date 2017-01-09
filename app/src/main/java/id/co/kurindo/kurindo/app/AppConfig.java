@@ -65,20 +65,21 @@ public class AppConfig {
     public static  String URL_SENT_KERJASAMA= HOST + "/message_kerjasama";
 
     public static String URL_PLACE_ORDER = HOST + "/packet/addordernew";
-
     public static String URL_PLACE_ORDER_SHOP = HOST + "/shop/addordernew";
 
+    public static String URL_ORDER_ADDPIC = HOST + "/order/addpic";;
+    public static String URL_ORDER_REJECT = HOST + "/order/reject";
     public static String URL_ORDER_ACTION = HOST + "/order/action";
     public static String URL_ORDER_REALTIME = HOST + "/order/realtime";
     public static String URL_ORDER_MYTASKS = HOST + "/order/myjob";
     public static String URL_ORDER_MYORDERS = HOST + "/order/myorders";
+    public static String URL_ORDER_HISTORY = HOST + "/order/history";
 
     public static String URL_PACKET_TRACE= HOST + "/packet/trace";
     public static String URL_PACKET_PRICE= HOST + "/packet/tariff";
     public static String URL_PACKET_PRICE_GROUP = HOST + "/packet/tariffgroup";
     public static String URL_PACKET_REALTIME= HOST + "/packet/realtime";
     public static String URL_PACKET_MYTASKS= HOST + "/packet/myjob";
-    public static String URL_PACKET_BOOKING = HOST + "/packet/booking";
     public static String URL_PACKET_ACTION = HOST + "/packet/action";
     public static String URL_PACKET_HISTORY = HOST + "/packet/history";
 
@@ -93,8 +94,6 @@ public class AppConfig {
     public static String URL_SHOP_LIST = HOST + "/shops/list/{page}";
     public static String URL_SHOP_PRODUCTS = HOST + "/shop/{shop_id}/product/{page}";
 
-    public static String URL_ORDER_ADDPIC = HOST + "/order/addpic";;
-    public static String URL_ORDER_REJECT = HOST + "/order/reject";
 
     public static final String KEY_KURIR= "KURIR";
     public static final String KEY_AGENT= "AGEN";
@@ -143,13 +142,13 @@ public class AppConfig {
                 statusText = "PAKET TERSEDIA KEMBALI.";
                 break;
             case KEY_KUR101:
-                statusText = "PAKET SUDAH DIBOOKING KURIR.";
+                statusText = "PAKET DIBOOKING KURIR. SIAP MEMBANTU.";
                 break;
             case KEY_KUR200:
                 statusText= "KURIR KURINDO OTW MENGAMBIL PAKET.";
                 break;
             case KEY_KUR300:
-                statusText= "PAKET SUDAH DIAMBIL KURIR.";
+                statusText= "PAKET SUDAH DIBAWA KURIR.";
                 break;
             case KEY_KUR310:
                 statusText= "KURIR OTW MENGANTAR PAKET.";
@@ -211,7 +210,7 @@ public class AppConfig {
                 statusText= "PESANAN SIAP DIKIRIM.";
                 break;
             case KEY_KUR300:
-                statusText= "PESANAN SUDAH DIAMBIL KURIR.";
+                statusText= "PESANAN SUDAH DIBAWA KURIR.";
                 break;
             case KEY_KUR310:
                 statusText= "KURIR OTW MENGANTAR PESANAN.";

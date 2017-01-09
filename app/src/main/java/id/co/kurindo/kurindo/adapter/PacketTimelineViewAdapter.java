@@ -35,7 +35,9 @@ public class PacketTimelineViewAdapter extends RecyclerView.Adapter<RecyclerView
         this.data = data;
     }
 
-
+    public void updateData(List<StatusHistory> data){
+        this.data = data;
+    }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder;
@@ -67,15 +69,17 @@ public class PacketTimelineViewAdapter extends RecyclerView.Adapter<RecyclerView
             }else if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR101)){
                 ((MyItemHolder) holder).mImg.setImageResource(R.drawable.accept_booking_icon);
             }else if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR200)){
-                ((MonitorPacketAdapter.MyItemHolder) holder).kur300Btn.setImageResource(R.drawable.status01_2_icon);
+                ((MyItemHolder) holder).mImg.setImageResource(R.drawable.status01_1_icon);
             }else if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR300)){
-                ((MonitorPacketAdapter.MyItemHolder) holder).kur310Btn.setImageResource(R.drawable.status03_2_icon);
-            }else if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR310) || model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR350)){
-                ((MonitorPacketAdapter.MyItemHolder) holder).kur400Btn.setImageResource(R.drawable.status05_2_icon);
+                ((MyItemHolder) holder).mImg.setImageResource(R.drawable.status01_2_icon);
+            }else if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR310)) {
+                ((MyItemHolder) holder).mImg.setImageResource(R.drawable.status03_2_icon);
+            }else if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR350)){
+                ((MyItemHolder) holder).mImg.setImageResource(R.drawable.status05_2_icon);
             }else if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR400)){
-                ((MonitorPacketAdapter.MyItemHolder) holder).kur350Btn.setImageResource(R.drawable.status06_2_icon);
+                ((MyItemHolder) holder).mImg.setImageResource(R.drawable.status06_2_icon);
             }else if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR500)){
-                ((MonitorPacketAdapter.MyItemHolder) holder).kur500Btn.setImageResource(R.drawable.status04_2_icon);
+                ((MyItemHolder) holder).mImg.setImageResource(R.drawable.status04_2_icon);
             }
         }
     }

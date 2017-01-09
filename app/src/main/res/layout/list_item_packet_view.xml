@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:background="@color/white"
+    android:layout_height="wrap_content" android:orientation="vertical"
+    android:padding="10dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center" android:weightSum="1"
+            >
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_weight=".5"
+                android:layout_height="match_parent" android:orientation="vertical" android:gravity="center_vertical|right" android:layout_gravity="center_vertical|left">
+                <ImageView
+                    android:id="@+id/service_icon"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:scaleType="centerCrop" android:layout_gravity="center"
+                    android:src="@drawable/do_send_icon"/>
+                <ImageView
+                    android:id="@+id/service_code_icon"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerCrop" android:layout_gravity="center"
+                    android:src="@drawable/icon_nds"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left">
+                <TextView
+                    android:id="@+id/awbTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No. Resi" android:layout_gravity="center" android:gravity="center"
+                    android:textSize="16dp" android:textStyle="bold"
+                    />
+                <ImageView
+                    android:id="@+id/resi_qrcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:scaleType="centerCrop" android:layout_gravity="center"
+                    android:src="@drawable/icon_nds"/>
+                <TextView
+                    android:id="@+id/statusTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Status" android:layout_gravity="center" android:gravity="center"
+                    android:textSize="12dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Detil Paket" android:textStyle="italic" android:gravity="center"
+            android:textSize="16dp" android:layout_marginTop="10dp"
+            />
+
+        <TextView
+            android:id="@+id/text_info_paket"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:gravity="center"
+            android:text="Packet"
+            android:textSize="16dp"></TextView>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_marginTop="20dp" android:background="@color/colorPrimary"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_margin="5dp"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+            <TextView
+                android:id="@+id/text_berat_paket"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp" android:textColor="@color/white"
+                android:text="Berat paket" android:layout_weight=".5"
+                />
+
+            <TextView
+                android:id="@+id/text_ongkos_paket"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp" android:textColor="@color/white"
+                android:text="Ongkos Paket" android:layout_weight=".5"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_margin="2dp" android:background="@color/white"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+            <TextView
+                android:id="@+id/text_kota_pengirim" android:layout_weight=".5" android:layout_margin="3dp"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Kota Asal" android:textSize="16dp" android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_kota_penerima" android:layout_weight=".5" android:layout_margin="3dp"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="Kota Tujuan" android:textSize="16dp" android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_margin="2dp" android:background="@color/white"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_marginTop="10dp" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Pengirim" android:layout_gravity="center_horizontal" android:textStyle="italic|bold"
+                    android:textSize="12dp">
+                </TextView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:id="@+id/text_nama_pengirim"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nama Pengirim"
+                        android:textSize="12dp">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/text_telepon_pengirim"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="021"
+                        android:autoLink="phone"
+                        android:textSize="12dp">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/text_alamat_pengirim"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alamat Pengirim"
+                        android:textSize="12dp">
+                    </TextView>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent" android:gravity="right" android:layout_marginTop="10dp"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Penerima" android:layout_gravity="center_horizontal" android:textStyle="italic|bold"
+                    android:textSize="12dp">
+                </TextView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:id="@+id/text_nama_penerima"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nama Penerima"
+                        android:textSize="12dp">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/text_telepon_penerima"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="021"
+                        android:autoLink="phone"
+                        android:textSize="12dp">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/text_alamat_penerima"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alamat Penerima"
+                        android:textSize="12dp">
+                    </TextView>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+ </LinearLayout>

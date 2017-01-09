@@ -26,6 +26,7 @@ public class Order implements Parcelable{
     private String payment;
     private String status;
     private String statusText;
+    private String pic;
 
     private String created;
 
@@ -77,6 +78,7 @@ public class Order implements Parcelable{
             packets.addAll(alPac);
         }catch (Exception e){}
 
+        pic = in.readString();
     }
 
     public static final Creator<Order> CREATOR = new Creator<Order>() {
@@ -203,6 +205,14 @@ public class Order implements Parcelable{
         this.packets = packets;
     }
 
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -229,5 +239,6 @@ public class Order implements Parcelable{
         List<Packet>  alPac = new ArrayList<>();
         if(packets != null) alPac.addAll(packets);
         dest.writeTypedList(alPac);
+        dest.writeString(pic);
     }
 }

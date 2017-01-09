@@ -114,7 +114,7 @@ public class DummyContent {
         addProduct(shop.getId(),products);
 
 
-        News n = new News(1, "Wakaf", "Wakaf", "Wakaf", R.drawable.news_sample);
+        News n = new News(1, "Wakaf", "Wakaf", "Wakaf", R.drawable.wakaf_annasai);
         addNews(n);
         n = new News(2, "DO-Send", "DO-Send", "DO-Send", R.drawable.banner_dosend);
         addNews(n);
