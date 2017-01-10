@@ -63,6 +63,13 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //((MyItemHolder) holder).serviceCodeText.setText(packet.getServiceCode());
         //String color = bgColors[position % bgColors.length];
         */
+        if(order.getPic() != null && !order.getPic().getFirstname().isEmpty()){
+            ((MyItemHolder) holder).picText.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).picText.setText("PIC: "+order.getPic().getFirstname() +" "+order.getPic().getLastname());
+        }else{
+            ((MyItemHolder) holder).picText.setVisibility(View.GONE);
+        }
+
         ((MyItemHolder) holder).statusText.setText( AppConfig.getOrderStatusText( order.getStatus() ) );
         ((MyItemHolder) holder).createdText.setText(order.getCreated());
 
@@ -114,7 +121,54 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         });
 
-        if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR200)){
+        if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR100)) {
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).kur101Btn.setImageResource(R.drawable.booking_order);
+            ((MyItemHolder) holder).kur101Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onPickButtonClick(v, position, AppConfig.KEY_KUR101);
+                }
+            });
+
+            ((MyItemHolder) holder).picText.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur500Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur400Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur350Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur300Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur310Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.GONE);
+
+        }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR101)){
+            ((MyItemHolder) holder).kur200Btn.setImageResource(R.drawable.accept_booking_icon);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).kur200Btn.setEnabled(true);
+            ((MyItemHolder) holder).kur200Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onPickButtonClick(v, position, AppConfig.KEY_KUR200);
+                }
+            });
+
+            ((MyItemHolder) holder).kur100Btn.setImageResource(R.drawable.reject_booking_icon);
+            ((MyItemHolder) holder).kur100Btn.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).kur100Btn.setEnabled(true);
+            ((MyItemHolder) holder).kur100Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onPickButtonClick(v, position, AppConfig.KEY_KUR100);
+                }
+            });
+
+            ((MyItemHolder) holder).picText.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur300Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur310Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur350Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur400Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur500Btn.setVisibility(View.GONE);
+
+        }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR200)){
             ((MyItemHolder) holder).kur300Btn.setImageResource(R.drawable.status01_1_icon);
             ((MyItemHolder) holder).kur300Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur300Btn.setEnabled(true);
@@ -129,7 +183,11 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).kur310Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur310Btn.setEnabled(false);
 
-            ((MyItemHolder) holder).kur400Btn.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).kur100Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.GONE);
+
+            ((MyItemHolder) holder).kur400Btn.setVisibility(View.GONE);
             ((MyItemHolder) holder).kur400Btn.setEnabled(false);
 
             ((MyItemHolder) holder).kur500Btn.setVisibility(View.VISIBLE);
@@ -149,7 +207,10 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).kur300Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur300Btn.setEnabled(false);
 
-            ((MyItemHolder) holder).kur400Btn.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).kur100Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur400Btn.setVisibility(View.GONE);
             ((MyItemHolder) holder).kur400Btn.setEnabled(false);
 
             ((MyItemHolder) holder).kur500Btn.setVisibility(View.VISIBLE);
@@ -182,6 +243,11 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).kur310Btn.setImageResource(R.drawable.status03_2_icon);
             ((MyItemHolder) holder).kur310Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur310Btn.setEnabled(false);
+
+            ((MyItemHolder) holder).kur100Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.GONE);
+
         }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR400)){
             ((MyItemHolder) holder).kur350Btn.setImageResource(R.drawable.status06_1_icon);
             ((MyItemHolder) holder).kur350Btn.setVisibility(View.VISIBLE);
@@ -198,6 +264,11 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).kur310Btn.setImageResource(R.drawable.status03_2_icon);
             ((MyItemHolder) holder).kur310Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur310Btn.setEnabled(false);
+
+            ((MyItemHolder) holder).kur100Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.GONE);
+
         }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR350)){
             ((MyItemHolder) holder).kur500Btn.setImageResource(R.drawable.status04_1_icon);
             ((MyItemHolder) holder).kur500Btn.setVisibility(View.VISIBLE);
@@ -226,6 +297,11 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).kur310Btn.setImageResource(R.drawable.status03_2_icon);
             ((MyItemHolder) holder).kur310Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur310Btn.setEnabled(false);
+
+            ((MyItemHolder) holder).kur100Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.GONE);
+
         }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR500)){
             ((MyItemHolder) holder).kur500Btn.setImageResource(R.drawable.status04_2_icon);
             ((MyItemHolder) holder).kur500Btn.setVisibility(View.VISIBLE);
@@ -238,12 +314,21 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).kur310Btn.setImageResource(R.drawable.status03_2_icon);
             ((MyItemHolder) holder).kur310Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur310Btn.setEnabled(false);
+
+            ((MyItemHolder) holder).kur100Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.GONE);
+
         }else{
             ((MyItemHolder) holder).kur300Btn.setVisibility(View.GONE);
             ((MyItemHolder) holder).kur310Btn.setVisibility(View.GONE);
             ((MyItemHolder) holder).kur400Btn.setVisibility(View.GONE);
             ((MyItemHolder) holder).kur500Btn.setVisibility(View.GONE);
             ((MyItemHolder) holder).kur350Btn.setVisibility(View.GONE);
+
+            ((MyItemHolder) holder).kur100Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);
+            ((MyItemHolder) holder).kur200Btn.setVisibility(View.GONE);
         }
 
 
@@ -263,6 +348,7 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //protected TextView serviceCodeText;
         protected ImageView item_service;
         protected ImageView item_serviceType;
+        protected TextView picText;
         protected TextView statusText;
         protected TextView createdText;
         protected  ImageButton updateBtn;
@@ -286,6 +372,7 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.kotaTujuanText= (TextView) itemView.findViewById(R.id.tv_kota_tujuan);
             this.statusText= (TextView) itemView.findViewById(R.id.tv_status);
             this.createdText = (TextView) itemView.findViewById(R.id.tv_created);
+            this.picText= (TextView) itemView.findViewById(R.id.tv_pic);
             //this.packetGrid = (GridLayout)itemView.findViewById(R.id.packet_grid);
             this.item_service = (ImageView) itemView.findViewById(R.id.item_service);
             this.item_serviceType = (ImageView) itemView.findViewById(R.id.item_service_type);

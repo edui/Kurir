@@ -178,7 +178,7 @@ public class LoginFragment extends BaseFragment {
             _recoveryEmailText.setError("enter a valid email address");
             valid = false;
         } else {
-            _recoveryEmailText.setError("");
+            _recoveryEmailText.setError(null);
         }
 
         if(valid){
@@ -202,7 +202,8 @@ public class LoginFragment extends BaseFragment {
 
                                     // Check for error node in json
                                     if (!error) {
-
+                                        session.setActive(false);
+                                        showActivationLayout();;
                                     }
                                 } catch (JSONException e) {
                                     // JSON error
@@ -487,8 +488,8 @@ public class LoginFragment extends BaseFragment {
                         boolean active = jObj.getBoolean("active");
                         if(active){
                             db.onUpgrade(db.getWritableDatabase(), 0, 1);
-                            db.onCreateTableRecipient(db.getWritableDatabase());
-                            //db.onUpgradeTableRecipient(db.getWritableDatabase(),0,1);
+                            //db.onCreateTableRecipient(db.getWritableDatabase());
+                            db.onUpgradeTableRecipient(db.getWritableDatabase(),0,1);
 
                             //db.activatedUsers(email);
 
@@ -616,7 +617,7 @@ public class LoginFragment extends BaseFragment {
 
     private void checkLogin(final String email, final String password){
         String tag_string_req = "req_login";
-        final String token = FirebaseInstanceId.getInstance().getToken();
+        //final String token = FirebaseInstanceId.getInstance().getToken();
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_LOGIN, new Response.Listener<String>() {
 
@@ -709,7 +710,7 @@ public class LoginFragment extends BaseFragment {
                 params.put("form-email", email);
                 params.put("form-password", password);
                 params.put("form-type", "json");
-                params.put("form-token", token);
+                //params.put("form-token", token);
 
                 return params;
             }

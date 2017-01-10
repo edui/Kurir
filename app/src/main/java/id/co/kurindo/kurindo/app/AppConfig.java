@@ -43,9 +43,8 @@ import id.co.kurindo.kurindo.model.User;
  * Created by DwiM on 11/8/2016.
  */
 public class AppConfig {
-    public static String HOST = "https://kurindo.co.id";
-    //public static String HOST = "http://10.0.2.2/kurindo";
-    //public static String HOST = "http://192.168.43.25/kurindo";
+    //public static String HOST = "https://kurindo.co.id";
+    public static String HOST = "http://10.0.2.2/kurindo";
     public static String USER_AGENT = "KURINDROID";
 
     public static String SECRET_KEY = "AIzaSyCIVhOu83YxppEIlQEtqV0KCEW-JFDWAKA-KURINDROID";

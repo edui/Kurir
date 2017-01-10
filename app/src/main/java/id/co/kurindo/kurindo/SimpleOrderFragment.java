@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -89,6 +90,8 @@ public class SimpleOrderFragment extends BaseFragment {
     EditText input_pesan;
     @Bind(R.id.input_kota)
     Spinner _cityText;
+    @Bind(R.id.gender_spinner)    Spinner _genderSpinner;
+    private String gender = "Laki-laki";
 
     @Bind(R.id.rdogrpInput)
     RadioGroup inputModeRadioGroup;
@@ -157,11 +160,28 @@ public class SimpleOrderFragment extends BaseFragment {
         View rootView = inflateAndBind(inflater, container, R.layout.fragment_simpleorder);
 
         setup_form();
+        setup_gender_list();
         load_city();
 
         return rootView;
     }
+    private void setup_gender_list() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.genders_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        _genderSpinner.setAdapter(adapter);
+        _genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String) parent.getItemAtPosition(position);
+                gender = selected;
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
 
     private void load_city() {
         cityAdapter = new CityAdapter(getActivity(), cityList);
@@ -250,7 +270,7 @@ public class SimpleOrderFragment extends BaseFragment {
                             place_order(handler);
                         }
                     };
-                    showConfirmationDialog("Confirm Order","Anda Yakin akan membeli produk ini?", YesClickListener, null);
+                    showConfirmationDialog("Confirm Order","Anda yakin akan memesan layanan ini?", YesClickListener, null);
 
                     // loop till a runtime exception is triggered.
                     try { Looper.loop(); }
@@ -285,9 +305,11 @@ public class SimpleOrderFragment extends BaseFragment {
         });
 
         if(data.size() > 0){
-            pilihListRadio.setSelected(true);
+            inputBaru = false;
+            inputModeRadioGroup.check(pilihListRadio.getId());
         }else{
-            inputNewRadio.setSelected(true);
+            inputBaru = true;
+            inputModeRadioGroup.check(inputNewRadio.getId());
         }
         inputBaruLayout.setVisibility( data.size() > 0? View.GONE : View.VISIBLE );
         pilihListLayout.setVisibility( data.size() > 0? View.VISIBLE : View.GONE );
@@ -402,7 +424,7 @@ public class SimpleOrderFragment extends BaseFragment {
                 params.put("payment",order.getPayment());
                 params.put("type", product.getCode());
                 params.put("remarks", remarks);
-                //Log.d("PARAMS",gson.toJson(params));
+                Log.d("PARAMS",gson.toJson(params));
                 return params;
             }
 
@@ -418,6 +440,7 @@ public class SimpleOrderFragment extends BaseFragment {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
 
     private boolean validate() {
         boolean valid = true;
@@ -458,6 +481,7 @@ public class SimpleOrderFragment extends BaseFragment {
                     telepon = input_telepon.getPhoneNumber().getCountryCode()+""+telepon;
                 }
                 recipient.setTelepon(telepon);
+                recipient.setGender(gender);
                 Address addr = new Address();
                 addr.setCity(city);
                 addr.setAlamat(alamat);
@@ -466,7 +490,7 @@ public class SimpleOrderFragment extends BaseFragment {
                 data.add(recipient);
                 //add to DB
                 //String name= email;
-                //db.addRecipient(name, telepon, addr.getAlamat(), addr.getCity().getCode(), addr.getCity().getText());
+                db.addRecipient(recipient);
 
             }
         }else{

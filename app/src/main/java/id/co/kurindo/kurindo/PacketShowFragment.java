@@ -74,6 +74,10 @@ public class PacketShowFragment extends BaseFragment{
     @Bind(R.id.text_alamat_penerima)    TextView _alamatPenerimaText;
     @Bind(R.id.text_telepon_penerima)    TextView _teleponPenerimaText;
     @Bind(R.id.text_kota_penerima)    TextView _kotaPenerimaText;
+
+    @Bind(R.id.text_gender_pengirim)    TextView _genderPengirimText;
+    @Bind(R.id.text_gender_penerima)    TextView _genderPenerimaText;
+
     @Bind(R.id.awbTextView)    TextView _awbText;
     @Bind(R.id.statusTextView)    TextView _statusText;
     @Bind(R.id.resi_qrcode) ImageView barcodeView;
@@ -282,11 +286,18 @@ public class PacketShowFragment extends BaseFragment{
                 ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
             }
 
+            _genderPengirimText.setVisibility(View.GONE);
+            _genderPenerimaText.setVisibility(View.GONE);
             if(packet.getOrder() != null){
                 if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
                     ivServiceIcon.setImageResource(R.drawable.do_send_icon);
                 }else if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOJEK)) {
                     ivServiceIcon.setImageResource(R.drawable.do_jek_icon);
+
+                    _genderPengirimText.setVisibility(View.VISIBLE);
+                    _genderPenerimaText.setVisibility(View.VISIBLE);
+                    _genderPengirimText.setText(packet.getGenderPengirim());
+                    _genderPenerimaText.setText(packet.getGenderPenerima());
                 }else if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
                     ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
                 }else if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {

@@ -1,5 +1,6 @@
 package id.co.kurindo.kurindo;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -59,6 +60,7 @@ import id.co.kurindo.kurindo.model.Packet;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.wizard.AcceptOrderActivity;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -67,6 +69,8 @@ import id.co.kurindo.kurindo.model.User;
 public abstract class BaseOrderMonitoringFragment extends BaseFragment implements MonitorOrderAdapter.OnItemClickListener, View.OnClickListener {
     private static final String TAG = "BaseOrderMonitoringFragment";
     private static final int REQUEST_PACKET_LIST =0;
+    public static final int ACCEPTED_REQUEST_CODE = 1500;
+    public static final int REJECTED_REQUEST_CODE = 1999;
 
     MonitorOrderAdapter adapter;
     RecyclerView mRecyclerView;
@@ -140,30 +144,49 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
     }
 
     public void onPickButtonClick(View view, final int position, final String status) {
-        if(session.isAdministrator()){
+        if(session.isAdministrator() || session.isKurir()){
             selectedOrder = orders.get(position);
-            final Handler handler = new Handler() {
-                @Override
-                public void handleMessage(Message mesg) {
-                    throw new RuntimeException();
-                }
-            };
 
-            DialogInterface.OnClickListener YesClickListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    action_order(selectedOrder, position, status, handler);
-                }
-            };
-            showConfirmationDialog("Confirm StatusHistory","Anda Yakin akan merubah status order '"+selectedOrder.getAwb()+"' menjadi '"+AppConfig.getOrderStatusText(status)+"' ?", YesClickListener, null);
+            if(selectedOrder.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR100) && session.isAdministrator()){
+                Intent intent = new Intent(getActivity(), AcceptOrderActivity.class);
+                intent.putExtra("order", selectedOrder);
+                startActivityForResult(intent, ACCEPTED_REQUEST_CODE);
+            }else{
+                final Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message mesg) {
+                        throw new RuntimeException();
+                    }
+                };
 
-            // loop till a runtime exception is triggered.
-            try { Looper.loop(); }
-            catch(RuntimeException e2) {}
+                DialogInterface.OnClickListener YesClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        action_order(selectedOrder, position, status, selectedOrder.getStatus(), handler);
+                    }
+                };
+                showConfirmationDialog("Confirm Status","Anda Yakin akan merubah status order '"+selectedOrder.getAwb()+"' menjadi '"+AppConfig.getOrderStatusText(status)+"' ?", YesClickListener, null);
+
+                // loop till a runtime exception is triggered.
+                try { Looper.loop(); }
+                catch(RuntimeException e2) {}
+            }
+
+        }
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == ACCEPTED_REQUEST_CODE ||requestCode == REJECTED_REQUEST_CODE )&& resultCode == Activity.RESULT_OK) {
+            Order order = data.getExtras().getParcelable("order");
+            if(order != null) {
+                int position = orders.indexOf(selectedOrder);
+                this.selectedOrder = order;
+                adapter.notifyItemChanged(position);
+            }
         }
     }
 
-    private void action_order(final Order p, final int position, final String status, final Handler handler) {
+    private void action_order(final Order p, final int position, final String status, final String statusBefore, final Handler handler) {
         if(getActivity() != null){
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -224,6 +247,7 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
                             Map<String, String> params = getRequestParams();
                             params.put("awb", p.getAwb());
                             params.put("action", status);
+                            params.put("filter", statusBefore);
 
                             return params;
                         }
@@ -342,6 +366,11 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
                     pembeli = gson.fromJson(data.getString("pembeli"),User.class);
                 }catch (Exception e){}
 
+                User pic =  null;
+                try {
+                    pic = gson.fromJson(data.getString("pic"),User.class);
+                }catch (Exception e){}
+
                 double totalPrice = data.getDouble("totalPrice");
                 int totalQuantity = data.getInt("totalQuantity");
                 String type = data.getString("type");
@@ -382,6 +411,7 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
                 order.setTotalPrice(new BigDecimal(totalPrice));
                 order.setTotalQuantity(totalQuantity);
                 order.setBuyer(pembeli);
+                order.setPic(pic);
                 order.setItems(items);
 /*                try{
                     Set<Recipient> recipients = gson.fromJson(data.getString("recipients"), new TypeToken<LinkedHashSet<Recipient>>(){}.getType());
@@ -401,9 +431,11 @@ public abstract class BaseOrderMonitoringFragment extends BaseFragment implement
                     JSONArray pkt = data.getJSONArray("packets");
                     for (int j = 0; j < pkt.length(); j++) {
                         JSONObject prod = pkt.optJSONObject(j);
-                        Log.d("dd", prod.toString());
-                        Packet packet = gson.fromJson(pkt.getString(j), Packet.class);
-                        packets.add(packet);
+                        //Log.d("dd", prod.toString());
+                        try {
+                            Packet packet = gson.fromJson(pkt.getString(j), Packet.class);
+                            packets.add(packet);
+                        }catch (Exception e){}
                     }
                     //Set<Packet> packets = gson.fromJson(data.getString("packets"), new TypeToken<LinkedHashSet<Packet>>(){}.getType());
                     order.setPackets(packets);

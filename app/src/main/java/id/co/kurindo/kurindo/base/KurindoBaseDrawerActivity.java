@@ -99,7 +99,9 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
                 showActivity(KerjasamaActivity.class, bundle);
                 break;
             case R.id.nav_item_kurir_monitor_paket:
-                showActivity(MonitorPacketActivity.class);
+                bundle.putString("extra", "KURIR");
+                showActivity(AdminMonitorOrderActivity.class, bundle);
+                //showActivity(MonitorPacketActivity.class);
                 break;
             case R.id.nav_item_admin_monitor_paket_kurir:
                 showActivity(MonitorPacketActivity.class);

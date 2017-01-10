@@ -75,6 +75,11 @@
             style="style/TextAppearance.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tv_pic"
+            style="style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:visibility="gone"/>
         </LinearLayout>
         <LinearLayout
             android:background="@color/white"
@@ -83,17 +88,17 @@
             <ImageButton
                 android:id="@+id/updateBtn"
                 android:layout_width="wrap_content" android:background="@color/white"
-                android:layout_height="wrap_content"
+                android:layout_height="wrap_content" android:layout_margin="5dp"
                 android:src="@drawable/detail_order_40"/>
             <ImageButton
                 android:id="@+id/kur101Btn"
                 android:layout_width="wrap_content" android:background="@color/white"
-                android:layout_height="wrap_content"
+                android:layout_height="wrap_content" android:layout_margin="5dp"
                 android:src="@drawable/booking_order_40" android:visibility="gone"/>
             <ImageButton
                 android:id="@+id/waBtn"
                 android:layout_width="wrap_content" android:background="@color/white"
-                android:layout_height="wrap_content"
+                android:layout_height="wrap_content" android:layout_margin="5dp"
                 android:src="@drawable/ic_phone_black" android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>

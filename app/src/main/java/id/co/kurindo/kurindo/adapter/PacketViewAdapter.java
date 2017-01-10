@@ -22,6 +22,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.helper.OrderHelper;
+import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.Packet;
 
 /**
@@ -55,6 +57,7 @@ public class PacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Packet packet = data.get(position);
+        Order order = OrderHelper.getInstance().getOrder();
         if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_SDS)){
             ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_sds);
         }else if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_NDS)) {
@@ -62,15 +65,21 @@ public class PacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }else if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_ENS)) {
             ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
         }
-
-        if(packet.getOrder() != null){
-            if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
+        ((MyItemHolder) holder)._genderPengirimText.setVisibility(View.GONE);
+        ((MyItemHolder) holder)._genderPenerimaText.setVisibility(View.GONE);
+        if(order != null){
+            if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
                 ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_send_icon);
-            }else if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOJEK)) {
+            }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOJEK)) {
                 ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_jek_icon);
-            }else if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
+
+                ((MyItemHolder) holder)._genderPengirimText.setVisibility(View.VISIBLE);
+                ((MyItemHolder) holder)._genderPenerimaText.setVisibility(View.VISIBLE);
+                ((MyItemHolder) holder)._genderPengirimText.setText(packet.getGenderPengirim());
+                ((MyItemHolder) holder)._genderPenerimaText.setText(packet.getGenderPenerima());
+            }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
                 ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
-            }else if(packet.getOrder().getType().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {
+            }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {
                 ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_shop_icon);
             }
         }
@@ -111,6 +120,10 @@ public class PacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TextView _alamatPenerimaText;
         TextView _teleponPenerimaText;
         TextView _kotaPenerimaText;
+
+        TextView _genderPengirimText;
+        TextView _genderPenerimaText;
+
         TextView _beratText;
         TextView _infoPaketText;
         TextView _ongkosPaketText;
@@ -130,7 +143,11 @@ public class PacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
              _alamatPenerimaText = (TextView) itemView.findViewById(R.id.text_alamat_penerima);
              _teleponPenerimaText = (TextView) itemView.findViewById(R.id.text_telepon_penerima);
              _kotaPenerimaText = (TextView) itemView.findViewById(R.id.text_kota_penerima);
-             _beratText = (TextView) itemView.findViewById(R.id.text_berat_paket);
+
+            _genderPengirimText = (TextView) itemView.findViewById(R.id.text_gender_pengirim);
+            _genderPenerimaText = (TextView) itemView.findViewById(R.id.text_gender_penerima);
+
+            _beratText = (TextView) itemView.findViewById(R.id.text_berat_paket);
              _infoPaketText = (TextView) itemView.findViewById(R.id.text_info_paket);
              _ongkosPaketText= (TextView) itemView.findViewById(R.id.text_ongkos_paket);
              _awbText = (TextView) itemView.findViewById(R.id.awbTextView);

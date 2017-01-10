@@ -60,6 +60,9 @@ import static android.app.Activity.RESULT_OK;
 public class StepRejectOrderFragment extends BaseStepFragment implements Step {
     private static final String TAG = "StepAcceptOrderFragment";
 
+    @Bind(R.id.tv_formTitle)
+    TextView tvformTitle;
+
     @Bind(R.id.input_reason)
     EditText reasonEt;
     @Bind(R.id.inlay_reason)
@@ -74,6 +77,8 @@ public class StepRejectOrderFragment extends BaseStepFragment implements Step {
         order = ((RejectOrderActivity)getActivity()).getOrder();
 
         reasonLayout.setVisibility(View.VISIBLE);
+
+        tvformTitle.setText("Reject Order");
         return v;
     }
 

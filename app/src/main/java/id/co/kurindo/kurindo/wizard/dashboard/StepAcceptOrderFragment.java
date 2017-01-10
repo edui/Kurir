@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -41,6 +42,7 @@ import id.co.kurindo.kurindo.adapter.UserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.helper.CheckoutHelper;
+import id.co.kurindo.kurindo.helper.OrderHelper;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Order;
@@ -56,6 +58,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class StepAcceptOrderFragment extends BaseStepFragment implements Step {
     private static final String TAG = "StepAcceptOrderFragment";
+    @Bind(R.id.tv_formTitle)
+    TextView tvformTitle;
 
     @Bind(R.id.list)
     RecyclerView mRecyclerView;
@@ -69,7 +73,10 @@ public class StepAcceptOrderFragment extends BaseStepFragment implements Step {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_accept_order);
 
-        order = ((AcceptOrderActivity)getActivity()).getOrder();
+        //order = ((AcceptOrderActivity)getActivity()).getOrder();
+        order = OrderHelper.getInstance().getOrder();
+
+        tvformTitle.setText("Accept Order --> Pilih Kurir");
 
         setup_list();
         return v;
@@ -199,9 +206,9 @@ public class StepAcceptOrderFragment extends BaseStepFragment implements Step {
                     if (!error) {
                         //success
                         order.setStatus(AppConfig.KEY_KUR200);
-                        order.setPic(user.getEmail());
+                        order.setPic(user);
                         Intent intent = new Intent();
-                        intent.putExtra("order", order);
+                        //intent.putExtra("order", order);
                         getActivity().setResult(RESULT_OK, intent);
                         verify[0] = null;
                     }else{

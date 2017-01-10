@@ -14,20 +14,23 @@ import java.util.Map;
 public class Recipient implements Parcelable{
     private String name;
     private String telepon;
+    private String gender;
     private Address address;
     private double cost;
     private String status;
 
     public Recipient(){}
-    public Recipient(String name, String telepon, Address address){
+    public Recipient(String name, String telepon, String gender, Address address){
         this.name = name;
         this.telepon = telepon;
+        this.gender = gender;
         this.address = address;
     }
 
     protected Recipient(Parcel in) {
         name = in.readString();
         telepon = in.readString();
+        gender = in.readString();
         cost = in.readDouble();
         status = in.readString();
         address = in.readParcelable(Address.class.getClassLoader());
@@ -85,6 +88,14 @@ public class Recipient implements Parcelable{
         this.status = status;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -111,6 +122,7 @@ public class Recipient implements Parcelable{
         Map<String, String> params = new HashMap<String, String>();
         params.put("nama_penerima", name);
         params.put("telepon_penerima", telepon);
+        params.put("gender_penerima", telepon);
         params.put("cost_penerima", ""+cost);
         params.putAll(getAddress().getAsParams("_penerima"));
         return params;
@@ -125,6 +137,7 @@ public class Recipient implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(telepon);
+        dest.writeString(gender);
         dest.writeDouble(cost);
         dest.writeString(status);
         dest.writeParcelable(address,flags);

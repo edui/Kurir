@@ -25,6 +25,7 @@ import com.android.tonyvu.sc.util.CartHelper;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.helper.OrderHelper;
 import id.co.kurindo.kurindo.wizard.checkout.StepSelectRecipientFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepSelectPaymentFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepConfirmShopCheckoutFragment;
@@ -35,7 +36,7 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        OrderHelper.getInstance().setOrder(null);
     }
 
     @Override

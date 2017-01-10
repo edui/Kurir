@@ -55,91 +55,97 @@ public class MyOrderFragment extends BaseOrderMonitoringFragment {
         return x;
     }
 
+    public void onPickButtonClick(View view, final int position, final String status) {
+
+    }
     @Override
     public void check_order() {
         check_order("");
     }
 
     public void check_order(final String... params) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        if(getActivity() != null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-                String param = params[0].toString();
-                String URI = AppConfig.URL_ORDER_MYORDERS;
-                //URI = URI.replace("/{filter}", "/"+param);
+                    String param = params[0].toString();
+                    String URI = AppConfig.URL_ORDER_MYORDERS;
+                    //URI = URI.replace("/{filter}", "/"+param);
 
-                progressBar.setVisibility(View.VISIBLE);
-                refreshBtn.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
+                    refreshBtn.setVisibility(View.GONE);
 
-                String tag_string_req = "req_monitor_order_my_inprogress";
-                StringRequest strReq = new StringRequest(Request.Method.POST,
-                        URI, new Response.Listener<String>() {
+                    String tag_string_req = "req_monitor_order_my_inprogress";
+                    StringRequest strReq = new StringRequest(Request.Method.POST,
+                            URI, new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
-                        //hideDialog();
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
+                            //hideDialog();
 
-                        try {
-                            JSONObject jObj = new JSONObject(response);
-                            boolean error = jObj.getBoolean("error");
+                            try {
+                                JSONObject jObj = new JSONObject(response);
+                                boolean error = jObj.getBoolean("error");
 
-                            // Check for error node in json
-                            if (!error) {
+                                // Check for error node in json
+                                if (!error) {
 
-                                Bundle bundle = parseOrders(orders, jObj);
-                                adapter.notifyDataSetChanged();
+                                    Bundle bundle = parseOrders(orders, jObj);
+                                    adapter.notifyDataSetChanged();
 
-                            } else {
-                                // Error in login. Get the error message
-                                String errorMsg = jObj.getString("message");
-                                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                } else {
+                                    // Error in login. Get the error message
+                                    String errorMsg = jObj.getString("message");
+                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                // JSON error
+                                e.printStackTrace();
+                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                        } catch (JSONException e) {
-                            // JSON error
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                            refreshBtn.setVisibility(View.VISIBLE);
                         }
-                        progressBar.setVisibility(View.GONE);
-                        refreshBtn.setVisibility(View.VISIBLE);
-                    }
-                }, new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                        refreshBtn.setVisibility(View.VISIBLE);
-                    }
-                }) {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
+                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                            refreshBtn.setVisibility(View.VISIBLE);
+                        }
+                    }) {
 
-                    @Override
-                    protected Map<String, String> getParams() {
-                        // Posting parameters to  url
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("form-type", "json");
-                        params.put("user_agent", "KURINDROID");
-                        params.put("job", task.toUpperCase());
+                        @Override
+                        protected Map<String, String> getParams() {
+                            // Posting parameters to  url
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("form-type", "json");
+                            params.put("user_agent", "KURINDROID");
+                            params.put("job", task.toUpperCase());
 
-                        return params;
-                    }
+                            return params;
+                        }
 
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        String api = db.getUserApi();
-                        params.put("Api", api);
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            String api = db.getUserApi();
+                            params.put("Api", api);
 
-                        return params;
-                    }
-                };
+                            return params;
+                        }
+                    };
 
-                // Adding request to request queue
-                AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-            }
-        });
+                    // Adding request to request queue
+                    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+                }
+            });
+        }
+
     }
 
 }

@@ -19,6 +19,7 @@ package id.co.kurindo.kurindo.wizard;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
@@ -38,7 +39,11 @@ public class RejectOrderActivity extends AbstractStepperActivity {
         order = (Order) bundle.getParcelable("order");
 
     }
-
+    protected ActionBar setupToolbar() {
+        ActionBar ab = super.setupToolbar();
+        if(ab != null) ab.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
+        return  ab;
+    }
     @Override
     protected AbstractStepAdapter getStepperAdapter() {
         return new MyStepperAdapter(getSupportFragmentManager());

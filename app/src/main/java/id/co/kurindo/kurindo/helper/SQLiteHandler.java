@@ -294,7 +294,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /////////////
     public void onCreateTableRecipient(SQLiteDatabase db) {
         String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_RECIPIENT+ "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"+ KEY_PHONE + " TEXT ," + KEY_ALAMAT + " TEXT,"+ KEY_CITY + " TEXT,"+ KEY_CITYTEXT + " TEXT,"
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"+ KEY_PHONE + " TEXT "+ ","+ KEY_GENDER + " TEXT," + KEY_ALAMAT + " TEXT,"+ KEY_CITY + " TEXT,"+ KEY_CITYTEXT + " TEXT,"
                 + KEY_RT + " TEXT," + KEY_RW + " TEXT," + KEY_DUSUN + " TEXT,"+ KEY_DESA + " TEXT," + KEY_KECAMATAN + " TEXT,"
                 + KEY_KABUPATEN + " TEXT,"+ KEY_PROPINSI + " TEXT" + ","+ KEY_NEGARA + " TEXT"+ ","+ KEY_KODEPOS + " TEXT"+")";
         db.execSQL(CREATE_TABLE);
@@ -312,16 +312,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     public void addRecipient(Recipient recipient) {
         //addRecipient(recipient.getName(), recipient.getTelepon(), recipient.getAddress().getAlamat(), recipient.getAddress().getCity());
-        addRecipient(recipient.getName(), recipient.getTelepon(), recipient.getAddress().getAlamat(), recipient.getAddress().getCity().getCode(), recipient.getAddress().getCity().getText()
+        addRecipient(recipient.getName(), recipient.getTelepon(), recipient.getGender(), recipient.getAddress().getAlamat(), recipient.getAddress().getCity().getCode(), recipient.getAddress().getCity().getText()
         ,recipient.getAddress().getRt(),recipient.getAddress().getRw(),recipient.getAddress().getDusun(),recipient.getAddress().getDesa(),recipient.getAddress().getKecamatan()
                 ,recipient.getAddress().getKabupaten(),recipient.getAddress().getPropinsi(),recipient.getAddress().getNegara(),recipient.getAddress().getKodepos());
     }
-    public void addRecipient(String name, String telepon, String alamat, String city, String cityText) {
+    public void addRecipient(String name, String telepon, String gender,String alamat, String city, String cityText) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, name); //
         values.put(KEY_PHONE, telepon); //
+        values.put(KEY_GENDER, gender); //
         values.put(KEY_ALAMAT, alamat); //
         values.put(KEY_CITY, city); //
         values.put(KEY_CITYTEXT, cityText); //
@@ -333,12 +334,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New recipient inserted into sqlite: " + id);
     }
 
-    public void addRecipient(String name, String telepon, String alamat, String city, String cityText, String rt, String rw, String dusun, String desa, String kec, String kab, String prop, String negara, String kodepos) {
+    public void addRecipient(String name, String telepon,  String gender, String alamat, String city, String cityText, String rt, String rw, String dusun, String desa, String kec, String kab, String prop, String negara, String kodepos) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, name); // Name
         values.put(KEY_PHONE, telepon); // Name
+        values.put(KEY_GENDER, gender); // Name
         values.put(KEY_ALAMAT, alamat); //
         values.put(KEY_CITY, city); //
         values.put(KEY_CITYTEXT, cityText); //
@@ -369,9 +371,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Address addr = new Address();
-            addr.setAlamat(cursor.getString(3));
-            addr.setCity(new City(cursor.getString(4), cursor.getString(5)));
-            Recipient r = new Recipient(cursor.getString(1), cursor.getString(2), addr);
+            addr.setAlamat(cursor.getString(4));
+            addr.setCity(new City(cursor.getString(5), cursor.getString(6)));
+            Recipient r = new Recipient(cursor.getString(1), cursor.getString(2), cursor.getString(3), addr);
             result.add(r);
             cursor.moveToNext();
         }

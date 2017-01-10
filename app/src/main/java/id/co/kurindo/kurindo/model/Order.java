@@ -26,14 +26,14 @@ public class Order implements Parcelable{
     private String payment;
     private String status;
     private String statusText;
-    private String pic;
 
     private String created;
 
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private int totalQuantity = 0;
 
-    private User buyer;
+    private User pic;
+    private User pembeli;
     private Set<CartItem> items;
     //private Map<Saleable, Integer> products;
     private Set<Recipient> recipients = new LinkedHashSet<>();
@@ -54,7 +54,7 @@ public class Order implements Parcelable{
         totalQuantity = in.readInt();
 
         try {
-            buyer = in.readParcelable(User.class.getClassLoader());
+            pembeli = in.readParcelable(User.class.getClassLoader());
         }catch (Exception e){}
 
         try {
@@ -78,7 +78,9 @@ public class Order implements Parcelable{
             packets.addAll(alPac);
         }catch (Exception e){}
 
-        pic = in.readString();
+        try {
+            pic = in.readParcelable(User.class.getClassLoader());
+        }catch (Exception e){}
     }
 
     public static final Creator<Order> CREATOR = new Creator<Order>() {
@@ -110,11 +112,11 @@ public class Order implements Parcelable{
     }
 
     public User getBuyer() {
-        return buyer;
+        return pembeli;
     }
 
     public void setBuyer(User buyer) {
-        this.buyer = buyer;
+        this.pembeli = buyer;
     }
 
     public String getType() {
@@ -205,11 +207,11 @@ public class Order implements Parcelable{
         this.packets = packets;
     }
 
-    public String getPic() {
+    public User getPic() {
         return pic;
     }
 
-    public void setPic(String pic) {
+    public void setPic(User pic) {
         this.pic = pic;
     }
 
@@ -229,7 +231,7 @@ public class Order implements Parcelable{
         dest.writeString(created);
         dest.writeDouble( totalPrice == null ? 0 :totalPrice.doubleValue());
         dest.writeInt(totalQuantity);
-        if(buyer != null) dest.writeParcelable(buyer, flags);
+        if(pembeli != null) dest.writeParcelable(pembeli, flags);
         List<CartItem>  alCi = new ArrayList<>();
         if(items != null) alCi.addAll(items);
         dest.writeTypedList(alCi);
@@ -239,6 +241,6 @@ public class Order implements Parcelable{
         List<Packet>  alPac = new ArrayList<>();
         if(packets != null) alPac.addAll(packets);
         dest.writeTypedList(alPac);
-        dest.writeString(pic);
+        if(pic != null) dest.writeParcelable(pic, flags);
     }
 }

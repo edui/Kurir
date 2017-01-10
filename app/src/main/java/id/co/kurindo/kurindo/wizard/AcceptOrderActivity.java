@@ -19,12 +19,14 @@ package id.co.kurindo.kurindo.wizard;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.view.View;
 
 import com.android.tonyvu.sc.util.CartHelper;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.helper.OrderHelper;
 import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.wizard.checkout.StepConfirmShopCheckoutFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepSelectPaymentFragment;
@@ -39,10 +41,15 @@ public class AcceptOrderActivity extends AbstractStepperActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
-        order = (Order) bundle.getParcelable("order");
+        //order = (Order) bundle.getParcelable("order");
+        order = OrderHelper.getInstance().getOrder();
 
     }
-
+    protected ActionBar setupToolbar() {
+        ActionBar ab = super.setupToolbar();
+        if(ab != null) ab.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
+        return  ab;
+    }
     @Override
     protected AbstractStepAdapter getStepperAdapter() {
         return new MyStepperAdapter(getSupportFragmentManager());
@@ -53,7 +60,7 @@ public class AcceptOrderActivity extends AbstractStepperActivity {
         //Toast.makeText(this, "onStepSelected! -> " + newStepPosition, Toast.LENGTH_SHORT).show();
         //if(newStepPosition == 0){
 
-            mCompleteNavigationButton.setText("Accept");
+            mCompleteNavigationButton.setText("Assign");
             //mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_spesial_button_background));
         //}else{
         //    mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_default_button_background));

@@ -345,7 +345,6 @@ public abstract class BasePacketMonitoringFragment extends BaseFragment implemen
                 try{berat = Integer.parseInt(berat_kiriman); }catch (Exception e){}
 
                 String isi_kiriman = data.getString("isi_kiriman");
-                User kurir = gson.fromJson(data.getString("kurir_user"), User.class);
 
                 String status = data.getString("status");
                 String statusText = data.getString("status_text");
@@ -366,7 +365,6 @@ public abstract class BasePacketMonitoringFragment extends BaseFragment implemen
                 packet.setKotaPenerima(kota_penerima);
                 packet.setBerat(berat);
                 packet.setInfoPaket(isi_kiriman);
-                packet.setKurir(kurir);
                 packet.setStatus(status);
                 packet.setStatusText(statusText);
                 packet.setBiaya(biayaPacket);
@@ -375,6 +373,10 @@ public abstract class BasePacketMonitoringFragment extends BaseFragment implemen
 
                 packet.setKotaPengirimText(kota_pengirim_text);
                 packet.setKotaPenerimaText(kota_penerima_text);
+                try {
+                    User kurir = gson.fromJson(data.getString("kurir"), User.class);
+                    packet.setKurir(kurir);
+                }catch (Exception e){}
 
                 Order order = gson.fromJson(data.getString("order"), Order.class);
                 packet.setOrder(order);

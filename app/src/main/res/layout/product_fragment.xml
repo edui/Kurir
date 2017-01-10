@@ -26,9 +26,24 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/tvProductName"
         android:layout_above="@+id/tvProductDesc"
+        android:visibility="gone"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"/>
+    <ProgressBar
+        android:id="@+id/progress"
+        android:visibility="visible"
+        android:layout_alignTop="@+id/slider1"
+        android:layout_alignBottom="@+id/slider1" android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp" />
 
+    <com.daimajia.slider.library.SliderLayout
+        android:id="@+id/slider1" android:padding="0dp" android:layout_marginBottom="15dp" android:visibility="gone"
+        android:layout_below="@id/tvProductName"
+        android:layout_above="@+id/tvProductDesc"
+        android:layout_width="match_parent"
+        android:layout_height="150dp" android:layout_gravity="top"
+        />
     <TextView
         android:id="@+id/tvProductDesc"
         android:layout_width="match_parent"

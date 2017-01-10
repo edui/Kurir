@@ -11,12 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.tonyvu.sc.model.Cart;
 import com.android.tonyvu.sc.util.CartHelper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.app.AppConfig;
@@ -50,6 +54,9 @@ public class ProductFragment extends BaseFragment {
     @Bind(R.id.ivSdsSupport) ImageView ivSdsSupport;
     @Bind(R.id.ivNdsSupport) ImageView ivNdsSupport;
     @Bind(R.id.input_special_request) EditText inputSpecialRequest;
+
+    @Bind(R.id.slider1) SliderLayout sliderShow1;
+    @Bind(R.id.progress) ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,6 +127,10 @@ public class ProductFragment extends BaseFragment {
         tvProductName.setText(product.getName());
         tvProductDesc.setText(product.getDescription());
         tvProductPrice.setText(AppConfig.formatCurrency( product.getPrice().doubleValue() ));
+        //*
+        ivProductImage.setVisibility(View.VISIBLE);
+        sliderShow1.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
 
         if(product.getImageName() !=null){
             int resId = this.getResources().getIdentifier(product.getImageName().substring(0,product.getImageName().length()-4), "drawable", this.getActivity().getPackageName());
@@ -136,6 +147,37 @@ public class ProductFragment extends BaseFragment {
         }
         else{
             ivProductImage.setImageResource(product.getDrawable());
+        }
+
+        //*/
+
+
+        //setup_slide();
+
+    }
+
+    private void setup_slide() {
+        sliderShow1.setDuration(5000);
+        sliderShow1.removeAllSliders();
+        DefaultSliderView sliderView = new DefaultSliderView(getContext());
+        sliderView.setOnImageLoadListener(new BaseSliderView.ImageLoadListener() {
+            @Override
+            public void onStart(BaseSliderView baseSliderView) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onEnd(boolean b, BaseSliderView baseSliderView) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+        if(product.getImages() != null) {
+            sliderShow1.setVisibility(View.VISIBLE);
+            ivProductImage.setVisibility(View.GONE);
+            for (int i = 0; i < product.getImages().size(); i++) {
+                String s = (String) product.getImages().get(i);
+                sliderView.image(AppConfig.urlShopImage(s)).setScaleType(BaseSliderView.ScaleType.FitCenter);
+            }
         }
     }
 

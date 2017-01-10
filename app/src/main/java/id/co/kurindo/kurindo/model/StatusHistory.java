@@ -17,12 +17,17 @@ public class StatusHistory implements Parcelable {
 
 
     protected StatusHistory(Parcel in) {
+        created_date = in.readString();
         status = in.readString();
         remarks = in.readString();
+        try {
+            created_by = in.readParcelable(User.class.getClassLoader());
+        }catch (Exception e){}
+
+        try {
+            pic = in.readParcelable(User.class.getClassLoader());
+        }catch (Exception e){}
         location = in.readString();
-        created_date = in.readString();
-        pic = in.readParcelable(User.class.getClassLoader());
-        created_by = in.readParcelable(User.class.getClassLoader());
     }
 
     public static final Creator<StatusHistory> CREATOR = new Creator<StatusHistory>() {
@@ -44,12 +49,12 @@ public class StatusHistory implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(created_date);
         dest.writeString(status);
         dest.writeString(remarks);
-        dest.writeString(location);
-        dest.writeString(created_date);
-        dest.writeParcelable(pic, flags);
         dest.writeParcelable(created_by, flags);
+        dest.writeParcelable(pic, flags);
+        dest.writeString(location);
     }
 
     public String getStatus() {
@@ -103,7 +108,7 @@ public class StatusHistory implements Parcelable {
     @Override
     public String toString() {
         StringBuilder sb =new StringBuilder();
-        sb.append(getCreated_date()+" \nby "+getCreated_by()==null? "":getCreated_by().getFirstname()+"\n");
+        sb.append(getCreated_date()+ (getCreated_by()==null? "":" \nby "+getCreated_by().getFirstname())+"\n");
         sb.append(getRemarks()+"\n");
         if(getPic()!=null){
             sb.append(getPic() +" at "+(getLocation()==null? getLocation():"")+"\n");

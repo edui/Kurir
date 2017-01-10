@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -104,6 +105,10 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
     @Bind(R.id.rdogrpJenisPengiriman)
     RadioGroup jenisKirimanRadio;
 
+    @Bind(R.id.gender_spinner_penerima)    Spinner _genderSpinnerPenerima;
+    private String genderPenerima = "Laki-laki";
+
+
     boolean multiple = false;
     boolean inputBaru = false;
     boolean sdsPacket = false;
@@ -142,7 +147,7 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
         setup_radio_group(v);
         setup_radio_list(v);
         setup_recipient_form(v);
-
+        setup_gender_list(v);
         //setup_spinner(v);
 
         updateNavigationBar(true);
@@ -194,6 +199,27 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
     }
 
 
+    private void setup_gender_list(View v) {
+        _genderSpinnerPenerima = (Spinner) v.findViewById(R.id.gender_spinner_penerima);
+
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.genders_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        _genderSpinnerPenerima.setAdapter(adapter);
+        _genderSpinnerPenerima.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String) parent.getItemAtPosition(position);
+                genderPenerima = selected;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
     private void setup_radio_group(View v) {
         jenisKirimanRadio= (RadioGroup)v.findViewById(R.id.rdogrpJenisPengiriman);
         jenisKirimanRadio.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -273,12 +299,13 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
                 if(validate()){
                     Recipient r = new Recipient();
                     r.setName(_namaPenerimaText.getText().toString());
+                    r.setGender(genderPenerima);
                     r.setTelepon(_teleponPenerimaText.getText().toString());
                     Address addr = new Address();
                     addr.setAlamat(_alamatPenerimaText.getText().toString());
                     addr.setCity(CheckoutHelper.getInstance().getCity());
                     r.setAddress(addr);
-                    db.addRecipient(r.getName(), r.getTelepon(), r.getAddress().getAlamat(), r.getAddress().getCity().getCode(), r.getAddress().getCity().getText());
+                    db.addRecipient(r.getName(), r.getTelepon(), genderPenerima,r.getAddress().getAlamat(), r.getAddress().getCity().getCode(), r.getAddress().getCity().getText());
                     data.add(r);
                     mRecipientAdapter.notifyDataSetChanged();
                     addSelection(data.indexOf(r));
@@ -355,7 +382,7 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
         Address addr= new Address();
         addr.setAlamat(_alamatPenerimaText.getText().toString());
         addr.setCity(CheckoutHelper.getInstance().getCity());
-        Recipient r = new Recipient(_namaPenerimaText.getText().toString(), _teleponPenerimaText.getText().toString(), addr);
+        Recipient r = new Recipient(_namaPenerimaText.getText().toString(), _teleponPenerimaText.getText().toString(), "SYSTEM", addr);
         db.addRecipient(r);
         CheckoutHelper.getInstance().addRecipient(r);
         return valid;

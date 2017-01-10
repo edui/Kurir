@@ -19,12 +19,14 @@ public class Packet implements Parcelable{
     private String alamat_pengirim;
     private String kota_pengirim;
     private String kota_pengirim_text;
+    private String gender_pengirim;
 
     private String nama_penerima;
     private String telepon_penerima;
     private String alamat_penerima;
     private String kota_penerima;
     private String kota_penerima_text;
+    private String gender_penerima;
 
     private int berat_kiriman;
     private String isi_kiriman;
@@ -47,11 +49,13 @@ public class Packet implements Parcelable{
     protected Packet(Parcel in) {
         awb_number = in.readString();
         nama_pengirim = in.readString();
+        gender_pengirim = in.readString();
         telepon_pengirim = in.readString();
         alamat_pengirim = in.readString();
         kota_pengirim = in.readString();
         kota_pengirim_text = in.readString();
         nama_penerima = in.readString();
+        gender_penerima = in.readString();
         telepon_penerima = in.readString();
         alamat_penerima = in.readString();
         kota_penerima = in.readString();
@@ -64,15 +68,17 @@ public class Packet implements Parcelable{
         status_text = in.readString();
         biaya= in.readDouble();
         created_date = in.readString();
-        try {
-            order = in.readParcelable(Order.class.getClassLoader());
-        }catch (Exception e){}
-        statusHistoryList = new ArrayList<StatusHistory>();
-        in.readTypedList(statusHistoryList, StatusHistory.CREATOR);
+        //try {
+        //    order = in.readParcelable(Order.class.getClassLoader());
+        //}catch (Exception e){}
         try {
             kurir = in.readParcelable(User.class.getClassLoader());
         }catch (Exception e){}
         updated_date = in.readString();
+        statusHistoryList = new ArrayList<StatusHistory>();
+        try {
+            in.readTypedList(statusHistoryList, StatusHistory.CREATOR);
+        }catch (Exception e){}
 
     }
 
@@ -272,13 +278,31 @@ public class Packet implements Parcelable{
         this.statusHistoryList = statusHistoryList;
     }
 
+    public String getGenderPenerima() {
+        return gender_penerima;
+    }
+
+    public void setGenderPenerima(String gender_penerima) {
+        this.gender_penerima = gender_penerima;
+    }
+
+    public String getGenderPengirim() {
+        return gender_pengirim;
+    }
+
+    public void setGenderPengirim(String gender_pengirim) {
+        this.gender_pengirim = gender_pengirim;
+    }
+
     public Map<String, String> getAsParams(){
         Map<String, String> params = new HashMap<String, String>();
         params.put("nama_pengirim", nama_pengirim);
+        params.put("gender_pengirim", gender_pengirim);
         params.put("telepon_pengirim", telepon_pengirim);
         params.put("alamat_pengirim", alamat_pengirim);
         params.put("kota_pengirim", kota_pengirim);
         params.put("nama_penerima", nama_penerima);
+        params.put("gender_penerima", gender_penerima);
         params.put("telepon_penerima", telepon_penerima);
         params.put("alamat_penerima", alamat_penerima);
         params.put("kota_penerima", kota_penerima);
@@ -300,11 +324,13 @@ public class Packet implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(awb_number);
         dest.writeString(nama_pengirim);
+        dest.writeString(gender_pengirim);
         dest.writeString(telepon_pengirim);
         dest.writeString(alamat_pengirim);
         dest.writeString(kota_pengirim);
         dest.writeString(kota_pengirim_text);
         dest.writeString(nama_penerima);
+        dest.writeString(gender_penerima);
         dest.writeString(telepon_penerima);
         dest.writeString(alamat_penerima);
         dest.writeString(kota_penerima);
@@ -318,9 +344,9 @@ public class Packet implements Parcelable{
         dest.writeDouble(biaya);
         dest.writeString(created_date);
 
-        dest.writeParcelable( order , flags);
-        dest.writeTypedList(statusHistoryList);
+        //dest.writeParcelable( order , flags);
         dest.writeParcelable(kurir, flags);
         dest.writeString(updated_date);
+        dest.writeTypedList(statusHistoryList);
     }
 }

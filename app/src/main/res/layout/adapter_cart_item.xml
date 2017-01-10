@@ -20,8 +20,8 @@
     <TextView
         android:id="@+id/tvCartItemName"
         android:layout_width="0dip"
+        android:layout_weight=".4"
         android:layout_height="match_parent"
-        android:layout_weight="0.4"
         android:gravity="center_vertical|left"
         android:text=""/>
 
@@ -31,14 +31,16 @@
         android:layout_height="match_parent"
         android:layout_weight="0.2"
         android:gravity="center"
-        android:text=""/>
+        android:text=""
+        />
 
     <TextView
         android:id="@+id/tvCartItemQuantity"
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="0.15"
-        android:gravity="center"/>
+        android:gravity="center"
+        />
 
     <TextView
         android:id="@+id/tvCartItemPrice"
@@ -46,7 +48,8 @@
         android:layout_height="match_parent"
         android:layout_weight="0.25"
         android:gravity="center_vertical|right"
-        android:text=""/>
+        android:text=""
+        />
 </LinearLayout>
     <TextView
         android:id="@+id/tvCartItemNotes"

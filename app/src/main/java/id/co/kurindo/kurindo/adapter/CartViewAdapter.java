@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -88,6 +89,17 @@ public class CartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     ((VHItem) holder).tvNotes.setVisibility(View.VISIBLE);
                     ((VHItem) holder).tvNotes.setText("Note: "+cartItem.getProduct().getNotes());
                 }
+                /*if(cartItem.getQuantity() > 0){
+                    ((VHItem) holder).ibPriceUpdate.setVisibility(View.GONE);
+                }else{
+                    ((VHItem) holder).ibPriceUpdate.setVisibility(View.VISIBLE);
+                    ((VHItem) holder).ibPriceUpdate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                }*/
 
             }
         }
@@ -104,6 +116,7 @@ public class CartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         TextView tvUnitPrice;
         TextView tvQuantity;
         TextView tvPrice;
+        //ImageButton ibPriceUpdate;
 
         public VHItem(View itemView) {
             super(itemView);
@@ -112,6 +125,7 @@ public class CartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tvUnitPrice = (TextView) itemView.findViewById(R.id.tvCartItemUnitPrice);
             tvQuantity = (TextView) itemView.findViewById(R.id.tvCartItemQuantity);
             tvPrice = (TextView) itemView.findViewById(R.id.tvCartItemPrice);
+            //ibPriceUpdate= (ImageButton) itemView.findViewById(R.id.ibPriceUpdate);
         }
     }
 

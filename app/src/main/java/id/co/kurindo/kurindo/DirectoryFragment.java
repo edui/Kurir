@@ -72,6 +72,7 @@ public class DirectoryFragment extends Fragment {
                     }
                 }));
 
+        load_shops("1");
         return  view;
     }
 
@@ -117,6 +118,7 @@ public class DirectoryFragment extends Fragment {
                     boolean success = jObj.getBoolean("success");
                     if (success) {
                         shops.clear();
+                        shops.addAll(DummyContent.SHOPS);
                         JSONArray datas = jObj.getJSONArray("data");
                         for (int j = 0; j < datas.length(); j++) {
                             JSONObject obj = datas.getJSONObject(j);
@@ -131,7 +133,7 @@ public class DirectoryFragment extends Fragment {
                             String phone = obj.getString("phone");
                             String alamat= obj.getString("alamat");
                             String status= obj.getString("status");
-                            String motto = obj.getString("motto");
+                            String motto = obj.getString("description");
                             String city= obj.getString("city");
                             String cityText= obj.getString("cityText");
                             Shop shop = new Shop(id, code, name, motto, banner, backdrop, phone, alamat, status, city, cityText);

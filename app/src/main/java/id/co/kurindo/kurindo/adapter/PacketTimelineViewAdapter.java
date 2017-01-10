@@ -61,7 +61,7 @@ public class PacketTimelineViewAdapter extends RecyclerView.Adapter<RecyclerView
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(((MyItemHolder) holder).mImg);
             */
-            String statusText = model.getRemarks() +"\n"+model.getCreated_date()+"\n"+model.getLocation() + (model.getPic()==null? (model.getCreated_by()==null? "":"by "+model.getCreated_by().getFirstname()):" by "+model.getPic().getFirstname());
+            String statusText = model.getRemarks() +"\n"+model.getCreated_date()+"\n"+(model.getLocation()==null?"":model.getLocation()) + (model.getPic()==null || model.getPic().getFirstname().isEmpty() ? (model.getCreated_by()==null || model.getCreated_by().getFirstname().isEmpty()? "":"by "+model.getCreated_by().getFirstname()):" by "+model.getPic().getFirstname());
             ((MyItemHolder) holder).mTextView.setText(statusText);
 
             if(model.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR100)) {

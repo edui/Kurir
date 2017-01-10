@@ -1,15 +1,12 @@
 package id.co.kurindo.kurindo;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,21 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.tonyvu.sc.model.Cart;
-import com.android.tonyvu.sc.model.Saleable;
-import com.android.tonyvu.sc.util.CartHelper;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.daimajia.slider.library.SliderLayout;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -39,13 +29,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,36 +39,25 @@ import java.util.Set;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.adapter.CartViewAdapter;
-import id.co.kurindo.kurindo.adapter.NewsAdapter;
-import id.co.kurindo.kurindo.adapter.PacketAdapter;
 import id.co.kurindo.kurindo.adapter.PacketViewAdapter;
-import id.co.kurindo.kurindo.adapter.RecipientViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
-import id.co.kurindo.kurindo.app.Constant;
 import id.co.kurindo.kurindo.base.BaseFragment;
-import id.co.kurindo.kurindo.helper.CheckoutHelper;
+import id.co.kurindo.kurindo.helper.OrderHelper;
 import id.co.kurindo.kurindo.model.CartItem;
-import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.Packet;
-import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.StatusHistory;
 import id.co.kurindo.kurindo.model.User;
-import id.co.kurindo.kurindo.task.ListenableAsyncTask;
-import id.co.kurindo.kurindo.task.LoadNewsTask;
 import id.co.kurindo.kurindo.wizard.AcceptOrderActivity;
 import id.co.kurindo.kurindo.wizard.RejectOrderActivity;
-import id.co.kurindo.kurindo.wizard.ShopCheckoutActivity;
 
 /**
  * Created by Ratan on 7/29/2015.
  */
 public class OrderShowFragment extends BaseFragment {
     private static final String TAG = "OrderShowFragment";
-    @Bind(R.id.kur200BtnS)
-    ImageButton kur200BtnS;
     @Bind(R.id.kur300Btn)
     ImageButton kur300Btn;
     @Bind(R.id.kur310Btn)
@@ -98,8 +72,6 @@ public class OrderShowFragment extends BaseFragment {
     ImageButton kur900Btn;
     @Bind(R.id.kur910Btn)
     ImageButton kur910Btn;
-    @Bind(R.id.kur999BtnS)
-    ImageButton kur999BtnS;
 
     Order order;
     @Bind(R.id.tvPageTitle)
@@ -135,6 +107,7 @@ public class OrderShowFragment extends BaseFragment {
         //ArrayList list = bundle.getParcelableArrayList("order");
         bundle.setClassLoader(Order.class.getClassLoader());
         order = (Order) bundle.getParcelable("order");
+        OrderHelper.getInstance().setOrder(order);
         //if(list != null) order = (Order) list.get(0);
     }
 
@@ -148,12 +121,9 @@ public class OrderShowFragment extends BaseFragment {
         setup_status();
         return view;
     }
-
     private void setup_status() {
         if(order != null){
             if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR100)){
-                kur200BtnS.setImageResource(R.drawable.accept_booking_icon);
-                kur200BtnS.setVisibility(View.VISIBLE);
                 kur300Btn.setImageResource(R.drawable.status01_0_icon);
                 kur300Btn.setVisibility(View.VISIBLE);
                 kur310Btn.setImageResource(R.drawable.status03_0_icon);
@@ -164,9 +134,12 @@ public class OrderShowFragment extends BaseFragment {
                 kur200Btn.setVisibility(View.VISIBLE);
                 kur999Btn.setVisibility(View.VISIBLE);
 
+                if(session.isPelanggan() || session.isKurir()){
+                    kur200Btn.setVisibility(View.GONE);
+                    kur999Btn.setVisibility(View.GONE);
+                }
+
             }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR101)){
-                kur200BtnS.setImageResource(R.drawable.status01_0_icon);
-                kur200BtnS.setVisibility(View.VISIBLE);
                 kur310Btn.setImageResource(R.drawable.status03_0_icon);
                 kur310Btn.setVisibility(View.VISIBLE);
                 kur500Btn.setImageResource(R.drawable.status04_0_icon);
@@ -174,11 +147,14 @@ public class OrderShowFragment extends BaseFragment {
                 kur350Btn.setVisibility(View.GONE);
                 kur400Btn.setVisibility(View.GONE);
 
+                if(session.isPelanggan() || session.isKurir()){
+                    kur200Btn.setVisibility(View.GONE);
+                    kur999Btn.setVisibility(View.GONE);
+                }
             }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR200)){
                 kur300Btn.setVisibility(View.VISIBLE);
                 kur300Btn.setImageResource(R.drawable.status01_1_icon);
 
-                kur200BtnS.setVisibility(View.GONE);
                 kur350Btn.setVisibility(View.GONE);
                 kur400Btn.setVisibility(View.GONE);
 
@@ -194,7 +170,6 @@ public class OrderShowFragment extends BaseFragment {
             }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR300)){
                 kur310Btn.setImageResource(R.drawable.status03_1_icon);
                 kur310Btn.setVisibility(View.VISIBLE);
-                kur200BtnS.setVisibility(View.GONE);
                 kur350Btn.setVisibility(View.GONE);
                 kur400Btn.setVisibility(View.GONE);
 
@@ -212,7 +187,6 @@ public class OrderShowFragment extends BaseFragment {
 
                 kur500Btn.setImageResource(R.drawable.status04_1_icon);
                 kur500Btn.setVisibility(View.VISIBLE);
-                kur200BtnS.setVisibility(View.GONE);
                 kur350Btn.setVisibility(View.GONE);
 
                 kur300Btn.setImageResource(R.drawable.status01_2_icon);
@@ -243,7 +217,6 @@ public class OrderShowFragment extends BaseFragment {
             }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR500)){
                 kur500Btn.setImageResource(R.drawable.status04_2_icon);
                 kur500Btn.setVisibility(View.VISIBLE);
-                kur200BtnS.setVisibility(View.GONE);
                 kur350Btn.setVisibility(View.GONE);
                 kur400Btn.setVisibility(View.GONE);
 
@@ -256,7 +229,6 @@ public class OrderShowFragment extends BaseFragment {
                 kur200Btn.setVisibility(View.GONE);
                 kur999Btn.setVisibility(View.GONE);
             }else{
-                kur200BtnS.setEnabled(false);
                 kur300Btn.setEnabled(false);
                 kur310Btn.setEnabled(false);
                 kur350Btn.setEnabled(false);
@@ -308,10 +280,13 @@ public class OrderShowFragment extends BaseFragment {
                         Gson gson = builder.create();
 
                         JSONArray jArr = jObj.getJSONArray("histories");
-                        for (int i = 0; i < jArr.length(); i++) {
-                            StatusHistory hist = gson.fromJson(jArr.get(i).toString(), StatusHistory.class);
-                            User by = gson.fromJson(jArr.getJSONObject(i).get("created_by").toString(), User.class);
-                            historyList.add(hist);
+                        if(jArr.length() > 0){
+                            historyList.clear();
+                            for (int i = 0; i < jArr.length(); i++) {
+                                StatusHistory hist = gson.fromJson(jArr.get(i).toString(), StatusHistory.class);
+                                //User by = gson.fromJson(jArr.getJSONObject(i).get("created_by").toString(), User.class);
+                                historyList.add(hist);
+                            }
                         }
                     }
                 } catch (JSONException e) {
@@ -408,7 +383,8 @@ public class OrderShowFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), AcceptOrderActivity.class);
-                        intent.putExtra("order", order);
+                        //OrderHelper.getInstance().setOrder(order);
+                        //intent.putExtra("order", order);
                         startActivityForResult(intent, ACCEPTED_REQUEST_CODE);
                     }
                 });
@@ -417,7 +393,8 @@ public class OrderShowFragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), RejectOrderActivity.class);
-                        intent.putExtra("order", order);
+                        //intent.putExtra("order", order);
+                        //OrderHelper.getInstance().setOrder(order);
                         startActivityForResult(intent, REJECTED_REQUEST_CODE);
                     }
                 });
@@ -430,10 +407,12 @@ public class OrderShowFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ((requestCode == ACCEPTED_REQUEST_CODE ||requestCode == REJECTED_REQUEST_CODE )&& resultCode == Activity.RESULT_OK) {
-            Order order = data.getExtras().getParcelable("order");
+            Order order = OrderHelper.getInstance().getOrder();
+            //Order order = data.getExtras().getParcelable("order");
             if(order != null) {
                 this.order = order;
                 updateStatus();
+                setup_status();
             }
         }
     }

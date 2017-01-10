@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -134,6 +135,11 @@ public class PacketOrderFragment extends BaseFragment {
     RecyclerView pilihListPengirim;
     @Bind(R.id.listPenerima)
     RecyclerView pilihListPenerima;
+
+    @Bind(R.id.gender_spinner_penerima)    Spinner _genderSpinnerPenerima;
+    private String genderPenerima = "Laki-laki";
+    @Bind(R.id.gender_spinner_pengirim)    Spinner _genderSpinnerPengirim;
+    private String genderPengirim = "Laki-laki";
 
     RecipientAdapter mPenerimaRecipientAdapter;
     RecipientAdapter mPengirimRecipientAdapter;
@@ -249,10 +255,41 @@ public class PacketOrderFragment extends BaseFragment {
 
         setup_radio();
         setup_city_list();
+        setup_gender_list();
         return rootView;
     }
 
+    private void setup_gender_list() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.genders_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        _genderSpinnerPenerima.setAdapter(adapter);
+        _genderSpinnerPenerima.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String) parent.getItemAtPosition(position);
+                genderPenerima = selected;
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        _genderSpinnerPengirim.setAdapter(adapter);
+        _genderSpinnerPengirim.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String) parent.getItemAtPosition(position);
+                genderPengirim = selected;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
     private void pickContact() {
         pickContactBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -383,6 +420,22 @@ public class PacketOrderFragment extends BaseFragment {
                 if(inputBaruPenerima) receiver= null;
             }
         });
+
+        if(data.size() > 0){
+            inputBaruPenerima = false;
+            inputBaruPengirim = false;
+            inputModePenerimaRadioGroup.check(pilihListPenerima.getId());
+            inputModePengirimRadioGroup.check(pilihListPengirim.getId());
+        }else{
+            inputBaruPenerima = true;
+            inputBaruPengirim = true;
+            inputModePenerimaRadioGroup.check(R.id.radio_inputbaru_penerima);
+            inputModePengirimRadioGroup.check(R.id.radio_inputbaru_pengirim);
+        }
+        inputBaruPenerimaLayout.setVisibility( data.size() > 0? View.GONE : View.VISIBLE );
+        pilihListPenerimaLayout.setVisibility( data.size() > 0? View.VISIBLE : View.GONE );
+        inputBaruPengirimLayout.setVisibility( data.size() > 0? View.GONE : View.VISIBLE );
+        pilihListPengirimLayout.setVisibility( data.size() > 0? View.VISIBLE : View.GONE );
     }
 
 
@@ -407,12 +460,14 @@ public class PacketOrderFragment extends BaseFragment {
                 teleponPengirim = _teleponPengirimText.getPhoneNumber().getCountryCode()+""+teleponPengirim;
             }
             packet.setNamaPengirim(namaPengirim);
+            packet.setGenderPengirim(genderPengirim);
             packet.setAlamatPengirim(alamatPengirim);
             packet.setTeleponPengirim(teleponPengirim);
 
-            db.addRecipient(namaPengirim,teleponPengirim,alamatPengirim,kota_pengirim.getCode(), kota_pengirim.getText());
+            db.addRecipient(namaPengirim,teleponPengirim,genderPengirim,alamatPengirim,kota_pengirim.getCode(), kota_pengirim.getText());
         }else{
             packet.setNamaPengirim(sender.getName());
+            packet.setGenderPengirim(sender.getGender());
             packet.setAlamatPengirim(sender.getAddress().getAlamat());
             packet.setTeleponPengirim(sender.getTelepon());
             kota_pengirim = (sender.getAddress() != null ? sender.getAddress().getCity(): new City(user.getCity(),user.getCity()));
@@ -429,11 +484,13 @@ public class PacketOrderFragment extends BaseFragment {
                 teleponPenerima = _teleponPenerimaText.getPhoneNumber().getCountryCode()+""+teleponPenerima;
             }
             packet.setNamaPenerima(namaPenerima);
+            packet.setGenderPenerima(genderPenerima);
             packet.setAlamatPenerima(alamatPenerima);
             packet.setTeleponPenerima(teleponPenerima);
-            db.addRecipient(namaPenerima,teleponPenerima,alamatPenerima,kota_penerima.getCode(), kota_penerima.getText());
+            db.addRecipient(namaPenerima,teleponPenerima, genderPenerima, alamatPenerima,kota_penerima.getCode(), kota_penerima.getText());
         }else{
             packet.setNamaPenerima(receiver.getName());
+            packet.setGenderPenerima(receiver.getGender());
             packet.setAlamatPenerima(receiver.getAddress().getAlamat());
             packet.setTeleponPenerima(receiver.getTelepon());
 

@@ -123,7 +123,24 @@
                 android:drawableLeft="@drawable/ic_person_pin_black"
                 android:hint="Nama Penerima" />
         </android.support.design.widget.TextInputLayout>
-
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"            android:layout_weight="1"
+            >
+            <TextView
+                android:layout_weight=".5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gender" android:layout_margin="5dp">
+            </TextView>
+            <Spinner
+                android:layout_weight=".5"
+                android:id="@+id/gender_spinner_penerima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </android.support.v7.widget.LinearLayoutCompat>
         <android.support.design.widget.TextInputLayout
             android:id="@+id/inlay_telepon_penerima"
             android:layout_width="match_parent"
