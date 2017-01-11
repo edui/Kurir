@@ -60,6 +60,11 @@ public class KurindoFirebaseInstanceIdService extends FirebaseInstanceIdService 
      */
     private void sendRegistrationToServer(final String token) {
         // TODO: Implement this method to send token to your app server.
+        AppConfig.FCM_TOKEN = token;
+        update_token(token);
+    }
+
+    private void update_token(final String token) {
         String tag_string_req = "req_sendRegistrationToServer";
 
         final SQLiteHandler db = new SQLiteHandler(getApplicationContext());
@@ -111,5 +116,6 @@ public class KurindoFirebaseInstanceIdService extends FirebaseInstanceIdService 
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
     }
 }

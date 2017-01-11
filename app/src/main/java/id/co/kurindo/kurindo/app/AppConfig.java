@@ -47,6 +47,7 @@ public class AppConfig {
     //public static String HOST = "http://10.0.2.2/kurindo";
     public static String USER_AGENT = "KURINDROID";
 
+    public static String FCM_TOKEN = null;
     public static String SECRET_KEY = "AIzaSyCIVhOu83YxppEIlQEtqV0KCEW-JFDWAKA-KURINDROID";
 
     // Server user login url

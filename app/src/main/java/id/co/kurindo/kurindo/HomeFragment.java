@@ -47,9 +47,10 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
 
         sliderShow = (SliderLayout) view.findViewById(R.id.slider);
         //sliderShow.setCustomIndicator((PagerIndicator) view.findViewById(R.id.custom_indicator));
+        /*
         List<News> banners = AppController.banners;
-        //if(banners != null){
-            /*if(banners.size() > 0 && (reloadCounter < 2 || reloadCounter > 7)){
+        if(banners != null){
+            if(banners.size() > 0 && (reloadCounter < 2 || reloadCounter > 7)){
                 sliderShow.removeAllSliders();
                 for (int i = 0; i < banners.size(); i++) {
                     DefaultSliderView sliderView = new DefaultSliderView(view.getContext());
@@ -159,6 +160,32 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
         sliderShow.addSlider(sliderView);
             //Toast.makeText(getContext(), "Could not connect to server.", Toast.LENGTH_SHORT).show();
         //}
+
+        List<News> banners = AppController.banners;
+        if(banners != null){
+            for (int i = 0; i < banners.size(); i++) {
+                sliderView = new DefaultSliderView(view.getContext());
+                sliderView.image(banners.get(i).getImg())
+                        .setScaleType(BaseSliderView.ScaleType.FitCenter);
+                //.setOnSliderClickListener(this);
+                sliderView.setOnImageLoadListener(new BaseSliderView.ImageLoadListener() {
+                    @Override
+                    public void onStart(BaseSliderView baseSliderView) {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onEnd(boolean b, BaseSliderView baseSliderView) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+                sliderView.bundle(new Bundle());
+                sliderView.getBundle().putString("extra", banners.get(i).getTitle());
+                sliderShow.addSlider(sliderView);
+            }
+        }
+
+
 
         setupMenuData();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
