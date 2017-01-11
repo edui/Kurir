@@ -378,8 +378,10 @@ public abstract class BasePacketMonitoringFragment extends BaseFragment implemen
                     packet.setKurir(kurir);
                 }catch (Exception e){}
 
-                Order order = gson.fromJson(data.getString("order"), Order.class);
-                packet.setOrder(order);
+                try {
+                    Order order = gson.fromJson(data.getString("order"), Order.class);
+                    packet.setOrder(order);
+                }catch (Exception e){}
 
                 packets.add(packet);
             }

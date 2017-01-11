@@ -252,10 +252,20 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).kur350Btn.setImageResource(R.drawable.status06_1_icon);
             ((MyItemHolder) holder).kur350Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur350Btn.setEnabled(true);
+            ((MyItemHolder) holder).kur350Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onPickButtonClick(v,position, AppConfig.KEY_KUR350);
+                }
+            });
 
             ((MyItemHolder) holder).kur400Btn.setImageResource(R.drawable.status05_2_icon);
             ((MyItemHolder) holder).kur400Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur400Btn.setEnabled(false);
+
+            ((MyItemHolder) holder).kur500Btn.setImageResource(R.drawable.status04_0_icon);
+            ((MyItemHolder) holder).kur500Btn.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).kur500Btn.setEnabled(false);
 
             ((MyItemHolder) holder).kur300Btn.setImageResource(R.drawable.status01_2_icon);
             ((MyItemHolder) holder).kur300Btn.setVisibility(View.VISIBLE);
@@ -297,6 +307,10 @@ public class MonitorOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MyItemHolder) holder).kur310Btn.setImageResource(R.drawable.status03_2_icon);
             ((MyItemHolder) holder).kur310Btn.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).kur310Btn.setEnabled(false);
+
+            ((MyItemHolder) holder).kur350Btn.setImageResource(R.drawable.status06_2_icon);
+            ((MyItemHolder) holder).kur350Btn.setVisibility(View.VISIBLE);
+            ((MyItemHolder) holder).kur350Btn.setEnabled(false);
 
             ((MyItemHolder) holder).kur100Btn.setVisibility(View.GONE);
             ((MyItemHolder) holder).kur101Btn.setVisibility(View.GONE);

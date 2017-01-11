@@ -25,6 +25,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -186,6 +187,12 @@ public class LoginFragment extends BaseFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
+                        try {
+                            instanceId.deleteInstanceId();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         final String token = FirebaseInstanceId.getInstance().getToken();
 
                         String tag_string_req = "req_recovery_account";

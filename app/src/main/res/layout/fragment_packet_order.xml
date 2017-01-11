@@ -301,15 +301,19 @@
             android:id="@+id/inlay_info_barang"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <EditText
                 android:id="@+id/input_info_barang"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_create_black_18dp"
-                android:minLines="2"
-                android:maxLines="5"
-                android:hint="Informasi Detail" />
+                android:gravity="top|left"
+                android:inputType="textMultiLine"
+                android:lines="15"
+                android:minLines="3"
+                android:scrollHorizontally="false"
+                android:scrollbars="vertical"
+                android:hint="Informasi Detail"
+                android:singleLine="false" />
         </android.support.design.widget.TextInputLayout>
 
         <TextView

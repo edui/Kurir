@@ -43,8 +43,8 @@ import id.co.kurindo.kurindo.model.User;
  * Created by DwiM on 11/8/2016.
  */
 public class AppConfig {
-    //public static String HOST = "https://kurindo.co.id";
-    public static String HOST = "http://10.0.2.2/kurindo";
+    public static String HOST = "https://kurindo.co.id";
+    //public static String HOST = "http://10.0.2.2/kurindo";
     public static String USER_AGENT = "KURINDROID";
 
     public static String SECRET_KEY = "AIzaSyCIVhOu83YxppEIlQEtqV0KCEW-JFDWAKA-KURINDROID";
@@ -92,6 +92,7 @@ public class AppConfig {
     public static String URL_NEWS= HOST + "/news";
     public static String URL_SHOP_LIST = HOST + "/shops/list/{page}";
     public static String URL_SHOP_PRODUCTS = HOST + "/shop/{shop_id}/product/{page}";
+    public static String URL_REGISTER_FCM = HOST + "/refresh/fcm";
 
 
     public static final String KEY_KURIR= "KURIR";

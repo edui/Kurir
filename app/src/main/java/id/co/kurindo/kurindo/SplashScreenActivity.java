@@ -6,6 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+
 import java.util.List;
 
 import id.co.kurindo.kurindo.app.AppController;
@@ -26,6 +29,8 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run(){
                 while(!done){
                     try {
+                        String token = FirebaseInstanceId.getInstance().getToken();
+                        Log.i("laod_token", token);
                         sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

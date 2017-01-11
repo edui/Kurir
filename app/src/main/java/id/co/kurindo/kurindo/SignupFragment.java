@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -255,6 +256,12 @@ public class SignupFragment extends BaseFragment {
 
     private void signup_process(final String firstname, final String lastname, final String email, final String phone, final String role){
         String tag_string_req = "req_signup";
+        FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
+        try {
+            instanceId.deleteInstanceId();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         final String token = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Token: " + token);
 

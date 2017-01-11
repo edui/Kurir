@@ -58,52 +58,55 @@ public class PacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Packet packet = data.get(position);
         Order order = OrderHelper.getInstance().getOrder();
-        if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_SDS)){
-            ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_sds);
-        }else if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_NDS)) {
-            ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_nds);
-        }else if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_ENS)) {
-            ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
-        }
-        ((MyItemHolder) holder)._genderPengirimText.setVisibility(View.GONE);
-        ((MyItemHolder) holder)._genderPenerimaText.setVisibility(View.GONE);
-        if(order != null){
-            if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
-                ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_send_icon);
-            }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOJEK)) {
-                ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_jek_icon);
-
-                ((MyItemHolder) holder)._genderPengirimText.setVisibility(View.VISIBLE);
-                ((MyItemHolder) holder)._genderPenerimaText.setVisibility(View.VISIBLE);
-                ((MyItemHolder) holder)._genderPengirimText.setText(packet.getGenderPengirim());
-                ((MyItemHolder) holder)._genderPenerimaText.setText(packet.getGenderPenerima());
-            }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
-                ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
-            }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {
-                ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_shop_icon);
+        if(packet != null){
+            if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_SDS)){
+                ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_sds);
+            }else if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_NDS)) {
+                ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_nds);
+            }else if(packet.getServiceCode().equalsIgnoreCase(AppConfig.PACKET_ENS)) {
+                ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
             }
+            ((MyItemHolder) holder)._genderPengirimText.setVisibility(View.GONE);
+            ((MyItemHolder) holder)._genderPenerimaText.setVisibility(View.GONE);
+            if(order != null){
+                if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
+                    ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_send_icon);
+                }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOJEK)) {
+                    ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_jek_icon);
+
+                    ((MyItemHolder) holder)._genderPengirimText.setVisibility(View.VISIBLE);
+                    ((MyItemHolder) holder)._genderPenerimaText.setVisibility(View.VISIBLE);
+                    ((MyItemHolder) holder)._genderPengirimText.setText(packet.getGenderPengirim());
+                    ((MyItemHolder) holder)._genderPenerimaText.setText(packet.getGenderPenerima());
+                }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
+                    ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
+                }else if(order.getType().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {
+                    ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_shop_icon);
+                }
+            }
+            ((MyItemHolder) holder)._awbText.setText(packet.getResi());
+            ((MyItemHolder) holder)._infoPaketText.setText(packet.getInfoPaket() +(packet.isViaMobil()? "\npakai Mobil = YES":""));
+            ((MyItemHolder) holder)._beratText.setText("Berat : "+packet.getBerat() + " Kg");
+            ((MyItemHolder) holder)._ongkosPaketText.setText("Biaya : "+ AppConfig.formatCurrency( packet.getBiaya() ));
+
+            ((MyItemHolder) holder)._namaPengirimText.setText(packet.getNamaPengirim());
+            ((MyItemHolder) holder)._alamatPengirimText.setText(packet.getAlamatPengirim());
+            ((MyItemHolder) holder)._teleponPengirimText.setText(packet.getTeleponPengirim());
+
+            ((MyItemHolder) holder)._namaPenerimaText.setText(packet.getNamaPenerima());
+            ((MyItemHolder) holder)._alamatPenerimaText.setText(packet.getAlamatPenerima());
+            ((MyItemHolder) holder)._teleponPenerimaText.setText(packet.getTeleponPenerima());
+
+            ((MyItemHolder) holder)._kotaPengirimText.setText("Dari: \n"+packet.getKotaPengirimText());
+            ((MyItemHolder) holder)._kotaPenerimaText.setText("Ke: \n"+packet.getKotaPenerimaText());
+
+            ((MyItemHolder) holder)._statusText.setText((packet.getStatusText()==null?"":packet.getStatusText()) +"\n"+packet.getUpdatedDate()==null? packet.getCreatedDate() == null? "":packet.getCreatedDate() : packet.getUpdatedDate());
+            String data = packet.getResi()+";"+packet.getNamaPengirim()+";"+packet.getAlamatPengirim()+";"+packet.getTeleponPengirim()+";"+packet.getKotaPengirim()
+                    +";"+packet.getNamaPenerima()+";"+packet.getTeleponPenerima()+";"+packet.getAlamatPenerima()+";"+packet.getKotaPenerima();
+            //barcodeView.setImageBitmap(AppConfig.encodeContentsToBarcode(packet.getResi(), BarcodeFormat.CODE_128));
+            ((MyItemHolder) holder).barcodeView.setImageBitmap(AppConfig.encodeContentsToBarcode(data, BarcodeFormat.QR_CODE));
         }
-        ((MyItemHolder) holder)._awbText.setText(packet.getResi());
-        ((MyItemHolder) holder)._infoPaketText.setText(packet.getInfoPaket() +(packet.isViaMobil()? "\npakai Mobil = YES":""));
-        ((MyItemHolder) holder)._beratText.setText("Berat : "+packet.getBerat() + " Kg");
-        ((MyItemHolder) holder)._ongkosPaketText.setText("Biaya : "+ AppConfig.formatCurrency( packet.getBiaya() ));
 
-        ((MyItemHolder) holder)._namaPengirimText.setText(packet.getNamaPengirim());
-        ((MyItemHolder) holder)._alamatPengirimText.setText(packet.getAlamatPengirim());
-        ((MyItemHolder) holder)._teleponPengirimText.setText(packet.getTeleponPengirim());
-
-        ((MyItemHolder) holder)._namaPenerimaText.setText(packet.getNamaPenerima());
-        ((MyItemHolder) holder)._alamatPenerimaText.setText(packet.getAlamatPenerima());
-        ((MyItemHolder) holder)._teleponPenerimaText.setText(packet.getTeleponPenerima());
-
-        ((MyItemHolder) holder)._kotaPengirimText.setText("Dari: \n"+packet.getKotaPengirimText());
-        ((MyItemHolder) holder)._kotaPenerimaText.setText("Ke: \n"+packet.getKotaPenerimaText());
-
-        ((MyItemHolder) holder)._statusText.setText((packet.getStatusText()==null?"":packet.getStatusText()) +"\n"+packet.getUpdatedDate()==null? packet.getCreatedDate() == null? "":packet.getCreatedDate() : packet.getUpdatedDate());
-        String data = packet.getResi()+";"+packet.getNamaPengirim()+";"+packet.getAlamatPengirim()+";"+packet.getTeleponPengirim()+";"+packet.getKotaPengirim()
-                +";"+packet.getNamaPenerima()+";"+packet.getTeleponPenerima()+";"+packet.getAlamatPenerima()+";"+packet.getKotaPenerima();
-        //barcodeView.setImageBitmap(AppConfig.encodeContentsToBarcode(packet.getResi(), BarcodeFormat.CODE_128));
-        ((MyItemHolder) holder).barcodeView.setImageBitmap(AppConfig.encodeContentsToBarcode(data, BarcodeFormat.QR_CODE));
     }
 
     @Override
