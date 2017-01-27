@@ -43,8 +43,6 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run(){
                 while(!done){
                     try {
-                        String token = FirebaseInstanceId.getInstance().getToken();
-                        Log.i("laod_token", token);
                         sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

@@ -160,7 +160,6 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
         sliderShow.addSlider(sliderView);
             //Toast.makeText(getContext(), "Could not connect to server.", Toast.LENGTH_SHORT).show();
         //}
-
         List<News> banners = AppController.banners;
         if(banners != null){
             for (int i = 0; i < banners.size(); i++) {
@@ -184,8 +183,6 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                 sliderShow.addSlider(sliderView);
             }
         }
-
-
 
         setupMenuData();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);

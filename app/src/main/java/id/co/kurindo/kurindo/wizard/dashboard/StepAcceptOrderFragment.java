@@ -97,8 +97,9 @@ public class StepAcceptOrderFragment extends BaseStepFragment implements Step {
                         user = data.get(position);
                     }
                 }));
-
+        data.clear();
         request_list_kurir("KURIR");
+        request_list_kurir("ADMIN");
     }
 
     private void request_list_kurir(String...params) {

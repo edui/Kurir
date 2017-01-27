@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -639,6 +640,7 @@ public class LoginFragment extends BaseFragment {
 
                     // Check for error node in json
                     if (!error) {
+
                         // user successfully logged in
                         db.onUpgrade(db.getWritableDatabase(), 0, 1);
                         //db.onCreateTableRecipient(db.getWritableDatabase());
@@ -672,6 +674,7 @@ public class LoginFragment extends BaseFragment {
                         // Launch main activity
                         onAlreadyLogin();
 
+                        update_token(api_key);
                     } else {
                         boolean active= jObj.getBoolean("active");
                         boolean approved= jObj.getBoolean("approved");
@@ -802,4 +805,63 @@ public class LoginFragment extends BaseFragment {
 
         return valid;
     }
+
+    private void update_token(final String api_key) {
+        if(AppConfig.FCM_TOKEN != null){
+            String tag_string_req = "req_sendRegistrationToServer";
+
+            final SQLiteHandler db = new SQLiteHandler(getContext());
+
+            StringRequest strReq = new StringRequest(Request.Method.POST,
+                    AppConfig.URL_REGISTER_FCM, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, "update_token Response: " + response.toString());
+
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+
+                        boolean error = jObj.getBoolean("error");
+                        String message= jObj.getString("message");
+                        Log.i(TAG, "message : "+ message);
+                        if(!error) AppConfig.FCM_TOKEN = null;
+
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "update_token Error: " + error.getMessage());
+                }
+            }) {
+
+                @Override
+                protected Map<String, String> getParams() {
+                    // Posting parameters to login url
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("form-token", AppConfig.FCM_TOKEN);
+
+                    return params;
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    //String api = db.getUserApi();
+                    params.put("Api", api_key);
+
+                    return params;
+                }
+            };
+
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        }
+    }
+
 }

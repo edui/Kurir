@@ -20,6 +20,7 @@ import java.util.List;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
+import id.co.kurindo.kurindo.task.LoadNewsTask;
 import id.co.kurindo.kurindo.util.DummyContent;
 
 public class NewsFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ListenableAsyncTask.AsyncTaskListener {
@@ -64,8 +65,8 @@ public class NewsFragment extends Fragment implements BaseSliderView.OnSliderCli
         sliderShow2.setDuration(6000);
         sliderShow3.setDuration(7000);
 
-        //loadNewsTask = (ListenableAsyncTask) new LoadNewsTask(getContext());
-        //loadNewsTask.listenWith(this);
+        loadNewsTask = (ListenableAsyncTask) new LoadNewsTask(getContext());
+        loadNewsTask.listenWith(this);
 
         /*
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
@@ -81,7 +82,7 @@ public class NewsFragment extends Fragment implements BaseSliderView.OnSliderCli
         */
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        //loadNewsTask.execute("latest");
+        loadNewsTask.execute("latest");
         progressBar.setVisibility(View.GONE);
         onPostExecute(null);
         return view;
@@ -98,20 +99,23 @@ public class NewsFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     @Override
     public void onPostExecute(Object o) {
-        //List<News> newsList = (List<News>)o;
-        List<News> newsList = new ArrayList<>();
+        List<News> newsList = (List<News>)o;
+        if(newsList == null) newsList = new ArrayList<>();
         Log.i("loadNewsTask","newsList size:"+newsList.size());
         //data.clear();
         sliderShow1.removeAllSliders();
         sliderShow2.removeAllSliders();
         sliderShow3.removeAllSliders();
         //if(newsList != null && newsList.size() > 0){
-            newsList.addAll(DummyContent.NEWS);
+            //newsList.addAll(DummyContent.NEWS);
         data.clear();
+        data.addAll(DummyContent.NEWS);
         data.addAll(newsList);
-            Collections.shuffle(newsList);
-            for (int i = 0; i < newsList.size(); i++) {
-                News n = newsList.get(i);
+
+            int c = Math.round( data.size()/3 );
+            Collections.shuffle(data);
+            for (int i = 0; i < data.size(); i++) {
+                News n = data.get(i);
                 //data.add(n);
 
                 DefaultSliderView sliderView = new DefaultSliderView(getContext());
@@ -139,8 +143,8 @@ public class NewsFragment extends Fragment implements BaseSliderView.OnSliderCli
                 bundle.putParcelable("news", n);
                 sliderView.bundle(bundle);
 
-                if(i < 3) sliderShow1.addSlider(sliderView);
-                else if(i < 6) sliderShow2.addSlider(sliderView);
+                if(i < c) sliderShow1.addSlider(sliderView);
+                else if(i < (2*c)) sliderShow2.addSlider(sliderView);
                 else sliderShow3.addSlider(sliderView);
             }
         /*}else{

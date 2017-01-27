@@ -16,6 +16,8 @@ public class User implements Parcelable{
     private String email;
     private String phone;
     private String gender = "LAKI-LAKI";
+    private String nik;
+    private String simc;
     private String uid;
     private String role;
     private String city;
@@ -48,6 +50,8 @@ public class User implements Parcelable{
         try {
             address = in.readParcelable(Address.class.getClassLoader());
         }catch (Exception e){}
+        nik = in.readString();
+        simc = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -182,6 +186,22 @@ public class User implements Parcelable{
         this.gender = gender;
     }
 
+    public String getNik() {
+        return nik;
+    }
+
+    public void setNik(String nik) {
+        this.nik = nik;
+    }
+
+    public String getSimc() {
+        return simc;
+    }
+
+    public void setSimc(String simc) {
+        this.simc = simc;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -204,5 +224,7 @@ public class User implements Parcelable{
         dest.writeString(api_key);
         dest.writeString(cityText);
         if(address != null) dest.writeParcelable(address, flags);
+        dest.writeString(nik);
+        dest.writeString(simc);
     }
 }

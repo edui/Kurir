@@ -74,13 +74,13 @@ public class KurindoFirebaseInstanceIdService extends FirebaseInstanceIdService 
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
+                Log.d(TAG, "update_token Response: " + response.toString());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
 
                     String message= jObj.getString("message");
-                    Log.e(TAG, message);
+                    Log.i(TAG, "message "+message);
 
                 } catch (JSONException e) {
                     // JSON error
@@ -91,7 +91,7 @@ public class KurindoFirebaseInstanceIdService extends FirebaseInstanceIdService 
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
+                Log.e(TAG, "update_token Error: " + error.getMessage());
             }
         }) {
 
@@ -116,6 +116,5 @@ public class KurindoFirebaseInstanceIdService extends FirebaseInstanceIdService 
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-
     }
 }

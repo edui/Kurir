@@ -58,7 +58,7 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String banner = model.getBanner().substring(0,model.getBanner().length()-4);
             int resId = context.getResources().getIdentifier(banner, "drawable", context.getPackageName());
             if(resId == 0){
-                Glide.with(context).load(AppConfig.urlBannerImage(model.getBanner()))
+                Glide.with(context).load(AppConfig.urlShopImage(model.getBanner()))
                         .thumbnail(0.5f)
                         .override(200,200)
                         .crossFade()

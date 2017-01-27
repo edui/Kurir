@@ -108,10 +108,10 @@ public class StatusHistory implements Parcelable {
     @Override
     public String toString() {
         StringBuilder sb =new StringBuilder();
-        sb.append(getCreated_date()+ (getCreated_by()==null? "":" \nby "+getCreated_by().getFirstname())+"\n");
+        sb.append(getCreated_date()+ (getCreated_by()==null? "":" \nby "+getCreated_by().getFirstname())+" "+getCreated_by().getLastname()+"\n");
         sb.append(getRemarks()+"\n");
         if(getPic()!=null){
-            sb.append(getPic() +" at "+(getLocation()==null? getLocation():"")+"\n");
+            sb.append(getPic().getFirstname() +" "+getPic().getLastname() +" "+(getLocation()==null? "":" at "+getLocation())+"\n");
         }
         sb.append("\n");
         return sb.toString();

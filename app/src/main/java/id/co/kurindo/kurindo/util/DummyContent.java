@@ -65,7 +65,7 @@ public class DummyContent {
         addProduct(shop.getId(),products);
 */
 
-        Shop shop = new Shop(2, "HAMASA001", "HAMASAFARM", "","hamasafarm_iconshop.png", "hamasafarm_bannershop.png", "08xxx", "Balikpapan Regency, CLuster Celebration i3", "CLOSED", "BPN02", "Balikpapan Selatan  Tengah");
+        /*Shop shop = new Shop(2, "HAMASA001", "HAMASAFARM", "","hamasafarm_iconshop.png", "hamasafarm_bannershop.png", "08xxx", "Balikpapan Regency, Cluster Celebration i3", "OPEN", "BPN02", "Balikpapan Tengah & Kota");
         List<Product> products = new ArrayList<>();
         Product p = new Product(8, "HAMASA010", "Selada Merah", "Selada Merah", R.drawable.hamasa010, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
@@ -78,9 +78,10 @@ public class DummyContent {
         //shop.setProducts(products);
         addShop(shop);
         addProduct(shop.getId(),products);
+        */
 
-        shop = new Shop(3, "BURYAMI001", "BURYAMI", "Bubur Ayam Istimewa\nDiolah dari bahan segar dan bumbu rempah asli & sehat, Non MSG", "buryami_iconshop.png", "buryami_bannershop.png", "0811542188", "Jl. Syarifudin Yoes \ndepan HER Guesthouse (seberang Pelangi B Point)\nOpen at 06.30 - 11.00", "OPEN", "BPN02", "Balikpapan Selatan");
-        products = new ArrayList<>();
+        Shop shop = new Shop(3, "BURYAMI001", "BURYAMI", "Bubur Ayam Istimewa\nDiolah dari bahan segar dan bumbu rempah asli & sehat, Non MSG", "buryami_iconshop.png", "buryami_bannershop.png", "0811542188", "Jl. Syarifudin Yoes \ndepan HER Guesthouse (seberang Pelangi B Point)\nOpen at 06.30 - 11.00", "OPEN", "BPN02", "Balikpapan Tengah & Kota");
+        List<Product> products = new ArrayList<>();
         Product p11 = new Product(12, "BURYAMI010", "Bubur Ayam Komplit", "Bubur Ayam Komplit", R.drawable.buryami010, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p11);
         Product p12 = new Product(13, "BURYAMI011", "Bubur Ayam Basah", "Bubur Ayam Basah", R.drawable.buryami011, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
@@ -89,9 +90,9 @@ public class DummyContent {
         addShop(shop);
         addProduct(shop.getId(),products);
 
-        shop = new Shop(4, "HONEYMOON001", "HONEYMOON", "","honeymoon_iconshop.png", "honeymoon_bannershop.png", "Info dan pemesanan:\nIkhwan 085387180678\nAkhwat 081254406406", "Jl.Indrakila, Strat 3, \nGg.pandega, RT 32, No 56 \n\nInstagram : @mang_oncel", "OPEN", "BPN07", "Balikpapan Utara");
+        shop = new Shop(4, "HONEYMOON001", "HONEYMOON", "","honeymoon_iconshop.png", "honeymoon_bannershop.png", "Info dan pemesanan: 0812-5630-2990", "Balikpapan Regency\nCastarica JE3 02", "OPEN", "BPN02", "Balikpapan Tengah & Kota");
         products = new ArrayList<>();
-        p = new Product(13, "HONEYMOON001", "Madu Premium", "Madu Premium", R.drawable.honeymoon001, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
+        Product p = new Product(13, "HONEYMOON001", "Madu Premium", "Madu Premium", R.drawable.honeymoon001, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
         p = new Product(14, "HONEYMOON002", "Madu Organik", "Madu Organik", R.drawable.honeymoon002, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
@@ -132,6 +133,8 @@ public class DummyContent {
         n = new News(8, "DO-Move", "DO-Move", "DO-Move", R.drawable.banner_domove);
         addNews(n);
         n = new News(9, "DO-Client", "DO-Client", "DO-Client", R.drawable.banner_doclient);
+        addNews(n);
+        n = new News(10, "Wika-WH", "Wika-WH", "Wika-WH", R.drawable.banner_wikawh);
         addNews(n);
     }
 

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,7 +66,8 @@ public class SignupFragment extends BaseFragment {
     IntlPhoneInput _phoneText;
     @Bind(R.id.city_spinner)
     Spinner _citySpinner;
-    @Bind(R.id.gender_spinner)    Spinner _genderSpinner;
+    @Bind(R.id.gender_spinner)
+    Spinner _genderSpinner;
 
     @Bind(R.id.radio_group_role)
     RadioGroup roleRadioGroup;
@@ -81,6 +83,13 @@ public class SignupFragment extends BaseFragment {
     ImageView ivAgrement;
     @Bind(R.id.ivAgrement2)
     ImageView ivAgrement2;
+
+    @Bind(R.id.input_simc)
+    EditText _simcText;
+    @Bind(R.id.input_nik)
+    EditText _nikText;
+    @Bind(R.id.input_layout_kurir)
+    LinearLayoutCompat _kurirLayout;
 
     private SessionManager session;
     private SQLiteHandler db;
@@ -125,12 +134,15 @@ public class SignupFragment extends BaseFragment {
                 switch(checkedId){
                     case R.id.radio_kurir:
                         role = AppConfig.KEY_KURIR;
+                        show_kurir_layout(true);
                         break;
                     case R.id.radio_client:
                         role = AppConfig.KEY_PELANGGAN;
+                        show_kurir_layout(false);
                         break;
                     case R.id.radio_agent:
                         role = AppConfig.KEY_AGENT;
+                        show_kurir_layout(false);
                         break;
                 }
             }
@@ -153,6 +165,10 @@ public class SignupFragment extends BaseFragment {
         });
 
         return v;
+    }
+
+    private void show_kurir_layout(boolean b) {
+        _kurirLayout.setVisibility(b?View.VISIBLE:View.GONE);
     }
 
     @Override
@@ -331,6 +347,13 @@ public class SignupFragment extends BaseFragment {
                 params.put("form-city", city);
                 params.put("form-gender", gender);
                 params.put("form-token", token == null ? "":token);
+                if(role.equalsIgnoreCase(AppConfig.KEY_KURIR)){
+                    params.put("form-nik", _nikText.getText().toString());
+                    params.put("form-simc", _simcText.getText().toString());
+                }else{
+                    params.put("form-nik", null);
+                    params.put("form-simc", null);
+                }
                 return params;
             }
 
@@ -427,6 +450,8 @@ public class SignupFragment extends BaseFragment {
         String name = _firstnameText.getText().toString();
         String email = _emailText.getText().toString();
         //String phone = _phoneText.getText().toString();
+        String nik = _nikText.getText().toString();
+        String simc  = _simcText.getText().toString();
 
         if (name.isEmpty() || name.length() < 3) {
             _firstnameText.setError("at least 3 characters");
@@ -448,8 +473,22 @@ public class SignupFragment extends BaseFragment {
         }
 
         if (city == null || city.isEmpty() || city.length() < 5) {
-            Toast.makeText(getContext(), "Select your City", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Select your City", Toast.LENGTH_SHORT).show();
             valid = false;
+        }
+        if(role.equalsIgnoreCase(AppConfig.KEY_KURIR)){
+            if(nik.isEmpty() || nik.length() < 4){
+                valid = false;
+                _nikText.setError("NIK harus diisi");
+            }else{
+                _nikText.setError(null);
+            }
+            if(simc.isEmpty() || simc.length() < 4){
+                valid = false;
+                _simcText.setError("SIM C harus diisi");
+            }else{
+                _simcText.setError(null);
+            }
         }
         if(valid){
             if(!chkAgrement.isChecked()) {

@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,6 +54,8 @@ import id.co.kurindo.kurindo.model.User;
 import id.co.kurindo.kurindo.wizard.AcceptOrderActivity;
 import id.co.kurindo.kurindo.wizard.RejectOrderActivity;
 
+import static id.co.kurindo.kurindo.R.style.CustomDialog;
+
 /**
  * Created by Ratan on 7/29/2015.
  */
@@ -100,6 +103,8 @@ public class OrderShowFragment extends BaseFragment {
     public static final int ACCEPTED_REQUEST_CODE = 1500;
     public static final int REJECTED_REQUEST_CODE = 1999;
 
+    ProgressDialog progressDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +114,9 @@ public class OrderShowFragment extends BaseFragment {
         order = (Order) bundle.getParcelable("order");
         OrderHelper.getInstance().setOrder(order);
         //if(list != null) order = (Order) list.get(0);
+
+
+        progressDialog = new ProgressDialog(getActivity(), CustomDialog);
     }
 
     @Nullable
@@ -239,6 +247,8 @@ public class OrderShowFragment extends BaseFragment {
             }
         }
     }
+
+
     @OnClick(R.id.infoStatus)
     public void OnClick_InfoStatus(){
         final Handler handler = new Handler() {
@@ -247,6 +257,7 @@ public class OrderShowFragment extends BaseFragment {
                 throw new RuntimeException();
             }
         };
+        progressDialog.show();
 
         retrieve_packet_history(handler);
 
@@ -258,6 +269,7 @@ public class OrderShowFragment extends BaseFragment {
         for(StatusHistory hist : historyList){
             content+= hist.toString();
         }
+        progressDialog.dismiss();
         showPopupWindow("Order\nStatus Information", content, R.drawable.icon_kurirkurindo);
     }
 

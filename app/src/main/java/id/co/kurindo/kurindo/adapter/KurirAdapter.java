@@ -65,9 +65,13 @@ public class KurirAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
         ((MyItemHolder) holder).name.setText(r.getFirstname() + " "+r.getLastname());
         ((MyItemHolder) holder).phone.setText(r.getPhone());
+        ((MyItemHolder) holder).nik.setText(r.getNik());
+        ((MyItemHolder) holder).simc.setText(r.getSimc());
 
         if(r.getFirstname().isEmpty()) ((MyItemHolder) holder).name.setVisibility(View.GONE);
         if(r.getPhone().isEmpty()) ((MyItemHolder) holder).phone.setVisibility(View.GONE);
+        if(r.getNik()==null || r.getNik().isEmpty()) ((MyItemHolder) holder).nik.setVisibility(View.GONE);
+        if(r.getSimc()==null || r.getSimc().isEmpty()) ((MyItemHolder) holder).simc.setVisibility(View.GONE);
 
         //String color = bgColors[position % bgColors.length];
         if(multiple){
@@ -143,6 +147,8 @@ public class KurirAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         protected TextView city;
         protected TextView name;
         protected TextView phone;
+        protected TextView nik;
+        protected TextView simc;
         protected ImageButton approvedBtn;
         public MyItemHolder(View itemView) {
             super(itemView);
@@ -152,6 +158,8 @@ public class KurirAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             this.name= (TextView) itemView.findViewById(R.id.name_text);
             this.phone= (TextView) itemView.findViewById(R.id.telepon_text);
             this.approvedBtn = (ImageButton) itemView.findViewById(R.id.approvedBtn);
+            this.nik= (TextView) itemView.findViewById(R.id.nik_text);
+            this.simc= (TextView) itemView.findViewById(R.id.simc_text);
         }
     }
 

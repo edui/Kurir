@@ -35,7 +35,7 @@
                     android:id="@+id/nav_item_admin_monitor"
                     android:icon="@drawable/ic_assignment_black"/>
                 <item android:title="Monitor Paket KURIR"
-                    android:id="@+id/nav_item_admin_monitor_paket_kurir"
+                    android:id="@+id/nav_item_admin_monitor_paket_kurir" android:visible="false"
                     android:icon="@drawable/ic_dashboard_black_18dp"/>
                 <item android:title="Calon KURIR"
                     android:id="@+id/nav_item_admin_daftar_kurir"
