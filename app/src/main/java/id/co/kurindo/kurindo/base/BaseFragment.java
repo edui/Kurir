@@ -11,12 +11,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.util.LogUtil;
@@ -38,7 +45,6 @@ public class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         db = new SQLiteHandler(getActivity());
         session = new SessionManager(getActivity());
-
     }
 
     /**
@@ -173,5 +179,19 @@ public class BaseFragment extends Fragment {
             e.printStackTrace();
         }
         return TextBuffer;
+    }
+
+    public void addRequest(final String tag_string_req, int method, String url, Response.Listener responseListener, Response.ErrorListener errorListener, final Map<String, String> params, final Map<String, String> headers){
+        final StringRequest strReq = new StringRequest(method,url, responseListener, errorListener){
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if(params == null) return super.getParams();
+                return params;
+            }
+            public Map<String, String> getHeaders() throws AuthFailureError{
+                if(headers == null) return super.getHeaders();
+                return headers;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 }

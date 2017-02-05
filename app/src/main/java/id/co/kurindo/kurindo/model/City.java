@@ -18,6 +18,7 @@ public class City implements Parcelable {
 
     private String code;
     private String text;
+
     public City(String code, String text){
         this.code = code;
         this.text = text;

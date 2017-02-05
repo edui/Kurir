@@ -1,6 +1,21 @@
 package id.co.kurindo.kurindo.util;
 
 import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.app.AppController;
 
 /**
  * Created by Andreas Schrade on 14.12.2015.
@@ -94,9 +109,58 @@ public class LogUtil {
         }
     }
 
-    /**
-     * Utility class
-     */
+    public static void logToServer(final String tag, final String activity, final String user) {
+        String tag_string_req = "req_logToServer_"+tag;
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LOGGING, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(tag, "logToServer: " + response.toString());
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                    } else {
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(tag, "logToServer Error: " + error.getMessage());
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("form-tag", tag);
+                params.put("form-activity", activity);
+                params.put("form-user", user);
+                //params.put("form-token", token);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+        /**
+         * Utility class
+         */
     private LogUtil() {
     }
 }

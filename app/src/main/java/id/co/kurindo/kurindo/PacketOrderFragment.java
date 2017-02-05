@@ -1,6 +1,5 @@
 package id.co.kurindo.kurindo;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -31,7 +30,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -44,16 +42,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lamudi.phonefield.PhoneInputLayout;
 
-import net.rimoto.intlphoneinput.IntlPhoneInput;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,13 +84,13 @@ public class PacketOrderFragment extends BaseFragment {
     @Bind(R.id.input_nama_pengirim)
     EditText _namaPengirimText;
     @Bind(R.id.input_alamat_pengirim) EditText _alamatPengirimText;
-    @Bind(R.id.input_telepon_pengirim) IntlPhoneInput _teleponPengirimText;
+    @Bind(R.id.input_telepon_pengirim) PhoneInputLayout _teleponPengirimText;
     @Bind(R.id.input_kota_pengirim)
     Spinner _kotaPengirimText;
 
     @Bind(R.id.input_nama_penerima) EditText _namaPenerimaText;
     @Bind(R.id.input_alamat_penerima) EditText _alamatPenerimaText;
-    @Bind(R.id.input_telepon_penerima) IntlPhoneInput _teleponPenerimaText;
+    @Bind(R.id.input_telepon_penerima) PhoneInputLayout _teleponPenerimaText;
     @Bind(R.id.input_kota_penerima) Spinner _kotaPenerimaText;
 
     @Bind(R.id.input_berat_barang) EditText _beratBarangText;
@@ -455,10 +450,8 @@ public class PacketOrderFragment extends BaseFragment {
             String namaPengirim = _namaPengirimText.getText().toString();
             //String teleponPengirim = _teleponPengirimText.getText().toString();
             String alamatPengirim = _alamatPengirimText.getText().toString();
-            String teleponPengirim =  _teleponPengirimText.getNumber();
-            if(teleponPengirim.startsWith("0")){
-                teleponPengirim = _teleponPengirimText.getPhoneNumber().getCountryCode()+""+teleponPengirim;
-            }
+            String teleponPengirim =  _teleponPengirimText.getPhoneNumber();
+            //if(teleponPengirim.startsWith("0")){ teleponPengirim = _teleponPengirimText.getPhoneNumber().getCountryCode()+""+teleponPengirim;            }
             packet.setNamaPengirim(namaPengirim);
             packet.setGenderPengirim(genderPengirim);
             packet.setAlamatPengirim(alamatPengirim);
@@ -479,10 +472,8 @@ public class PacketOrderFragment extends BaseFragment {
             String namaPenerima= _namaPenerimaText.getText().toString();
             //String teleponPenerima = _teleponPenerimaText.getText().toString();
             String alamatPenerima = _alamatPenerimaText.getText().toString();
-            String teleponPenerima =  _teleponPengirimText.getNumber();
-            if(teleponPenerima.startsWith("0")){
-                teleponPenerima = _teleponPenerimaText.getPhoneNumber().getCountryCode()+""+teleponPenerima;
-            }
+            String teleponPenerima =  _teleponPengirimText.getPhoneNumber();
+            //if(teleponPenerima.startsWith("0")){ teleponPenerima = _teleponPenerimaText.getPhoneNumber().getCountryCode()+""+teleponPenerima; }
             packet.setNamaPenerima(namaPenerima);
             packet.setGenderPenerima(genderPenerima);
             packet.setAlamatPenerima(alamatPenerima);

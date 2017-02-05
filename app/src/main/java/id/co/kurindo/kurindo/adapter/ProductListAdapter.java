@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.Constant;
 import id.co.kurindo.kurindo.model.Product;
 
@@ -70,7 +71,7 @@ public class ProductListAdapter extends BaseAdapter {
 
         final Product product = getItem(position);
         tvName.setText(product.getName());
-        tvPrice.setText(Constant.CURRENCY+String.valueOf(product.getPrice().setScale(2, BigDecimal.ROUND_HALF_UP)));
+        tvPrice.setText(AppConfig.CURRENCY+String.valueOf(product.getPrice().setScale(2, BigDecimal.ROUND_HALF_UP)));
         Log.d(TAG, "Context package name: " + context.getPackageName());
         ivImage.setImageResource(context.getResources().getIdentifier(
                 product.getImageName(), "drawable", context.getPackageName()));

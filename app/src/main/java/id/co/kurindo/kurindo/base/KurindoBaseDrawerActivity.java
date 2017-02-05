@@ -9,10 +9,10 @@ import android.widget.TextView;
 import java.util.HashMap;
 
 import id.co.kurindo.kurindo.AdminMonitorOrderActivity;
+import id.co.kurindo.kurindo.BuildConfig;
 import id.co.kurindo.kurindo.KerjasamaActivity;
 import id.co.kurindo.kurindo.KurirActivity;
 import id.co.kurindo.kurindo.LoginActivity;
-import id.co.kurindo.kurindo.LoginActivity1;
 import id.co.kurindo.kurindo.LuarKotaFragment;
 import id.co.kurindo.kurindo.MonitorOrderActivity;
 import id.co.kurindo.kurindo.MonitorPacketActivity;
@@ -120,6 +120,9 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
             case R.id.nav_item_settings:
                 showActivity(SettingsActivity.class);
                 break;
+            case R.id.nav_item_maps:
+                showActivity(id.co.kurindo.kurindo.map.MapsActivity.class);
+                break;
             case R.id.nav_item_logout:
                 logoutUser();
                 showActivity(LoginActivity.class);
@@ -167,6 +170,11 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
     public void setupHeader(boolean param){
         View headerLayout = navigationView.getHeaderView(0);
         TextView txt = (TextView) headerLayout.findViewById(R.id.headerTxt);
+        TextView versiontxt = (TextView) headerLayout.findViewById(R.id.versiTxt);
+        int versionCode = BuildConfig.VERSION_CODE;
+        String versionName = BuildConfig.VERSION_NAME;
+        versiontxt.setText("Versi "+versionName +" (build "+versionCode+")");
+
         loginBtn = (AppCompatButton) headerLayout.findViewById(R.id.mainLoginBtn);
         if(param){
             HashMap user = db.getUserDetails();
@@ -180,7 +188,7 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
             loginBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showActivity(LoginActivity1.class);
+                    showActivity(LoginActivity.class);
                 }
             });
         }

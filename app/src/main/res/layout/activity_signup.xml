@@ -89,19 +89,12 @@
                 android:inputType="textPassword"
                 android:hint="Password"/>
         </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <net.rimoto.intlphoneinput.IntlPhoneInput
-                android:id="@+id/input_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_phone_black"
-                android:hint="Nomor Handphone" />
-        </android.support.design.widget.TextInputLayout>
 
+        <com.lamudi.phonefield.PhoneInputLayout
+            android:id="@+id/input_phone" android:hint="Nomor Handphone" android:drawableLeft="@drawable/ic_phone_black"
+            android:layout_width="match_parent"   android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
+           android:textSize="14dp" />
 
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"

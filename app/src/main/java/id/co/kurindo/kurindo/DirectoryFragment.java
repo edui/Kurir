@@ -149,7 +149,7 @@ public class DirectoryFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "LoadShopTask Error: " + error.getMessage());
-                Toast.makeText(getContext(),error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 

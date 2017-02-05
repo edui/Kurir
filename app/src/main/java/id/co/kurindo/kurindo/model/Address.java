@@ -4,6 +4,8 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +25,8 @@ public class Address implements Parcelable{
     private String propinsi;
     private String negara;
     private String kodepos;
-    private Location location;
+    private LatLng location;
+    private String formattedAddress;
 
     private City city; //code
 
@@ -145,6 +148,21 @@ public class Address implements Parcelable{
         this.negara = negara;
     }
 
+    public LatLng getLocation() {
+        return location;
+    }
+
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
+
+    public String getFormattedAddress() {
+        return formattedAddress;
+    }
+
+    public void setFormattedAddress(String formattedAddress) {
+        this.formattedAddress = formattedAddress;
+    }
 
     public Map<String, String> getAsParams(String suffix){
         Map<String, String> params = new HashMap<String, String>();
@@ -160,7 +178,7 @@ public class Address implements Parcelable{
         params.put("kodepos"+suffix, kodepos);
         params.put("kota"+suffix, (city != null? city.getCode(): ""));
         params.put("kotaText"+suffix, (city != null? city.getText(): ""));
-        params.put("lokasi"+suffix, (location != null? location.getLatitude()+","+location.getLongitude() : ""));
+        params.put("lokasi"+suffix, (location != null? location.latitude+","+location.longitude : ""));
 
         return params;
     }

@@ -22,6 +22,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +46,8 @@ import id.co.kurindo.kurindo.model.User;
  */
 public class AppConfig {
     public static String HOST = "https://kurindo.co.id";
-    //public static String HOST = "http://10.0.2.2/kurindo";
+    //public static String DEV_HOST = "http://10.0.2.2/kurindo";
+    public static String DEV_HOST = "http://172.30.3.58/kurindo";
     public static String USER_AGENT = "KURINDROID";
 
     public static String FCM_TOKEN = null;
@@ -55,6 +58,8 @@ public class AppConfig {
 
     // Server user register url
     public static String URL_REGISTER = HOST + "/backend/signup/json";
+
+    public static String URL_LOGGING = HOST + "/logging";
 
     public static  String URL_ACCOUNT_ACTIVATION = HOST + "/activation";
     public static String URL_ACCOUNT_RECOVERY = HOST + "/recovery";
@@ -89,6 +94,7 @@ public class AppConfig {
     public static String URL_LIST_NEWKURIR = HOST + "/users/new/{type}";
     public static String URL_KURIR_APPROVED =  HOST + "/user/kurir/approved";
 
+    public static String URL_PRICE_KM= DEV_HOST + "/tariff/km";
 
     public static String URL_NEWS= HOST + "/news";
     public static String URL_SHOP_LIST = HOST + "/shops/list/{page}";
@@ -130,6 +136,7 @@ public class AppConfig {
 
     public static final String CLOSED = "CLOSED";
     public static final String OPEN = "OPEN";
+    public static final String ISI_SALDO = "ISI SALDO";
 
     public static SimpleDateFormat sdf;
 
@@ -173,6 +180,9 @@ public class AppConfig {
         return statusText;
     }
 
+    public static final String CURRENCY = "Rp ";
+    public static String KilometerShort = " km";
+
     public static String formatCurrency(double amount)
     {
         NumberFormat format = NumberFormat.getInstance();
@@ -180,7 +190,7 @@ public class AppConfig {
         format.setGroupingUsed(true);
         //Currency currency = Currency.getInstance(Constant.CURRENCY);
         //format.setCurrency(currency);
-       return Constant.CURRENCY+ ""+format.format(amount);
+       return CURRENCY+ ""+format.format(amount);
     }
     public static String formatDate(String pdate)
     {
@@ -319,4 +329,12 @@ public class AppConfig {
         if(sdf == null) sdf = new SimpleDateFormat("yyyy-MM-dd h:m:s");
         return sdf;
     }
+
+    public static String formatKmDecimal(double amount) {
+        DecimalFormat format = new DecimalFormat(".##");
+        format.setGroupingUsed(true);
+        format.setRoundingMode(RoundingMode.UP);
+        return format.format(amount) + KilometerShort;
+    }
+
 }

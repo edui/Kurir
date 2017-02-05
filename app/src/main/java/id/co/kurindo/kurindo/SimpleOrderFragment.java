@@ -25,7 +25,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.tonyvu.sc.util.CartHelper;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -33,8 +32,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lamudi.phonefield.PhoneInputLayout;
 
-import net.rimoto.intlphoneinput.IntlPhoneInput;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +54,6 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseFragment;
-import id.co.kurindo.kurindo.base.KurindoActivity;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.CartItem;
@@ -83,7 +81,7 @@ public class SimpleOrderFragment extends BaseFragment {
     @Bind(R.id.input_email)
     EditText input_email;
     @Bind(R.id.input_telepon)
-    IntlPhoneInput input_telepon;
+    PhoneInputLayout input_telepon;
     @Bind(R.id.input_alamat)
     EditText input_alamat;
     @Bind(R.id.input_pesan)
@@ -130,7 +128,7 @@ public class SimpleOrderFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         sessionManager = new SessionManager(getContext());
         if(!sessionManager.isLoggedIn()){
-            ((BaseActivity)getActivity()).showActivity(LoginActivity1.class);
+            ((BaseActivity)getActivity()).showActivity(LoginActivity.class);
             getActivity().finish();
             return;
         }
@@ -278,6 +276,7 @@ public class SimpleOrderFragment extends BaseFragment {
                 }
             }
         });
+
 
         pilihListRecycleView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         pilihListRecycleView.setHasFixedSize(true);
@@ -476,10 +475,8 @@ public class SimpleOrderFragment extends BaseFragment {
             if(valid) {
                 Recipient recipient = new Recipient();
                 recipient.setName(email);
-                String telepon =  input_telepon.getNumber();
-                if(telepon.startsWith("0")){
-                    telepon = input_telepon.getPhoneNumber().getCountryCode()+""+telepon;
-                }
+                String telepon =  input_telepon.getPhoneNumber();
+                //if(telepon.startsWith("0")){ telepon = input_telepon.getPhoneNumber().getCountryCode()+""+telepon; }
                 recipient.setTelepon(telepon);
                 recipient.setGender(gender);
                 Address addr = new Address();

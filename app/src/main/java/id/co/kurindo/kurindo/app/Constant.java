@@ -25,6 +25,4 @@ public final class Constant {
         PRODUCT_LIST.add(PRODUCT2);
         PRODUCT_LIST.add(PRODUCT3);
     }
-
-    public static final String CURRENCY = "Rp ";
 }

@@ -96,8 +96,7 @@ public class ActivationActivity extends AppCompatActivity {
         final String activationCode = _activationCodeText.getText().toString();
         final String password = _passwordText.getText().toString();
 
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_ACCOUNT_ACTIVATION, new Response.Listener<String>() {
+        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.URL_ACCOUNT_ACTIVATION, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {

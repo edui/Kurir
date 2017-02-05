@@ -1,117 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="id.co.kurindo.kurindo">
-    <!-- -kurindo2016key kurindoKey kurindo2016key -->
-
+    package="id.co.kurindo.kurindo"> <!-- -kurindo2016key kurindoKey kurindo2016key -->
     <uses-sdk android:minSdkVersion="8" />
     <!-- if you want to load images from the internet -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- if you want to load images from a file OR from the internet -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the 'MyLocation' functionality. 
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <permission
+        android:name="com.talagasoft.gojek.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.talagasoft.gojek.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
+        android:name=".app.AppController"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" android:name=".app.AppController">
-
+        android:theme="@style/AppTheme">
         <activity
-            android:name=".SplashScreenActivity" android:screenOrientation="portrait"
+            android:name=".SplashScreenActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
         </activity>
-
         <activity
-            android:name=".MainDrawerActivity" android:screenOrientation="portrait"
-            android:icon="@drawable/logo_kurindo">
-        </activity>
-
-        <activity android:name=".PacketOrderActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
-        </activity>
-        <activity android:name=".PacketCheckActivity" android:screenOrientation="portrait"
+            android:name=".MainDrawerActivity"
+            android:icon="@drawable/logo_kurindo"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".PacketOrderActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
         </activity>
-        <activity android:name=".PacketShowActivity" android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" >
-        </activity>
-
-        <activity android:name=".MonitorPacketActivity" android:screenOrientation="portrait"
+        <activity
+            android:name=".PacketCheckActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
         </activity>
-        <activity android:name=".AdminMonitorOrderActivity" android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
+        <activity
+            android:name=".PacketShowActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".MonitorPacketActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
         </activity>
-        <activity android:name=".MonitorOrderActivity" android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
+        <activity
+            android:name=".AdminMonitorOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
+        </activity>
+        <activity
+            android:name=".MonitorOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".LoginActivity1"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".SignupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ActivationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".WaitingApprovalActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".DetailImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
+        </activity>
+        <activity
+            android:name=".ProductActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".ShoppingCartActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ShopActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
+        </activity>
+        <activity
+            android:name=".CartDrawerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".CheckoutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.ShopCheckoutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".SimpleOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
+        </activity>
+        <activity
+            android:name=".OrderShowActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".wizard.AcceptOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MonitorOrderActivity" />
+        </activity>
+        <activity
+            android:name=".wizard.RejectOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MonitorOrderActivity" />
+        </activity>
+        <activity
+            android:name=".NewsShowActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
+        </activity>
+        <activity
+            android:name=".KerjasamaActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
+        </activity>
+        <activity
+            android:name=".KurirActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainDrawerActivity" />
         </activity>
 
-        <activity android:name=".LoginActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-        </activity>
-        <activity android:name=".SignupActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" />
-        <activity android:name=".ActivationActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" />
-        <activity android:name=".WaitingApprovalActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" />
-
-        <activity android:name=".DetailImageActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
-        </activity>
-
-        <activity android:name=".ProductActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-        </activity>
-        <activity android:name=".ShoppingCartActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" />
-        <activity android:name=".ShopActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
-        </activity>
-        <activity android:name=".CartDrawerActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" />
-        <activity android:name=".CheckoutActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" />
-        <activity android:name=".wizard.ShopCheckoutActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" />
-        <activity android:name=".SimpleOrderActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
-        </activity>
-        <activity android:name=".OrderShowActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-        </activity>
-        <activity android:name=".wizard.AcceptOrderActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MonitorOrderActivity" />
-        </activity>
-        <activity android:name=".wizard.RejectOrderActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MonitorOrderActivity" />
-        </activity>
-        <activity android:name=".NewsShowActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
-        </activity>
-        <activity android:name=".KerjasamaActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
-        </activity>
-        <activity android:name=".KurirActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainDrawerActivity" />
-        </activity>
-
-        <meta-data android:name="id.co.kurindo.kurindo.util.GlideConfiguration" android:value="GlideModule"/>
-
+        <meta-data
+            android:name="id.co.kurindo.kurindo.util.GlideConfiguration"
+            android:value="GlideModule" />
 
         <service android:name=".firebase.KurindoFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".firebase.KurindoFirebaseInstanceIdService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
+        <activity
+            android:name=".map.MapsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+
+
+        </activity>
     </application>
 
 </manifest>

@@ -25,12 +25,9 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.iid.FirebaseInstanceId;
-
-import net.rimoto.intlphoneinput.IntlPhoneInput;
+import com.lamudi.phonefield.PhoneInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +54,7 @@ public class SignupActivity extends AppCompatActivity {
     @Bind(R.id.input_lastname) EditText _lastnameText;
     @Bind(R.id.input_email) EditText _emailText;
 
-    @Bind(R.id.input_phone)    IntlPhoneInput _phoneText;
+    @Bind(R.id.input_phone) PhoneInputLayout _phoneText;
     @Bind(R.id.city_spinner)    Spinner _citySpinner;
     @Bind(R.id.gender_spinner)    Spinner _genderSpinner;
 
@@ -184,10 +181,8 @@ public class SignupActivity extends AppCompatActivity {
         String lastname = _lastnameText.getText().toString();
         String email = _emailText.getText().toString();
         //String password = _passwordText.getText().toString();
-        String phone =  _phoneText.getNumber();
-        if(phone.startsWith("0")){
-            phone = _phoneText.getPhoneNumber().getCountryCode()+""+phone;
-        }
+        String phone =  _phoneText.getPhoneNumber();
+        //if(phone.startsWith("0")){ phone = _phoneText.getPhoneNumber().getCountryCode()+""+phone;}
         // TODONE: Implement your own signup logic here.
         signup_process(firstname, lastname, email, phone, role);
         /*new android.os.Handler().postDelayed(

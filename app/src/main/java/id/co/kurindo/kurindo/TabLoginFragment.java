@@ -70,7 +70,8 @@ public class TabLoginFragment  extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                tabLayout.getTabAt(position).select();
+                if(tabLayout.getTabCount() >= position)
+                    tabLayout.getTabAt(position).select();
             }
 
             @Override

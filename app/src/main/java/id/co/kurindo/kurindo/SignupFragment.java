@@ -3,9 +3,7 @@ package id.co.kurindo.kurindo;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutCompat;
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,14 +25,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.firebase.iid.FirebaseInstanceId;
-
-import net.rimoto.intlphoneinput.IntlPhoneInput;
+import com.lamudi.phonefield.PhoneInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +58,7 @@ public class SignupFragment extends BaseFragment {
     @Bind(R.id.input_email) EditText _emailText;
 
     @Bind(R.id.input_phone)
-    IntlPhoneInput _phoneText;
+    PhoneInputLayout _phoneText;
     @Bind(R.id.city_spinner)
     Spinner _citySpinner;
     @Bind(R.id.gender_spinner)
@@ -252,10 +247,8 @@ public class SignupFragment extends BaseFragment {
         String lastname = _lastnameText.getText().toString();
         String email = _emailText.getText().toString();
         //String password = _passwordText.getText().toString();
-        String phone =  _phoneText.getNumber();
-        if(phone.startsWith("0")){
-            phone = _phoneText.getPhoneNumber().getCountryCode()+""+phone;
-        }
+        String phone =  _phoneText.getPhoneNumber();
+        //if(phone.startsWith("0")){ phone = _phoneText.getPhoneNumber().getCountryCode()+""+phone;}
         // TODONE: Implement your own signup logic here.
         signup_process(firstname, lastname, email, phone, role);
         /*new android.os.Handler().postDelayed(
@@ -272,12 +265,12 @@ public class SignupFragment extends BaseFragment {
 
     private void signup_process(final String firstname, final String lastname, final String email, final String phone, final String role){
         String tag_string_req = "req_signup";
-        FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
+        /*FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
         try {
             instanceId.deleteInstanceId();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         final String token = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Token: " + token);
 
@@ -350,9 +343,9 @@ public class SignupFragment extends BaseFragment {
                 if(role.equalsIgnoreCase(AppConfig.KEY_KURIR)){
                     params.put("form-nik", _nikText.getText().toString());
                     params.put("form-simc", _simcText.getText().toString());
-                }else{
-                    params.put("form-nik", null);
-                    params.put("form-simc", null);
+                /*}else{
+                    params.put("form-nik", "");
+                    params.put("form-simc", ""); */
                 }
                 return params;
             }
@@ -414,8 +407,8 @@ public class SignupFragment extends BaseFragment {
         _firstnameText.setText("");
         _lastnameText.setText("");
         _emailText.setText("");
-
-        _phoneText.setNumber("");
+        _phoneText.setDefaultCountry("ID");
+        _phoneText.setPhoneNumber("");
     }
 
     public void onSignupFailed() {

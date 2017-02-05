@@ -20,6 +20,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.Constant;
 import id.co.kurindo.kurindo.model.CartItem;
 
@@ -99,7 +100,7 @@ public class CartProductItemAdapter extends BaseAdapter {
         final Cart cart = CartHelper.getCart();
         final CartItem cartItem = getItem(position);
         tvProductTitle.setText(cartItem.getProduct().getName());
-        tvProductPrice.setText(Constant.CURRENCY+String.valueOf(cartItem.getProduct().getPrice().setScale(2, BigDecimal.ROUND_HALF_UP)));
+        tvProductPrice.setText(AppConfig.CURRENCY+String.valueOf(cartItem.getProduct().getPrice().setScale(2, BigDecimal.ROUND_HALF_UP)));
         quantityStr.setText(String.valueOf(cartItem.getQuantity()));
         int resId = this.context.getResources().getIdentifier(cartItem.getProduct().getImageName().substring(0,cartItem.getProduct().getImageName().length()-4), "drawable", this.context.getPackageName());
         if(resId >0) ivProductImage.setImageResource(resId);

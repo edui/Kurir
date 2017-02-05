@@ -27,6 +27,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.lamudi.phonefield.PhoneInputLayout;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
@@ -72,7 +73,7 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
     @Bind(R.id.input_nama_penerima)
     EditText _namaPenerimaText;
     @Bind(R.id.text_telepon_penerima)
-    EditText _teleponPenerimaText;
+    PhoneInputLayout _teleponPenerimaText;
     @Bind(R.id.input_alamat_penerima)
     EditText _alamatPenerimaText;
     @Bind(R.id.input_kota_penerima)
@@ -285,9 +286,10 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
             }
         });
 
-//*
+///*
         _namaPenerimaText = (EditText) v.findViewById(R.id.input_nama_penerima);
-         _teleponPenerimaText= (EditText) v.findViewById(R.id.input_telepon_penerima);
+         _teleponPenerimaText= (PhoneInputLayout) v.findViewById(R.id.input_telepon_penerima);
+        _teleponPenerimaText.setDefaultCountry("ID");
         _alamatPenerimaText = (EditText) v.findViewById(R.id.input_alamat_penerima);
         _kotaPenerimaText = (Spinner) v.findViewById(R.id.input_kota_penerima);
         _ButtonAddOrder = (AppCompatButton) v.findViewById(R.id.ButtonAddRecipient);
@@ -300,7 +302,7 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
                     Recipient r = new Recipient();
                     r.setName(_namaPenerimaText.getText().toString());
                     r.setGender(genderPenerima);
-                    r.setTelepon(_teleponPenerimaText.getText().toString());
+                    r.setTelepon(_teleponPenerimaText.getPhoneNumber());
                     Address addr = new Address();
                     addr.setAlamat(_alamatPenerimaText.getText().toString());
                     addr.setCity(CheckoutHelper.getInstance().getCity());
@@ -337,7 +339,7 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
 
     private void clear_recipient_form() {
         _namaPenerimaText.setText(null);
-        _teleponPenerimaText.setText(null);
+        _teleponPenerimaText.setPhoneNumber("");
         _alamatPenerimaText.setText(null);
         _kotaPenerimaText.setSelected(false);
     }
@@ -351,7 +353,7 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
             _namaPenerimaText.setError(null);
         }
 
-        if (_teleponPenerimaText.getText() == null || _teleponPenerimaText.getText().toString().isEmpty() || _teleponPenerimaText.length() < 4 ) {
+        if (!_teleponPenerimaText.isValid() ) {
             _teleponPenerimaText.setError("Tuliskan telepon Penerima");
             valid = false;
         } else {
@@ -372,7 +374,7 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
             valid = false;
         }
 
-        if (_teleponPenerimaText.getText() == null || _teleponPenerimaText.getText().toString().isEmpty() || _teleponPenerimaText.length() < 4 ) {
+        if (!_teleponPenerimaText.isValid()) {
             valid = false;
         }
 
@@ -382,7 +384,7 @@ public class StepSelectRecipientFragment extends BaseStepFragment implements Ste
         Address addr= new Address();
         addr.setAlamat(_alamatPenerimaText.getText().toString());
         addr.setCity(CheckoutHelper.getInstance().getCity());
-        Recipient r = new Recipient(_namaPenerimaText.getText().toString(), _teleponPenerimaText.getText().toString(), "SYSTEM", addr);
+        Recipient r = new Recipient(_namaPenerimaText.getText().toString(), _teleponPenerimaText.getPhoneNumber(), "SYSTEM", addr);
         db.addRecipient(r);
         CheckoutHelper.getInstance().addRecipient(r);
         return valid;

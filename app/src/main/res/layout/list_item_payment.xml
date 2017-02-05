@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" android:gravity="left"
+    android:padding="5dp" >
+    <RadioButton
+        android:id="@+id/radio_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:gravity="center"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" android:gravity="center_vertical|left">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical|left" android:weightSum="1">
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent" android:layout_weight=".6" android:gravity="center_vertical|left"
+                android:layout_height="wrap_content" android:padding="2dp"
+                android:textSize="16sp" android:text="text"/>
+            <TextView
+                android:id="@+id/action"
+                android:layout_width="match_parent" android:layout_weight=".4" android:gravity="center_vertical|right"
+                android:layout_height="wrap_content" android:padding="2dp" android:textColor="@color/greenDark" android:textStyle="bold"
+                android:textSize="16sp" android:text="action"/>
+            </LinearLayout>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="2dp"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>
