@@ -1,4 +1,4 @@
-package id.co.kurindo.kurindo.adapter;
+package id.co.kurindo.kurindo.map;
 
 /**
  * Created by dwim on 1/31/2017.

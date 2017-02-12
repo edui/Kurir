@@ -14,8 +14,8 @@ public class MapUtils {
     private static String geocode = "https://maps.googleapis.com/maps/api/geocode/json?";
 
 
-    public static String formatDistance(float distance) {
-        String dist = distance + " M";
+    public static String formatDistance(double distance) {
+        String dist = Math.abs(distance) + " M";
 
         if (distance > 1000.0f) {
             distance = distance / 1000.0f;

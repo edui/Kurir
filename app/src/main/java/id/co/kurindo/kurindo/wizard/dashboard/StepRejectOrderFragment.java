@@ -9,47 +9,34 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.RecyclerItemClickListener;
-import id.co.kurindo.kurindo.adapter.UserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
-import id.co.kurindo.kurindo.model.Address;
-import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Order;
-import id.co.kurindo.kurindo.model.User;
-import id.co.kurindo.kurindo.wizard.AcceptOrderActivity;
 import id.co.kurindo.kurindo.wizard.RejectOrderActivity;
-import id.co.kurindo.kurindo.wizard.checkout.BaseStepFragment;
+import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static android.app.Activity.RESULT_OK;
 

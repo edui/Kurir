@@ -1,6 +1,5 @@
 package id.co.kurindo.kurindo;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,6 +28,7 @@ import id.co.kurindo.kurindo.adapter.EndlessRecyclerViewScrollListener;
 import id.co.kurindo.kurindo.adapter.ProductGridAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseFragment;
+import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;

@@ -37,18 +37,16 @@ import java.util.Map;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.adapter.UserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
-import id.co.kurindo.kurindo.helper.CheckoutHelper;
 import id.co.kurindo.kurindo.helper.OrderHelper;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.User;
-import id.co.kurindo.kurindo.wizard.AcceptOrderActivity;
-import id.co.kurindo.kurindo.wizard.checkout.BaseStepFragment;
+import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static android.app.Activity.RESULT_OK;
 

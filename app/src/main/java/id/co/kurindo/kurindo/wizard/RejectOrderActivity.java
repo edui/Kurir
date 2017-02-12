@@ -39,11 +39,6 @@ public class RejectOrderActivity extends AbstractStepperActivity {
         order = (Order) bundle.getParcelable("order");
 
     }
-    protected ActionBar setupToolbar() {
-        ActionBar ab = super.setupToolbar();
-        if(ab != null) ab.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
-        return  ab;
-    }
     @Override
     protected AbstractStepAdapter getStepperAdapter() {
         return new MyStepperAdapter(getSupportFragmentManager());

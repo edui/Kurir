@@ -18,6 +18,7 @@ package id.co.kurindo.kurindo.wizard;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -66,6 +67,12 @@ public abstract class AbstractStepperActivity extends BaseActivity implements St
     }
 
     protected abstract AbstractStepAdapter getStepperAdapter();
+
+    protected ActionBar setupToolbar() {
+        ActionBar ab = super.setupToolbar();
+        if(ab != null) ab.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
+        return  ab;
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

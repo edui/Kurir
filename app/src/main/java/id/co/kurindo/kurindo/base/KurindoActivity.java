@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.helper.SQLiteHandler;
+import id.co.kurindo.kurindo.helper.SessionManager;
 
 /**
  * Created by DwiM on 12/14/2016.
@@ -11,12 +13,18 @@ import id.co.kurindo.kurindo.R;
 
 public abstract class KurindoActivity extends BaseActivity {
     private Class fragmentClass;
+    protected SQLiteHandler db;
+    protected SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayout());
-        showFragment(getFragmentClass(), getBundleParams(), getContainer());
+
+        db = new SQLiteHandler(this);
+        session = new SessionManager(this);
+        Class classZ = getFragmentClass();
+        if(classZ != null) showFragment(classZ, getBundleParams(), getContainer());
     }
 
     @Override

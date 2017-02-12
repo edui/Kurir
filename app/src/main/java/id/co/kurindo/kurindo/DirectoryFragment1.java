@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.kurindo.kurindo.adapter.GalleryAdapter;
+import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.model.ImageModel;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;

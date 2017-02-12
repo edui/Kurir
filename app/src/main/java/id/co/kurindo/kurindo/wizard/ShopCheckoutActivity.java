@@ -19,7 +19,9 @@ package id.co.kurindo.kurindo.wizard;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.tonyvu.sc.util.CartHelper;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
@@ -30,9 +32,13 @@ import id.co.kurindo.kurindo.wizard.checkout.StepSelectRecipientFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepSelectPaymentFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepConfirmShopCheckoutFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepSummaryFragment;
+import id.co.kurindo.kurindo.wizard.doshop.StepPinLocationMapFragment;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 public class ShopCheckoutActivity extends AbstractStepperActivity {
-
+    private static final String TAG = "ShopCheckoutActivity";
+    int step = -1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,13 +63,13 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
         if(newStepPosition == 3){
             mBackNavigationButton.setVisibility(View.GONE);
         }
+        step = newStepPosition;
     }
 
     @Override
     public void onCompleted(View completeButton) {
         CartHelper.getCart().clear();
         finish();
-
     }
 
     @Override
@@ -81,12 +87,14 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return new StepSelectRecipientFragment();
+                    return StepPinLocationMapFragment.newInstance();
                 case 1:
-                    return new StepSelectPaymentFragment();
+                    return new StepSelectRecipientFragment();
                 case 2:
-                    return new StepConfirmShopCheckoutFragment();
+                    return new StepSelectPaymentFragment();
                 case 3:
+                    return new StepConfirmShopCheckoutFragment();
+                case 4:
                     return new StepSummaryFragment();
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
@@ -95,12 +103,35 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 5;
         }
     }
 
     @Override
     public void onBackPressed() {
-        finish();
+        Log.d(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
+        Fragment f = getStepperAdapter().getItem(step);
+        if(f != null){
+            if(f instanceof StepPinLocationMapFragment){
+                if(!((StepPinLocationMapFragment)StepPinLocationMapFragment.newInstance()).handleBackPressed()) {
+                    super.onBackPressed();
+                    finish();
+                }
+            }else{
+                super.onBackPressed();
+            }
+        }
+
+        /*
+        if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
+
+            // only show dialog while there's back stack entry
+            //dialog.show(getSupportFragmentManager(), "ConfirmDialogFragment");
+            Toast.makeText(getApplicationContext(), "onBackPressed", LENGTH_SHORT).show();
+        } else if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            // or just go back to main activity
+            super.onBackPressed();
+            finish();
+        }*/
     }
 }

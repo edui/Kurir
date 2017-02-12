@@ -9,19 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -29,17 +21,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
-import id.co.kurindo.kurindo.model.CartItem;
-import id.co.kurindo.kurindo.model.Order;
-import id.co.kurindo.kurindo.model.Packet;
-import id.co.kurindo.kurindo.model.Product;
-import id.co.kurindo.kurindo.model.Recipient;
-import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.model.PacketService;
 
 /**
  * Created by DwiM on 11/8/2016.
@@ -101,6 +85,14 @@ public class AppConfig {
     public static String URL_SHOP_PRODUCTS = HOST + "/shop/{shop_id}/product/{page}";
     public static String URL_REGISTER_FCM = HOST + "/refresh/fcm";
 
+    public static String URL_DOSEND_ORDER = DEV_HOST + "/torder/dosend";
+    public static String URL_TORDER_HISTORY = DEV_HOST + "/torder/history";
+    public static String URL_TORDER_ACTION = DEV_HOST + "/torder/action";
+    public static String URL_TORDER_MYORDERS = DEV_HOST + "/torder/myorders";
+    public static String URL_TORDER_REALTIME = DEV_HOST + "/torder/realtime";
+    public static String URL_TORDER_MYTASKS = DEV_HOST + "/torder/myjob";
+    public static String URL_TORDER_ADDPIC = DEV_HOST + "/torder/addpic";;
+    public static String URL_TORDER_REJECT = DEV_HOST + "/torder/reject";
 
     public static final String KEY_KURIR= "KURIR";
     public static final String KEY_AGENT= "AGEN";
@@ -134,6 +126,7 @@ public class AppConfig {
     public static final String KEY_DOMOVE = "DO-MOVE";
     public static final String KEY_DOSHOP = "DO-SHOP";
 
+    public static final String DEFAULT_COUNTRY = "ID";
     public static final String CLOSED = "CLOSED";
     public static final String OPEN = "OPEN";
     public static final String ISI_SALDO = "ISI SALDO";
@@ -246,7 +239,19 @@ public class AppConfig {
         }
         return statusText;
     }
+    public static List<PacketService> getPacketServiceList() {
+        List<PacketService> packetServiceList = new ArrayList<>();
+        PacketService service2 = new PacketService("NDS", "Next Day Service", "Kiriman Ekonomis untuk Esok hari");
+        packetServiceList.add(service2);
 
+        PacketService service = new PacketService("SDS", "Same Day Service", "Kiriman Express (hari yang sama)");
+        packetServiceList.add(service);
+
+        PacketService service3 = new PacketService("ENS", "Extra Night Service", "Kiriman Express setelah jam 6 malam");
+        packetServiceList.add(service3);
+
+        return packetServiceList;
+    }
     public static int getResourceId(String resourceName, String type){
         return Resources.getSystem().getIdentifier(resourceName, type, null);
     }
@@ -336,5 +341,17 @@ public class AppConfig {
         format.setRoundingMode(RoundingMode.UP);
         return format.format(amount) + KilometerShort;
     }
-
+    public static String formatKm(double amount)
+    {
+        NumberFormat format = NumberFormat.getInstance();
+        format.setMaximumFractionDigits(2);
+        format.setGroupingUsed(true);
+        //Currency currency = Currency.getInstance(Constant.CURRENCY);
+        //format.setCurrency(currency);
+        String str = format.format(amount) + " m";
+        if(amount > 1000){
+            str = format.format(amount/1000) + " km";
+        }
+        return str;
+    }
 }

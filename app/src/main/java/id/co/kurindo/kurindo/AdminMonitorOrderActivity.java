@@ -28,7 +28,7 @@ public class AdminMonitorOrderActivity extends KurindoActivity {
 
     @Override
     public Class getFragmentClass() {
-        return AdminMonitorOrderTabFragment.class;
+        return AdminMonitorTOrderTabFragment.class;
     }
 
     @Override

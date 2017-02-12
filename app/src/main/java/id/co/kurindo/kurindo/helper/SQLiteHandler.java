@@ -5,10 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -16,6 +21,7 @@ import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.Sender;
+import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
 
 /**
@@ -35,9 +41,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Login table name
     private static final String TABLE_USER = "user";
     private static final String TABLE_RECIPIENT = "recipient";
+    private static final String TABLE_USER_ADDRESS = "user_address";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
+    private static final String KEY_TYPE = "data_type";
     private static final String KEY_FIRSTNAME = "firstname";
     private static final String KEY_LASTNAME = "lastname";
     private static final String KEY_EMAIL = "email";
@@ -51,6 +59,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_APPROVED = "approved";
     private static final String KEY_CREATED_AT = "created_at";
     private static final String KEY_API = "api_key";
+    private static final String KEY_NIK = "nik";
+    private static final String KEY_SIMC = "simc";
 
     private static final String KEY_NAME = "name";
     private static final String KEY_ALAMAT = "alamat";
@@ -63,6 +73,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_PROPINSI = "propinsi";
     private static final String KEY_NEGARA = "negara";
     private static final String KEY_KODEPOS = "kodepos";
+    private static final String KEY_LATITUDE = "latitue";
+    private static final String KEY_LONGITUDE = "longitude";
+    private static final String KEY_NOTES= "notes";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -296,7 +309,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_RECIPIENT+ "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"+ KEY_PHONE + " TEXT "+ ","+ KEY_GENDER + " TEXT," + KEY_ALAMAT + " TEXT,"+ KEY_CITY + " TEXT,"+ KEY_CITYTEXT + " TEXT,"
                 + KEY_RT + " TEXT," + KEY_RW + " TEXT," + KEY_DUSUN + " TEXT,"+ KEY_DESA + " TEXT," + KEY_KECAMATAN + " TEXT,"
-                + KEY_KABUPATEN + " TEXT,"+ KEY_PROPINSI + " TEXT" + ","+ KEY_NEGARA + " TEXT"+ ","+ KEY_KODEPOS + " TEXT"+")";
+                + KEY_KABUPATEN + " TEXT,"+ KEY_PROPINSI + " TEXT" + ","+ KEY_NEGARA + " TEXT"+ ","+ KEY_KODEPOS + " TEXT, "
+                + KEY_LATITUDE + " TEXT," + KEY_LONGITUDE + " TEXT"
+                +")";
         db.execSQL(CREATE_TABLE);
 
         Log.d(TAG, TABLE_RECIPIENT+" tables created");
@@ -314,7 +329,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         //addRecipient(recipient.getName(), recipient.getTelepon(), recipient.getAddress().getAlamat(), recipient.getAddress().getCity());
         addRecipient(recipient.getName(), recipient.getTelepon(), recipient.getGender(), recipient.getAddress().getAlamat(), recipient.getAddress().getCity().getCode(), recipient.getAddress().getCity().getText()
         ,recipient.getAddress().getRt(),recipient.getAddress().getRw(),recipient.getAddress().getDusun(),recipient.getAddress().getDesa(),recipient.getAddress().getKecamatan()
-                ,recipient.getAddress().getKabupaten(),recipient.getAddress().getPropinsi(),recipient.getAddress().getNegara(),recipient.getAddress().getKodepos());
+                ,recipient.getAddress().getKabupaten(),recipient.getAddress().getPropinsi(),recipient.getAddress().getNegara(),recipient.getAddress().getKodepos(), recipient.getAddress().getLocation().latitude, recipient.getAddress().getLocation().longitude);
     }
     public void addRecipient(String name, String telepon, String gender,String alamat, String city, String cityText) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -334,6 +349,25 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New recipient inserted into sqlite: " + id);
     }
 
+    public void addRecipient(String name, String telepon, String gender,String alamat, String city, String cityText, double lat, double lng) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, name); //
+        values.put(KEY_PHONE, telepon); //
+        values.put(KEY_GENDER, gender); //
+        values.put(KEY_ALAMAT, alamat); //
+        values.put(KEY_CITY, city); //
+        values.put(KEY_CITYTEXT, cityText); //
+        values.put(KEY_LATITUDE, lat); //
+        values.put(KEY_LONGITUDE, lng); //
+
+        // Inserting Row
+        long id = db.insert(TABLE_RECIPIENT, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New recipient inserted into sqlite: " + id);
+    }
     public void addRecipient(String name, String telepon,  String gender, String alamat, String city, String cityText, String rt, String rw, String dusun, String desa, String kec, String kab, String prop, String negara, String kodepos) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -361,6 +395,35 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New recipient inserted into sqlite: " + id);
     }
 
+    public void addRecipient(String name, String telepon,  String gender, String alamat, String city, String cityText, String rt, String rw, String dusun, String desa, String kec, String kab, String prop, String negara, String kodepos, double lat, double lng) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, name); // Name
+        values.put(KEY_PHONE, telepon); // Name
+        values.put(KEY_GENDER, gender); // Name
+        values.put(KEY_ALAMAT, alamat); //
+        values.put(KEY_CITY, city); //
+        values.put(KEY_CITYTEXT, cityText); //
+        values.put(KEY_RT, rt); //
+        values.put(KEY_RW, rw);
+        values.put(KEY_DUSUN, dusun);
+        values.put(KEY_DESA, desa);
+        values.put(KEY_KECAMATAN, kec);
+        values.put(KEY_KABUPATEN, kab);
+        values.put(KEY_PROPINSI, prop);
+        values.put(KEY_NEGARA, negara);
+        values.put(KEY_KODEPOS, kodepos);
+        values.put(KEY_LATITUDE, lat);
+        values.put(KEY_LONGITUDE, lng);
+
+        // Inserting Row
+        long id = db.insert(TABLE_RECIPIENT, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New recipient inserted into sqlite: " + id);
+    }
+
     public Set<Recipient> getRecipientList() {
         Set<Recipient> result = new LinkedHashSet<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RECIPIENT;
@@ -373,6 +436,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             Address addr = new Address();
             addr.setAlamat(cursor.getString(4));
             addr.setCity(new City(cursor.getString(5), cursor.getString(6)));
+            addr.setLocation(new LatLng(cursor.getDouble(16), cursor.getDouble(17)));
             Recipient r = new Recipient(cursor.getString(1), cursor.getString(2), cursor.getString(3), addr);
             result.add(r);
             cursor.moveToNext();
@@ -435,4 +499,135 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "User data updated into sqlite: " + id);
     }
 
+    //================================
+    public void onCreateUserAddress(SQLiteDatabase db) {
+        String CREATE_TABLE = "CREATE TABLE " + TABLE_USER_ADDRESS + "("
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
+                + KEY_FIRSTNAME + " TEXT,"+ KEY_LASTNAME + " TEXT," + KEY_EMAIL + " TEXT UNIQUE," + KEY_PHONE + " TEXT ,"
+                + KEY_ROLE + " TEXT," + KEY_GENDER + " TEXT , "+ KEY_NIK + " TEXT,"+ KEY_SIMC + " TEXT, "
+                + KEY_API + " TEXT," + KEY_ACTIVE+ " BOOLEAN," + KEY_APPROVED + " BOOLEAN, " + KEY_CREATED_AT + " TEXT, "
+                + KEY_LATITUDE + " TEXT," + KEY_LONGITUDE + " TEXT, "+ KEY_ALAMAT + " TEXT, "
+                + KEY_RT + " TEXT," + KEY_RW + " TEXT," + KEY_DUSUN + " TEXT,"+ KEY_DESA + " TEXT," + KEY_KECAMATAN + " TEXT,"
+                + KEY_KABUPATEN + " TEXT,"+ KEY_PROPINSI + " TEXT" + ","+ KEY_NEGARA + " TEXT"+ ","+ KEY_KODEPOS + " TEXT, "
+                + KEY_NOTES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_TABLE);
+
+        Log.d(TAG, "Database tables "+TABLE_USER_ADDRESS+" created");
+    }
+
+    // Upgrading database
+    public void onUpgradeUserAddress(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Drop older table if existed
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_ADDRESS);
+
+        // Create tables again
+        onCreateUserAddress(db);
+    }
+    public void addAddress(TUser user, String type) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_TYPE, type);
+        values.put(KEY_FIRSTNAME, user.getFirstname());
+        values.put(KEY_LASTNAME, user.getLastname());
+        values.put(KEY_EMAIL, user.getEmail());
+        values.put(KEY_PHONE, user.getPhone());
+        values.put(KEY_ROLE, user.getRole());
+        values.put(KEY_GENDER, user.getGender());
+        values.put(KEY_NIK, user.getNik());
+        values.put(KEY_SIMC, user.getSimc());
+        values.put(KEY_API, user.getApi_key());
+        values.put(KEY_LATITUDE, user.getAddress().getLocation().latitude);
+        values.put(KEY_LONGITUDE, user.getAddress().getLocation().longitude);
+        values.put(KEY_ALAMAT, user.getAddress().getAlamat());
+        values.put(KEY_RT, user.getAddress().getRt());
+        values.put(KEY_RW, user.getAddress().getRw());
+        values.put(KEY_DUSUN, user.getAddress().getDusun());
+        values.put(KEY_DESA, user.getAddress().getDesa());
+        values.put(KEY_KECAMATAN, user.getAddress().getKecamatan());
+        values.put(KEY_KABUPATEN, user.getAddress().getKabupaten());
+        values.put(KEY_PROPINSI, user.getAddress().getPropinsi());
+        values.put(KEY_NEGARA, user.getAddress().getNegara());
+        values.put(KEY_KODEPOS, user.getAddress().getKodepos());
+        values.put(KEY_NOTES, user.getAddress().getNotes());
+
+        // Inserting Row
+        long id = db.insert(TABLE_USER_ADDRESS, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New address inserted into sqlite: " + id);
+    }
+    public void addAddress(TUser user) {
+        addAddress(user, "ADDRESS");
+    }
+
+    public Set<TUser> getAddressList() {
+        Set<TUser> result = new LinkedHashSet<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_USER_ADDRESS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+
+
+            //TUser r = new TUser(cursor.getString(1), cursor.getString(2), cursor.getString(3), addr);
+            TUser r = new TUser();
+
+            r.setFirstname(cursor.getString(2));
+            r.setLastname(cursor.getString(3));
+            r.setEmail(cursor.getString(4));
+            r.setPhone(cursor.getString(5));
+            r.setRole(cursor.getString(6));
+            r.setGender(cursor.getString(7));
+            r.setNik(cursor.getString(8));
+            r.setSimc(cursor.getString(9));
+            r.setApi_key(cursor.getString(10));
+            r.setActive(Boolean.parseBoolean( cursor.getString(11) ));
+            r.setApproved(Boolean.parseBoolean( cursor.getString(12) ));
+            r.setCreated_at(cursor.getString(13));
+
+            Address addr = new Address();
+            addr.setAlamat(cursor.getString(16));
+            addr.setCity(new City(cursor.getString(20), cursor.getString(20)));
+            addr.setLocation(new LatLng(cursor.getDouble(14), cursor.getDouble(15)));
+            addr.setRt(cursor.getString(16));
+            addr.setRw(cursor.getString(17));
+            addr.setDusun(cursor.getString(18));
+            addr.setDesa(cursor.getString(20));
+            addr.setKecamatan(cursor.getString(21));
+            addr.setKabupaten(cursor.getString(22));
+            addr.setPropinsi(cursor.getString(23));
+            addr.setNegara(cursor.getString(24));
+            addr.setNotes(cursor.getString(26));
+            r.setAddress(addr);
+
+            result.add(r);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
+        Log.d(TAG, "Fetching Recipient from Sqlite: ");
+        return result;
+    }
+
+    public TUser toTUser(HashMap<String, String> params) {
+        TUser user = null;
+        if(params != null && params.size() > 0){
+            user = new TUser();
+            user.setFirstname(params.get(KEY_FIRSTNAME));
+            user.setLastname(params.get(KEY_LASTNAME));
+            user.setEmail(params.get(KEY_EMAIL));
+            user.setPhone(params.get(KEY_PHONE));
+            user.setRole(params.get(KEY_ROLE));
+            user.setGender(params.get(KEY_GENDER));
+            Address addr = new Address();
+            addr.setAlamat(params.get(KEY_CITY));
+            addr.setCity(new City(params.get(KEY_CITY), params.get(KEY_CITYTEXT)));
+            user.setAddress(addr);
+        }
+        return user;
+    }
 }

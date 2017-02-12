@@ -26,13 +26,13 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.adapter.CartViewAdapter;
 import id.co.kurindo.kurindo.adapter.RecipientViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.app.Constant;
 import id.co.kurindo.kurindo.helper.CheckoutHelper;
 import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.ShippingCost;
+import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 /**
  * Created by DwiM on 12/5/2016.

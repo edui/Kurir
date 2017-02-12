@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -40,7 +39,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.adapter.CityAdapter;
 import id.co.kurindo.kurindo.adapter.RecipientAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
@@ -49,6 +48,7 @@ import id.co.kurindo.kurindo.helper.CheckoutHelper;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Recipient;
+import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 import id.co.kurindo.kurindo.wizard.OnNavigationBarListener;
 
 /**

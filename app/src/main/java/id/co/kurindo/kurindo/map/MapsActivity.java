@@ -2,6 +2,7 @@ package id.co.kurindo.kurindo.map;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,9 +23,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,18 +74,24 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.adapter.TUserAdapter;
+import id.co.kurindo.kurindo.base.KurindoActivity;
+import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
 import id.co.kurindo.kurindo.adapter.PaymentAdapter;
-import id.co.kurindo.kurindo.adapter.PlaceArrayAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseActivity;
+import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
 import id.co.kurindo.kurindo.model.Address;
+import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.Payment;
 import id.co.kurindo.kurindo.model.Route;
+import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class MapsActivity extends BaseActivity implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class MapsActivity extends KurindoActivity implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -115,6 +124,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION= 3;
 
     private static final LatLngBounds BOUNDS_ID = new LatLngBounds(new LatLng(-0, 0), new LatLng(0, 0));
+
+    @Bind(R.id.iconOrigin)
+    ImageView ivIconOrigin;
+    @Bind(R.id.iconDestination)
+    ImageView ivIconDestination;
+    TUserAdapter tUserAdapter;
+    ArrayList<TUser> data = new ArrayList<>();
 
     @Bind(R.id.tvOrigin)
     TextView tvOrigin;
@@ -162,8 +178,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     PlaceArrayAdapter mPlaceArrayAdapter;
 
     Route route;
-    Address origin = new Address();
-    Address destination = new Address();
+    TUser origin = new TUser();
+    TUser destination = new TUser();
     Location mLastLocation;
     Marker originMarker;
     Marker destinationMarker;
@@ -180,6 +196,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     RadioGroup rgDoType;
     String doType = AppConfig.KEY_DOJEK;
     String serviceCode = AppConfig.PACKET_SDS;
+    double price = 0;
+
+    @Bind(R.id.input_service_code)
+    Spinner _serviceCodeText;
+    PacketServiceAdapter packetServiceAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,6 +208,29 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
 
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            int type= bundle.getInt("do_type");
+                switch (type){
+                    case R.drawable.do_send_icon:
+                        doType = AppConfig.KEY_DOSEND;
+                        rgDoType.check(R.id.radio_dosend);
+                        break;
+                    case R.drawable.do_jek_icon:
+                        doType = AppConfig.KEY_DOJEK;
+                        rgDoType.check(R.id.radio_dojek);
+                        break;
+                    case R.drawable.do_move_icon:
+                        doType = AppConfig.KEY_DOMOVE;
+                        rgDoType.check(R.id.radio_domove);
+                        break;
+                }
+        }
+
+        if(OrderViaMapHelper.getInstance().getPacket() != null && OrderViaMapHelper.getInstance().getPacket().getOrigin() != null){
+            origin = OrderViaMapHelper.getInstance().getPacket().getOrigin();
+            destination = OrderViaMapHelper.getInstance().getPacket().getDestination();
+        }
         mContext = this;
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -194,6 +238,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         buildGoogleApiClient();
 
         showAddressLayout();
+
+        tUserAdapter = new TUserAdapter(this, data);
 
         mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1, BOUNDS_ID, null);
         mOriginAutoCompleteTextView.setAdapter(mPlaceArrayAdapter);
@@ -215,13 +261,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         paymentAdapter = new PaymentAdapter(this, getPaymentData(), new PaymentAdapter.OnItemClickListener() {
             @Override
             public void onActionButtonClick(View view, int position) {
-                Payment payment = paymentAdapter.getItem(position);
-                if(payment.getAction().equalsIgnoreCase(AppConfig.ISI_SALDO)){
+                Payment p = paymentAdapter.getItem(position);
+                if(p.getAction().equalsIgnoreCase(AppConfig.ISI_SALDO)){
                     Toast.makeText(getApplicationContext(), "TODO : "+AppConfig.ISI_SALDO, LENGTH_SHORT).show();
                 }
             }
         });
         paymentAdapter.selected(1);
+        payment = paymentAdapter.getItem(1);
         rvPayment.setAdapter(paymentAdapter);
         rvPayment.setLayoutManager(new GridLayoutManager(this, 1){
             @Override
@@ -238,7 +285,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     Toast.makeText(getApplicationContext(), "Saldo tidak mencukupi. Silahkan isi ulang saldo anda.", LENGTH_SHORT).show();
                     position = paymentAdapter.getSelectedPosition();
                 }
-                paymentAdapter .selected(position);
+                paymentAdapter.selected(position);
                 payment = paymentAdapter.getItem(position);
             }
         }));
@@ -257,10 +304,26 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                          doType = AppConfig.KEY_DOMOVE;
                          break;
                  }
+                 if(canDrawRoute()) requestprice();
              }
          });
 
-         mResultReceiver = new AddressResultReceiver(new Handler());
+        packetServiceAdapter = new PacketServiceAdapter(this, AppConfig.getPacketServiceList(), 1);
+        _serviceCodeText.setAdapter(packetServiceAdapter);
+        _serviceCodeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                serviceCode = ((PacketService) parent.getItemAtPosition(position)).getCode();
+                if(canDrawRoute()) requestprice();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        mResultReceiver = new AddressResultReceiver(new Handler());
 
         if (checkPlayServices()) {
             // If this check succeeds, proceed with normal processing.
@@ -319,17 +382,19 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             String address = place.getAddress().toString();
             if(originMode){
                 tvOrigin.setText(address);
-                origin.setAlamat(name);
-                origin.setFormattedAddress(address);
-                origin.setLocation( place.getLatLng());
-                if(destination.getLocation() != null) originMode = false;
+                Address addr = origin.getAddress();
+                addr.setAlamat(name);
+                addr.setFormattedAddress(address);
+                addr.setLocation( place.getLatLng());
+                if(destination.getAddress().getLocation() != null) originMode = false;
             }
             if(destinationMode){
                 tvDestination.setText(address);
-                destination.setAlamat(name);
-                destination.setFormattedAddress(address);
-                destination.setLocation( place.getLatLng() );
-                if(origin.getLocation() != null) destinationMode = false;
+                Address addr = destination.getAddress();
+                addr.setAlamat(name);
+                addr.setFormattedAddress(address);
+                addr.setLocation( place.getLatLng() );
+                if(origin.getAddress().getLocation() != null) destinationMode = false;
             }
             showAddressLayout();
             refreshMap();
@@ -338,7 +403,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     };
 
     private boolean canDrawRoute() {
-        return (origin.getLocation() != null && destination.getLocation() != null);
+        return (origin.getAddress().getLocation() != null && destination.getAddress().getLocation() != null);
     }
 
     @Override
@@ -347,19 +412,28 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         return super.onSupportNavigateUp();
     }
 
+    private void resetAll() {
+        route = null;
+
+        origin = new TUser();
+        destination = new TUser();
+        OrderViaMapHelper.getInstance().clearAll();
+    }
+
     public boolean handleBackPressed(){
         if(originMode){
             originMode = false;
             showAddressLayout();
-            moveCameraToLocation(origin.getLocation());
+            if(origin != null && origin.getAddress().getLocation() != null)
+                moveCameraToLocation(origin.getAddress().getLocation());
             showMap();
             return true;
         }
         if(destinationMode){
             destinationMode = false;
             showAddressLayout();
-            if(destination.getLocation() == null) moveCameraToLocation(origin.getLocation());
-            else moveCameraToLocation(destination.getLocation());
+            if(destination.getAddress().getLocation() == null) moveCameraToLocation(origin.getAddress().getLocation());
+            else moveCameraToLocation(destination.getAddress().getLocation());
             showMap();
 
             return true;
@@ -368,21 +442,32 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             resetDestination();
             showMap();
             showAddressLayout();
-            moveCameraToLocation(origin.getLocation());
+            moveCameraToLocation(origin.getAddress().getLocation());
             return true;
         }
+        resetAll();
         return false;
     }
 
     @Override
     public void onBackPressed() {
-        if(!handleBackPressed()) super.onBackPressed();
+        if(!handleBackPressed()) {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 
     private void resetDestination(){
-        destination = new Address();
+        destination = new TUser();
         route = null;
         tvDestination.setText("Set Tujuan Anda");
+        etDestinationNotes.setText("");
+        etDestinationNotes.setVisibility(View.GONE);
         destinationMode = false;
         buttonAddOrder.setVisibility(View.GONE);
     }
@@ -423,13 +508,33 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         return  ab;
     }
 
+    @Override
+    public Bundle getBundleParams() {
+        return null;
+    }
+
+    @OnClick(R.id.iconOrigin)
+    public void onClick_IconOrigin(){
+        originMode = true;
+        destinationMode = !originMode;
+        showPopupWindow("Daftar Lokasi", R.drawable.origin_pin);
+
+    }
+    @OnClick(R.id.iconDestination)
+    public void onClick_IconDestination(){
+        destinationMode = true;
+        originMode = !destinationMode;
+        showPopupWindow("Daftar Lokasi", R.drawable.destination_pin);
+
+    }
+
     @OnClick(R.id.locationMarkertext)
     public void onClick_mLocationMarkerText(){
         if(destinationMode){
-            destination.setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+            destination.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
             //tvDestination.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
         }else {
-            origin.setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+            origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
             //tvOrigin.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
         }
         requestAddress(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
@@ -441,7 +546,21 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         //startIntentService(mLastLocation);
 
     }
-
+    @OnClick(R.id.ButtonAddOrder)
+    public void onClick_buttonAddOrder(){
+        String onotes = etOriginNotes.getText().toString();
+        String dnotes = etDestinationNotes.getText().toString();
+        origin.getAddress().setNotes(onotes);
+        destination.getAddress().setNotes(dnotes);
+        if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
+            OrderViaMapHelper.getInstance().setRoute(origin, destination);
+            OrderViaMapHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, route.getDistance().getValue(), price);
+            showActivity( DoSendOrderActivity.class );
+            finish();
+        }else{
+            Toast.makeText(getApplicationContext(), "Not Available", LENGTH_SHORT).show();
+        }
+    }
 
     private void showMap() {
         reDrawMarker();
@@ -487,26 +606,26 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                         Address address = parser.parseAddress(jObj);
                         if(originMode){
                             tvOrigin.setText(address.getFormattedAddress());
-                            address.setLocation(origin.getLocation());
-                            origin = address;
+                            address.setLocation(origin.getAddress().getLocation());
+                            origin.setAddress(  address );
                             //origin = address.getLocation();
-                            if(destination.getLocation() != null) originMode= false;
+                            if(destination.getAddress().getLocation() != null) originMode= false;
                             //originMode= false;
                         }else if(destinationMode){
                             tvDestination.setText(address.getFormattedAddress());
-                            address.setLocation(destination.getLocation());
-                            destination = address;
+                            address.setLocation(destination.getAddress().getLocation());
+                            destination.setAddress( address );
                             //destination = address.getLocation();
-                            if(origin.getLocation() != null) destinationMode = false;
+                            if(origin.getAddress().getLocation() != null) destinationMode = false;
                             //destinationMode= false;
                         }
                     }
                 }catch (Exception e){
                     e.printStackTrace();
                     if(originMode){
-                        if(destination.getLocation() != null) originMode= false;
+                        if(destination.getAddress().getLocation() != null) originMode= false;
                     }else if(destinationMode){
-                        if(origin.getLocation() != null) destinationMode = false;
+                        if(origin.getAddress().getLocation() != null) destinationMode = false;
                     }
                 }
                 refreshMap();
@@ -516,18 +635,20 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
                 if(originMode){
-                    if(destination.getLocation() != null) originMode= false;
+                    if(destination.getAddress().getLocation() != null) originMode= false;
                 }else if(destinationMode){
-                    if(origin.getLocation() != null) destinationMode = false;
+                    if(origin.getAddress().getLocation() != null) destinationMode = false;
                 }
             }
         }, null, null);
     }
     private void drawRoute() {
         if(route != null){
-            DataParser parser = new DataParser();
+            OrderViaMapHelper.getInstance().setRoute(origin, destination);
 
-            originMarker.setSnippet("Est. Distance :"+ route.getDistance().getText());
+            DataParser parser = new DataParser();
+            String snippet = originMarker.getSnippet();
+            originMarker.setSnippet(snippet + "\nEst. Distance :"+ route.getDistance().getText());
             PolylineOptions lineOptions = parser.drawRoutes(route.getRoutes());
 
             // Drawing polyline in the Google Map for the i-th route
@@ -540,8 +661,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 for (int i = 0; i < points.size(); i++) {
                     builder.include(points.get(i));
                 }*/
-                builder.include(origin.getLocation());
-                if(destination.getLocation() != null) builder.include(destination.getLocation());
+                builder.include(origin.getAddress().getLocation());
+                if(destination.getAddress().getLocation() != null) builder.include(destination.getAddress().getLocation());
 
                 LatLngBounds bounds = builder.build();
 
@@ -556,14 +677,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 Log.d("drawRoutes","without Polylines drawn");
             }
         }
-        if(canDrawRoute()) {
+        if(canDrawRoute() && route != null) {
             Location lo = new Location("Origin");
-            lo.setLatitude(origin.getLocation().latitude);
-            lo.setLongitude(origin.getLocation().longitude);
+            lo.setLatitude(origin.getAddress().getLocation().latitude);
+            lo.setLongitude(origin.getAddress().getLocation().longitude);
 
             Location ld = new Location("Destination");
-            ld.setLatitude(destination.getLocation().latitude);
-            ld.setLongitude(destination.getLocation().longitude);
+            ld.setLatitude(destination.getAddress().getLocation().latitude);
+            ld.setLongitude(destination.getAddress().getLocation().longitude);
 
             tvDistanceInfo.setText("Harga ( "+route.getDistance().getText()+" ) : ");
             //tvPriceInfo.setText("");
@@ -582,7 +703,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         if(canDrawRoute()){
 
-            String url = MapUtils.getDirectionUrl(origin.getLocation(), destination.getLocation());
+            String url = MapUtils.getDirectionUrl(origin.getAddress().getLocation(), destination.getAddress().getLocation());
             addRequest("request_direction_route", Request.Method.GET, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -603,6 +724,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
+                    Log.e(TAG, "request_direction_route Error: " + volleyError.getMessage());
                     volleyError.printStackTrace();
                 }
             }, null, null);
@@ -612,9 +734,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     private void requestprice() {
         HashMap<String, String> params = new HashMap();
-        params.put("distance", route.getDistance().getValue());
-        params.put("origin", origin.getKecamatan());
-        params.put("destination", destination.getKecamatan());
+        params.put("distance", (route ==null || route.getDistance()==null? "1" : route.getDistance().getValue()));
+        params.put("origin", origin.getAddress().getKecamatan());//TODO json origin
+        params.put("destination", destination.getAddress().getKecamatan()); //TODO json destination
         params.put("service_code", serviceCode);
         params.put("do_type", doType);
         params.put("berat_kiriman", "1");
@@ -629,6 +751,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
                     if(OK){
                         double tariff = jObj.getDouble("tarif");
+                        price = tariff;
                         tvPriceInfo.setText(AppConfig.formatCurrency(tariff));
                     }
                 }catch (Exception e){
@@ -645,7 +768,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void requestDistance() {
-        String url = MapUtils.getDistancematrixUrl(origin.getLocation(), destination.getLocation());
+        String url = MapUtils.getDistancematrixUrl(origin.getAddress().getLocation(), destination.getAddress().getLocation());
         addRequest("request_distance_route", Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -707,11 +830,25 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     public void reDrawMarker(){
         mMap.clear();
-        if(destination.getLocation() != null){
-            destinationMarker = mMap.addMarker(new MarkerOptions().position(destination.getLocation()).title("Destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.destination_pin)));
+        if(destination != null && destination.getAddress() != null && destination.getAddress().getLocation() != null){
+            String title = "Destination";
+            String snippet = (destination.getName() != null ? destination.toStringFormatted() : "");
+            destinationMarker = mMap.addMarker(
+                    new MarkerOptions()
+                            .position(destination.getAddress().getLocation())
+                            .title(title)
+                            .snippet(snippet)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.destination_pin)));
         }
-        if(origin.getLocation() != null){
-            originMarker = mMap.addMarker(new MarkerOptions().position(origin.getLocation()).title("Origin").icon(BitmapDescriptorFactory.fromResource(R.drawable.origin_pin)));
+        if(origin != null && origin.getAddress() != null && origin.getAddress().getLocation() != null){
+            String title = "Origin";
+            String snippet = (origin.getName() != null ? origin.toStringFormatted() : "");
+            originMarker = mMap.addMarker(
+                    new MarkerOptions()
+                            .position(origin.getAddress().getLocation())
+                            .title(title)
+                            .snippet(snippet)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.origin_pin)));
         }
 
     }
@@ -727,7 +864,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         locationMarkerLayout.setVisibility(View.VISIBLE);
         mOriginAutoCompleteTextView.setVisibility(originMode ? View.VISIBLE : View.GONE);
         mOriginAutoCompleteTextView.setText("");
-        if(origin.getLocation() != null) moveCameraToLocation(origin.getLocation());
+        if(origin.getAddress().getLocation() != null) moveCameraToLocation(origin.getAddress().getLocation());
         changeMarkerIcon();
         hidepanel(true);
     }
@@ -742,7 +879,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         locationMarkerLayout.setVisibility(View.VISIBLE);
         mDestinationAutoCompleteTextView.setVisibility(destinationMode ? View.VISIBLE : View.GONE);
         mDestinationAutoCompleteTextView.setText("");
-        if(destination.getLocation()!= null) moveCameraToLocation(destination.getLocation());
+        if(destination.getAddress().getLocation()!= null) moveCameraToLocation(destination.getAddress().getLocation());
         changeMarkerIcon();
         hidepanel(true);
     }
@@ -835,9 +972,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             if(canDrawRoute()) {
                 drawRoute();
             }else{
-                if(origin.getLocation() == null) {
-                    origin.setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
-                    requestAddress(origin.getLocation());
+                if(origin.getAddress().getLocation() == null) {
+                    origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+                    requestAddress(origin.getAddress().getLocation());
                 }
                 changeMap(mLastLocation);
             }
@@ -995,6 +1132,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         return true;
     }
 
+    @Override
+    public Class getFragmentClass() {
+        return null;
+    }
+
     /**
      * Receiver for data sent from FetchAddressIntentService.
      */
@@ -1129,4 +1271,70 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
 
+    protected void showPopupWindow(String title, int imageResourceId) {
+        data.clear();
+        data.addAll(db.getAddressList());
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(this);
+        // Include dialog.xml file
+        dialog.setContentView(R.layout.popup_list);
+        // Set dialog title
+        dialog.setTitle("Popup Dialog");
+
+        RecyclerView list = (RecyclerView) dialog.findViewById(R.id.popupList);
+        list.setLayoutManager(new GridLayoutManager(this, 1));
+        list.setHasFixedSize(true);
+        list.setAdapter(tUserAdapter);
+        list.addOnItemTouchListener(new RecyclerItemClickListener(getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                TUser p = data.get(position);
+                showAddressLayout();
+                if(originMode){
+                    origin = p;
+                    tvOrigin.setText(p.getAddress().toStringFormatted());
+                    if(p.getAddress().getNotes() != null && !p.getAddress().getNotes().isEmpty()) {
+                        etOriginNotes.setText(p.getAddress().getNotes());
+                        etOriginNotes.setVisibility(View.VISIBLE);
+                    }
+                    originMode = false;
+                }
+                if(destinationMode){
+                    destination = p;
+                    tvDestination.setText(p.getAddress().toStringFormatted());
+                    if(p.getAddress().getNotes() != null && !p.getAddress().getNotes().isEmpty()) {
+                        etDestinationNotes.setText(p.getAddress().getNotes());
+                        etDestinationNotes.setVisibility(View.VISIBLE);
+                    }
+                    destinationMode = false;
+                }
+                dialog.dismiss();
+                refreshMap();
+            }
+        }));
+
+        // set values for custom dialog components - text, image and button
+        //TextView text = (TextView) dialog.findViewById(R.id.textDialog);
+        //text.setText(content);
+        ImageView image = (ImageView) dialog.findViewById(R.id.imageDialog);
+        if(imageResourceId == 0) imageResourceId  = R.drawable.icon_syarat_ketentuan;
+        image.setImageResource(imageResourceId);
+        TextView textTitleDialog = (TextView) dialog.findViewById(R.id.textTitleDialog);
+        if(title != null) textTitleDialog.setText(title);
+
+        dialog.show();
+
+        ImageButton declineButton = (ImageButton) dialog.findViewById(R.id.btncancelcat);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+                destinationMode = false;
+                originMode = false;
+            }
+        });
+    }
 }

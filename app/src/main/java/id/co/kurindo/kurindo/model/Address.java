@@ -27,6 +27,7 @@ public class Address implements Parcelable{
     private String kodepos;
     private LatLng location;
     private String formattedAddress;
+    private String notes;
 
     private City city; //code
 
@@ -44,6 +45,7 @@ public class Address implements Parcelable{
         propinsi= in.readString();
         negara= in.readString();
         kodepos= in.readString();
+        notes = in.readString();
         location = in.readParcelable(Location.class.getClassLoader());
         city= in.readParcelable(City.class.getClassLoader());
     }
@@ -164,6 +166,14 @@ public class Address implements Parcelable{
         this.formattedAddress = formattedAddress;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public Map<String, String> getAsParams(String suffix){
         Map<String, String> params = new HashMap<String, String>();
         params.put("alamat"+suffix, alamat);
@@ -176,6 +186,7 @@ public class Address implements Parcelable{
         params.put("propinsi"+suffix, propinsi);
         params.put("negara"+suffix, negara);
         params.put("kodepos"+suffix, kodepos);
+        params.put("notes"+suffix, notes);
         params.put("kota"+suffix, (city != null? city.getCode(): ""));
         params.put("kotaText"+suffix, (city != null? city.getText(): ""));
         params.put("lokasi"+suffix, (location != null? location.latitude+","+location.longitude : ""));
@@ -214,6 +225,7 @@ public class Address implements Parcelable{
         dest.writeString(propinsi);
         dest.writeString(negara);
         dest.writeString(kodepos);
+        dest.writeString(notes);
         dest.writeParcelable(location, flags);
         dest.writeParcelable(city, flags);
     }
@@ -221,7 +233,12 @@ public class Address implements Parcelable{
     public String toStringFormatted() {
         String formatted = "";
         formatted += alamat;
-        formatted += "\n"+city;
+        if(desa != null) formatted += ", "+desa;
+        if(kecamatan!= null) formatted += ", "+kecamatan;
+        if(kabupaten!= null) formatted += ", "+kabupaten;
+        if(propinsi != null) formatted += ", "+propinsi;
+        if(negara!= null) formatted += ", "+negara;
+        if(notes!= null) formatted += "\n"+notes;
         return formatted;
     }
 }

@@ -10,16 +10,16 @@
         <TextView
             android:id="@+id/tvPageTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:padding="5dp"
-            android:gravity="center" android:layout_marginBottom="5dp"
-            android:textSize="13pt" android:text="Detail Order"/>
+            android:layout_height="wrap_content" android:padding="3dp"
+            android:gravity="center" android:layout_marginBottom="3dp"
+            android:textSize="16dp" android:text="Detail Order"/>
 
         <TextView
             android:id="@+id/tvAwbTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:padding="5dp"
-            android:gravity="center" android:layout_marginBottom="5dp"
-            android:textSize="15sp" android:text="AWB" android:visibility="gone"/>
+            android:layout_height="wrap_content" android:padding="3dp"
+            android:gravity="center" android:layout_marginBottom="3dp"
+            android:textSize="14dp" android:text="AWB" android:visibility="gone"/>
     </LinearLayout>
 
     <android.support.v7.widget.LinearLayoutCompat

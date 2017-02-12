@@ -40,8 +40,10 @@ public class MonitorOrderTabFragment extends BaseTabFragment {
         public Fragment getItem(int position)
         {
             switch (position){
-                case 0 : return MyOrderFragment.newInstance("inprogress");
-                case 1 : return MyOrderFragment.newInstance("completed");
+                //case 0 : return MyOrderFragment.newInstance("inprogress");
+                //case 1 : return MyOrderFragment.newInstance("completed");
+                case 0 : return MyTOrderFragment.newInstance("inprogress");
+                case 1 : return MyTOrderFragment.newInstance("completed");
             }
             return null;
         }

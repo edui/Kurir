@@ -31,6 +31,7 @@ import id.co.kurindo.kurindo.adapter.PacketAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseFragment;
+import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.model.Packet;
 
 /**

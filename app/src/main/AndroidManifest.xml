@@ -236,10 +236,29 @@
         <activity
             android:name=".map.MapsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"/>
 
+        <activity
+            android:name=".wizard.dosend.DoSendOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".TOrderShowActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.dosend.AcceptTOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.dosend.RejectTOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".map.MapViewsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
-        </activity>
     </application>
 
 </manifest>

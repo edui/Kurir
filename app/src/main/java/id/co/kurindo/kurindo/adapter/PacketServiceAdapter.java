@@ -30,10 +30,15 @@ public class PacketServiceAdapter extends BaseAdapter {
     Context context;
     List<PacketService> data = new ArrayList<>();
     private String[] bgColors;
+    private int size;
 
     public PacketServiceAdapter(Context context, List<PacketService> data) {
+        this(context, data, 10);
+    }
+    public PacketServiceAdapter(Context context, List<PacketService> data, int size) {
         this.context = context;
         this.data = data;
+        this.size = size;
         bgColors = context.getResources().getStringArray(R.array.list_bg);
     }
 
@@ -54,7 +59,9 @@ public class PacketServiceAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_packet_service, parent, false);
+        int layout = R.layout.list_item_packet_service;
+        if(size == 1) layout = R.layout.list_item_packet_service_small;
+        View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         ImageView ivCode = (ImageView) v.findViewById( R.id.iv_service_code);
         //TextView code = (TextView) v.findViewById(R.id.service_code);
         TextView text = (TextView) v.findViewById(R.id.service_text);

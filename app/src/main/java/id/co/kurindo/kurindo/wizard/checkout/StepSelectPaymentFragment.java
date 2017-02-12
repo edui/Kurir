@@ -13,6 +13,7 @@ import com.stepstone.stepper.VerificationError;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.helper.CheckoutHelper;
+import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 
 /**

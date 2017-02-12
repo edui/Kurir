@@ -29,6 +29,7 @@ public class Product implements Saleable, Parcelable{
     private ArrayList images;
     private int shopid = 1;
     private String notes="";
+    private String unit="pcs";
 
     public Product() {
         super();
@@ -83,6 +84,7 @@ public class Product implements Saleable, Parcelable{
         drawable = in.readInt();
         shopid = in.readInt();
         notes= in.readString();
+        unit= in.readString();
         description = in.readString();
     }
 
@@ -256,6 +258,14 @@ public class Product implements Saleable, Parcelable{
         this.notes = orderNotes;
     }
 
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
     ///*
     @Override
     public int describeContents() {
@@ -279,6 +289,7 @@ public class Product implements Saleable, Parcelable{
         dest.writeInt(drawable);
         dest.writeInt(shopid);
         dest.writeString(notes);
+        dest.writeString(unit);
         dest.writeString(description);
     }
     //*/

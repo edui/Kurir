@@ -1,4 +1,4 @@
-package id.co.kurindo.kurindo.wizard.checkout;
+package id.co.kurindo.kurindo.wizard;
 
 import android.content.DialogInterface;
 import android.os.Bundle;

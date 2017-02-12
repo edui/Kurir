@@ -19,6 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -194,4 +195,15 @@ public class BaseFragment extends Fragment {
         };
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
+    public Map<String,String> getKurindoHeaders() {
+        Map<String, String> headers = null;
+        String api = db.getUserApi();
+        if(api != null && !api.isEmpty()){
+            headers = new HashMap<>();
+            headers.put("Api", api);
+        }
+        return headers;
+    }
+
 }

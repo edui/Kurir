@@ -33,6 +33,7 @@ import id.co.kurindo.kurindo.app.AppController;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected Toolbar actionBarToolbar;
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

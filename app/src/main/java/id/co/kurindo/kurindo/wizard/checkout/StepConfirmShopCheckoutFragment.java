@@ -59,6 +59,7 @@ import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.ShippingCost;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.util.DummyContent;
+import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 
 /**

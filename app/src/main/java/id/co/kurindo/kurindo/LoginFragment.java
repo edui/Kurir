@@ -499,6 +499,7 @@ public class LoginFragment extends BaseFragment {
                             //db.onCreateTableRecipient(db.getWritableDatabase());
                             db.onUpgradeTableRecipient(db.getWritableDatabase(),0,1);
 
+                            db.onUpgradeUserAddress(db.getWritableDatabase(), 0, 1);
                             //db.activatedUsers(email);
 
                             // Now store the user in SQLite
@@ -641,10 +642,13 @@ public class LoginFragment extends BaseFragment {
                     // Check for error node in json
                     if (!error) {
 
+                        //TODO: Remove sqllite table user to user_address
                         // user successfully logged in
                         db.onUpgrade(db.getWritableDatabase(), 0, 1);
                         //db.onCreateTableRecipient(db.getWritableDatabase());
                         db.onUpgradeTableRecipient(db.getWritableDatabase(),0,1);
+
+                        db.onUpgradeUserAddress(db.getWritableDatabase(), 0, 1);
 
                         // Now store the user in SQLite
                         String uid = jObj.getString("user");

@@ -62,6 +62,7 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseFragment;
+import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Packet;
@@ -166,7 +167,7 @@ public class PacketOrderFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         session = new SessionManager(getContext());
         if(!session.isLoggedIn()){
-            ((BaseActivity)getActivity()).showActivity(LoginActivity1.class);
+            ((BaseActivity)getActivity()).showActivity(LoginActivity.class);
             getActivity().finish();
             return ;
         }
@@ -222,7 +223,7 @@ public class PacketOrderFragment extends BaseFragment {
                 final Handler handler = new Handler() {
                     @Override
                     public void handleMessage(Message mesg) {
-                        throw new RuntimeException();
+                        //throw new RuntimeException();
                     }
                 };
 
@@ -853,16 +854,7 @@ public class PacketOrderFragment extends BaseFragment {
 
     public List<PacketService> getPacketServiceList() {
         if(packetServiceList ==null){
-            packetServiceList = new ArrayList<>();
-            PacketService service2 = new PacketService("NDS", "Next Day Service", "Kiriman Ekonomis untuk Esok hari");
-            packetServiceList.add(service2);
-
-            PacketService service = new PacketService("SDS", "Same Day Service", "Kiriman Express (hari yang sama)");
-            packetServiceList.add(service);
-
-            PacketService service3 = new PacketService("ENS", "Extra Night Service", "Kiriman Express setelah jam 6 malam");
-            packetServiceList.add(service3);
-
+            packetServiceList = AppConfig.getPacketServiceList();
         }
         return packetServiceList;
     }

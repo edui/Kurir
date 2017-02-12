@@ -52,13 +52,13 @@ public class PaymentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         Payment payment = data.get(position);
         ((MyItemHolder) holder).titleText.setText( payment.getText() );
-        if(payment.getDescription() == null) {
+        if(payment.getDescription() == null || payment.getDescription().isEmpty()) {
             ((MyItemHolder) holder).descriptionText.setVisibility(View.GONE);
         }else{
             ((MyItemHolder) holder).descriptionText.setVisibility(View.VISIBLE);
             ((MyItemHolder) holder).descriptionText.setText( payment.getDescription() );
         }
-        if(payment.getAction() == null){
+        if(payment.getAction() == null || payment.getAction().isEmpty()){
             ((MyItemHolder) holder).actionText.setVisibility(View.GONE);
         }else{
             ((MyItemHolder) holder).actionText.setVisibility(View.VISIBLE);
