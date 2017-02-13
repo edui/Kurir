@@ -25,6 +25,9 @@ import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import butterknife.Bind;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseFragment;
+import id.co.kurindo.kurindo.helper.DoShopHelper;
+import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
+import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.util.DummyContent;
@@ -61,11 +64,15 @@ public class ProductFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /*
         product = getArguments().getParcelable("product");
         try {
             shop = getArguments().getParcelable("shop");
         }catch (Exception e){}
+        */
+        product = ViewHelper.getInstance().getProduct();
+        shop = ViewHelper.getInstance().getShop();
+
         if(shop == null){
             String shopid = getArguments().getString("shopid");
             shop = DummyContent.SHOP_MAP.get(shopid);
@@ -117,6 +124,7 @@ public class ProductFragment extends BaseFragment {
                 //cart.add(product, Integer.valueOf(spQuantity.getSelectedItem().toString()));
                 cart.add(product, Integer.parseInt(quantityStr.getText().toString()));
                 //Intent intent = new Intent(getActivity(), CartDrawerActivity.class);
+                DoShopHelper.getInstance().addShop(shop);
                 Intent intent = new Intent(getActivity(), ShoppingCartActivity.class);
                 startActivity(intent);
             }

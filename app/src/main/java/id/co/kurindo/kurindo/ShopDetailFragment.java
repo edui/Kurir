@@ -29,6 +29,7 @@ import id.co.kurindo.kurindo.adapter.ProductGridAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
@@ -94,7 +95,9 @@ public class ShopDetailFragment extends BaseFragment {
             shop = DummyContent.shop;
         }
         if(shop == null){
-            shop = getArguments().getParcelable("shop");
+            shop = ViewHelper.getInstance().getShop();
+            //shop = getArguments().getParcelable("shop");
+
             //shop = (Shop) getArguments().getSerializable("shop");
             //products = DummyContent.PRODUCT_MAP.get(shop.getId());
             //shop.setProducts(products);
@@ -185,8 +188,9 @@ public class ShopDetailFragment extends BaseFragment {
                         Product p = products.get(position);
                         //DummyContent.product = p;
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable("product",p);
-                        bundle.putParcelable("shop",shop);
+                        //bundle.putParcelable("product",p);
+                        //bundle.putParcelable("shop",shop);
+                        ViewHelper.getInstance().setProduct(p);
                         ((ShopActivity)getActivity()).showActivity(ProductActivity.class, bundle);
                     }
                 }));

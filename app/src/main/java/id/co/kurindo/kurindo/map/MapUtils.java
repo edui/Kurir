@@ -7,6 +7,8 @@ import android.text.TextUtils;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Set;
+
 
 public class MapUtils {
     private static String distancematrix = "https://maps.googleapis.com/maps/api/distancematrix/json?";
@@ -36,6 +38,17 @@ public class MapUtils {
         String originsStr = "origin="+origin.latitude+","+origin.longitude;
         String destinationStr = "&destination="+destination.latitude+","+destination.longitude;
         return direction + originsStr + destinationStr;
+    }
+    public static String getDirectionUrl(LatLng origin, LatLng destination, Set<LatLng> waypoints) {
+        String originsStr = "origin="+origin.latitude+","+origin.longitude;
+        String destinationStr = "&destination="+destination.latitude+","+destination.longitude;
+        String waypointStr = "&waypoints=optimize:true";
+
+        for (LatLng point : waypoints){
+            waypointStr +="|";
+            waypointStr += point.latitude+","+point.longitude;
+        }
+        return direction + originsStr + destinationStr + waypointStr;
     }
     public static String getGeocodeUrl(LatLng latlng) {
         String latlngStr = "latlng="+latlng.latitude+","+latlng.longitude;

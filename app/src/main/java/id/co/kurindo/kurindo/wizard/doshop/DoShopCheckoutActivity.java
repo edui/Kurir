@@ -14,29 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package id.co.kurindo.kurindo.wizard;
+package id.co.kurindo.kurindo.wizard.doshop;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.android.tonyvu.sc.util.CartHelper;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.helper.OrderHelper;
-import id.co.kurindo.kurindo.wizard.checkout.StepSelectRecipientFragment;
-import id.co.kurindo.kurindo.wizard.checkout.StepSelectPaymentFragment;
+import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 import id.co.kurindo.kurindo.wizard.checkout.StepConfirmShopCheckoutFragment;
+import id.co.kurindo.kurindo.wizard.checkout.StepSelectPaymentFragment;
+import id.co.kurindo.kurindo.wizard.checkout.StepSelectRecipientFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepSummaryFragment;
-import id.co.kurindo.kurindo.wizard.doshop.StepPinLocationMapFragment;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
-public class ShopCheckoutActivity extends AbstractStepperActivity {
+public class DoShopCheckoutActivity extends AbstractStepperActivity {
     private static final String TAG = "ShopCheckoutActivity";
     int step = -1;
     @Override
@@ -53,16 +50,13 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
     @Override
     public void onStepSelected(int newStepPosition) {
         //Toast.makeText(this, "onStepSelected! -> " + newStepPosition, Toast.LENGTH_SHORT).show();
-        if(newStepPosition == 2){
+        if(newStepPosition == 1){
             mNextNavigationButton.setText("Confirm Order");
             mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_spesial_button_background));
         }else{
             mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_default_button_background));
         }
 
-        if(newStepPosition == 3){
-            mBackNavigationButton.setVisibility(View.GONE);
-        }
         step = newStepPosition;
     }
 
@@ -87,13 +81,9 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return new StepSelectRecipientFragment();
+                    return StepPinLocationMapFragment.newInstance();
                 case 1:
-                    return new StepSelectPaymentFragment();
-                case 2:
-                    return new StepConfirmShopCheckoutFragment();
-                case 3:
-                    return new StepSummaryFragment();
+                    return new DoShopFormFragment();
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }
@@ -101,13 +91,13 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 2;
         }
     }
 
     @Override
     public void onBackPressed() {
-        /*Log.d(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
+        Log.d(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
         Fragment f = getStepperAdapter().getItem(step);
         if(f != null){
             if(f instanceof StepPinLocationMapFragment){
@@ -118,9 +108,7 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
             }else{
                 super.onBackPressed();
             }
-        }*/
-
-        super.onBackPressed();
+        }
 
         /*
         if (getSupportFragmentManager().getBackStackEntryCount() != 0) {

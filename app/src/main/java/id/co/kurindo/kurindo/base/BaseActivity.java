@@ -1,5 +1,6 @@
 package id.co.kurindo.kurindo.base;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -154,6 +155,26 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         };
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    protected void showErrorDialog(String title, String message){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getApplicationContext());
+
+        // set title
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder
+                .setMessage(message)
+                .setCancelable(true)
+                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
     }
 }
 

@@ -9,13 +9,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -67,9 +69,12 @@ import com.stepstone.stepper.VerificationError;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -79,7 +84,7 @@ import id.co.kurindo.kurindo.adapter.PaymentAdapter;
 import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
+import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.map.DataParser;
 import id.co.kurindo.kurindo.map.MapUtils;
 import id.co.kurindo.kurindo.map.PlaceArrayAdapter;
@@ -87,6 +92,7 @@ import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.Payment;
 import id.co.kurindo.kurindo.model.Route;
+import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
@@ -158,8 +164,8 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
     @Bind(R.id.ivSwitchInfo)
     ImageView ivSwitchInfo;
 
-    boolean originMode = true;
-    boolean destinationMode;
+    boolean originMode;
+    boolean destinationMode = true;
     boolean addOriginNote;
     boolean addDestinationNote;
 
@@ -176,6 +182,10 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
     Marker originMarker;
     Marker destinationMarker;
 
+    Set<Marker> originMarkers;
+    //Set<Marker> destinationMarkers;
+    boolean destinationChanged = false;
+    //Set<LatLng> waypoints;
     //@Bind(R.id.ButtonAddOrder)
     //AppCompatButton buttonAddOrder;
 
@@ -186,7 +196,7 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
 
     @Bind(R.id.rgDoType)
     RadioGroup rgDoType;
-    String doType = AppConfig.KEY_DOSHOP;
+    String doType = AppConfig.KEY_DOSEND;
     String serviceCode = AppConfig.PACKET_SDS;
     double price = 0;
 
@@ -196,16 +206,21 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
 
     SupportMapFragment mapFragment;
 
+    final Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message mesg) {
+            throw new RuntimeException();
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(OrderViaMapHelper.getInstance().getPacket() != null && OrderViaMapHelper.getInstance().getPacket().getOrigin() != null){
-            origin = OrderViaMapHelper.getInstance().getPacket().getOrigin();
-            destination = OrderViaMapHelper.getInstance().getPacket().getDestination();
-        }
-
-
+        //if(OrderViaMapHelper.getInstance().getOrder() != null && OrderViaMapHelper.getInstance().getOrder().getPackets() != null){
+        //    Set<TPacket> packets = OrderViaMapHelper.getInstance().getOrder().getPackets();
+        //}
+        //waypoints = new LinkedHashSet<>();
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -277,16 +292,22 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
                     case R.id.radio_dosend:
                         doType = AppConfig.KEY_DOSEND;
                         break;
-                    case R.id.radio_dojek:
-                        doType = AppConfig.KEY_DOJEK;
-                        break;
                     case R.id.radio_domove:
                         doType = AppConfig.KEY_DOMOVE;
                         break;
                 }
-                if(canDrawRoute()) requestprice();
+                if(canDrawRoute()) {
+                    Set<Route> routes = DoShopHelper.getInstance().getRoutes();
+                    for (Route r: routes) {
+                        route = r;
+                        requestprice();
+                        try { Looper.loop(); }
+                        catch(RuntimeException e2) { }
+                    }
+                }
             }
         });
+        rgDoType.check(R.id.radio_dosend);
 
         packetServiceAdapter = new PacketServiceAdapter(getContext(), AppConfig.getPacketServiceList(), 1);
         _serviceCodeText.setAdapter(packetServiceAdapter);
@@ -294,7 +315,15 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 serviceCode = ((PacketService) parent.getItemAtPosition(position)).getCode();
-                if(canDrawRoute()) requestprice();
+                if(canDrawRoute()) {
+                    Set<Route> routes = DoShopHelper.getInstance().getRoutes();
+                    for (Route r: routes) {
+                        route = r;
+                        requestprice();
+                        try { Looper.loop(); }
+                        catch(RuntimeException e2) { }
+                    }
+                }
             }
 
             @Override
@@ -371,14 +400,6 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
 
             String name = place.getName().toString();
             String address = place.getAddress().toString();
-            if(originMode){
-                tvOrigin.setText(address);
-                Address addr = origin.getAddress();
-                addr.setAlamat(name);
-                addr.setFormattedAddress(address);
-                addr.setLocation( place.getLatLng());
-                if(destination.getAddress().getLocation() != null) originMode = false;
-            }
             if(destinationMode){
                 tvDestination.setText(address);
                 Address addr = destination.getAddress();
@@ -386,6 +407,7 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
                 addr.setFormattedAddress(address);
                 addr.setLocation( place.getLatLng() );
                 if(origin.getAddress().getLocation() != null) destinationMode = false;
+                destinationChanged = true;
             }
             showAddressLayout();
             refreshMap();
@@ -402,18 +424,21 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
 
         origin = new TUser();
         destination = new TUser();
-        OrderViaMapHelper.getInstance().clearAll();
+
+        originMarkers.clear();
+        //OrderViaMapHelper.getInstance().clearAll();
+        //DoShopHelper.getInstance().clearAll();
     }
 
     public boolean handleBackPressed(){
-        if(originMode){
+        /*if(originMode){
             originMode = false;
             showAddressLayout();
             if(origin != null && origin.getAddress().getLocation() != null)
                 moveCameraToLocation(origin.getAddress().getLocation());
             showMap();
             return true;
-        }
+        }*/
         if(destinationMode){
             destinationMode = false;
             showAddressLayout();
@@ -447,7 +472,7 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
         tvDestination.setText("Set Tujuan Anda");
         etDestinationNotes.setText("");
         etDestinationNotes.setVisibility(View.GONE);
-        destinationMode = false;
+        destinationMode = true;
         //buttonAddOrder.setVisibility(View.GONE);
     }
     private void showAddressLayout() {
@@ -465,9 +490,9 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
 
     private void changeMarkerIcon(){
         locationMarkerLayout.setVisibility(View.VISIBLE);
-        imageMarker.setImageResource(destinationMode ? R.drawable.destination_pin : R.drawable.origin_pin );
+        imageMarker.setImageResource(originMode ? R.drawable.origin_pin : R.drawable.destination_pin );
         mLocationMarkerText.setVisibility(View.VISIBLE);
-        mLocationMarkerText.setText("Set "+(destinationMode? "Tujuan Anda" : "Lokasi Anda"));
+        mLocationMarkerText.setText("Set "+(originMode? "Lokasi Anda" : "Tujuan Anda" ));
     }
     public void moveCameraToLocation(LatLng location, float zoom){
         CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(70).build();
@@ -480,7 +505,7 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
         //TODO
     }
 
-
+/*
     @OnClick(R.id.iconOrigin)
     public void onClick_IconOrigin(){
         originMode = true;
@@ -488,29 +513,33 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
         showPopupWindow("Daftar Lokasi", R.drawable.origin_pin);
 
     }
+*/
     @OnClick(R.id.iconDestination)
     public void onClick_IconDestination(){
         destinationMode = true;
         originMode = !destinationMode;
         showPopupWindow("Daftar Lokasi", R.drawable.destination_pin);
-
     }
 
     @OnClick(R.id.locationMarkertext)
     public void onClick_mLocationMarkerText(){
+        LatLng location = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         if(destinationMode){
-            destination.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+            destination.getAddress().setLocation( location );
             //tvDestination.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
+            destinationChanged = true;
         }else {
-            origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+            origin.getAddress().setLocation( location );
             //tvOrigin.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
         }
-        requestAddress(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+        requestAddress(location);
 
         mLocationMarkerText.setVisibility(View.GONE);
 
         showAddressLayout();
-        //refreshMap();
+        refreshMap();
+        if(!canDrawRoute()) moveCameraToLocation( location);
+
         //startIntentService(mLastLocation);
 
     }
@@ -522,8 +551,7 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
         origin.getAddress().setNotes(onotes);
         destination.getAddress().setNotes(dnotes);
         if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
-            OrderViaMapHelper.getInstance().setRoute(origin, destination);
-            OrderViaMapHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, route.getDistance().getValue(), price);
+            DoShopHelper.getInstance().setRoute(origin, destination);
             //showActivity( DoSendOrderActivity.class );
             //finish();
         }else{
@@ -613,38 +641,46 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
     }
     private void drawRoute() {
         if(route != null){
-            OrderViaMapHelper.getInstance().setRoute(origin, destination);
+            //DoShopHelper.getInstance().setRoute(origin, destination);
 
             DataParser parser = new DataParser();
-            String snippet = originMarker.getSnippet();
-            originMarker.setSnippet(snippet + "\nEst. Distance :"+ route.getDistance().getText());
-            PolylineOptions lineOptions = parser.drawRoutes(route.getRoutes());
+            Set<Route> routes = DoShopHelper.getInstance().getRoutes();
+            for(Route r : routes){
+                PolylineOptions lineOptions = parser.drawRoutes(r.getRoutes());
 
-            // Drawing polyline in the Google Map for the i-th route
-            if(lineOptions != null) {
-                mMap.addPolyline(lineOptions);
+                // Drawing polyline in the Google Map for the i-th route
+                if(lineOptions != null) {
+                    mMap.addPolyline(lineOptions);
+                }else {
+                    Log.d("drawRoutes","without Polylines drawn");
+                }
+            }
 
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            //String snippet = originMarker.getSnippet();
+            //originMarker.setSnippet(snippet + "\nEst. Distance :"+ route.getDistance().getText());
+
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 /*
                 List<LatLng> points = lineOptions.getPoints();
                 for (int i = 0; i < points.size(); i++) {
                     builder.include(points.get(i));
                 }*/
-                builder.include(origin.getAddress().getLocation());
-                if(destination.getAddress().getLocation() != null) builder.include(destination.getAddress().getLocation());
 
-                LatLngBounds bounds = builder.build();
-
-                int width = getResources().getDisplayMetrics().widthPixels;
-                int padding = (int) (width * 0.40); // offset from edges of the map 12% of screen
-
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                mMap.animateCamera(cu);
-                //moveCameraToLocation(bounds.getCenter(), 16f);
-
-            }else {
-                Log.d("drawRoutes","without Polylines drawn");
+            Set<Shop> shops = DoShopHelper.getInstance().getShops();
+            for (Shop shop : shops) {
+                builder.include(shop.getAddress().getLocation());
             }
+            if(destination.getAddress().getLocation() != null) builder.include(destination.getAddress().getLocation());
+
+            LatLngBounds bounds = builder.build();
+
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int padding = (int) (width * 0.40); // offset from edges of the map 12% of screen
+
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            mMap.animateCamera(cu);
+            //moveCameraToLocation(bounds.getCenter(), 16f);
+
         }
         if(canDrawRoute() && route != null) {
             Location lo = new Location("Origin");
@@ -655,10 +691,10 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
             ld.setLatitude(destination.getAddress().getLocation().latitude);
             ld.setLongitude(destination.getAddress().getLocation().longitude);
 
-            tvDistanceInfo.setText("Harga ( "+route.getDistance().getText()+" ) : ");
+            //tvDistanceInfo.setText("Harga ( "+route.getDistance().getText()+" ) : ");
             //tvPriceInfo.setText("");
 
-            Toast.makeText(getContext(), "Calculate distance : " + lo.distanceTo(ld), LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Calculate distance : " + lo.distanceTo(ld), LENGTH_SHORT).show();
 
             showOrderpanel(true);
             //buttonAddOrder.setVisibility(View.VISIBLE );
@@ -671,32 +707,57 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
     private void reDrawRoute() {
 
         if(canDrawRoute()){
-
-            String url = MapUtils.getDirectionUrl(origin.getAddress().getLocation(), destination.getAddress().getLocation());
-            addRequest("request_direction_route", Request.Method.GET, url, new Response.Listener<String>() {
+            DoShopHelper.getInstance().clearRoutes();
+            Response.Listener responseListener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    //Log.d(TAG, "drawRoute Response: " + response.toString());
+                    Log.d(TAG, "drawRoute Response: " + response.toString());
                     try {
                         JSONObject jObj = new JSONObject(response);
                         boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
                         if(OK){
                             DataParser parser = new DataParser();
                             route = parser.parseRoutes(jObj);
-                            requestprice();
-                            drawRoute();
+                            int dist = 0;
+                            try{
+                                dist = Integer.parseInt(route.getDistance().getValue());
+                            }catch (Exception e){}
+                            if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM && !doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
+                                //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
+                                Toast.makeText(getContext(), "( "+route.getDistance().getText()+" ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
+                                showOrderpanel(false);
+                            }else{
+                                DoShopHelper.getInstance().addRoute(route);
+                                requestprice();
+                            }
                         }
                     }catch (Exception e){
                         e.printStackTrace();
+                        handler.handleMessage(null);
                     }
                 }
-            }, new Response.ErrorListener() {
+            };
+            Response.ErrorListener responseErrorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     Log.e(TAG, "request_direction_route Error: " + volleyError.getMessage());
                     volleyError.printStackTrace();
+                    handler.handleMessage(null);
                 }
-            }, null, null);
+            };
+            Set<Shop> shops = DoShopHelper.getInstance().getShops();
+            for (Shop shop : shops) {
+                origin = new TUser();
+                origin.setAddress(shop.getAddress());
+                origin.setFirstname(shop.getOwner());
+                origin.setLastname(shop.getName());
+                origin.setPhone(shop.getTelepon());
+                String url = MapUtils.getDirectionUrl(origin.getAddress().getLocation(), destination.getAddress().getLocation());
+                addRequest("request_direction_route", Request.Method.GET, url, responseListener, responseErrorListener , null, null);
+                try { Looper.loop(); }
+                catch(RuntimeException e2) { }
+            }
+            drawRoute();
 
         }
     }
@@ -704,7 +765,7 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
     private void requestprice() {
         HashMap<String, String> params = new HashMap();
         params.put("distance", (route ==null || route.getDistance()==null? "1" : route.getDistance().getValue()));
-        params.put("origin", origin.getAddress().getKecamatan());//TODO json origin
+        params.put("origin", origin.getName());//TODO json origin
         params.put("destination", destination.getAddress().getKecamatan()); //TODO json destination
         params.put("service_code", serviceCode);
         params.put("do_type", doType);
@@ -720,17 +781,29 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
                     boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
                     if(OK){
                         double tariff = jObj.getDouble("tarif");
-                        price = tariff;
-                        tvPriceInfo.setText(AppConfig.formatCurrency(tariff));
+                        price += tariff;
+                        route.setPrice(tariff);
+                        Set<Route> routes = DoShopHelper.getInstance().getRoutes();
+                        BigDecimal prices = new BigDecimal(0);
+                        BigDecimal distance = new BigDecimal(0);
+                        for(Route r : routes){
+                            prices = prices.add(new BigDecimal(r.getPrice()));
+                            distance = distance.add( new BigDecimal(r.getDistance().getValue())  );
+                        }
+                        //tvPriceInfo.setText(AppConfig.formatCurrency(tariff));
+                        tvPriceInfo.setText(AppConfig.formatCurrency(prices.doubleValue()));
+                        tvDistanceInfo.setText("Harga ( "+AppConfig.formatKm(distance.doubleValue())+" ) : ");
                     }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+                handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
+                handler.handleMessage(null);
             }
         }, params, null);
 
@@ -808,22 +881,28 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
                             .title(title)
                             .snippet(snippet)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.destination_pin)));
+            //if(destinationMarkers == null) destinationMarkers = new LinkedHashSet<>();
+            //destinationMarkers.add(destinationMarker);
         }
         if(origin != null && origin.getAddress() != null && origin.getAddress().getLocation() != null){
             String title = "Origin";
-            String snippet = (origin.getName() != null ? origin.toStringFormatted() : "");
-            originMarker = mMap.addMarker(
-                    new MarkerOptions()
-                            .position(origin.getAddress().getLocation())
-                            .title(title)
-                            .snippet(snippet)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.origin_pin)));
+            for (Shop shop: DoShopHelper.getInstance().getShops()) {
+                String snippet = (shop.getName() != null ? shop.getName() : (shop.getAddress().toStringFormatted() != null ? shop.getAddress().toStringFormatted() : ""));
+                originMarker = mMap.addMarker(
+                        new MarkerOptions()
+                                .position(shop.getAddress().getLocation())
+                                .title(title)
+                                .snippet(snippet)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.origin_pin)));
+                if(originMarkers == null) originMarkers = new LinkedHashSet<>();
+                originMarkers.add(originMarker);
+            }
         }
 
     }
 
 
-    @OnClick(R.id.tvOrigin)
+/*    @OnClick(R.id.tvOrigin)
     public void onClick_tvOrigin(){
         originMode= !originMode;
         destinationMode = false;
@@ -837,6 +916,7 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
         changeMarkerIcon();
         hidepanel(true);
     }
+*/
 
     @OnClick(R.id.tvDestination)
     public void onClick_tvDestination(){
@@ -852,11 +932,14 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
         changeMarkerIcon();
         hidepanel(true);
     }
-    @OnClick(R.id.ivAddOriginNotes)
+
+/*    @OnClick(R.id.ivAddOriginNotes)
     public void onClick_ivAddOriginNotes(){
         addOriginNote =!addOriginNote;
         etOriginNotes.setVisibility(addOriginNote? View.VISIBLE : View.GONE);
     }
+*/
+
     @OnClick(R.id.ivAddDestinationNotes)
     public void ivAddDestinationNotes(){
         addDestinationNote =!addDestinationNote;
@@ -941,11 +1024,14 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
             if(canDrawRoute()) {
                 drawRoute();
             }else{
-                if(origin.getAddress().getLocation() == null) {
-                    origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
-                    requestAddress(origin.getAddress().getLocation());
+                if(destination.getAddress().getLocation() == null) {
+                    destination.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+                    destinationMode = true;
+                    requestAddress(destination.getAddress().getLocation());
+                    changeMap(mLastLocation);
+                }else{
+                    moveCameraToLocation( destination.getAddress().getLocation());
                 }
-                changeMap(mLastLocation);
             }
             reDrawMarker();
             showAddressLayout();
@@ -1134,6 +1220,7 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
         } else if (resultCode == getActivity().RESULT_CANCELED) {
             // Indicates that the activity closed before a selection was made. For example if
             // the user pressed the back button.
+
         }
     }
 
@@ -1148,6 +1235,19 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
         dialog.setContentView(R.layout.popup_list);
         // Set dialog title
         dialog.setTitle("Popup Dialog");
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(destinationMode){
+                    destinationMode = false;
+                    showAddressLayout();
+                    refreshMap();
+                    try { Looper.loop(); }
+                    catch(RuntimeException e2) {
+                    }
+                }
+            }
+        });
 
         RecyclerView list = (RecyclerView) dialog.findViewById(R.id.popupList);
         list.setLayoutManager(new GridLayoutManager(getActivity(), 1));
@@ -1157,16 +1257,6 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
             @Override
             public void onItemClick(View view, int position) {
                 TUser p = data.get(position);
-                showAddressLayout();
-                if(originMode){
-                    origin = p;
-                    tvOrigin.setText(p.getAddress().toStringFormatted());
-                    if(p.getAddress().getNotes() != null && !p.getAddress().getNotes().isEmpty()) {
-                        etOriginNotes.setText(p.getAddress().getNotes());
-                        etOriginNotes.setVisibility(View.VISIBLE);
-                    }
-                    originMode = false;
-                }
                 if(destinationMode){
                     destination = p;
                     tvDestination.setText(p.getAddress().toStringFormatted());
@@ -1174,10 +1264,13 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
                         etDestinationNotes.setText(p.getAddress().getNotes());
                         etDestinationNotes.setVisibility(View.VISIBLE);
                     }
-                    destinationMode = false;
+                    //Location l = new Location("Destination");
+                    //l.setLatitude(p.getAddress().getLocation().latitude);
+                    //l.setLongitude(p.getAddress().getLocation().longitude);
+                    //changeMap(l);
+                    //destinationMode = false;
                 }
                 dialog.dismiss();
-                refreshMap();
             }
         }));
 
@@ -1206,12 +1299,6 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
     }
 
 
-
-    public static void onBackPressed()
-    {
-        //Pop Fragments off backstack and do your other checks
-    }
-
     @Override
     public int getName() {
         return 0;
@@ -1219,11 +1306,45 @@ public class StepPinLocationMapFragment extends BaseStepFragment implements Step
 
     @Override
     public VerificationError verifyStep() {
-        return null;
+        final VerificationError[] invalid = {null};
+        if(!destinationChanged){
+            DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    invalid[0] = new VerificationError("Tentukan Lokasi Tujuan Anda");
+                    handler.handleMessage(null);
+                }
+            };
+            DialogInterface.OnClickListener YesClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    invalid[0] = null;
+                    handler.handleMessage(null);
+                }
+            };
+            showConfirmationDialog("Confirm Destination","Anda Yakin menggunakan lokasi ini "+destination.getAddress().toStringShortFormatted()+" sebagai tujuan pengiriman?", YesClickListener, NoClickListener);
+            try { Looper.loop(); }
+            catch(RuntimeException e2) { }
+        }
+        return invalid[0];
     }
 
     @Override
     public void onSelected() {
+        String t = ""; int i=0;
+        Set<Shop> shops = DoShopHelper.getInstance().getShops();
+        for (Shop shop : shops) {
+            origin = new TUser();
+            origin.setAddress(shop.getAddress());
+            origin.setFirstname(shop.getOwner());
+            origin.setLastname(shop.getName());
+            origin.setPhone(shop.getTelepon());
+            //waypoints.add(shop.getAddress().getLocation());
+            if(i>0) t+= " | ";
+            t += origin.getName();
+            i++;
+        }
+        tvOrigin.setText(t);
 
     }
 

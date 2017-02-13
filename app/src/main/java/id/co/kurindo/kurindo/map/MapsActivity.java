@@ -80,7 +80,6 @@ import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
 import id.co.kurindo.kurindo.adapter.PaymentAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.PacketService;
@@ -714,8 +713,18 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
                         if(OK){
                             DataParser parser = new DataParser();
                             route = parser.parseRoutes(jObj);
-                            requestprice();
-                            drawRoute();
+                            int dist = 0;
+                            try{
+                                dist = Integer.parseInt(route.getDistance().getValue());
+                            }catch (Exception e){}
+                            if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM && !doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
+                                //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
+                                Toast.makeText(getApplicationContext(), "( "+route.getDistance().getText()+" ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
+                                showOrderpanel(false);
+                            }else{
+                                requestprice();
+                                drawRoute();
+                            }
                         }
                     }catch (Exception e){
                         e.printStackTrace();

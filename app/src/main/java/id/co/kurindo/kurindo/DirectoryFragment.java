@@ -26,6 +26,7 @@ import id.co.kurindo.kurindo.adapter.ShopAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadShopTask;
@@ -67,7 +68,8 @@ public class DirectoryFragment extends Fragment {
                         DummyContent.shop = model;
                         Bundle bundle = new Bundle();
                         //bundle.putSerializable("shop", model);
-                        bundle.putParcelable("shop", model);
+                        //bundle.putParcelable("shop", model);
+                        ViewHelper.getInstance().setShop(model);
                         ((MainDrawerActivity)getActivity()).showActivity(ShopActivity.class, bundle);
                     }
                 }));

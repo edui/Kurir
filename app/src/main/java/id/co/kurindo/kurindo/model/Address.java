@@ -241,4 +241,12 @@ public class Address implements Parcelable{
         if(notes!= null) formatted += "\n"+notes;
         return formatted;
     }
+
+    public String toStringShortFormatted() {
+        String formatted = "";
+        formatted += alamat;
+        if(kecamatan!= null) formatted += ", "+kecamatan;
+
+        return formatted ;
+    }
 }

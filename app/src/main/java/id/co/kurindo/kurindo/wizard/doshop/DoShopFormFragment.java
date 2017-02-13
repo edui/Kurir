@@ -1,4 +1,4 @@
-package id.co.kurindo.kurindo.wizard.dosend;
+package id.co.kurindo.kurindo.wizard.doshop;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -50,27 +49,21 @@ import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import id.co.kurindo.kurindo.BuildConfig;
 import id.co.kurindo.kurindo.LoginActivity;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.adapter.CityAdapter;
 import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
-import id.co.kurindo.kurindo.adapter.RecipientAdapter;
 import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
 import id.co.kurindo.kurindo.helper.SessionManager;
-import id.co.kurindo.kurindo.map.MapUtils;
 import id.co.kurindo.kurindo.model.City;
-import id.co.kurindo.kurindo.model.Packet;
 import id.co.kurindo.kurindo.model.PacketService;
-import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
-import id.co.kurindo.kurindo.model.User;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static id.co.kurindo.kurindo.R.style.CustomDialog;
@@ -79,7 +72,7 @@ import static id.co.kurindo.kurindo.R.style.CustomDialog;
  * Created by dwim on 2/7/2017.
  */
 
-public class DoSendFormFragment extends BaseStepFragment implements Step {
+public class DoShopFormFragment extends BaseStepFragment implements Step {
     private static final String TAG = "DoSendFormFragment";
     VerificationError invalid = null;
 

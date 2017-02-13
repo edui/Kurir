@@ -1,5 +1,7 @@
 package id.co.kurindo.kurindo.util;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +89,7 @@ public class DummyContent {
         Product p12 = new Product(13, "BURYAMI011", "Bubur Ayam Basah", "Bubur Ayam Basah", R.drawable.buryami011, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p12);
         //shop.setProducts(products);
+        shop.getAddress().setLocation(new LatLng(-0.3220503,117.429754));
         addShop(shop);
         addProduct(shop.getId(),products);
 
@@ -97,6 +100,7 @@ public class DummyContent {
         p = new Product(14, "HONEYMOON002", "Madu Organik", "Madu Organik", R.drawable.honeymoon002, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
         //shop.setProducts(products);
+        shop.getAddress().setLocation(new LatLng(-0.3420503,117.429754));
         addShop(shop);
         addProduct(shop.getId(),products);
 
@@ -111,6 +115,7 @@ public class DummyContent {
         p = new Product(18, "MANGONCEL004", "Es Krim Cup Strawberry", "Es Krim Cup Strawberry", R.drawable.mangoncel004, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
         //shop.setProducts(products);
+        shop.getAddress().setLocation(new LatLng(-0.3520503,117.429754));
         addShop(shop);
         addProduct(shop.getId(),products);
 

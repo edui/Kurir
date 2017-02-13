@@ -1,5 +1,7 @@
 package id.co.kurindo.kurindo.helper;
 
+import id.co.kurindo.kurindo.model.Product;
+import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
 
@@ -10,6 +12,9 @@ import id.co.kurindo.kurindo.model.TPacket;
 public class ViewHelper {
     TOrder order;
     TPacket packet;
+    Shop shop;
+    Product product;
+
     private static ViewHelper helper;
     public static ViewHelper getInstance(){
         if(helper == null) helper = new ViewHelper();
@@ -30,5 +35,21 @@ public class ViewHelper {
 
     public void setPacket(TPacket packet) {
         this.packet = packet;
+    }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
+    }
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }
