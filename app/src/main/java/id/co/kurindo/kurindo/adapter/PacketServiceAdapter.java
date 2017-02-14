@@ -18,8 +18,6 @@ import java.util.List;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.model.City;
-import id.co.kurindo.kurindo.model.Packet;
 import id.co.kurindo.kurindo.model.PacketService;
 
 /**

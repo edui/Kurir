@@ -15,10 +15,7 @@ import java.util.List;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.model.Order;
-import id.co.kurindo.kurindo.model.Packet;
 import id.co.kurindo.kurindo.model.TOrder;
-import id.co.kurindo.kurindo.model.TPacket;
 
 /**
  * Created by DwiM on 11/9/2016.

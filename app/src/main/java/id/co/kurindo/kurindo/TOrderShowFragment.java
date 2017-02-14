@@ -48,7 +48,6 @@ import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.map.MapViewsActivity;
 import id.co.kurindo.kurindo.model.CartItem;
-import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.StatusHistory;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
@@ -438,12 +437,7 @@ public class TOrderShowFragment extends BaseFragment {
             }
         }
     }
-    private List<Recipient> getRecipientItems(Set<Recipient> recipients) {
-        List<Recipient> results = new ArrayList<>();
-        //results.add(new Recipient());
-        results.addAll(recipients);
-        return results;
-    }
+
     private List<CartItem> getCartItemsPlusHeader(TOrder order) {
         List<CartItem> cartItems = new ArrayList<>();
         CartItem ci = new CartItem();

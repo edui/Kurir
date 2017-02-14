@@ -69,8 +69,7 @@ dependencies {
     compile files('libs/gson-2.8.0.jar')
     compile project(':material-stepper')
     compile files('libs/core-3.3.0.jar')
-    compile project(':timelineview')
-    compile(name:'phone-field-0.1.3', ext:'aar')
+    compile(name: 'phone-field-0.1.3', ext: 'aar')
     compile files('libs/libphonenumber-7.7.2.jar')
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'

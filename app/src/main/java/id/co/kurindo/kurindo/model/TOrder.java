@@ -79,15 +79,15 @@ public class TOrder implements Parcelable{
         updated_by = in.readString();
     }
 
-    public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {
+    public static final Parcelable.Creator<TOrder> CREATOR = new Parcelable.Creator<TOrder>() {
         @Override
-        public Order createFromParcel(Parcel in) {
-            return new Order(in);
+        public TOrder createFromParcel(Parcel in) {
+            return new TOrder(in);
         }
 
         @Override
-        public Order[] newArray(int size) {
-            return new Order[size];
+        public TOrder[] newArray(int size) {
+            return new TOrder[size];
         }
     };
 

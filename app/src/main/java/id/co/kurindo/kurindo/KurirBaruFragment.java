@@ -35,31 +35,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import butterknife.Bind;
-import id.co.kurindo.kurindo.adapter.CityAdapter;
 import id.co.kurindo.kurindo.adapter.KurirAdapter;
-import id.co.kurindo.kurindo.adapter.RecipientAdapter;
-import id.co.kurindo.kurindo.adapter.UserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
-import id.co.kurindo.kurindo.base.BaseActivity;
-import id.co.kurindo.kurindo.base.BaseFragment;
-import id.co.kurindo.kurindo.helper.SessionManager;
-import id.co.kurindo.kurindo.model.Address;
-import id.co.kurindo.kurindo.model.CartItem;
-import id.co.kurindo.kurindo.model.City;
-import id.co.kurindo.kurindo.model.Order;
-import id.co.kurindo.kurindo.model.Packet;
-import id.co.kurindo.kurindo.model.Product;
-import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.User;
 
 /**

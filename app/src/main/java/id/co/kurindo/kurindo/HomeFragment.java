@@ -234,7 +234,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                     }
                 });
     }
-
+/*
     public RecyclerItemClickListener getRecyclerItemClickListener(){
         return new RecyclerItemClickListener(getContext(),
                 new RecyclerItemClickListener.OnItemClickListener() {
@@ -370,6 +370,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                     }
                 });
     }
+    */
     private void setupMenuData() {
         data.clear();
         ImageModel model1 = new ImageModel(R.drawable.do_send_icon, "Kirim Paket");

@@ -24,10 +24,8 @@ import android.view.View;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.helper.ViewHelper;
-import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
-import id.co.kurindo.kurindo.wizard.dashboard.StepRejectOrderFragment;
 
 public class RejectTOrderActivity extends AbstractStepperActivity {
     TOrder order;

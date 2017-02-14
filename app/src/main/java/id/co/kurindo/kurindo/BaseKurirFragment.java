@@ -16,7 +16,6 @@ import java.util.Timer;
 import butterknife.Bind;
 import id.co.kurindo.kurindo.adapter.UserAdapter;
 import id.co.kurindo.kurindo.base.BaseFragment;
-import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.User;
 
 /**

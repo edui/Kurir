@@ -35,10 +35,8 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.helper.ViewHelper;
-import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
-import id.co.kurindo.kurindo.wizard.RejectOrderActivity;
 
 import static android.app.Activity.RESULT_OK;
 

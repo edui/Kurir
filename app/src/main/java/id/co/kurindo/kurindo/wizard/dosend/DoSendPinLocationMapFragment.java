@@ -1234,8 +1234,11 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
         origin.getAddress().setNotes(onotes);
         destination.getAddress().setNotes(dnotes);
         if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
+            if(!canDrawRoute()){
+                return new VerificationError("Pilih rute lokasi anda.");
+            }
             DoSendHelper.getInstance().setPacketRoute(origin, destination);
-            DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, route.getDistance().getValue(), price);
+            DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, (route == null || route.getDistance() == null  ? "" : route.getDistance().getValue()), price);
             //showActivity( DoSendOrderActivity.class );
             //finish();
         }else{

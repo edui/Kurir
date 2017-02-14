@@ -47,9 +47,7 @@ import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.StatusHistory;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
-import id.co.kurindo.kurindo.wizard.AcceptOrderActivity;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
-import id.co.kurindo.kurindo.wizard.RejectOrderActivity;
 
 import static id.co.kurindo.kurindo.R.style.CustomDialog;
 
@@ -297,7 +295,7 @@ public class StepSummaryFragment extends BaseStepFragment implements Step {
                     kur200Btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(getActivity(), AcceptOrderActivity.class);
+                            Intent intent = new Intent(getActivity(), AcceptTOrderActivity.class);
                             //OrderHelper.getInstance().setOrder(order);
                             //intent.putExtra("order", order);
                             startActivityForResult(intent, ACCEPTED_REQUEST_CODE);
@@ -307,7 +305,7 @@ public class StepSummaryFragment extends BaseStepFragment implements Step {
                     kur999Btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(getActivity(), RejectOrderActivity.class);
+                            Intent intent = new Intent(getActivity(), RejectTOrderActivity.class);
                             //intent.putExtra("order", order);
                             //OrderHelper.getInstance().setOrder(order);
                             startActivityForResult(intent, REJECTED_REQUEST_CODE);

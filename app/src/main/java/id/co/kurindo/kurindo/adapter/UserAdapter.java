@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.User;
 
 /**

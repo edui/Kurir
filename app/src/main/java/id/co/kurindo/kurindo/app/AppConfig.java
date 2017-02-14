@@ -31,7 +31,8 @@ import id.co.kurindo.kurindo.model.PacketService;
 public class AppConfig {
     public static String HOST = "https://kurindo.co.id";
     //public static String DEV_HOST = "http://10.0.2.2/kurindo";
-    public static String DEV_HOST = "http://172.30.3.58/kurindo";
+    //public static String DEV_HOST = "http://172.30.3.58/kurindo";
+    public static String DEV_HOST = HOST;
     public static String USER_AGENT = "KURINDROID";
 
     public static String FCM_TOKEN = null;

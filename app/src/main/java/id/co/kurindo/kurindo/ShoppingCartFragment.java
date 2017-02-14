@@ -26,13 +26,10 @@ import java.util.Map;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.adapter.CartProductAdapter;
-import id.co.kurindo.kurindo.adapter.CartProductItemAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.app.Constant;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.Product;
-import id.co.kurindo.kurindo.wizard.ShopCheckoutActivity;
 import id.co.kurindo.kurindo.wizard.doshop.DoShopCheckoutActivity;
 
 /**

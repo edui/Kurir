@@ -15,15 +15,13 @@ import id.co.kurindo.kurindo.KurirActivity;
 import id.co.kurindo.kurindo.LoginActivity;
 import id.co.kurindo.kurindo.LuarKotaFragment;
 import id.co.kurindo.kurindo.MonitorOrderActivity;
-import id.co.kurindo.kurindo.MonitorPacketActivity;
-import id.co.kurindo.kurindo.PacketCheckActivity;
-import id.co.kurindo.kurindo.PacketOrderActivity;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.SettingsActivity;
 import id.co.kurindo.kurindo.ShoppingCartActivity;
 import id.co.kurindo.kurindo.TabFragment;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
+import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
 
 /**
  * Created by aspire on 11/24/2016.
@@ -78,10 +76,10 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
                 showFragment(LuarKotaFragment.class);
                 break;
             case R.id.nav_item_kiriman_dalam_kota:
-                showActivity(PacketOrderActivity.class);
+                showActivity(DoSendOrderActivity.class);
                 break;
             case R.id.nav_item_cek_resi :
-                showActivity(PacketCheckActivity.class);
+                showActivity(MonitorOrderActivity.class);
                 break;
             case R.id.nav_item_home :
                 showFragment(TabFragment.class);
@@ -104,7 +102,7 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
                 //showActivity(MonitorPacketActivity.class);
                 break;
             case R.id.nav_item_admin_monitor_paket_kurir:
-                showActivity(MonitorPacketActivity.class);
+                showActivity(MonitorOrderActivity.class);
                 break;
             case R.id.nav_item_admin_daftar_kurir:
                 showActivity(KurirActivity.class);

@@ -7,7 +7,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 
-import id.co.kurindo.kurindo.PacketCheckActivity;
+import id.co.kurindo.kurindo.MainDrawerActivity;
 import id.co.kurindo.kurindo.R;
 
 import static id.co.kurindo.kurindo.util.LogUtil.logD;
@@ -99,7 +99,7 @@ public abstract class BaseDrawerActivity extends KurindoWithCartActivity {
     protected void goToNavDrawerItem(int item) {
         switch (item) {
             case R.id.nav_item_cek_resi:
-                startActivity(new Intent(this,PacketCheckActivity.class));
+                startActivity(new Intent(this,MainDrawerActivity.class));
                 //finish();
                 break;
         }

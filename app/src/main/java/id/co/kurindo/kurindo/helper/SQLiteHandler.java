@@ -19,8 +19,6 @@ import java.util.concurrent.ExecutionException;
 
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
-import id.co.kurindo.kurindo.model.Recipient;
-import id.co.kurindo.kurindo.model.Sender;
 import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
 
@@ -324,13 +322,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         // Create tables again
         onCreateTableRecipient(db);
     }
-
+/*
     public void addRecipient(Recipient recipient) {
         //addRecipient(recipient.getName(), recipient.getTelepon(), recipient.getAddress().getAlamat(), recipient.getAddress().getCity());
         addRecipient(recipient.getName(), recipient.getTelepon(), recipient.getGender(), recipient.getAddress().getAlamat(), recipient.getAddress().getCity().getCode(), recipient.getAddress().getCity().getText()
         ,recipient.getAddress().getRt(),recipient.getAddress().getRw(),recipient.getAddress().getDusun(),recipient.getAddress().getDesa(),recipient.getAddress().getKecamatan()
                 ,recipient.getAddress().getKabupaten(),recipient.getAddress().getPropinsi(),recipient.getAddress().getNegara(),recipient.getAddress().getKodepos(), recipient.getAddress().getLocation().latitude, recipient.getAddress().getLocation().longitude);
-    }
+    }*/
     public void addRecipient(String name, String telepon, String gender,String alamat, String city, String cityText) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -423,7 +421,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "New recipient inserted into sqlite: " + id);
     }
-
+/*
     public Set<Recipient> getRecipientList() {
         Set<Recipient> result = new LinkedHashSet<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RECIPIENT;
@@ -445,7 +443,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
         Log.d(TAG, "Fetching Recipient from Sqlite: ");
         return result;
-    }
+    }*/
 
     public User toUser(HashMap<String, String> params){
         User user = null;
