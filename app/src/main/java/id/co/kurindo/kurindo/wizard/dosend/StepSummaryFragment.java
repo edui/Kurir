@@ -18,11 +18,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.stepstone.stepper.Step;
@@ -42,13 +40,10 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.adapter.CartViewAdapter;
-import id.co.kurindo.kurindo.adapter.PacketViewAdapter;
 import id.co.kurindo.kurindo.adapter.TPacketViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.app.AppController;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
+import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.model.CartItem;
-import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.StatusHistory;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
@@ -120,7 +115,7 @@ public class StepSummaryFragment extends BaseStepFragment implements Step {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_order_show);
-        //order = OrderViaMapHelper.getInstance().getOrder();
+        //order = DoSendHelper.getInstance().getOrder();
         setup_pembeli();
         setup_products();
         setup_shipping();
@@ -253,7 +248,7 @@ public class StepSummaryFragment extends BaseStepFragment implements Step {
         List<TPacket> packets = new ArrayList<>();
         if(order != null && order.getPackets().size() > 0) packets.addAll( order.getPackets());
         tvPengiriman.setVisibility(View.VISIBLE);
-        TPacketViewAdapter adapter = new TPacketViewAdapter(getContext(), packets);
+        TPacketViewAdapter adapter = new TPacketViewAdapter(getContext(), packets, order);
         lvRecipientItems.setAdapter(adapter);
 
         /*
@@ -413,7 +408,7 @@ public class StepSummaryFragment extends BaseStepFragment implements Step {
 
     @Override
     public void onSelected() {
-        order = OrderViaMapHelper.getInstance().getOrder();
+        order = DoSendHelper.getInstance().getOrder();
         setup_pembeli();
         setup_products();
         setup_shipping();

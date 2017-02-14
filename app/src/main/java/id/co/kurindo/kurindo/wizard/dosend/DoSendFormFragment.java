@@ -9,9 +9,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,9 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,27 +46,20 @@ import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import id.co.kurindo.kurindo.BuildConfig;
 import id.co.kurindo.kurindo.LoginActivity;
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.adapter.CityAdapter;
 import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
-import id.co.kurindo.kurindo.adapter.RecipientAdapter;
-import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseActivity;
-import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
+import id.co.kurindo.kurindo.helper.DoSendHelper;
+import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.helper.SessionManager;
-import id.co.kurindo.kurindo.map.MapUtils;
+import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.City;
-import id.co.kurindo.kurindo.model.Packet;
 import id.co.kurindo.kurindo.model.PacketService;
-import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
-import id.co.kurindo.kurindo.model.User;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static id.co.kurindo.kurindo.R.style.CustomDialog;
@@ -109,38 +98,38 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     @Bind(R.id.ivAgrement)
     ImageView ivAgrement;
 
-    @Bind(R.id.rdogrpInputPenerima)
+    /*@Bind(R.id.rdogrpInputPenerima)
     RadioGroup inputModePenerimaRadioGroup;
     @Bind(R.id.rdogrpInputPengirim)
     RadioGroup inputModePengirimRadioGroup;
-
+*/
     @Bind(R.id.layout_inputbaru_penerima)
     LinearLayoutCompat inputBaruPenerimaLayout;
-    @Bind(R.id.layout_pilihlist_penerima)
-    LinearLayoutCompat pilihListPenerimaLayout;
+    //@Bind(R.id.layout_pilihlist_penerima)
+    //LinearLayoutCompat pilihListPenerimaLayout;
 
     @Bind(R.id.layout_inputbaru_pengirim)
     LinearLayoutCompat inputBaruPengirimLayout;
-    @Bind(R.id.layout_pilihlist_pengirim)
-    LinearLayoutCompat pilihListPengirimLayout;
+    //@Bind(R.id.layout_pilihlist_pengirim)
+    //LinearLayoutCompat pilihListPengirimLayout;
 
-    @Bind(R.id.listPengirim)
-    RecyclerView pilihListPengirim;
-    @Bind(R.id.listPenerima)
-    RecyclerView pilihListPenerima;
+    //@Bind(R.id.listPengirim)
+    //RecyclerView pilihListPengirim;
+    //@Bind(R.id.listPenerima)
+    //RecyclerView pilihListPenerima;
 
-    TUserAdapter mPenerimaRecipientAdapter;
-    TUserAdapter mPengirimRecipientAdapter;
-    TUser sender;
-    TUser receiver;
+    //TUserAdapter mPenerimaRecipientAdapter;
+    //TUserAdapter mPengirimRecipientAdapter;
+    //TUser sender;
+    //TUser receiver;
 
     ProgressDialog progressDialog;
     SessionManager session;
 
-    CityAdapter cityPengirimAdapter;
-    CityAdapter cityPenerimaAdapter;
+    //CityAdapter cityPengirimAdapter;
+    //CityAdapter cityPenerimaAdapter;
     PacketServiceAdapter packetServiceAdapter;
-    ArrayList<TUser> data = new ArrayList<>();
+    //ArrayList<TUser> data = new ArrayList<>();
 
     private TPacket packet ;
     //private City kota_pengirim;
@@ -167,7 +156,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflateAndBind(inflater, container, R.layout.fragment_order_dosend);
+        View v = inflateAndBind(inflater, container, R.layout.fragment_dosend_form);
 
         progressDialog = new ProgressDialog(getActivity(), CustomDialog);
         ivAgrement.setOnClickListener(new View.OnClickListener() {
@@ -177,9 +166,6 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             }
         });
 
-        setup_berat_barang();
-        setup_radio();
-        setup_service();
         return v;
     }
     //*
@@ -216,7 +202,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String serviceCode= packetServiceList.get(position).getCode();
-                OrderViaMapHelper.getInstance().setServiceCode( serviceCode);
+                DoSendHelper.getInstance().setServiceCode( serviceCode);
                 checkTarif();
             }
 
@@ -228,9 +214,9 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     }
 
     private void setup_radio() {
-        data.clear();
-        data.addAll(db.getAddressList());
-
+        //data.clear();
+        //data.addAll(db.getAddressList());
+/*
         mPenerimaRecipientAdapter = new TUserAdapter(getActivity(), data);
         pilihListPenerima.setLayoutManager(new GridLayoutManager(getContext(), 1));
         pilihListPenerima.setHasFixedSize(true);
@@ -244,7 +230,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 checkTarif();
             }
         }));
-        int idx = data.indexOf(OrderViaMapHelper.getInstance().getDestination());
+        int idx = data.indexOf(DoSendHelper.getInstance().getDestination());
         if(idx >= 0) {
             mPenerimaRecipientAdapter.selected(idx);
             mPenerimaRecipientAdapter.setSelection(idx);
@@ -263,7 +249,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 checkTarif();
             }
         }));
-        idx = data.indexOf(OrderViaMapHelper.getInstance().getOrigin());
+        idx = data.indexOf(DoSendHelper.getInstance().getOrigin());
         if(idx >= 0) {
             mPengirimRecipientAdapter.selected(idx);
             mPengirimRecipientAdapter.setSelection(idx);
@@ -278,7 +264,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
                 if(inputBaruPengirim) {
                     sender = null;
-                    TUser pengirim = OrderViaMapHelper.getInstance().getOrigin();
+                    TUser pengirim = DoSendHelper.getInstance().getOrigin();
                     _alamatPengirimText.setText(pengirim.getAddress().toStringFormatted());
                 }
             }
@@ -291,12 +277,11 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 pilihListPenerimaLayout.setVisibility(inputBaruPenerima? View.GONE: View.VISIBLE);
                 if(inputBaruPenerima) {
                     receiver= null;
-                    TUser user = OrderViaMapHelper.getInstance().getDestination();
+                    TUser user = DoSendHelper.getInstance().getDestination();
                     _alamatPenerimaText.setText(user.getAddress().toStringFormatted());
                 }
             }
         });
-
         if(data.size() > 0){
             inputBaruPenerima = false;
             inputBaruPengirim = false;
@@ -312,7 +297,10 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         pilihListPenerimaLayout.setVisibility( data.size() > 0? View.VISIBLE : View.GONE );
         inputBaruPengirimLayout.setVisibility( data.size() > 0? View.GONE : View.VISIBLE );
         pilihListPengirimLayout.setVisibility( data.size() > 0? View.VISIBLE : View.GONE );
+*/
 
+        inputBaruPenerimaLayout.setVisibility( View.VISIBLE );
+        inputBaruPengirimLayout.setVisibility( View.VISIBLE );
         _teleponPengirimText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
         _teleponPenerimaText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
     }
@@ -339,7 +327,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             }
         });
 
-        TextViewTitle.setText("Manifest Paket ( Jarak: "+ AppConfig.formatKm( OrderViaMapHelper.getInstance().getPacket().getDistance() )+")");
+        TextViewTitle.setText("Manifest Paket ( Jarak: "+ AppConfig.formatKm( DoSendHelper.getInstance().getPacket().getDistance() )+")");
     }
     public List<PacketService> getPacketServiceList() {
         if(packetServiceList ==null){
@@ -350,11 +338,11 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     private void checkTarif(){
         HashMap<String, String> params = new HashMap();
 
-        params.put("distance", ""+OrderViaMapHelper.getInstance().getPacket().getDistance());
-        params.put("origin", (inputBaruPengirim? (sender ==null? "": sender.getAddress().getKecamatan()) : OrderViaMapHelper.getInstance().getOrigin().getAddress().getKecamatan() ));
-        params.put("destination", (inputBaruPenerima? (receiver ==null? "": receiver.getAddress().getKecamatan()) : OrderViaMapHelper.getInstance().getDestination().getAddress().getKecamatan() ));
-        params.put("service_code", OrderViaMapHelper.getInstance().getOrder().getService_code());
-        params.put("do_type", OrderViaMapHelper.getInstance().getOrder().getService_type());
+        params.put("distance", ""+ DoSendHelper.getInstance().getPacket().getDistance());
+        params.put("origin", (inputBaruPengirim?  _alamatPengirimText.getText().toString() : DoSendHelper.getInstance().getOrigin().getAddress().getKecamatan() ));
+        params.put("destination", (inputBaruPenerima? _alamatPenerimaText.getText().toString(): DoSendHelper.getInstance().getDestination().getAddress().getKecamatan() ));
+        params.put("service_code", DoSendHelper.getInstance().getOrder().getService_code());
+        params.put("do_type", DoSendHelper.getInstance().getOrder().getService_type());
         params.put("berat_kiriman", _beratBarangText.getText().toString());
         params.put("volume", "0");
 
@@ -367,7 +355,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                     boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
                     if(OK){
                         double tariff = jObj.getDouble("tarif");
-                        OrderViaMapHelper.getInstance().getOrder().setTotalPrice( new BigDecimal( tariff ) ) ;
+                        DoSendHelper.getInstance().getOrder().setTotalPrice( new BigDecimal( tariff ) ) ;
                         priceText.setText(AppConfig.formatCurrency(tariff));
                     }
                 }catch (Exception e){
@@ -395,34 +383,34 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             //String alamatPengirim = _alamatPengirimText.getText().toString();
             String teleponPengirim =  _teleponPengirimText.getPhoneNumber();
             //if(teleponPengirim.startsWith("0")){ teleponPengirim = _teleponPengirimText.getPhoneNumber().getCountryCode()+""+teleponPengirim;            }
-            TUser origin = OrderViaMapHelper.getInstance().getOrigin();
+            TUser origin = DoSendHelper.getInstance().getOrigin();
             if(origin == null) origin = new TUser();
             origin.setFirstname(namaPengirim);
             origin.setPhone(teleponPengirim);
-            OrderViaMapHelper.getInstance().setOrigin(origin);
+            DoSendHelper.getInstance().setOrigin(origin);
 
             //db.addRecipient(namaPengirim,teleponPengirim,genderPengirim,alamatPengirim,kota_pengirim.getCode(), kota_pengirim.getText());
-        }else{
-            OrderViaMapHelper.getInstance().setOrigin(sender);
-        }
+       // }else{
+       //     DoSendHelper.getInstance().setOrigin(sender);
+       }
 
         if(inputBaruPenerima){
             String namaPenerima= _namaPenerimaText.getText().toString();
             //String alamatPenerima = _alamatPenerimaText.getText().toString();
-            String teleponPenerima =  _teleponPengirimText.getPhoneNumber();
+            String teleponPenerima =  _teleponPenerimaText.getPhoneNumber();
             //if(teleponPenerima.startsWith("0")){ teleponPenerima = _teleponPenerimaText.getPhoneNumber().getCountryCode()+""+teleponPenerima; }
-            TUser destination = OrderViaMapHelper.getInstance().getDestination();
+            TUser destination = DoSendHelper.getInstance().getDestination();
             if(destination == null) destination = new TUser();
             destination.setFirstname(namaPenerima);
             destination.setPhone(teleponPenerima);
 
-            OrderViaMapHelper.getInstance().setDestination(destination);
+            DoSendHelper.getInstance().setDestination(destination);
             //db.addRecipient(namaPenerima,teleponPenerima, genderPenerima, alamatPenerima,kota_penerima.getCode(), kota_penerima.getText());
-        }else{
-            OrderViaMapHelper.getInstance().setDestination(receiver);
+        //}else{
+        //    DoSendHelper.getInstance().setDestination(receiver);
         }
 
-        TOrder order = OrderViaMapHelper.getInstance().getOrder();
+        TOrder order = DoSendHelper.getInstance().getOrder();
 
         String beratBarang = _beratBarangText.getText().toString();
         String infoBarang = _infoBarangText.getText().toString();
@@ -434,11 +422,13 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         try{
             beratBarangAsli = new BigDecimal(beratBarang);
         }catch (Exception e){}
-        packet = OrderViaMapHelper.getInstance().getPacket();
+        packet = DoSendHelper.getInstance().getPacket();
         packet.setBerat_asli(beratBarangAsli);
         packet.setBerat_kiriman(beratBarangAsli.intValue());
         packet.setIsi_kiriman(infoBarang);
         packet.setBiaya(order.getTotalPrice());
+        packet.setDestination( DoSendHelper.getInstance().getDestination());
+        packet.setOrigin( DoSendHelper.getInstance().getOrigin());
         Set packets = new LinkedHashSet();
         packets.add(packet);
         order.setPackets(packets);
@@ -454,7 +444,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         builder.setPrettyPrinting(); builder.serializeNulls();
         Gson gson = builder.create();
 
-        String orderStr = gson.toJson(OrderViaMapHelper.getInstance().getOrder());
+        String orderStr = gson.toJson(DoSendHelper.getInstance().getOrder());
         Log.d(TAG, "place_an_order: "+orderStr);
         params.put("order", orderStr);
 
@@ -475,12 +465,15 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                         String status = jObj.getString("order_status");
                         String statusText = jObj.getString("order_status_text");
 
-                        OrderViaMapHelper.getInstance().getOrder().setAwb(awb);
-                        OrderViaMapHelper.getInstance().getOrder().setStatus(status);
-                        OrderViaMapHelper.getInstance().getOrder().setStatusText(statusText);
+                        DoSendHelper.getInstance().getOrder().setAwb(awb);
+                        DoSendHelper.getInstance().getOrder().setStatus(status);
+                        DoSendHelper.getInstance().getOrder().setStatusText(statusText);
 
-                        if(inputBaruPenerima) db.addAddress(OrderViaMapHelper.getInstance().getOrigin());
-                        if(inputBaruPengirim) db.addAddress(OrderViaMapHelper.getInstance().getDestination());
+                        ViewHelper.getInstance().setOrder(DoSendHelper.getInstance().getOrder());
+
+                        if(inputBaruPengirim) db.addAddress(DoSendHelper.getInstance().getOrigin());
+                        if(inputBaruPenerima) db.addAddress(DoSendHelper.getInstance().getDestination());
+
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -563,11 +556,12 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 _alamatPengirimText.setError(null);
             }
 
-        }else{
+/*        }else{
             if(sender ==null){
                 Toast.makeText(getContext(),"Pilih Pengirim dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
                 valid=false;
             }
+*/
         }
 
         if(inputBaruPenerima){
@@ -602,11 +596,11 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             _kotaPenerimaText.setError(null);
         }
 */
-        }else{
+/*        }else{
             if(receiver ==null){
                 Toast.makeText(getContext(),"Pilih Penerima dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
                 valid=false;
-            }
+            }*/
         }
 
         String beratBarang = _beratBarangText.getText().toString();
@@ -637,7 +631,37 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
     @Override
     public void onSelected() {
-
+        setup_berat_barang();
+        setup_radio();
+        setup_service();
+        updateUI();
+    }
+    private void updateUI() {
+        TUser destination = DoSendHelper.getInstance().getDestination();
+        if(destination != null && destination.getFirstname() != null){
+            _alamatPenerimaText.setText(destination.getAddress().toStringFormatted());
+            _teleponPenerimaText.setPhoneNumber(destination.getPhone());
+            _namaPenerimaText.setText(destination.getName());
+            inputBaruPenerima = false;
+        }else{
+            _teleponPenerimaText.setPhoneNumber("");
+            _namaPenerimaText.setText("");
+            inputBaruPenerima = true;
+        }
+        TUser origin = DoSendHelper.getInstance().getOrigin();
+        _teleponPengirimText.setPhoneNumber("");
+        _namaPengirimText.setText("");
+        inputBaruPengirim = true;
+        if(origin != null){
+            if(origin.getAddress() != null){
+                _alamatPengirimText.setText(origin.getAddress().toStringFormatted());
+            }
+            if(origin.getFirstname() != null) {
+                _teleponPengirimText.setPhoneNumber(origin.getPhone());
+                _namaPengirimText.setText(origin.getName());
+                inputBaruPengirim = false;
+            }
+        }
     }
 
     @Override

@@ -33,6 +33,7 @@ import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.wizard.ShopCheckoutActivity;
+import id.co.kurindo.kurindo.wizard.doshop.DoShopCheckoutActivity;
 
 /**
  * Created by aspire on 11/25/2016.
@@ -103,7 +104,7 @@ public class ShoppingCartFragment extends BaseFragment implements CartProductAda
             public void onClick(View v) {
                 //Intent intent = new Intent(getActivity(), CheckoutStepper.class);
                 if(CartHelper.getCart().getTotalQuantity() > 0){
-                    Intent intent = new Intent(getActivity(), ShopCheckoutActivity.class);
+                    Intent intent = new Intent(getActivity(), DoShopCheckoutActivity.class);
                     startActivity(intent);
                 }
                 getActivity().finish();

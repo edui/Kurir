@@ -1,4 +1,4 @@
-package id.co.kurindo.kurindo.map;
+package id.co.kurindo.kurindo.wizard.dosend;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -8,18 +8,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Handler;
-import android.os.ResultReceiver;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.AppCompatButton;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -35,9 +36,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -62,6 +60,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.stepstone.stepper.Step;
+import com.stepstone.stepper.VerificationError;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,26 +71,34 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.adapter.TUserAdapter;
-import id.co.kurindo.kurindo.base.KurindoActivity;
-import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
 import id.co.kurindo.kurindo.adapter.PaymentAdapter;
+import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
+import id.co.kurindo.kurindo.map.DataParser;
+import id.co.kurindo.kurindo.map.MapUtils;
+import id.co.kurindo.kurindo.map.PlaceArrayAdapter;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.Payment;
 import id.co.kurindo.kurindo.model.Route;
 import id.co.kurindo.kurindo.model.TUser;
-import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
+import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class MapsActivity extends KurindoActivity implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+/**
+ * Created by dwim on 2/14/2017.
+ */
+
+public class DoSendPinLocationMapFragment extends BaseStepFragment
+        implements Step, OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -104,24 +112,9 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
     @Bind(R.id.locationMarker)
     LinearLayout locationMarkerLayout;
 
-
-    /**
-     * Receiver registered with this activity to get the response from FetchAddressIntentService.
-     */
-    private AddressResultReceiver mResultReceiver;
-    /**
-     * The formatted location address.
-     */
-    protected String mAddressOutput;
-    protected String mAreaOutput;
-    protected String mCityOutput;
-    protected String mStateOutput;
-    //EditText mLocationAddress;
-    TextView mLocationText;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION= 2;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION= 3;
-
     private static final LatLngBounds BOUNDS_ID = new LatLngBounds(new LatLng(-0, 0), new LatLng(0, 0));
 
     @Bind(R.id.iconOrigin)
@@ -183,8 +176,8 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
     Marker originMarker;
     Marker destinationMarker;
 
-    @Bind(R.id.ButtonAddOrder)
-    AppCompatButton buttonAddOrder;
+    //@Bind(R.id.ButtonAddOrder)
+    //AppCompatButton buttonAddOrder;
 
     @Bind(R.id.rvPayment)
     RecyclerView rvPayment;
@@ -201,46 +194,33 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
     Spinner _serviceCodeText;
     PacketServiceAdapter packetServiceAdapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        ButterKnife.bind(this);
+    SupportMapFragment mapFragment;
 
-        Bundle bundle = getIntent().getExtras();
-        if(bundle != null){
-            int type= bundle.getInt("do_type");
-                switch (type){
-                    case R.drawable.do_send_icon:
-                        doType = AppConfig.KEY_DOSEND;
-                        rgDoType.check(R.id.radio_dosend);
-                        break;
-                    case R.drawable.do_jek_icon:
-                        doType = AppConfig.KEY_DOJEK;
-                        rgDoType.check(R.id.radio_dojek);
-                        break;
-                    case R.drawable.do_move_icon:
-                        doType = AppConfig.KEY_DOMOVE;
-                        rgDoType.check(R.id.radio_domove);
-                        break;
-                }
-        }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflateAndBind(inflater, container, R.layout.fragment_maps_dosend);
 
         if(DoSendHelper.getInstance().getPacket() != null && DoSendHelper.getInstance().getPacket().getOrigin() != null){
             origin = DoSendHelper.getInstance().getPacket().getOrigin();
             destination = DoSendHelper.getInstance().getPacket().getDestination();
         }
-        mContext = this;
+        mContext = getContext();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        buildGoogleApiClient();
+        //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        //mapFragment.getMapAsync(this);
+        //buildGoogleApiClient();
 
         showAddressLayout();
 
-        tUserAdapter = new TUserAdapter(this, data);
+        tUserAdapter = new TUserAdapter(getContext(), data);
 
-        mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1, BOUNDS_ID, null);
+        mPlaceArrayAdapter = new PlaceArrayAdapter(getContext(), android.R.layout.simple_list_item_1, BOUNDS_ID, null);
         mOriginAutoCompleteTextView.setAdapter(mPlaceArrayAdapter);
         mDestinationAutoCompleteTextView.setAdapter(mPlaceArrayAdapter);
 
@@ -257,31 +237,31 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         };
         mOriginAutoCompleteTextView.setOnItemClickListener(adapterOnItemClik);
         mDestinationAutoCompleteTextView.setOnItemClickListener(adapterOnItemClik);
-        paymentAdapter = new PaymentAdapter(this, getPaymentData(), new PaymentAdapter.OnItemClickListener() {
+        paymentAdapter = new PaymentAdapter(getContext(), getPaymentData(), new PaymentAdapter.OnItemClickListener() {
             @Override
             public void onActionButtonClick(View view, int position) {
                 Payment p = paymentAdapter.getItem(position);
                 if(p.getAction().equalsIgnoreCase(AppConfig.ISI_SALDO)){
-                    Toast.makeText(getApplicationContext(), "TODO : "+AppConfig.ISI_SALDO, LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "TODO : "+AppConfig.ISI_SALDO, LENGTH_SHORT).show();
                 }
             }
         });
         paymentAdapter.selected(1);
         payment = paymentAdapter.getItem(1);
         rvPayment.setAdapter(paymentAdapter);
-        rvPayment.setLayoutManager(new GridLayoutManager(this, 1){
+        rvPayment.setLayoutManager(new GridLayoutManager(getContext(), 1){
             @Override
             public boolean canScrollVertically() {
                 return false;
             }
         });
         rvPayment.setHasFixedSize(true);
-        rvPayment.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+        rvPayment.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Payment selected = paymentAdapter.getItem(position);
                 if(selected.getCredit() == 0){
-                    Toast.makeText(getApplicationContext(), "Saldo tidak mencukupi. Silahkan isi ulang saldo anda.", LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Saldo tidak mencukupi. Silahkan isi ulang saldo anda.", LENGTH_SHORT).show();
                     position = paymentAdapter.getSelectedPosition();
                 }
                 paymentAdapter.selected(position);
@@ -290,24 +270,24 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         }));
 
         rgDoType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-             @Override
-             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                 switch (group.getCheckedRadioButtonId()){
-                     case R.id.radio_dosend:
-                         doType = AppConfig.KEY_DOSEND;
-                         break;
-                     case R.id.radio_dojek:
-                         doType = AppConfig.KEY_DOJEK;
-                         break;
-                     case R.id.radio_domove:
-                         doType = AppConfig.KEY_DOMOVE;
-                         break;
-                 }
-                 if(canDrawRoute()) requestprice();
-             }
-         });
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (group.getCheckedRadioButtonId()){
+                    case R.id.radio_dosend:
+                        doType = AppConfig.KEY_DOSEND;
+                        break;
+                    case R.id.radio_dojek:
+                        doType = AppConfig.KEY_DOJEK;
+                        break;
+                    case R.id.radio_domove:
+                        doType = AppConfig.KEY_DOMOVE;
+                        break;
+                }
+                if(canDrawRoute()) requestprice();
+            }
+        });
 
-        packetServiceAdapter = new PacketServiceAdapter(this, AppConfig.getPacketServiceList(), 1);
+        packetServiceAdapter = new PacketServiceAdapter(getContext(), AppConfig.getPacketServiceList(), 1);
         _serviceCodeText.setAdapter(packetServiceAdapter);
         _serviceCodeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -322,7 +302,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
             }
         });
 
-        mResultReceiver = new AddressResultReceiver(new Handler());
+        //mResultReceiver = new MapsActivity.AddressResultReceiver(new Handler());
 
         if (checkPlayServices()) {
             // If this check succeeds, proceed with normal processing.
@@ -351,6 +331,21 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         } else {
             Toast.makeText(mContext, "Location not supported in this device", LENGTH_SHORT).show();
         }
+
+        return view;
+
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FragmentManager fm = getChildFragmentManager();
+        mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
+        if (mapFragment == null) {
+            mapFragment = SupportMapFragment.newInstance();
+            fm.beginTransaction().replace(R.id.map, mapFragment).commit();
+        }
+        mapFragment.getMapAsync(this);
+        buildGoogleApiClient();
 
     }
 
@@ -405,13 +400,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         return (origin.getAddress().getLocation() != null && destination.getAddress().getLocation() != null);
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        if(handleBackPressed()) return true;
-        return super.onSupportNavigateUp();
-    }
-
-    private void resetAll() {
+    public void resetAll() {
         route = null;
 
         origin = new TUser();
@@ -448,17 +437,11 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         return false;
     }
 
-    @Override
-    public void onBackPressed() {
-        if(!handleBackPressed()) {
-            super.onBackPressed();
-        }
-    }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
-        finish();
+        getActivity().finish();
     }
 
     private void resetDestination(){
@@ -467,8 +450,8 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         tvDestination.setText("Set Tujuan Anda");
         etDestinationNotes.setText("");
         etDestinationNotes.setVisibility(View.GONE);
-        destinationMode = false;
-        buttonAddOrder.setVisibility(View.GONE);
+        destinationMode = true;
+        //buttonAddOrder.setVisibility(View.GONE);
     }
     private void showAddressLayout() {
         tvOrigin.setVisibility(View.VISIBLE);
@@ -498,18 +481,6 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
     }
     public void onClick(View v) {
         //TODO
-    }
-
-    @Override
-    protected ActionBar setupToolbar() {
-        ActionBar ab = super.setupToolbar();
-        if(ab != null) ab.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
-        return  ab;
-    }
-
-    @Override
-    public Bundle getBundleParams() {
-        return null;
     }
 
     @OnClick(R.id.iconOrigin)
@@ -554,10 +525,10 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
             DoSendHelper.getInstance().setPacketRoute(origin, destination);
             DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, route.getDistance().getValue(), price);
-            showActivity( DoSendOrderActivity.class );
-            finish();
+            //showActivity( DoSendOrderActivity.class );
+            //finish();
         }else{
-            Toast.makeText(getApplicationContext(), "Not Available", LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Not Available", LENGTH_SHORT).show();
         }
     }
 
@@ -575,7 +546,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         showOrderpanel(serviceLayout.isShown());
         orderLayout.setVisibility(View.VISIBLE );
         //serviceLayout.setMinimumHeight(100);
-        buttonAddOrder.setVisibility(View.VISIBLE );
+        //buttonAddOrder.setVisibility(View.VISIBLE );
     }
     private void showOrderpanel(boolean show){
         orderLayout.setVisibility((show ? View.VISIBLE : View.GONE ));
@@ -588,7 +559,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         orderLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
         rvPayment.setVisibility((hide ? View.GONE: View.VISIBLE));
         serviceLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
-        buttonAddOrder.setVisibility((hide ? View.GONE : View.VISIBLE));
+        //buttonAddOrder.setVisibility((hide ? View.GONE : View.VISIBLE));
     }
     private void requestAddress(LatLng latLng) {
         String url = MapUtils.getGeocodeUrl(latLng);
@@ -677,7 +648,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
             }
         }
         if(canDrawRoute() && route != null) {
-            Location lo = new Location("Origin");
+            /*Location lo = new Location("Origin");
             lo.setLatitude(origin.getAddress().getLocation().latitude);
             lo.setLongitude(origin.getAddress().getLocation().longitude);
 
@@ -688,13 +659,13 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
             tvDistanceInfo.setText("Harga ( "+route.getDistance().getText()+" ) : ");
             //tvPriceInfo.setText("");
 
-            Toast.makeText(getApplicationContext(), "Calculate distance : " + lo.distanceTo(ld), LENGTH_SHORT).show();
-
+            Toast.makeText(getContext(), "Calculate distance : " + lo.distanceTo(ld), LENGTH_SHORT).show();
+            //buttonAddOrder.setVisibility(View.VISIBLE );
+            */
             showOrderpanel(true);
-            buttonAddOrder.setVisibility(View.VISIBLE );
         }else {
             showOrderpanel(false);
-            buttonAddOrder.setVisibility(View.GONE);
+            //buttonAddOrder.setVisibility(View.GONE);
         }
 
     }
@@ -713,13 +684,14 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
                         if(OK){
                             DataParser parser = new DataParser();
                             route = parser.parseRoutes(jObj);
+                            DoSendHelper.getInstance().addRoute(route);
                             int dist = 0;
                             try{
                                 dist = Integer.parseInt(route.getDistance().getValue());
                             }catch (Exception e){}
                             if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM && !doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
                                 //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
-                                Toast.makeText(getApplicationContext(), "( "+route.getDistance().getText()+" ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "( "+route.getDistance().getText()+" ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
                                 showOrderpanel(false);
                             }else{
                                 requestprice();
@@ -957,7 +929,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnected(Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -965,11 +937,11 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(getActivity(),
                     new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
 
@@ -983,6 +955,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
             }else{
                 if(origin.getAddress().getLocation() == null) {
                     origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+                    originMode= true;
                     requestAddress(origin.getAddress().getLocation());
                 }
                 changeMap(mLastLocation);
@@ -1044,17 +1017,17 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
 
 
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .enableAutoManage(this, 0 /* clientId */, this)
+                .enableAutoManage(getActivity(), 0 /* clientId */, this)
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .build();
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         try {
             mGoogleApiClient.connect();
 
@@ -1065,7 +1038,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         try {
 
         } catch (RuntimeException e) {
@@ -1078,10 +1051,10 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
     }
 
     private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getContext());
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(),
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 //finish();
@@ -1096,7 +1069,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         Log.d(TAG, "Reaching map" + mMap);
 
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -1104,11 +1077,11 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(getActivity(),
                     new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
             return;
@@ -1129,115 +1102,17 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
             //startIntentService(location);
 
         } else {
-            Toast.makeText(getApplicationContext(),
+            Toast.makeText(getContext(),
                     "Sorry! unable to create maps", LENGTH_SHORT)
                     .show();
         }
 
     }
 
-    @Override
-    public boolean providesActivityToolbar() {
-        return true;
+    public void setDoType(String doType) {
+        this.doType = doType;
     }
 
-    @Override
-    public Class getFragmentClass() {
-        return null;
-    }
-
-    /**
-     * Receiver for data sent from FetchAddressIntentService.
-     */
-    class AddressResultReceiver extends ResultReceiver {
-        public AddressResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-        /**
-         * Receives data sent from FetchAddressIntentService and updates the UI in MainActivity.
-         */
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-
-            // Display the address string or an error message sent from the intent service.
-            mAddressOutput = resultData.getString(MapUtils.LocationConstants.RESULT_DATA_KEY);
-
-            mAreaOutput = resultData.getString(MapUtils.LocationConstants.LOCATION_DATA_AREA);
-
-            mCityOutput = resultData.getString(MapUtils.LocationConstants.LOCATION_DATA_CITY);
-            mStateOutput = resultData.getString(MapUtils.LocationConstants.LOCATION_DATA_STREET);
-
-            displayAddressOutput();
-
-            // Show a toast message if an address was found.
-            if (resultCode == MapUtils.LocationConstants.SUCCESS_RESULT) {
-                //Toast.makeText(getApplicationContext(), "Address Found", LENGTH_SHORT).show();
-            }
-            Toast.makeText(getApplicationContext(), "onReceiveResult", LENGTH_SHORT).show();
-
-
-        }
-
-    }
-
-    /**
-     * Updates the address in the UI.
-     */
-    protected void displayAddressOutput() {
-        try {
-            //if (mAreaOutput != null)
-               // mLocationText.setText(mAreaOutput+ "");
-
-            //mLocationAddress.setText(mAddressOutput);
-            //mLocationText.setText(mAreaOutput);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Creates an intent, adds location data to it as an extra, and starts the intent service for
-     * fetching an address.
-     */
-    protected void startIntentService(Location mLocation) {
-        // Create an intent for passing to the intent service responsible for fetching the address.
-        Intent intent = new Intent(this, FetchAddressIntentService.class);
-
-        // Pass the result receiver as an extra to the service.
-        intent.putExtra(MapUtils.LocationConstants.RECEIVER, mResultReceiver);
-
-        // Pass the location data as an extra to the service.
-        intent.putExtra(MapUtils.LocationConstants.LOCATION_DATA_EXTRA, mLocation);
-
-        // Start the service. If the service isn't already running, it is instantiated and started
-        // (creating a process for it if needed); if it is running then it remains running. The
-        // service kills itself automatically once all intents are processed.
-        startService(intent);
-    }
-
-
-    private void openAutocompleteActivity() {
-        try {
-            // The autocomplete activity requires Google Play Services to be available. The intent
-            // builder checks this and throws an exception if it is not the case.
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
-                    .build(this);
-            startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE);
-        } catch (GooglePlayServicesRepairableException e) {
-            // Indicates that Google Play Services is either not installed or not up to date. Prompt
-            // the user to correct the issue.
-            GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(),
-                    0 /* requestCode */).show();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // Indicates that Google Play Services is not available and the problem is not easily
-            // resolvable.
-            String message = "Google Play Services is not available: " +
-                    GoogleApiAvailability.getInstance().getErrorString(e.errorCode);
-
-            Toast.makeText(mContext, message, LENGTH_SHORT).show();
-        }
-    }
 
     /**
      * Called after the autocomplete activity has finished to return its result.
@@ -1285,17 +1160,17 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         data.addAll(db.getAddressList());
 
         // Create custom dialog object
-        final Dialog dialog = new Dialog(this);
+        final Dialog dialog = new Dialog(getContext());
         // Include dialog.xml file
         dialog.setContentView(R.layout.popup_list);
         // Set dialog title
         dialog.setTitle("Popup Dialog");
 
         RecyclerView list = (RecyclerView) dialog.findViewById(R.id.popupList);
-        list.setLayoutManager(new GridLayoutManager(this, 1));
+        list.setLayoutManager(new GridLayoutManager(getContext(), 1));
         list.setHasFixedSize(true);
         list.setAdapter(tUserAdapter);
-        list.addOnItemTouchListener(new RecyclerItemClickListener(getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
+        list.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 TUser p = data.get(position);
@@ -1346,4 +1221,67 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
             }
         });
     }
+
+
+    @Override
+    public int getName() {
+        return 0;
+    }
+
+    public VerificationError verifyStep() {
+        String onotes = etOriginNotes.getText().toString();
+        String dnotes = etDestinationNotes.getText().toString();
+        origin.getAddress().setNotes(onotes);
+        destination.getAddress().setNotes(dnotes);
+        if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
+            DoSendHelper.getInstance().setPacketRoute(origin, destination);
+            DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, route.getDistance().getValue(), price);
+            //showActivity( DoSendOrderActivity.class );
+            //finish();
+        }else{
+            //Toast.makeText(getContext(), "Not Available", LENGTH_SHORT).show();
+            return new VerificationError("Not Available");
+        }
+        return null;
+    }
+
+    @Override
+    public void onSelected() {
+        updateUI();
+    }
+
+    private void updateUI() {
+        switch (doType){
+            case AppConfig.KEY_DOSEND:
+                rgDoType.check(R.id.radio_dosend);
+                break;
+            case AppConfig.KEY_DOJEK:
+                rgDoType.check(R.id.radio_dojek);
+                break;
+            case AppConfig.KEY_DOMOVE:
+                rgDoType.check(R.id.radio_domove);
+                break;
+        }
+    }
+
+    @Override
+    public void onError(@NonNull VerificationError error) {
+
+    }
+
+    static DoSendPinLocationMapFragment instance ;
+    public static Fragment newInstance(String keyDosend) {
+        if (instance == null) {
+            instance = new DoSendPinLocationMapFragment();
+        }
+        instance.setDoType(keyDosend);
+        return instance;
+    }
+
+    public static Fragment getInstance() {
+        return instance;
+    }
+
 }
+
+

@@ -20,8 +20,6 @@ import java.util.List;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
-import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
 
@@ -32,15 +30,17 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     Context context;
     List<TPacket> data = new ArrayList<>();
+    TOrder order;
     private String[] bgColors;
     private OnItemClickListener itemClickListener;
 
-    public TPacketViewAdapter(Context context, List<TPacket> data) {
-        this(context, data, null);
+    public TPacketViewAdapter(Context context, List<TPacket> data, TOrder order) {
+        this(context, data, order, null);
     }
-    public TPacketViewAdapter(Context context, List<TPacket> data, OnItemClickListener itemClickListener) {
+    public TPacketViewAdapter(Context context, List<TPacket> data, TOrder order, OnItemClickListener itemClickListener) {
         this.context = context;
         this.data = data;
+        this.order = order;
         bgColors = context.getResources().getStringArray(R.array.list_bg);
         this.itemClickListener = itemClickListener;
     }
@@ -59,63 +59,66 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder vholder, final int position) {
         final TPacket packet = data.get(position);
-        TOrder order = ViewHelper.getInstance().getOrder();
-        if(order != null){
+       if(order != null){
+           MyItemHolder holder = (MyItemHolder) vholder;
             if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_SDS)){
-                ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_sds);
+                holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_sds);
             }else if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_NDS)) {
-                ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_nds);
+                holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_nds);
             }else if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_ENS)) {
-                ((MyItemHolder) holder).ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
+                holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
             }
-            ((MyItemHolder) holder)._genderPengirimText.setVisibility(View.GONE);
-            ((MyItemHolder) holder)._genderPenerimaText.setVisibility(View.GONE);
+            holder._genderPengirimText.setVisibility(View.GONE);
+            holder._genderPenerimaText.setVisibility(View.GONE);
             if(order != null){
                 if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
-                    ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_send_icon);
+                    holder.ivServiceIcon.setImageResource(R.drawable.do_send_icon);
                 }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOJEK)) {
-                    ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_jek_icon);
+                    holder.ivServiceIcon.setImageResource(R.drawable.do_jek_icon);
 
-                    ((MyItemHolder) holder)._genderPengirimText.setVisibility(View.VISIBLE);
-                    ((MyItemHolder) holder)._genderPenerimaText.setVisibility(View.VISIBLE);
-                    ((MyItemHolder) holder)._genderPengirimText.setText(packet.getDestination().getGender());
-                    ((MyItemHolder) holder)._genderPenerimaText.setText(packet.getOrigin().getGender());
+                    holder._genderPengirimText.setVisibility(View.VISIBLE);
+                    holder._genderPenerimaText.setVisibility(View.VISIBLE);
+                    holder._genderPengirimText.setText(packet.getDestination().getGender());
+                    holder._genderPenerimaText.setText(packet.getOrigin().getGender());
                 }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
-                    ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
+                    holder.ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
                 }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {
-                    ((MyItemHolder) holder).ivServiceIcon.setImageResource(R.drawable.do_shop_icon);
+                    holder.ivServiceIcon.setImageResource(R.drawable.do_shop_icon);
                 }
             }
-            ((MyItemHolder) holder)._awbText.setText(order.getAwb());
-            ((MyItemHolder) holder)._infoPaketText.setText(packet.getIsi_kiriman() );
-            ((MyItemHolder) holder)._beratText.setText("Berat : "+packet.getBerat_kiriman() + " Kg");
-            ((MyItemHolder) holder)._ongkosPaketText.setText("Biaya : "+ AppConfig.formatCurrency( (packet.getBiaya() == null ? 0 : packet.getBiaya().doubleValue()) ));
+            holder._awbText.setText(order.getAwb());
+            holder._infoPaketText.setText(packet.getIsi_kiriman() );
+            holder._beratText.setText("Berat : "+packet.getBerat_kiriman() + " Kg");
+            holder._ongkosPaketText.setText("Biaya : "+ AppConfig.formatCurrency( (packet.getBiaya() == null ? 0 : packet.getBiaya().doubleValue()) ));
 
-            ((MyItemHolder) holder)._namaPengirimText.setText(packet.getOrigin().getName());
-            ((MyItemHolder) holder)._alamatPengirimText.setText(packet.getOrigin().getAddress().toStringFormatted());
-            ((MyItemHolder) holder)._teleponPengirimText.setText(packet.getOrigin().getPhone());
+            holder._namaPengirimText.setText(packet.getOrigin().getName());
+            holder._alamatPengirimText.setText(packet.getOrigin().getAddress().toStringFormatted());
+            holder._teleponPengirimText.setText(packet.getOrigin().getPhone());
 
-            ((MyItemHolder) holder)._namaPenerimaText.setText(packet.getDestination().getName());
-            ((MyItemHolder) holder)._alamatPenerimaText.setText(packet.getDestination().getAddress().toStringFormatted());
-            ((MyItemHolder) holder)._teleponPenerimaText.setText(packet.getDestination().getPhone());
+            holder._namaPenerimaText.setText(packet.getDestination().getName());
+            holder._alamatPenerimaText.setText(packet.getDestination().getAddress().toStringFormatted());
+            holder._teleponPenerimaText.setText(packet.getDestination().getPhone());
 
-            ((MyItemHolder) holder)._kotaPengirimText.setText("Dari: \n"+packet.getOrigin().getAddress().getKecamatan());
-            ((MyItemHolder) holder)._kotaPenerimaText.setText("Ke: \n"+packet.getDestination().getAddress().getKecamatan());
+            holder._kotaPengirimText.setText("Dari: \n"+packet.getOrigin().getAddress().getKecamatan());
+            holder._kotaPenerimaText.setText("Ke: \n"+packet.getDestination().getAddress().getKecamatan());
 
-            ((MyItemHolder) holder)._statusText.setText((order.getStatusText()==null?"":order.getStatusText()) +"\n"+order.getUpdated_date()==null? order.getCreated_date() == null? "":order.getCreated_date() : order.getUpdated_date());
+            holder._statusText.setText((order.getStatusText()==null?"":order.getStatusText()) +"\n"+order.getUpdated_date()==null? order.getCreated_date() == null? "":order.getCreated_date() : order.getUpdated_date());
             String data = order.getAwb()+";"+packet.getOrigin().getName()+";"+packet.getOrigin().getAddress().toStringFormatted()+";"+packet.getOrigin().getPhone()+";"+packet.getOrigin().getAddress().getKecamatan()
                     +";"+packet.getDestination().getName()+";"+packet.getDestination().getAddress().toStringFormatted()+";"+packet.getDestination().getPhone()+";"+packet.getDestination().getAddress().getKecamatan();
             //barcodeView.setImageBitmap(AppConfig.encodeContentsToBarcode(packet.getResi(), BarcodeFormat.CODE_128));
-            ((MyItemHolder) holder).barcodeView.setImageBitmap(AppConfig.encodeContentsToBarcode(data, BarcodeFormat.QR_CODE));
+            holder.barcodeView.setImageBitmap(AppConfig.encodeContentsToBarcode(data, BarcodeFormat.QR_CODE));
 
-            ((MyItemHolder) holder).btnLihatRute.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(itemClickListener != null) itemClickListener.onViewRouteButtonClick(v, position,  packet);
-                }
-            });
+           if(order.getStatus() != null){
+               holder.btnLihatRute.setVisibility(View.VISIBLE);
+               holder.btnLihatRute.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       if(itemClickListener != null) itemClickListener.onViewRouteButtonClick(v, position,  packet);
+                   }
+               });
+           }
 
         }
 

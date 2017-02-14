@@ -19,9 +19,7 @@ package id.co.kurindo.kurindo.wizard;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.android.tonyvu.sc.util.CartHelper;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
@@ -32,9 +30,6 @@ import id.co.kurindo.kurindo.wizard.checkout.StepSelectRecipientFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepSelectPaymentFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepConfirmShopCheckoutFragment;
 import id.co.kurindo.kurindo.wizard.checkout.StepSummaryFragment;
-import id.co.kurindo.kurindo.wizard.doshop.StepPinLocationMapFragment;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class ShopCheckoutActivity extends AbstractStepperActivity {
     private static final String TAG = "ShopCheckoutActivity";
@@ -110,8 +105,8 @@ public class ShopCheckoutActivity extends AbstractStepperActivity {
         /*Log.d(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
         Fragment f = getStepperAdapter().getItem(step);
         if(f != null){
-            if(f instanceof StepPinLocationMapFragment){
-                if(!((StepPinLocationMapFragment)StepPinLocationMapFragment.newInstance()).handleBackPressed()) {
+            if(f instanceof DoShopPinLocationMapFragment){
+                if(!((DoShopPinLocationMapFragment)DoShopPinLocationMapFragment.newInstance()).handleBackPressed()) {
                     super.onBackPressed();
                     finish();
                 }

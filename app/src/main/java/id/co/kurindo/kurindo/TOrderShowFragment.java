@@ -40,25 +40,18 @@ import java.util.Set;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.adapter.CartViewAdapter;
-import id.co.kurindo.kurindo.adapter.PacketViewAdapter;
 import id.co.kurindo.kurindo.adapter.TPacketViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseFragment;
-import id.co.kurindo.kurindo.helper.OrderHelper;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.map.MapViewsActivity;
 import id.co.kurindo.kurindo.model.CartItem;
-import id.co.kurindo.kurindo.model.Order;
-import id.co.kurindo.kurindo.model.Packet;
 import id.co.kurindo.kurindo.model.Recipient;
 import id.co.kurindo.kurindo.model.StatusHistory;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
-import id.co.kurindo.kurindo.wizard.AcceptOrderActivity;
-import id.co.kurindo.kurindo.wizard.RejectOrderActivity;
 import id.co.kurindo.kurindo.wizard.dosend.AcceptTOrderActivity;
 import id.co.kurindo.kurindo.wizard.dosend.RejectTOrderActivity;
 
@@ -363,7 +356,7 @@ public class TOrderShowFragment extends BaseFragment {
         List<TPacket> packets = new ArrayList<>();
         if(order.getPackets().size() > 0) packets.addAll( order.getPackets());
         tvPengiriman.setVisibility(View.VISIBLE);
-        TPacketViewAdapter adapter = new TPacketViewAdapter(getContext(), packets, new TPacketViewAdapter.OnItemClickListener() {
+        TPacketViewAdapter adapter = new TPacketViewAdapter(getContext(), packets, order, new TPacketViewAdapter.OnItemClickListener() {
             @Override
             public void onViewRouteButtonClick(View view, int position, TPacket packet) {
                 ViewHelper.getInstance().setPacket(packet);

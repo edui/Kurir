@@ -26,7 +26,6 @@ import butterknife.Bind;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.DoShopHelper;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;

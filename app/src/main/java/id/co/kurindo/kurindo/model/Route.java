@@ -12,6 +12,8 @@ public class Route {
     private TextValue distance;
     private TextValue duration;
     private double price;
+    private TUser origin;
+    private TUser destination;
 
     public List<List<HashMap<String, String>>> getRoutes() {
         return routes;
@@ -43,6 +45,22 @@ public class Route {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public TUser getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(TUser origin) {
+        this.origin = origin;
+    }
+
+    public TUser getDestination() {
+        return destination;
+    }
+
+    public void setDestination(TUser destination) {
+        this.destination = destination;
     }
 
     @Override

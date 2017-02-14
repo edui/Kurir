@@ -258,6 +258,10 @@
             android:name=".map.MapViewsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.doshop.DoShopCheckoutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
     </application>
 

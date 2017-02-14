@@ -1,13 +1,18 @@
 package id.co.kurindo.kurindo.wizard.dosend;
 
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
+import id.co.kurindo.kurindo.TOrderShowActivity;
+import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
 /**
@@ -16,6 +21,14 @@ import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
 public class DoSendOrderActivity extends AbstractStepperActivity {
     private static final String TAG = "DoSendOrderActivity";
+    int step = -1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        DoSendHelper.getInstance().clearAll();
+    }
+
 
     @Override
     protected AbstractStepAdapter getStepperAdapter() {
@@ -24,16 +37,14 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
 
     @Override
     public void onStepSelected(int newStepPosition) {
-        if(newStepPosition == 0){
-            mNextNavigationButton.setText("Confirm Order");
-            mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_spesial_button_background));
+        if(newStepPosition == 1){
+            mCompleteNavigationButton.setText("Confirm Order");
+            //mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_spesial_button_background));
         }else{
             mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_default_button_background));
         }
 
-        if(newStepPosition == 1){
-            mBackNavigationButton.setVisibility(View.GONE);
-        }
+        step = newStepPosition;
     }
 
     @Override
@@ -43,8 +54,8 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
 
     @Override
     public void onCompleted(View completeButton) {
-        super.onCompleted(completeButton);
-        OrderViaMapHelper.getInstance().clearAll();
+        showActivity(TOrderShowActivity.class);
+        ((DoSendPinLocationMapFragment)DoSendPinLocationMapFragment.getInstance()).resetAll();
         finish();
     }
 
@@ -58,9 +69,9 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return new DoSendFormFragment();
+                    return DoSendPinLocationMapFragment.newInstance(AppConfig.KEY_DOSEND);
                 case 1:
-                    return new StepSummaryFragment();
+                    return new DoSendFormFragment();
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }
@@ -74,14 +85,35 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        OrderViaMapHelper.getInstance().clearAll();
+        Fragment f = getStepperAdapter().getItem(step);
+        if(f != null){
+            if(f instanceof DoSendPinLocationMapFragment){
+                if(!((DoSendPinLocationMapFragment) DoSendPinLocationMapFragment.getInstance()).handleBackPressed()) {
+                    DoSendHelper.getInstance().clearAll();
+                    return super.onSupportNavigateUp();
+                }
+            }else{
+                return super.onSupportNavigateUp();
+            }
+        }
         return super.onSupportNavigateUp();
     }
 
 
     @Override
     public void onBackPressed() {
-        OrderViaMapHelper.getInstance().clearAll();
-        finish();
+        Log.d(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
+        Fragment f = getStepperAdapter().getItem(step);
+        if(f != null){
+            if(f instanceof DoSendPinLocationMapFragment){
+                if(!((DoSendPinLocationMapFragment) DoSendPinLocationMapFragment.getInstance()).handleBackPressed()) {
+                    DoSendHelper.getInstance().clearAll();
+                    super.onBackPressed();
+                    finish();
+                }
+            }else{
+                super.onBackPressed();
+            }
+        }
     }
 }

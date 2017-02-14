@@ -79,7 +79,7 @@ import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.KurindoActivity;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
+import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.Payment;
@@ -225,9 +225,9 @@ public class MapsActivityBak1 extends KurindoActivity implements OnMapReadyCallb
                 }
         }
 
-        if(OrderViaMapHelper.getInstance().getPacket() != null && OrderViaMapHelper.getInstance().getPacket().getOrigin() != null){
-            origin = OrderViaMapHelper.getInstance().getPacket().getOrigin().getAddress();
-            destination = OrderViaMapHelper.getInstance().getPacket().getDestination().getAddress();
+        if(DoSendHelper.getInstance().getPacket() != null && DoSendHelper.getInstance().getPacket().getOrigin() != null){
+            origin = DoSendHelper.getInstance().getPacket().getOrigin().getAddress();
+            destination = DoSendHelper.getInstance().getPacket().getDestination().getAddress();
         }
         mContext = this;
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -536,8 +536,8 @@ public class MapsActivityBak1 extends KurindoActivity implements OnMapReadyCallb
         origin.setNotes(onotes);
         destination.setNotes(dnotes);
         if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
-            OrderViaMapHelper.getInstance().setRoute(origin, destination);
-            OrderViaMapHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, route.getDistance().getValue(), price);
+            DoSendHelper.getInstance().setPacketRoute(origin, destination);
+            DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, route.getDistance().getValue(), price);
             showActivity( DoSendOrderActivity.class );
             finish();
         }else{
@@ -627,7 +627,7 @@ public class MapsActivityBak1 extends KurindoActivity implements OnMapReadyCallb
     }
     private void drawRoute() {
         if(route != null){
-            OrderViaMapHelper.getInstance().setRoute(origin, destination);
+            DoSendHelper.getInstance().setPacketRoute(origin, destination);
 
             DataParser parser = new DataParser();
 

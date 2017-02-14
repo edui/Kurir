@@ -8,20 +8,19 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.Product;
-import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
 
 /**
- * Created by dwim on 2/6/2017.
+ * Created by dwim on 2/14/2017.
  */
 
 public class OrderViaMapHelper {
-    TOrder order;
-    TPacket packet;
-    TUser origin;
-    TUser destination;
+    protected TOrder order;
+    protected TPacket packet;
+    protected TUser origin;
+    protected TUser destination;
 
     private static OrderViaMapHelper helper;
     public static OrderViaMapHelper getInstance(){
@@ -65,7 +64,7 @@ public class OrderViaMapHelper {
         packet.setDestination(destination);
     }
 
-    public void setRoute(Address originParam, Address destinationParam) {
+    public void setPacketRoute(Address originParam, Address destinationParam) {
         if(origin == null) origin = new TUser();
         if(destination == null) destination = new TUser();
         this.origin.setAddress( originParam );
@@ -75,7 +74,7 @@ public class OrderViaMapHelper {
         packet.setOrigin(origin);
     }
 
-    public void setRoute(TUser originParam, TUser destinationParam) {
+    public void setPacketRoute(TUser originParam, TUser destinationParam) {
         if(origin == null) origin = new TUser();
         if(destination == null) destination = new TUser();
         this.origin = originParam ;
@@ -92,48 +91,50 @@ public class OrderViaMapHelper {
         packet.setDistance(Double.parseDouble( distance ));
     }
 
-    private void addNewProduct(String code) {
-        Product p = new Product();
+    protected void addNewProduct(String code) {
+        addNewProduct(code, 0);
+    }
+
+    protected void addNewProduct(String code, double price) {
         if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
-            p.setCode(code);
-            p.setName(code);
-            p.setShopid(1);
-            p.setType("A");
-            p.setQuantity(1);
-            p.setWeight(new BigDecimal(1));
-            p.setPrice(order.getTotalPrice());
-            CartItem item = new CartItem();
-            item.setProduct(p);
-            item.setQuantity(p.getQuantity());
             Set items = new LinkedHashSet<>();
-            items.add(item);
+            items.add(addCartItem(code, price));
             order.setProducts(items);
         }
-
     }
-    private void addToProducts(String code) {
-        Product p = new Product();
+
+    protected void addToProducts(String code) {
+        addToProducts(code, 0);
+    }
+
+    protected void addToProducts(String code, double price) {
         Set<CartItem> items = order.getProducts();
         if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
-            p.setCode(code);
-            p.setName(code);
-            p.setShopid(1);
-            p.setType("A");
-            p.setQuantity(1);
-            p.setWeight(new BigDecimal(1));
-            p.setPrice(order.getTotalPrice());
-            CartItem item = new CartItem();
-            item.setProduct(p);
-            item.setQuantity(p.getQuantity());
             if(items == null) {
                 items = new LinkedHashSet<>();
                 order.setProducts(items);
             }
-            items.add(item);
+            items.add(addCartItem(code, price));
         }
-
     }
-    private void addOrder(String payment, String serviceCode, double price) {
+
+    public CartItem addCartItem(String code, double price){
+        Product p = new Product();
+        p.setCode(code);
+        p.setName(code);
+        p.setShopid(1);
+        p.setType("A");
+        p.setQuantity(1);
+        p.setPrice(new BigDecimal(price));
+        p.setWeight(new BigDecimal(1));
+        p.setPrice(order.getTotalPrice());
+        CartItem item = new CartItem();
+        item.setProduct(p);
+        item.setQuantity(p.getQuantity());
+        return item;
+    }
+
+    protected void addOrder(String payment, String serviceCode, double price) {
         if(order == null) order= new TOrder();
         order.setPayment(payment);
         order.setService_code(serviceCode);
@@ -150,5 +151,7 @@ public class OrderViaMapHelper {
         packet = null;
         origin = null;
         destination = null;
+
     }
+
 }

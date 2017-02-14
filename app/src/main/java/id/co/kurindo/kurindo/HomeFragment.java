@@ -30,6 +30,7 @@ import id.co.kurindo.kurindo.model.ImageModel;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
+import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -195,9 +196,32 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
         mRecyclerView.setAdapter(mAdapter);
 
         //mRecyclerView.addOnItemTouchListener(getRecyclerItemClickListener());
-        mRecyclerView.addOnItemTouchListener(getRecyclerItemClickListener2());
+        mRecyclerView.addOnItemTouchListener(getRecyclerItemClickListener3());
         return  view;
     }
+    public RecyclerItemClickListener getRecyclerItemClickListener3(){
+        return new RecyclerItemClickListener(getContext(),
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        ImageModel model = data.get(position);
+                        if(model.getDrawable() == R.drawable.do_send_icon){
+                            ((BaseActivity)getActivity()).showActivity(DoSendOrderActivity.class);
+                        /*}else if(model.getDrawable() == R.drawable.do_jek_icon){
+                        }else if(model.getDrawable() == R.drawable.do_wash_icon){
+                        }else if(model.getDrawable() == R.drawable.do_service_icon){
+                        }else if(model.getDrawable() == R.drawable.do_hijamah_icon){
+                        }else if(model.getDrawable() == R.drawable.do_car_icon){
+                        }else if(model.getDrawable() == R.drawable.do_move_icon) {*/
+                        }else{
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("do_type", model.getDrawable());
+                            ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                        }
+                    }
+                });
+    }
+
     public RecyclerItemClickListener getRecyclerItemClickListener2(){
         return new RecyclerItemClickListener(getContext(),
                 new RecyclerItemClickListener.OnItemClickListener() {

@@ -19,19 +19,13 @@ package id.co.kurindo.kurindo.wizard.dosend;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
-import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.helper.OrderHelper;
-import id.co.kurindo.kurindo.helper.OrderViaMapHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
-import id.co.kurindo.kurindo.model.Order;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
-import id.co.kurindo.kurindo.wizard.dashboard.StepAcceptOrderFragment;
 
 public class AcceptTOrderActivity extends AbstractStepperActivity {
     TOrder order;

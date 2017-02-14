@@ -148,7 +148,7 @@
         android:layout_width="match_parent" android:layout_margin="2dp" android:background="@color/white"
         android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btnLihatRute"
+            android:id="@+id/btnLihatRute" android:visibility="gone"
             android:layout_width="wrap_content" android:layout_gravity="center"
             android:layout_height="wrap_content" android:text="Lihat Rute" android:textColor="@color/white" android:background="@drawable/rounded_corner_map_primary" android:padding="10dp"/>
     </LinearLayout>

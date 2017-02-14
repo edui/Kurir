@@ -25,6 +25,8 @@ public class TPacket  implements Parcelable {
     private String received_date;
 
     public TPacket(){
+        berat_asli = new BigDecimal(1);
+        berat_kiriman = berat_asli.intValue();
     }
     protected TPacket(Parcel in) {
         distance = in.readDouble();

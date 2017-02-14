@@ -26,12 +26,9 @@ import com.android.tonyvu.sc.util.CartHelper;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.helper.OrderHelper;
+import id.co.kurindo.kurindo.TOrderShowActivity;
+import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
-import id.co.kurindo.kurindo.wizard.checkout.StepConfirmShopCheckoutFragment;
-import id.co.kurindo.kurindo.wizard.checkout.StepSelectPaymentFragment;
-import id.co.kurindo.kurindo.wizard.checkout.StepSelectRecipientFragment;
-import id.co.kurindo.kurindo.wizard.checkout.StepSummaryFragment;
 
 public class DoShopCheckoutActivity extends AbstractStepperActivity {
     private static final String TAG = "ShopCheckoutActivity";
@@ -39,7 +36,8 @@ public class DoShopCheckoutActivity extends AbstractStepperActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        OrderHelper.getInstance().setOrder(null);
+
+        DoShopHelper.getInstance().clearAll();
     }
 
     @Override
@@ -51,8 +49,8 @@ public class DoShopCheckoutActivity extends AbstractStepperActivity {
     public void onStepSelected(int newStepPosition) {
         //Toast.makeText(this, "onStepSelected! -> " + newStepPosition, Toast.LENGTH_SHORT).show();
         if(newStepPosition == 1){
-            mNextNavigationButton.setText("Confirm Order");
-            mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_spesial_button_background));
+            mCompleteNavigationButton.setText("Confirm Order");
+            //mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_spesial_button_background));
         }else{
             mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_default_button_background));
         }
@@ -62,6 +60,8 @@ public class DoShopCheckoutActivity extends AbstractStepperActivity {
 
     @Override
     public void onCompleted(View completeButton) {
+        showActivity(TOrderShowActivity.class);
+        DoShopHelper.getInstance().clearAll();
         CartHelper.getCart().clear();
         finish();
     }
@@ -81,7 +81,7 @@ public class DoShopCheckoutActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return StepPinLocationMapFragment.newInstance();
+                    return DoShopPinLocationMapFragment.newInstance();
                 case 1:
                     return new DoShopFormFragment();
                 default:
@@ -96,12 +96,28 @@ public class DoShopCheckoutActivity extends AbstractStepperActivity {
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        Fragment f = getStepperAdapter().getItem(step);
+        if(f != null){
+            if(f instanceof DoShopPinLocationMapFragment){
+                if(!((DoShopPinLocationMapFragment) DoShopPinLocationMapFragment.newInstance()).handleBackPressed()) {
+                    return super.onSupportNavigateUp();
+                }
+            }else{
+                return super.onSupportNavigateUp();
+            }
+        }
+
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
     public void onBackPressed() {
         Log.d(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
         Fragment f = getStepperAdapter().getItem(step);
         if(f != null){
-            if(f instanceof StepPinLocationMapFragment){
-                if(!((StepPinLocationMapFragment)StepPinLocationMapFragment.newInstance()).handleBackPressed()) {
+            if(f instanceof DoShopPinLocationMapFragment){
+                if(!((DoShopPinLocationMapFragment) DoShopPinLocationMapFragment.newInstance()).handleBackPressed()) {
                     super.onBackPressed();
                     finish();
                 }
