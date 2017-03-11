@@ -8,14 +8,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 
 import butterknife.Bind;
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.model.News;
 
@@ -76,6 +81,23 @@ public class NewsShowFragment extends BaseFragment {
             if(newsDescription.getText() == null || newsDescription.getText().equals("")){
                 newsDescription.setText(news.getContent());
             }
+
+            HashMap<String, String > params = new HashMap<>();
+            params.put("form-user", db.getUserEmail());
+            params.put("form-type", "NEWS");
+            params.put("form-tag", news.getTitle());
+            params.put("form-activity", "View "+news.getTitle());
+            addRequest("req_logger", Request.Method.POST, AppConfig.URL_LOGGING, new Response.Listener() {
+                @Override
+                public void onResponse(Object o) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+
+                }
+            }, params, getKurindoHeaders());
         }
         return view;
     }

@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -141,10 +142,10 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
     ImageView ivAddDestinationNotes;
 
     @Bind(R.id.etOriginNotes)
-    EditText etOriginNotes;
+    protected EditText etOriginNotes;
 
     @Bind(R.id.etDestinationNotes)
-    EditText etDestinationNotes;
+    protected EditText etDestinationNotes;
 
     @Bind(R.id.destination_layout)
     LinearLayout destinationLayout;
@@ -169,9 +170,9 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
     AutoCompleteTextView mDestinationAutoCompleteTextView;
     PlaceArrayAdapter mPlaceArrayAdapter;
 
-    Route route;
-    TUser origin = new TUser();
-    TUser destination = new TUser();
+    protected Route route;
+    protected TUser origin = new TUser();
+    protected TUser destination = new TUser();
     Location mLastLocation;
     Marker originMarker;
     Marker destinationMarker;
@@ -182,19 +183,30 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
     @Bind(R.id.rvPayment)
     RecyclerView rvPayment;
     PaymentAdapter paymentAdapter;
-    Payment payment;
+    protected  Payment payment;
 
     @Bind(R.id.rgDoType)
-    RadioGroup rgDoType;
-    String doType = AppConfig.KEY_DOJEK;
-    String serviceCode = AppConfig.PACKET_SDS;
-    double price = 0;
+    protected RadioGroup rgDoType;
+    @Bind(R.id.radio_dojek)
+    protected RadioButton radioDoJek;
+    @Bind(R.id.radio_dosend)
+    protected RadioButton radioDoSend;
+    @Bind(R.id.radio_domove)
+    protected RadioButton radioDoMove;
+    @Bind(R.id.radio_docar)
+    protected RadioButton radioDoCar;
+
+    protected String doType = AppConfig.KEY_DOSEND;
+    protected String serviceCode = AppConfig.PACKET_SDS;
+    protected double price = 0;
 
     @Bind(R.id.input_service_code)
     Spinner _serviceCodeText;
     PacketServiceAdapter packetServiceAdapter;
 
     SupportMapFragment mapFragment;
+    protected boolean inDoSendCoverageArea = true;
+    protected boolean inDoMoveCoverageArea = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -396,7 +408,7 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
         }
     };
 
-    private boolean canDrawRoute() {
+    protected boolean canDrawRoute() {
         return (origin.getAddress().getLocation() != null && destination.getAddress().getLocation() != null);
     }
 
@@ -619,6 +631,10 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
             DataParser parser = new DataParser();
             String snippet = originMarker.getSnippet();
             originMarker.setSnippet(snippet + "\nEst. Distance :"+ route.getDistance().getText());
+            tvDistanceInfo.setText("Harga ( "+route.getDistance().getText()+" ) : ");
+
+            handleNext();
+
             PolylineOptions lineOptions = parser.drawRoutes(route.getRoutes());
 
             // Drawing polyline in the Google Map for the i-th route
@@ -669,6 +685,28 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
         }
 
     }
+
+    public void handleNext(){
+        int dist = 0;
+        try{
+            dist = Integer.parseInt(route.getDistance().getValue());
+        }catch (Exception e){}
+        if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM ){
+            if(!doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)) {
+                //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
+                Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
+                inDoSendCoverageArea = false;
+            }else{
+                if(dist > AppConfig.MAX_DOMOVE_COVERAGE_KM ){
+                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
+                    inDoMoveCoverageArea = false;
+                }
+            }
+            showOrderpanel(false);
+        }else{
+            requestprice();
+        }
+    }
     private void reDrawRoute() {
 
         if(canDrawRoute()){
@@ -685,18 +723,8 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
                             DataParser parser = new DataParser();
                             route = parser.parseRoutes(jObj);
                             DoSendHelper.getInstance().addRoute(route);
-                            int dist = 0;
-                            try{
-                                dist = Integer.parseInt(route.getDistance().getValue());
-                            }catch (Exception e){}
-                            if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM && !doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
-                                //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
-                                Toast.makeText(getContext(), "( "+route.getDistance().getText()+" ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
-                                showOrderpanel(false);
-                            }else{
-                                requestprice();
-                                drawRoute();
-                            }
+                            drawRoute();
+                            //handleNext();
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -1229,21 +1257,28 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
     }
 
     public VerificationError verifyStep() {
+        if(!inDoSendCoverageArea){
+            return new VerificationError("Jarak terlalu jauh untuk DOSEND. Gunakan DOMOVE sebagai alternatif.");
+        }
+        if(!inDoMoveCoverageArea){
+            return new VerificationError("Jarak terlalu jauh. Tidak ada layanan.");
+        }
+
         String onotes = etOriginNotes.getText().toString();
         String dnotes = etDestinationNotes.getText().toString();
         origin.getAddress().setNotes(onotes);
         destination.getAddress().setNotes(dnotes);
-        if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
-            if(!canDrawRoute()){
+        if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
+            if (!canDrawRoute()) {
                 return new VerificationError("Pilih rute lokasi anda.");
             }
             DoSendHelper.getInstance().setPacketRoute(origin, destination);
-            DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, (route == null || route.getDistance() == null  ? "" : route.getDistance().getValue()), price);
+            DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, (route == null || route.getDistance() == null ? "" : route.getDistance().getValue()), price);
             //showActivity( DoSendOrderActivity.class );
             //finish();
         }else{
             //Toast.makeText(getContext(), "Not Available", LENGTH_SHORT).show();
-            return new VerificationError("Not Available");
+            return new VerificationError(doType+" Not Available");
         }
         return null;
     }
@@ -1253,13 +1288,16 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
         updateUI();
     }
 
-    private void updateUI() {
-        switch (doType){
+    protected void updateUI() {
+
+        radioDoSend.setVisibility(View.VISIBLE);
+        radioDoMove.setVisibility(View.VISIBLE);
+        radioDoJek.setVisibility(View.GONE);
+        radioDoCar.setVisibility(View.GONE);
+
+        switch (this.doType){
             case AppConfig.KEY_DOSEND:
                 rgDoType.check(R.id.radio_dosend);
-                break;
-            case AppConfig.KEY_DOJEK:
-                rgDoType.check(R.id.radio_dojek);
                 break;
             case AppConfig.KEY_DOMOVE:
                 rgDoType.check(R.id.radio_domove);
@@ -1273,7 +1311,7 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
     }
 
     static DoSendPinLocationMapFragment instance ;
-    public static Fragment newInstance(String keyDosend) {
+    protected static Fragment newInstance(String keyDosend) {
         if (instance == null) {
             instance = new DoSendPinLocationMapFragment();
         }
@@ -1281,7 +1319,7 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
         return instance;
     }
 
-    public static Fragment getInstance() {
+    protected static Fragment getInstance() {
         return instance;
     }
 

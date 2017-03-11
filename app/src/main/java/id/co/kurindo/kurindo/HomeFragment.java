@@ -30,6 +30,7 @@ import id.co.kurindo.kurindo.model.ImageModel;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
+import id.co.kurindo.kurindo.wizard.dojek.DoJekOrderActivity;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
 
 /**
@@ -205,18 +206,34 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                     @Override
                     public void onItemClick(View view, int position) {
                         ImageModel model = data.get(position);
+                        Bundle bundle = new Bundle();
                         if(model.getDrawable() == R.drawable.do_send_icon){
-                            ((BaseActivity)getActivity()).showActivity(DoSendOrderActivity.class);
-                        /*}else if(model.getDrawable() == R.drawable.do_jek_icon){
-                        }else if(model.getDrawable() == R.drawable.do_wash_icon){
-                        }else if(model.getDrawable() == R.drawable.do_service_icon){
-                        }else if(model.getDrawable() == R.drawable.do_hijamah_icon){
+                            bundle.putString("do_type", AppConfig.KEY_DOSEND);
+                            ((BaseActivity)getActivity()).showActivity(DoSendOrderActivity.class, bundle);
+                        }else if(model.getDrawable() == R.drawable.do_move_icon) {
+                            bundle.putString("do_type", AppConfig.KEY_DOMOVE);
+                            ((BaseActivity)getActivity()).showActivity(DoSendOrderActivity.class, bundle);
+                        }else if(model.getDrawable() == R.drawable.do_jek_icon){
+                            bundle.putString("do_type", AppConfig.KEY_DOJEK);
+                            ((BaseActivity)getActivity()).showActivity(DoJekOrderActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_car_icon){
-                        }else if(model.getDrawable() == R.drawable.do_move_icon) {*/
-                        }else{
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("do_type", model.getDrawable());
+                            bundle.putString("do_type", AppConfig.KEY_DOCAR);
+                            ((BaseActivity)getActivity()).showActivity(DoJekOrderActivity.class, bundle);
+                        }else if(model.getDrawable() == R.drawable.do_wash_icon){
+                            bundle.putInt("do_type", R.drawable.do_wash_icon);
                             ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                        }else if(model.getDrawable() == R.drawable.do_service_icon){
+                            bundle.putInt("do_type", R.drawable.do_service_icon);
+                            ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                        }else if(model.getDrawable() == R.drawable.do_service_icon){
+                            bundle.putInt("do_type", R.drawable.do_service_icon);
+                            ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                        }else if(model.getDrawable() == R.drawable.do_hijamah_icon){
+                            bundle.putInt("do_type", R.drawable.do_hijamah_icon);
+                            ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                        }else{
+                            bundle.putString("class", "kerjasama");
+                            ((BaseActivity)getActivity()).showActivity(KerjasamaActivity.class, bundle);
                         }
                     }
                 });
@@ -377,16 +394,19 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
         data.add(model1);
         ImageModel model2 = new ImageModel(R.drawable.do_jek_icon, "Ojek Antar");
         data.add(model2);
-        ImageModel model3 = new ImageModel(R.drawable.do_wash_icon, "Jasa Cuci");
-        data.add(model3);
-        ImageModel model4 = new ImageModel(R.drawable.do_service_icon, "Service AC");
-        data.add(model4);
-        ImageModel model5 = new ImageModel(R.drawable.do_hijamah_icon, "Terapi Hijamah");
-        data.add(model5);
+
         ImageModel model6 = new ImageModel(R.drawable.do_car_icon, "Auto Rental");
         data.add(model6);
         ImageModel model7 = new ImageModel(R.drawable.do_move_icon, "Jasa Pindah");
         data.add(model7);
+
+        ImageModel model3 = new ImageModel(R.drawable.do_wash_icon, "Jasa Cuci");
+        data.add(model3);
+        ImageModel model4 = new ImageModel(R.drawable.do_service_icon, "Service AC");
+        data.add(model4);
+
+        ImageModel model5 = new ImageModel(R.drawable.do_hijamah_icon, "Terapi Hijamah");
+        data.add(model5);
         ImageModel model8 = new ImageModel(R.drawable.doclient_icon, "Kerjasama");
         data.add(model8);
     }

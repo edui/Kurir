@@ -268,6 +268,24 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return str;
     }
+    public String getUserEmail() {
+        String str = null;
+        String selectQuery = "SELECT  * FROM " + TABLE_USER;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            str = cursor.getString(3);
+        }
+        cursor.close();
+        db.close();
+        // return user
+        Log.d(TAG, "Fetching "+KEY_EMAIL+" from Sqlite: "+str);
+
+        return str;
+    }
     /**
      * Re crate database Delete all tables and create them again
      * */

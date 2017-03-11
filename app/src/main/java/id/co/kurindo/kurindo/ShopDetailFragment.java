@@ -17,10 +17,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
@@ -155,6 +159,23 @@ public class ShopDetailFragment extends BaseFragment {
 
             products = shop.getProducts();
             if(products == null ) products = new ArrayList<>();
+
+            HashMap<String, String > params = new HashMap<>();
+            params.put("form-user", db.getUserEmail());
+            params.put("form-type", "SHOP");
+            params.put("form-tag", shop.getCode());
+            params.put("form-activity", "View "+shop.getName());
+            addRequest("req_logger", Request.Method.POST, AppConfig.URL_LOGGING, new Response.Listener() {
+                @Override
+                public void onResponse(Object o) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+
+                }
+            }, params, getKurindoHeaders());
         }
         setupList(rootView);
         return rootView;

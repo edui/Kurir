@@ -205,6 +205,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
     PacketServiceAdapter packetServiceAdapter;
 
     SupportMapFragment mapFragment;
+    boolean inDoSendCoverageArea = true;
+    boolean inDoMoveCoverageArea = true;
 
     final Handler handler = new Handler() {
         @Override
@@ -708,6 +710,29 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         }
 
     }
+
+    public void handleNext(){
+        int dist = 0;
+        try{
+            dist = Integer.parseInt(route.getDistance().getValue());
+        }catch (Exception e){}
+        if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM ){
+            if(!doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)) {
+                //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
+                Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
+                inDoSendCoverageArea = false;
+            }else{
+                if(dist > AppConfig.MAX_DOMOVE_COVERAGE_KM ){
+                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
+                    inDoMoveCoverageArea = false;
+                }
+            }
+            showOrderpanel(false);
+        }else{
+            DoShopHelper.getInstance().addRoute(route);
+            requestprice();
+        }
+    }
     private void reDrawRoute() {
 
         if(canDrawRoute()){
@@ -725,18 +750,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                             route.setOrigin(origin);
                             route.setDestination(destination);
 
-                            int dist = 0;
-                            try{
-                                dist = Integer.parseInt(route.getDistance().getValue());
-                            }catch (Exception e){}
-                            if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM && !doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
-                                //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
-                                Toast.makeText(getContext(), "( "+route.getDistance().getText()+" ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
-                                showOrderpanel(false);
-                            }else{
-                                DoShopHelper.getInstance().addRoute(route);
-                                requestprice();
-                            }
+                            handleNext();
+
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -1322,6 +1337,13 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
 
     @Override
     public VerificationError verifyStep() {
+        if(!inDoSendCoverageArea){
+            return new VerificationError("Jarak terlalu jauh untuk DOSEND. Gunakan DOMOVE sebagai alternatif.");
+        }
+        if(!inDoMoveCoverageArea){
+            return new VerificationError("Jarak terlalu jauh. Tidak ada layanan.");
+        }
+
         final VerificationError[] invalid = {null};
         DoShopHelper.getInstance().addDoShopOrder(payment.getText(), price, serviceCode);
 

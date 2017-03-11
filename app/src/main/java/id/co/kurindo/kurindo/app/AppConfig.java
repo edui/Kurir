@@ -132,6 +132,7 @@ public class AppConfig {
     public static final String OPEN = "OPEN";
     public static final String ISI_SALDO = "ISI SALDO";
     public static int MAX_DOSEND_COVERAGE_KM = 30000;
+    public static int MAX_DOMOVE_COVERAGE_KM = 100000;
 
     public static SimpleDateFormat sdf;
 

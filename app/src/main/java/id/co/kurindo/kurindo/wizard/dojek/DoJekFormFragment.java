@@ -1,4 +1,4 @@
-package id.co.kurindo.kurindo.wizard.dosend;
+package id.co.kurindo.kurindo.wizard.dojek;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -52,9 +53,9 @@ import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
-import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.TOrder;
@@ -68,24 +69,18 @@ import static id.co.kurindo.kurindo.R.style.CustomDialog;
  * Created by dwim on 2/7/2017.
  */
 
-public class DoSendFormFragment extends BaseStepFragment implements Step {
-    private static final String TAG = "DoSendFormFragment";
+public class DoJekFormFragment extends BaseStepFragment implements Step {
+    private static final String TAG = "DoJekFormFragment";
     VerificationError invalid = null;
 
     @Bind(R.id.input_nama_pengirim)    EditText _namaPengirimText;
     @Bind(R.id.input_alamat_pengirim) EditText _alamatPengirimText;
     @Bind(R.id.input_telepon_pengirim)    PhoneInputLayout _teleponPengirimText;
-
-    @Bind(R.id.input_nama_penerima) EditText _namaPenerimaText;
+    @Bind(R.id.gender_spinner_pengirim)    Spinner _genderSpinnerPengirim;
+    private String genderPengirim = "Laki-laki";
     @Bind(R.id.input_alamat_penerima) EditText _alamatPenerimaText;
-    @Bind(R.id.input_telepon_penerima) PhoneInputLayout _teleponPenerimaText;
 
-    @Bind(R.id.input_info_barang) EditText _infoBarangText;
     @Bind(R.id.input_service_code) Spinner _serviceCodeText;
-
-    @Bind(R.id.input_berat_barang) EditText _beratBarangText;
-    @Bind(R.id.incrementBtn) AppCompatButton incrementBtn;
-    @Bind(R.id.decrementBtn) AppCompatButton decrementBtn;
 
     @Bind(R.id.priceText)
     TextView priceText;
@@ -139,7 +134,6 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     private List<City> cityList = new ArrayList<>();
     private List<PacketService> packetServiceList;
     private boolean inputBaruPengirim;
-    private boolean inputBaruPenerima;
     private Map<String, String> headers;
 
     @Override
@@ -156,7 +150,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflateAndBind(inflater, container, R.layout.fragment_dosend_form);
+        View v = inflateAndBind(inflater, container, R.layout.fragment_dojek_form);
 
         progressDialog = new ProgressDialog(getActivity(), CustomDialog);
         ivAgrement.setOnClickListener(new View.OnClickListener() {
@@ -166,34 +160,29 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             }
         });
 
+        setup_gender();
         return v;
     }
-    //*
-    @OnClick(R.id.incrementBtn)
-    public void onClick_incrementBtn(){
-        //float q = 0;
-        //try{ q = Float.parseFloat(_beratBarangText.getText().toString());}catch (Exception e){};
-        //q +=0.1;
-        BigDecimal b = new BigDecimal(_beratBarangText.getText().toString());
-        b = b.add(new BigDecimal(0.1));
-        _beratBarangText.setText(""+b.floatValue());
 
-        //if(q % 0.5 == 0){checkTarif();}
+    private void setup_gender() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.genders_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        _genderSpinnerPengirim.setAdapter(adapter);
+        _genderSpinnerPengirim.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = (String) parent.getItemAtPosition(position);
+                genderPengirim = selected;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
-    @OnClick(R.id.decrementBtn)
-    public void onClick_decrementBtn(){
-        //float q = 1;
-        //try{ q = Float.parseFloat(_beratBarangText.getText().toString());}catch (Exception e){};
-        //q -= 0.1;
-        //if(q < 1) q = 1;
 
-        BigDecimal b = new BigDecimal(_beratBarangText.getText().toString());
-        b = b.subtract(new BigDecimal(0.1));
-        if(b.floatValue() < 1) b = new BigDecimal(1);
-        _beratBarangText.setText(""+b.floatValue());
-
-        //if(q % 0.5 == 0 && q > 1){checkTarif();        }
-    }//*/
     private void setup_service() {
         packetServiceList = getPacketServiceList();
         packetServiceAdapter = new PacketServiceAdapter(getContext(), packetServiceList);
@@ -302,32 +291,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         inputBaruPenerimaLayout.setVisibility( View.VISIBLE );
         inputBaruPengirimLayout.setVisibility( View.VISIBLE );
         _teleponPengirimText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
-        _teleponPenerimaText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
-    }
-    private void setup_berat_barang() {
 
-        _beratBarangText.setText("1");
-        _beratBarangText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable v) {
-                try {
-                    berat_kiriman = Float.parseFloat(v.toString());
-                } catch (Exception e) {
-                }
-                ;
-                if(berat_kiriman > 0 && (berat_kiriman % 0.25 == 0) ) checkTarif();
-            }
-        });
-
-        TextViewTitle.setText("Manifest Paket ( Jarak: "+ AppConfig.formatKm( DoSendHelper.getInstance().getPacket().getDistance() )+")");
     }
     public List<PacketService> getPacketServiceList() {
         if(packetServiceList ==null){
@@ -340,10 +304,10 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
         params.put("distance", ""+ DoSendHelper.getInstance().getPacket().getDistance());
         params.put("origin", (inputBaruPengirim?  _alamatPengirimText.getText().toString() : DoSendHelper.getInstance().getOrigin().getAddress().getKecamatan() ));
-        params.put("destination", (inputBaruPenerima? _alamatPenerimaText.getText().toString(): DoSendHelper.getInstance().getDestination().getAddress().getKecamatan() ));
+        params.put("destination", (DoSendHelper.getInstance().getDestination() == null? "" : DoSendHelper.getInstance().getDestination().getAddress().getKecamatan() ));
         params.put("service_code", DoSendHelper.getInstance().getOrder().getService_code());
         params.put("do_type", DoSendHelper.getInstance().getOrder().getService_type());
-        params.put("berat_kiriman", _beratBarangText.getText().toString());
+        params.put("berat_kiriman", "1");
         params.put("volume", "0");
 
         addRequest("request_price_route", Request.Method.POST, AppConfig.URL_PRICE_KM, new Response.Listener<String>() {
@@ -384,48 +348,46 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             String teleponPengirim =  _teleponPengirimText.getPhoneNumber();
             //if(teleponPengirim.startsWith("0")){ teleponPengirim = _teleponPengirimText.getPhoneNumber().getCountryCode()+""+teleponPengirim;            }
             TUser origin = DoSendHelper.getInstance().getOrigin();
-            if(origin == null) origin = new TUser();
+            if(origin == null) {
+                origin = new TUser();
+                String alamatPengirim = _alamatPengirimText.getText().toString();
+                Address addr = new Address();
+                addr.setAlamat(alamatPengirim);
+                origin.setAddress(addr);
+            }
             origin.setFirstname(namaPengirim);
             origin.setPhone(teleponPengirim);
+            origin.setGender(genderPengirim);
             DoSendHelper.getInstance().setOrigin(origin);
+
+            TUser destination = DoSendHelper.getInstance().getDestination();
+            if(destination== null) {
+                destination = new TUser();
+                String alamat = _alamatPenerimaText.getText().toString();
+                Address addr = new Address();
+                addr.setAlamat(alamat);
+                destination.setAddress(addr);
+            }
+            destination.setFirstname(namaPengirim);
+            destination.setPhone(teleponPengirim);
+            destination.setGender(genderPengirim);
+            DoSendHelper.getInstance().setDestination(destination);
 
             //db.addRecipient(namaPengirim,teleponPengirim,genderPengirim,alamatPengirim,kota_pengirim.getCode(), kota_pengirim.getText());
        // }else{
        //     DoSendHelper.getInstance().setOrigin(sender);
        }
 
-        if(inputBaruPenerima){
-            String namaPenerima= _namaPenerimaText.getText().toString();
-            //String alamatPenerima = _alamatPenerimaText.getText().toString();
-            String teleponPenerima =  _teleponPenerimaText.getPhoneNumber();
-            //if(teleponPenerima.startsWith("0")){ teleponPenerima = _teleponPenerimaText.getPhoneNumber().getCountryCode()+""+teleponPenerima; }
-            TUser destination = DoSendHelper.getInstance().getDestination();
-            if(destination == null) destination = new TUser();
-            destination.setFirstname(namaPenerima);
-            destination.setPhone(teleponPenerima);
-
-            DoSendHelper.getInstance().setDestination(destination);
-            //db.addRecipient(namaPenerima,teleponPenerima, genderPenerima, alamatPenerima,kota_penerima.getCode(), kota_penerima.getText());
-        //}else{
-        //    DoSendHelper.getInstance().setDestination(receiver);
-        }
 
         TOrder order = DoSendHelper.getInstance().getOrder();
-
-        String beratBarang = _beratBarangText.getText().toString();
-        String infoBarang = _infoBarangText.getText().toString();
 
         //String price = priceText.getText().toString();
         //order.setTotalPrice(new BigDecimal(price));
 
-        BigDecimal beratBarangAsli = new BigDecimal(0);
-        try{
-            beratBarangAsli = new BigDecimal(beratBarang);
-        }catch (Exception e){}
         packet = DoSendHelper.getInstance().getPacket();
-        packet.setBerat_asli(beratBarangAsli);
-        packet.setBerat_kiriman(beratBarangAsli.intValue());
-        packet.setIsi_kiriman(infoBarang);
+        packet.setBerat_asli(new BigDecimal(1));
+        packet.setBerat_kiriman(1);
+        packet.setIsi_kiriman("");
         packet.setBiaya(order.getTotalPrice());
         packet.setDestination( DoSendHelper.getInstance().getDestination());
         packet.setOrigin( DoSendHelper.getInstance().getOrigin());
@@ -472,8 +434,6 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                         ViewHelper.getInstance().setOrder(DoSendHelper.getInstance().getOrder());
 
                         if(inputBaruPengirim) db.addAddress(DoSendHelper.getInstance().getOrigin());
-                        if(inputBaruPenerima) db.addAddress(DoSendHelper.getInstance().getDestination());
-
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -564,62 +524,6 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 */
         }
 
-        if(inputBaruPenerima){
-            String namaPenerima= _namaPenerimaText.getText().toString();
-            //String teleponPenerima = _teleponPenerimaText.getText().toString();
-            String alamatPenerima = _alamatPenerimaText.getText().toString();
-            //String kotaPenerima = _kotaPenerimaText.getText().toString();
-
-            if (namaPenerima.isEmpty() || namaPenerima.length() < 4 ) {
-                _namaPenerimaText.setError("Tuliskan nama Penerima");
-                valid = false;
-            } else {
-                _namaPenerimaText.setError(null);
-            }
-
-            if (!_teleponPenerimaText.isValid()) {
-                Toast.makeText(getContext(), "Invalid Telepon Penerima.", Toast.LENGTH_SHORT).show();
-                valid = false;
-            }
-
-            if (alamatPenerima.isEmpty() || alamatPenerima.length() < 4 ) {
-                _alamatPenerimaText.setError("Tuliskan alamat Penerima");
-                valid = false;
-            } else {
-                _alamatPenerimaText.setError(null);
-            }
-/*
-        if (kotaPenerima.isEmpty() || kotaPenerima.length() < 4 ) {
-            _kotaPenerimaText.setError("Tuliskan kota Penerima");
-            valid = false;
-        } else {
-            _kotaPenerimaText.setError(null);
-        }
-*/
-/*        }else{
-            if(receiver ==null){
-                Toast.makeText(getContext(),"Pilih Penerima dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
-                valid=false;
-            }*/
-        }
-
-        String beratBarang = _beratBarangText.getText().toString();
-        String infoBarang = _infoBarangText.getText().toString();
-
-        if (beratBarang.isEmpty() || beratBarang.length() < 1 ) {
-            _beratBarangText.setError("Tuliskan berat barang");
-            valid = false;
-        } else {
-            _beratBarangText.setError(null);
-        }
-
-        if (infoBarang.isEmpty() || infoBarang.length() < 4 ) {
-            _infoBarangText.setError("Tuliskan informasi barang");
-            valid = false;
-        } else {
-            _infoBarangText.setError(null);
-        }
-
         if(valid){
             if(!chkAgrement.isChecked()) {
                 Toast.makeText(getActivity(), "Anda belum menyetujui syarat dan ketentuan kami.", Toast.LENGTH_SHORT).show();
@@ -631,24 +535,17 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
     @Override
     public void onSelected() {
-        setup_berat_barang();
         setup_radio();
         setup_service();
         updateUI();
     }
     private void updateUI() {
+        TextViewTitle.setText("Manifest DoJEK ( Jarak: "+ AppConfig.formatKm( (DoSendHelper.getInstance().getPacket()==null? 0 :DoSendHelper.getInstance().getPacket().getDistance() ))+")");
+
         TUser destination = DoSendHelper.getInstance().getDestination();
-        _teleponPenerimaText.setPhoneNumber("");
-        _namaPenerimaText.setText("");
-        inputBaruPenerima = true;
         if(destination != null ){
             if(destination.getAddress() != null){
                 _alamatPenerimaText.setText(destination.getAddress().toStringFormatted());
-            }
-            if(destination.getFirstname() != null) {
-                _teleponPenerimaText.setPhoneNumber(destination.getPhone());
-                _namaPenerimaText.setText(destination.getName());
-                inputBaruPenerima = false;
             }
         }
 
@@ -663,6 +560,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             if(origin.getFirstname() != null) {
                 _teleponPengirimText.setPhoneNumber(origin.getPhone());
                 _namaPengirimText.setText(origin.getName());
+                //_genderSpinnerPengirim.setSelection();
                 inputBaruPengirim = false;
             }
         }

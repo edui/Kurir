@@ -1,7 +1,6 @@
-package id.co.kurindo.kurindo.wizard.dosend;
+package id.co.kurindo.kurindo.wizard.dojek;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -14,15 +13,17 @@ import id.co.kurindo.kurindo.TOrderShowActivity;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
+import id.co.kurindo.kurindo.wizard.dosend.DoSendFormFragment;
+import id.co.kurindo.kurindo.wizard.dosend.DoSendPinLocationMapFragment;
 
 /**
  * Created by dwim on 2/7/2017.
  */
 
-public class DoSendOrderActivity extends AbstractStepperActivity {
-    private static final String TAG = "DoSendOrderActivity";
+public class DoJekOrderActivity extends AbstractStepperActivity {
+    private static final String TAG = "DoJekOrderActivity";
     int step = -1;
-    String doType = AppConfig.KEY_DOSEND;
+    String doType = AppConfig.KEY_DOJEK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
     @Override
     public void onCompleted(View completeButton) {
         showActivity(TOrderShowActivity.class);
-        ((DoSendPinLocationMapFragment)DoSendPinLocationMapFragment.getInstance()).resetAll();
+        ((DoJekPinLocationMapFragment)DoJekPinLocationMapFragment.getInstance()).resetAll();
         finish();
     }
 
@@ -74,9 +75,9 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return DoSendPinLocationMapFragment.newInstance(doType);
+                    return DoJekPinLocationMapFragment.newInstance(doType);
                 case 1:
-                    return new DoSendFormFragment();
+                    return new DoJekFormFragment();
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }
@@ -92,8 +93,8 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
     public boolean onSupportNavigateUp() {
         Fragment f = getStepperAdapter().getItem(step);
         if(f != null){
-            if(f instanceof DoSendPinLocationMapFragment){
-                if(!((DoSendPinLocationMapFragment) DoSendPinLocationMapFragment.getInstance()).handleBackPressed()) {
+            if(f instanceof DoJekPinLocationMapFragment){
+                if(!((DoJekPinLocationMapFragment) DoJekPinLocationMapFragment.getInstance()).handleBackPressed()) {
                     DoSendHelper.getInstance().clearAll();
                     return super.onSupportNavigateUp();
                 }
@@ -104,14 +105,13 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
         return super.onSupportNavigateUp();
     }
 
-
     @Override
     public void onBackPressed() {
         Log.d(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
         Fragment f = getStepperAdapter().getItem(step);
         if(f != null){
-            if(f instanceof DoSendPinLocationMapFragment){
-                if(!((DoSendPinLocationMapFragment) DoSendPinLocationMapFragment.getInstance()).handleBackPressed()) {
+            if(f instanceof DoJekPinLocationMapFragment){
+                if(!((DoJekPinLocationMapFragment) DoJekPinLocationMapFragment.getInstance()).handleBackPressed()) {
                     DoSendHelper.getInstance().clearAll();
                     super.onBackPressed();
                     finish();

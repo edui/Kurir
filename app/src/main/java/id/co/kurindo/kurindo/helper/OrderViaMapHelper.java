@@ -96,7 +96,7 @@ public class OrderViaMapHelper {
     }
 
     protected void addNewProduct(String code, double price) {
-        if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
+        if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND) || code.equalsIgnoreCase(AppConfig.KEY_DOJEK)){
             Set items = new LinkedHashSet<>();
             items.add(addCartItem(code, price));
             order.setProducts(items);
@@ -109,7 +109,7 @@ public class OrderViaMapHelper {
 
     protected void addToProducts(String code, double price) {
         Set<CartItem> items = order.getProducts();
-        if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND)){
+        if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND) || code.equalsIgnoreCase(AppConfig.KEY_DOJEK)){
             if(items == null) {
                 items = new LinkedHashSet<>();
                 order.setProducts(items);

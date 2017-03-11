@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -193,6 +194,21 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
 
     @Bind(R.id.rgDoType)
     RadioGroup rgDoType;
+    @Bind(R.id.radio_dojek)
+    protected RadioButton radioDoJek;
+    @Bind(R.id.radio_dosend)
+    protected RadioButton radioDoSend;
+    @Bind(R.id.radio_domove)
+    protected RadioButton radioDoMove;
+    @Bind(R.id.radio_docar)
+    protected RadioButton radioDoCar;
+    @Bind(R.id.radio_dowash)
+    protected RadioButton radioDoWash;
+    @Bind(R.id.radio_doservice)
+    protected RadioButton radioDoService;
+    @Bind(R.id.radio_dohijamah)
+    protected RadioButton radioDoHijamah;
+
     String doType = AppConfig.KEY_DOJEK;
     String serviceCode = AppConfig.PACKET_SDS;
     double price = 0;
@@ -222,6 +238,22 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
                     case R.drawable.do_move_icon:
                         doType = AppConfig.KEY_DOMOVE;
                         rgDoType.check(R.id.radio_domove);
+                        break;
+                    case R.drawable.do_car_icon:
+                        doType = AppConfig.KEY_DOCAR;
+                        rgDoType.check(R.id.radio_docar);
+                        break;
+                    case R.drawable.do_wash_icon:
+                        doType = AppConfig.KEY_DOWASH;
+                        rgDoType.check(R.id.radio_dowash);
+                        break;
+                    case R.drawable.do_service_icon:
+                        doType = AppConfig.KEY_DOSERVICE;
+                        rgDoType.check(R.id.radio_doservice);
+                        break;
+                    case R.drawable.do_hijamah_icon:
+                        doType = AppConfig.KEY_DOHIJAMAH;
+                        rgDoType.check(R.id.radio_dohijamah);
                         break;
                 }
         }

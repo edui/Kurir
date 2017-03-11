@@ -213,19 +213,39 @@
                 android:gravity="center"
                 android:orientation="horizontal" >
                 <RadioButton
-                    android:id="@+id/radio_dosend"
+                    android:id="@+id/radio_dosend" android:visibility="gone"
                     android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
                     android:background="@drawable/btn_dosend_selector" android:button="@null" android:gravity="center"
                     android:layout_height="60dp" android:text="" android:textSize="12sp" />
                 <RadioButton
-                    android:id="@+id/radio_dojek"
+                    android:id="@+id/radio_dojek" android:visibility="gone"
                     android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
                     android:background="@drawable/btn_dojek_selector" android:button="@null" android:gravity="center" android:checked="true"
                     android:layout_height="60dp" android:text="" android:textSize="12sp" />
                 <RadioButton
-                    android:id="@+id/radio_domove"
+                    android:id="@+id/radio_domove" android:visibility="gone"
                     android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
                     android:background="@drawable/btn_domove_selector" android:button="@null" android:gravity="center"
+                    android:layout_height="60dp" android:text="" android:textSize="12sp" />
+                <RadioButton
+                    android:id="@+id/radio_docar" android:visibility="gone"
+                    android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
+                    android:background="@drawable/btn_docar_selector" android:button="@null" android:gravity="center" android:checked="true"
+                    android:layout_height="60dp" android:text="" android:textSize="12sp" />
+                <RadioButton
+                    android:id="@+id/radio_dowash"
+                    android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
+                    android:background="@drawable/btn_dowash_selector" android:button="@null" android:gravity="center" android:checked="true"
+                    android:layout_height="60dp" android:text="" android:textSize="12sp" />
+                <RadioButton
+                    android:id="@+id/radio_doservice"
+                    android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
+                    android:background="@drawable/btn_doservice_selector" android:button="@null" android:gravity="center" android:checked="true"
+                    android:layout_height="60dp" android:text="" android:textSize="12sp" />
+                <RadioButton
+                    android:id="@+id/radio_dohijamah"
+                    android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
+                    android:background="@drawable/btn_dohijamah_selector" android:button="@null" android:gravity="center" android:checked="true"
                     android:layout_height="60dp" android:text="" android:textSize="12sp" />
             </RadioGroup>
             <LinearLayout

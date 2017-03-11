@@ -211,60 +211,65 @@
             android:name=".wizard.doshop.DoShopCheckoutActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-<!--
         <activity
-            android:name=".PacketOrderActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainDrawerActivity" />
-        </activity>
-        <activity
-            android:name=".PacketCheckActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainDrawerActivity" />
-        </activity>
-        <activity
-            android:name=".PacketShowActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
-             <activity
-            android:name=".wizard.ShopCheckoutActivity"
+            android:name=".wizard.dojek.DoJekOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".SimpleOrderActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainDrawerActivity" />
-        </activity>
-        <activity
-            android:name=".OrderShowActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
-        <activity
-            android:name=".wizard.AcceptOrderActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MonitorOrderActivity" />
-        </activity>
-        <activity
-            android:name=".wizard.RejectOrderActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MonitorOrderActivity" />
-        </activity>
--->
+
+        <!--
+                <activity
+                    android:name=".PacketOrderActivity"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme">
+                    <meta-data
+                        android:name="android.support.PARENT_ACTIVITY"
+                        android:value=".MainDrawerActivity" />
+                </activity>
+                <activity
+                    android:name=".PacketCheckActivity"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme">
+                    <meta-data
+                        android:name="android.support.PARENT_ACTIVITY"
+                        android:value=".MainDrawerActivity" />
+                </activity>
+                <activity
+                    android:name=".PacketShowActivity"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme"></activity>
+                     <activity
+                    android:name=".wizard.ShopCheckoutActivity"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme" />
+                <activity
+                    android:name=".SimpleOrderActivity"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme">
+                    <meta-data
+                        android:name="android.support.PARENT_ACTIVITY"
+                        android:value=".MainDrawerActivity" />
+                </activity>
+                <activity
+                    android:name=".OrderShowActivity"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme"></activity>
+                <activity
+                    android:name=".wizard.AcceptOrderActivity"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme">
+                    <meta-data
+                        android:name="android.support.PARENT_ACTIVITY"
+                        android:value=".MonitorOrderActivity" />
+                </activity>
+                <activity
+                    android:name=".wizard.RejectOrderActivity"
+                    android:screenOrientation="portrait"
+                    android:theme="@style/AppTheme">
+                    <meta-data
+                        android:name="android.support.PARENT_ACTIVITY"
+                        android:value=".MonitorOrderActivity" />
+                </activity>
+        -->
 
     </application>
 

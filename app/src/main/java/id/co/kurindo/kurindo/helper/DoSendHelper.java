@@ -48,4 +48,11 @@ public class DoSendHelper extends OrderViaMapHelper{
         super.clearAll();
         clearRoutes();
     }
+
+    public void addDoJekOrder(String payment, String serviceCode, String distance, double price) {
+        addOrder(payment, serviceCode, price);
+        addNewProduct(AppConfig.KEY_DOJEK);
+        order.setService_type(AppConfig.KEY_DOJEK);
+        packet.setDistance(Double.parseDouble( distance ));
+    }
 }
