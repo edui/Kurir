@@ -31,7 +31,7 @@ import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
 public class DoShopCheckoutActivity extends AbstractStepperActivity {
-    private static final String TAG = "ShopCheckoutActivity";
+    private static final String TAG = "DoShopCheckoutActivity";
     int step = -1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

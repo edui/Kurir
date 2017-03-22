@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
@@ -48,7 +49,6 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
         }else{
             mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_default_button_background));
         }
-
         step = newStepPosition;
     }
 

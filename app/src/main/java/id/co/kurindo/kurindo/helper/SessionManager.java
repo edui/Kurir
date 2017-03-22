@@ -85,7 +85,11 @@ public class SessionManager {
         }
         public boolean isKurir(){
             String role = pref.getString(KEY_ROLE, "client");
-            return role.equals(AppConfig.KEY_KURIR);
+            return (role.equals(AppConfig.KEY_KURIR) || role.equals(AppConfig.KEY_SHOPKURIR) || role.equals(AppConfig.KEY_KURIRSHOP));
+        }
+        public boolean isShopPic(){
+            String role = pref.getString(KEY_ROLE, "client");
+            return (role.equals(AppConfig.KEY_SHOPPIC) || role.equals(AppConfig.KEY_SHOPKEC) || role.equals(AppConfig.KEY_SHOPKAB) || role.equals(AppConfig.KEY_SHOPPROP) || role.equals(AppConfig.KEY_SHOPNEG)) ;
         }
         public boolean isAgent(){
             String role = pref.getString(KEY_ROLE, "client");
@@ -101,7 +105,7 @@ public class SessionManager {
         }
         public boolean isAdministrator(){
             String role = pref.getString(KEY_ROLE, "client");
-            return role.equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR);
+            return (role.equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKEC) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKAB) || role.equalsIgnoreCase(AppConfig.KEY_ADMINPROP) || role.equalsIgnoreCase(AppConfig.KEY_ADMINNEG));
         }
 
     public void clear() {

@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -37,13 +38,16 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
-import id.co.kurindo.kurindo.adapter.CityAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
+import id.co.kurindo.kurindo.helper.SignUpHelper;
 import id.co.kurindo.kurindo.model.City;
+import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.ParserUtil;
+import id.co.kurindo.kurindo.wizard.signup.SignupWizardActivity;
 
 /**
  * Created by dwim on 1/6/2017.
@@ -59,8 +63,8 @@ public class SignupFragment extends BaseFragment {
 
     @Bind(R.id.input_phone)
     PhoneInputLayout _phoneText;
-    @Bind(R.id.city_spinner)
-    Spinner _citySpinner;
+    //@Bind(R.id.city_spinner)
+    //Spinner _citySpinner;
     @Bind(R.id.gender_spinner)
     Spinner _genderSpinner;
 
@@ -72,12 +76,14 @@ public class SignupFragment extends BaseFragment {
     @Bind(R.id.link_login)
     TextView _loginLink;
 
+
     @Bind(R.id.chkAgrement)
     CheckBox chkAgrement;
     @Bind(R.id.ivAgrement)
     ImageView ivAgrement;
     @Bind(R.id.ivAgrement2)
     ImageView ivAgrement2;
+
 
     @Bind(R.id.input_simc)
     EditText _simcText;
@@ -89,12 +95,13 @@ public class SignupFragment extends BaseFragment {
     private SessionManager session;
     private SQLiteHandler db;
     private ProgressDialog progressDialog;
-    CityAdapter cityAdapter;
+    //CityAdapter cityAdapter;
     private String role = AppConfig.KEY_PELANGGAN;
-    private String city = "ID";
+    private String city;
     private String gender = "Laki-laki";
 
     private List<City> cityList = new ArrayList<>();
+    private int REQUEST_SignupWizardActivity = 1;
 
     @Nullable
     @Override
@@ -144,8 +151,12 @@ public class SignupFragment extends BaseFragment {
         });
 
         setup_gender_list();
-        setup_city_list();
+        //setup_city_list();
 
+        _phoneText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
+        _phoneText.setHint(R.string.telepon);
+
+        /*
         ivAgrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,6 +169,7 @@ public class SignupFragment extends BaseFragment {
                 showPopupWindow("Kurindo \nPrivacy Policy", R.raw.privacy_policy, R.drawable.icon_syarat_ketentuan);
             }
         });
+        */
 
         return v;
     }
@@ -196,7 +208,9 @@ public class SignupFragment extends BaseFragment {
         });
     }
 
+
     private void setup_city_list() {
+        /*
         cityAdapter = new CityAdapter(getContext(), cityList);
         _citySpinner.setAdapter(cityAdapter);
         _citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -214,6 +228,7 @@ public class SignupFragment extends BaseFragment {
         request_city("KEC");
         //new LoadCityTask().execute();
 
+        */
     }
 
     @Override
@@ -250,6 +265,7 @@ public class SignupFragment extends BaseFragment {
         String phone =  _phoneText.getPhoneNumber();
         //if(phone.startsWith("0")){ phone = _phoneText.getPhoneNumber().getCountryCode()+""+phone;}
         // TODONE: Implement your own signup logic here.
+        //signup_wizard(firstname, lastname, email, phone, role);
         signup_process(firstname, lastname, email, phone, role);
         /*new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -261,6 +277,29 @@ public class SignupFragment extends BaseFragment {
                         progressDialog.dismiss();
                     }
                 }, 3000);*/
+    }
+
+    private void signup_wizard(String firstname, String lastname, String email, String phone, String role) {
+        TUser user = new TUser();
+        user.setFirstname(firstname);
+        user.setLastname(lastname);
+        user.setEmail(email);
+        user.setPhone(phone);
+        user.setRole(role);
+        SignUpHelper.getInstance().setUser(user);
+
+        Intent intent = new Intent(getContext(), SignupWizardActivity.class);
+        startActivityForResult(intent, REQUEST_SignupWizardActivity);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SignupWizardActivity) {
+            if (resultCode == getActivity().RESULT_OK) {
+                SignUpHelper.getInstance().setUser(null);
+                onSignupSuccess();
+            }
+        }
     }
 
     private void signup_process(final String firstname, final String lastname, final String email, final String phone, final String role){
@@ -275,7 +314,7 @@ public class SignupFragment extends BaseFragment {
         Log.d(TAG, "Token: " + token);
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+                AppConfig.URL_BACKEND_SIGNUP, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -284,8 +323,9 @@ public class SignupFragment extends BaseFragment {
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
+                    String message = jObj.getString("message");
+                    boolean ok = "OK".equalsIgnoreCase(message);
+                    if (ok) {
                         db.onUpgrade(db.getWritableDatabase(), 0, 1);
                         session.setActive(false);
 
@@ -293,7 +333,7 @@ public class SignupFragment extends BaseFragment {
                         store_user_information(jObj);
 
                         // Show Validation Page
-                        Toast.makeText(getContext(), "User successfully registered. Check notification or your email for activation code.!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "User successfully registered. Check notification or your phone SMS for activation code.!", Toast.LENGTH_LONG).show();
 
                         // Launch Validation activity
                         onSignupSuccess();
@@ -302,9 +342,7 @@ public class SignupFragment extends BaseFragment {
 
                         // Error occurred in registration. Get the error
                         // message
-                        String errorMsg = jObj.getString("message");
-                        Toast.makeText(getContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
                         _signupButton.setEnabled(true);
 
                     }
@@ -337,15 +375,15 @@ public class SignupFragment extends BaseFragment {
                 params.put("form-email", email);
                 params.put("form-phone", phone);
                 params.put("form-role", role);
-                params.put("form-city", city);
+                //params.put("form-city", city);
                 params.put("form-gender", gender);
                 params.put("form-token", token == null ? "":token);
                 if(role.equalsIgnoreCase(AppConfig.KEY_KURIR)){
                     params.put("form-nik", _nikText.getText().toString());
                     params.put("form-simc", _simcText.getText().toString());
-                /*}else{
+                }else{
                     params.put("form-nik", "");
-                    params.put("form-simc", ""); */
+                    params.put("form-simc", "");
                 }
                 return params;
             }
@@ -359,12 +397,18 @@ public class SignupFragment extends BaseFragment {
     private void store_user_information(JSONObject jObj) {
         try {
             // Now store the user in sqlite
+            JSONObject user = jObj.getJSONObject("data");
+
+            ParserUtil parser = new ParserUtil();
+            TUser tuser = parser.parserUser(jObj);
+            db.addUser(tuser);
+
+            /*
             String uid = jObj.getString("user");
             String role = jObj.getString("role");
             String city = jObj.getString("city");
             String api_key = jObj.getString("api_key");
 
-            JSONObject user = jObj.getJSONObject("data");
             String firstname = user.getString("firstname");
             String lastname = user.getString("lastname");
             String email = user.getString("email");
@@ -375,9 +419,9 @@ public class SignupFragment extends BaseFragment {
             boolean active = jObj.getBoolean("active");
             boolean approved = jObj.getBoolean("approved");
 
-
             // Inserting row in users table
             db.addUser(firstname, lastname, email, phone, gender, uid, role, city, api_key, active, approved, created_at);
+            */
 
             // Create login session
             //session.setLogin(true);
@@ -393,7 +437,9 @@ public class SignupFragment extends BaseFragment {
     public void onSignupSuccess() {
         clearForm();
         _signupButton.setEnabled(true);
-        ((TabLoginFragment)getParentFragment()).tabLayout.getTabAt(0).select();
+        TabLoginFragment tab = ((TabLoginFragment)getParentFragment());
+        tab.tabLayout.getTabAt(0).select();
+        tab.loginFragment.showActivationLayout(_phoneText.getPhoneNumber());
 
         //TabHost host = (TabHost) getActivity().findViewById(android.R.id.tabs);
         //host.setCurrentTab(0);
@@ -404,15 +450,17 @@ public class SignupFragment extends BaseFragment {
     }
 
     private void clearForm() {
-        _firstnameText.setText("");
-        _lastnameText.setText("");
-        _emailText.setText("");
-        _phoneText.setDefaultCountry("ID");
-        _phoneText.setPhoneNumber("");
+        _firstnameText.setText(null);
+        _lastnameText.setText(null);
+        _emailText.setText(null);
+        _phoneText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
+        _phoneText.setPhoneNumber(null);
+        chkAgrement.setChecked(false);
+        roleRadioGroup.check(R.id.radio_client);
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Registration  failed", Toast.LENGTH_SHORT).show();
 
         _signupButton.setEnabled(true);
         progressDialog.dismiss();
@@ -464,11 +512,12 @@ public class SignupFragment extends BaseFragment {
             valid = false;
             Toast.makeText(getContext(), "Invalid Phone number.", Toast.LENGTH_SHORT).show();
         }
-
+    /*
         if (city == null || city.isEmpty() || city.length() < 5) {
             Toast.makeText(getContext(), "Select your City", Toast.LENGTH_SHORT).show();
             valid = false;
         }
+    */
         if(role.equalsIgnoreCase(AppConfig.KEY_KURIR)){
             if(nik.isEmpty() || nik.length() < 4){
                 valid = false;
@@ -483,6 +532,7 @@ public class SignupFragment extends BaseFragment {
                 _simcText.setError(null);
             }
         }
+
         if(valid){
             if(!chkAgrement.isChecked()) {
                 Toast.makeText(getActivity(), "Anda belum menyetujui syarat dan ketentuan kami.", Toast.LENGTH_SHORT).show();
@@ -521,7 +571,7 @@ public class SignupFragment extends BaseFragment {
                             City city = new City(cities.getJSONObject(j));
                             cityList.add(city);
                         }
-                        cityAdapter.notifyDataSetChanged();
+                        //cityAdapter.notifyDataSetChanged();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

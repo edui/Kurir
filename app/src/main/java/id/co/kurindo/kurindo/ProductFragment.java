@@ -29,9 +29,11 @@ import java.util.HashMap;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.util.DummyContent;
@@ -65,9 +67,18 @@ public class ProductFragment extends BaseFragment {
     @Bind(R.id.slider1) SliderLayout sliderShow1;
     @Bind(R.id.progress) ProgressBar progressBar;
 
+    boolean viewOnly = false;
+    boolean editMode = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            editMode = bundle.getBoolean("editMode");
+            viewOnly = bundle.getBoolean("viewOnly");
+        }
         /*
         product = getArguments().getParcelable("product");
         try {
@@ -98,30 +109,41 @@ public class ProductFragment extends BaseFragment {
         //initializeQuantity();
 
         HashMap<String, String > params = new HashMap<>();
-        params.put("form-user", db.getUserEmail());
-        params.put("form-type", "PRODUCT");
+        params.put("form-user", db.getUserPhone());
+        params.put("form-type", "PRODUCT"+(editMode?"-ADM":""));
         params.put("form-tag", product.getCode());
         params.put("form-activity", "View "+product.getName());
+        Address addr = ViewHelper.getInstance().getLastAddress();
+        params.put("form-lat", (addr.getLocation()==null? "0" : ""+addr.getLocation().latitude) );
+        params.put("form-lng", (addr.getLocation() == null ? "0" : ""+addr.getLocation().longitude));
         addRequest("req_logger", Request.Method.POST, AppConfig.URL_LOGGING, new Response.Listener() {
             @Override
             public void onResponse(Object o) {
+                Log.d(TAG, "req_logger Response: " + o.toString());
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                volleyError.printStackTrace();
             }
         }, params, getKurindoHeaders());
+
+
         return  view;
     }
 
     private void retrieveViews() {
-        if( (product == null || product.getQuantity() ==0) || shop.getStatus().equalsIgnoreCase(AppConfig.CLOSED)){
+        if( (product == null || product.getQuantity() ==0) || shop.getStatus()==null || shop.getStatus().equalsIgnoreCase(AppConfig.CLOSED) || viewOnly){
             bOrder.setBackgroundColor(Color.GRAY );
             bOrder.setEnabled(false);
             incrementBtn.setEnabled(false);
             decrementBtn.setEnabled(false);
+        }else{
+            bOrder.setBackgroundResource(R.color.colorPrimary);
+            bOrder.setEnabled(true);
+            incrementBtn.setEnabled(true);
+            decrementBtn.setEnabled(true);
         }
         incrementBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +185,7 @@ public class ProductFragment extends BaseFragment {
         if(product.getImageName() !=null){
             int resId = this.getResources().getIdentifier(product.getImageName().substring(0,product.getImageName().length()-4), "drawable", this.getActivity().getPackageName());
             if(resId == 0){
-                Glide.with(getContext()).load(product.getImageName())
+                Glide.with(getContext()).load(AppConfig.urlShopImage(product.getImageName() ))
                         .thumbnail(0.5f)
                         .crossFade()
                         .placeholder(R.drawable.placeholder)

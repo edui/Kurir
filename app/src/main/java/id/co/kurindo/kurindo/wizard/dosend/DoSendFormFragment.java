@@ -303,6 +303,8 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         inputBaruPengirimLayout.setVisibility( View.VISIBLE );
         _teleponPengirimText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
         _teleponPenerimaText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
+        _teleponPengirimText.setHint(R.string.telepon_pengirim);
+        _teleponPenerimaText.setHint(R.string.telepon_penerima);
     }
     private void setup_berat_barang() {
 
@@ -544,8 +546,10 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 _namaPengirimText.setError(null);
             }
 
-            if (!_teleponPengirimText.isValid() ) {
-                Toast.makeText(getContext(), "Invalid Telepon Pengirim.", Toast.LENGTH_SHORT).show();
+            if (_teleponPengirimText.isValid() ) {
+                _teleponPengirimText.setError(null);
+            }else{
+                _teleponPengirimText.setError("Invalid Telepon Pengirim.");
                 valid = false;
             }
 
@@ -577,8 +581,10 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 _namaPenerimaText.setError(null);
             }
 
-            if (!_teleponPenerimaText.isValid()) {
-                Toast.makeText(getContext(), "Invalid Telepon Penerima.", Toast.LENGTH_SHORT).show();
+            if (_teleponPenerimaText.isValid()) {
+                _teleponPenerimaText.setError(null);
+            }else{
+                _teleponPenerimaText.setError("Invalid Telepon Penerima.");
                 valid = false;
             }
 

@@ -1,5 +1,6 @@
 package id.co.kurindo.kurindo.helper;
 
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TOrder;
@@ -14,6 +15,8 @@ public class ViewHelper {
     TPacket packet;
     Shop shop;
     Product product;
+
+    Address lastAddress;
 
     private static ViewHelper helper;
     public static ViewHelper getInstance(){
@@ -51,5 +54,13 @@ public class ViewHelper {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public void setLastAddress(Address address) {
+        this.lastAddress = address;
+    }
+
+    public Address getLastAddress() {
+        return lastAddress;
     }
 }

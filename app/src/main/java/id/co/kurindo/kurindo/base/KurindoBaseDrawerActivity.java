@@ -1,5 +1,6 @@
 package id.co.kurindo.kurindo.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.view.MenuItem;
@@ -21,13 +22,20 @@ import id.co.kurindo.kurindo.ShoppingCartActivity;
 import id.co.kurindo.kurindo.TabFragment;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
+import id.co.kurindo.kurindo.helper.ShopAdmHelper;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
+import id.co.kurindo.kurindo.wizard.help.KurirOpenActivity;
+import id.co.kurindo.kurindo.wizard.help.ShopOpenActivity;
+import id.co.kurindo.kurindo.wizard.shopadm.AddShopActivity;
+
+import static java.security.AccessController.getContext;
 
 /**
  * Created by aspire on 11/24/2016.
  */
 
 public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
+    private static final int REQUEST_ADD_SHOP = 1;
     protected SessionManager session;
     protected SQLiteHandler db;
     protected AppCompatButton loginBtn;
@@ -115,6 +123,25 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
                 bundle.putString("extra", "PELANGGAN");
                 showActivity(MonitorOrderActivity.class, bundle);
                 break;
+
+            case R.id.nav_item_shop_add:
+                Intent intent = new Intent(getApplicationContext(), AddShopActivity.class);
+                startActivityForResult(intent, REQUEST_ADD_SHOP);
+                break;
+            case R.id.nav_item_shop_list:
+                showActivity(id.co.kurindo.kurindo.ShopListActivity.class);
+                break;
+            case R.id.nav_item_shop_city_list:
+                showActivity(id.co.kurindo.kurindo.map.MapsActivity.class);
+                break;
+
+            case R.id.nav_item_shop_open:
+                showActivity(ShopOpenActivity.class);
+                break;
+            case R.id.nav_item_kurir_open:
+                showActivity(KurirOpenActivity.class);
+                break;
+
             case R.id.nav_item_settings:
                 showActivity(SettingsActivity.class);
                 break;
@@ -137,10 +164,24 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
             boolean kurir = false;
             boolean agent = false;
             boolean pelanggan = false;
+            boolean shoppic = false;
+/*
+            boolean shopkurir = false;
+            boolean kurirshop = false;
+            boolean shopkec = false;
+            boolean shopkab = false;
+            boolean shopprop = false;
+            boolean shopneg = false;
+            boolean adminkec = false;
+            boolean adminkab = false;
+            boolean adminprop = false;
+            boolean adminneg = false;*/
+
             if(session.isKurir()){
                 pelanggan = true;
                 kurir = true;
             }
+            if(session.isShopPic()) shoppic= true;
             if(session.isAgent()) agent = true;
             if(session.isPelanggan()) pelanggan = true;
             if(session.isAdministrator()) {
@@ -159,6 +200,7 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
             navigationView.getMenu().setGroupVisible(R.id.group_agent_id, false);
             navigationView.getMenu().setGroupVisible(R.id.group_customer_id, false);
             navigationView.getMenu().setGroupVisible(R.id.group_admin_id, false);
+            navigationView.getMenu().setGroupVisible(R.id.group_shop_id, false);
 
             setupHeader(false);
         }
@@ -207,5 +249,16 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
     protected void onResume() {
         super.onResume();
         initialize();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_ADD_SHOP) {
+            if (resultCode == RESULT_OK) {
+                ShopAdmHelper.getInstance().setShop(null);
+                showActivity(id.co.kurindo.kurindo.ShopListActivity.class);
+            }
+        }
+
     }
 }

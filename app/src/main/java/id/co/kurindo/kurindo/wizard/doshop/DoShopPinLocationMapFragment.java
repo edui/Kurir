@@ -499,11 +499,11 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         mLocationMarkerText.setText("Set "+(originMode? "Lokasi Anda" : "Tujuan Anda" ));
     }
     public void moveCameraToLocation(LatLng location, float zoom){
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(70).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(AppConfig.DEFAULT_TILT_MAP).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
     public void moveCameraToLocation(LatLng location){
-        moveCameraToLocation(location, 19f);
+        moveCameraToLocation(location, AppConfig.DEFAULT_ZOOM_MAP);
     }
     public void onClick(View v) {
         //TODO
@@ -769,11 +769,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             };
             Set<Shop> shops = DoShopHelper.getInstance().getShops();
             for (Shop shop : shops) {
-                origin = new TUser();
-                origin.setAddress(shop.getAddress());
-                origin.setFirstname(shop.getOwner());
+                origin = shop.getPic();
                 origin.setLastname(shop.getName());
-                origin.setPhone(shop.getTelepon());
                 DoShopHelper.getInstance().setDestination(destination);
                 DoShopHelper.getInstance().setOrigin(origin);
 
@@ -918,10 +915,10 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         if(origin != null && origin.getAddress() != null && origin.getAddress().getLocation() != null){
             String title = "Origin";
             for (Shop shop: DoShopHelper.getInstance().getShops()) {
-                String snippet = (shop.getName() != null ? shop.getName() : (shop.getAddress().toStringFormatted() != null ? shop.getAddress().toStringFormatted() : ""));
+                String snippet = (shop.getName() != null ? shop.getName() : (shop.getPic() != null && shop.getPic().getAddress().toStringFormatted() != null ? shop.getPic().getAddress().toStringFormatted() : ""));
                 originMarker = mMap.addMarker(
                         new MarkerOptions()
-                                .position(shop.getAddress().getLocation())
+                                .position(shop.getPic().getAddress().getLocation())
                                 .title(title)
                                 .snippet(snippet)
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.origin_pin)));
@@ -1376,11 +1373,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         String t = ""; int i=0;
         Set<Shop> shops = DoShopHelper.getInstance().getShops();
         for (Shop shop : shops) {
-            origin = new TUser();
-            origin.setAddress(shop.getAddress());
-            origin.setFirstname(shop.getOwner());
+            origin = shop.getPic();
             origin.setLastname(shop.getName());
-            origin.setPhone(shop.getTelepon());
             //waypoints.add(shop.getAddress().getLocation());
             if(i>0) t+= " | ";
             t += origin.getName();

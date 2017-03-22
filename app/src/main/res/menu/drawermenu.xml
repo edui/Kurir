@@ -64,8 +64,29 @@
             </menu>
         </item>
     </group>
+    <group android:id="@+id/group_shop_id">
+        <item android:title="Shop">
+            <menu>
+                <item android:title="Add Shop"
+                    android:id="@+id/nav_item_shop_add"
+                    android:icon="@drawable/ic_store_black_18dp"/>
+                <item android:title="My Shop"
+                    android:id="@+id/nav_item_shop_list"
+                    android:icon="@drawable/ic_store_black_18dp"/>
+                <item android:title="City View"
+                    android:id="@+id/nav_item_shop_city_list"
+                    android:icon="@drawable/ic_location_city_black_18dp"/>
+            </menu>
+        </item>
+    </group>
     <item android:title="Informasi">
         <menu>
+            <item android:title="Ingin Buka Toko?"
+                android:id="@+id/nav_item_shop_open"
+                android:icon="@drawable/ic_store_black_18dp"/>
+            <item android:title="Ingin Jadi Kurir?"
+                android:id="@+id/nav_item_kurir_open"
+                android:icon="@drawable/ic_motorcycle_black"/>
             <item
                 android:title="Syarat &amp; Ketentuan"
                 android:id="@+id/nav_item_syarat"

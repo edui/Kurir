@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+        android:text="Perlengkapan Toko" android:layout_marginBottom="20dp">
+    </TextView>
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+            android:text="Image Branding">
+        </TextView>
+        <Button
+            android:layout_width="wrap_content" android:layout_weight=".6" android:layout_margin="10dp"
+            android:layout_height="70dp" android:theme="@style/AppTheme.Button" android:gravity="center_horizontal"
+            android:text="Pilih Brand/ Logo Image\n(w x h : 300px x 300px)"
+            android:id="@+id/buttonChooseBrand" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textStyle="italic"
+            android:text="Brand/ Logo akan muncul sebagai icon dalam daftar toko">
+        </TextView>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:id="@+id/imageViewBrand" />
+        <Button
+            android:layout_width="wrap_content" android:layout_weight=".6" android:layout_marginTop="20dp"
+            android:layout_height="70dp" android:theme="@style/AppTheme.Button" android:gravity="center_horizontal"
+            android:text="Pilih Backdrop Image\n(w x h :400px x 200px)"
+            android:id="@+id/buttonChooseBackdrop" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textStyle="italic"
+            android:text="Backdrop akan muncul sebagai banner pada halaman toko.">
+        </TextView>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_weight="1"
+            android:id="@+id/imageViewBackdrop" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

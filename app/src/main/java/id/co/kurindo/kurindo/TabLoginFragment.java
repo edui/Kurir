@@ -20,6 +20,9 @@ public class TabLoginFragment  extends Fragment {
     public static ViewPager viewPager;
     public static int int_items = 2 ;
 
+    LoginPhoneFragment loginFragment;
+    SignupFragment signupFragment;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /**
@@ -32,7 +35,9 @@ public class TabLoginFragment  extends Fragment {
         /**
          *Set an Apater for the View Pager
          */
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        loginFragment = new LoginPhoneFragment();
+        signupFragment = new SignupFragment();
+        viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), loginFragment, signupFragment));
 
         /**
          * Now , this is a workaround ,
@@ -92,8 +97,16 @@ public class TabLoginFragment  extends Fragment {
     }
 
     class MyAdapter extends FragmentPagerAdapter {
+        LoginPhoneFragment loginFragment;
+        SignupFragment signupFragment;
         public MyAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+        public MyAdapter(FragmentManager fm, LoginPhoneFragment loginFragment, SignupFragment signupFragment) {
+            super(fm);
+            this.loginFragment = loginFragment;
+            this.signupFragment = signupFragment;
         }
 
         /**
@@ -104,8 +117,8 @@ public class TabLoginFragment  extends Fragment {
         public Fragment getItem(int position)
         {
             switch (position){
-                case 0 : return new LoginFragment();
-                case 1 : return new SignupFragment();
+                case 0 : return loginFragment;
+                case 1 : return signupFragment;
             }
             return null;
         }

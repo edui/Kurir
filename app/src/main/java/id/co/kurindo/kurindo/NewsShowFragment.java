@@ -56,7 +56,7 @@ public class NewsShowFragment extends BaseFragment {
                         .into(ivNews);
             }
             pageTitle.setText(news.getTitle());
-            try {
+            /*try {
                 //File myFile = new File("/sdcard/filename.txt");
                 //FileInputStream iStr = new FileInputStream(myFile);
                 BufferedReader fileReader = new BufferedReader(new InputStreamReader(getContext().getResources().openRawResource(R.raw.news) ));
@@ -76,7 +76,7 @@ public class NewsShowFragment extends BaseFragment {
                 fileReader.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             if(newsDescription.getText() == null || newsDescription.getText().equals("")){
                 newsDescription.setText(news.getContent());

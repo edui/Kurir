@@ -81,6 +81,9 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     @Bind(R.id.input_alamat_penerima) EditText _alamatPenerimaText;
 
     @Bind(R.id.input_service_code) Spinner _serviceCodeText;
+    @Bind(R.id.ivProductImage)
+    ImageView ivProductImage;
+
 
     @Bind(R.id.priceText)
     TextView priceText;
@@ -200,6 +203,9 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
 
             }
         });
+
+        ivProductImage.setImageResource(R.drawable.do_jek_icon);
+
     }
 
     private void setup_radio() {
@@ -291,6 +297,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         inputBaruPenerimaLayout.setVisibility( View.VISIBLE );
         inputBaruPengirimLayout.setVisibility( View.VISIBLE );
         _teleponPengirimText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
+        _teleponPengirimText.setHint(R.string.telepon);
 
     }
     public List<PacketService> getPacketServiceList() {
@@ -504,8 +511,10 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
                 _namaPengirimText.setError(null);
             }
 
-            if (!_teleponPengirimText.isValid() ) {
-                Toast.makeText(getContext(), "Invalid Telepon Pengirim.", Toast.LENGTH_SHORT).show();
+            if (_teleponPengirimText.isValid() ) {
+                _teleponPengirimText.setError(null);
+            }else{
+                _teleponPengirimText.setError("Invalid Telepon Pengirim.");
                 valid = false;
             }
 

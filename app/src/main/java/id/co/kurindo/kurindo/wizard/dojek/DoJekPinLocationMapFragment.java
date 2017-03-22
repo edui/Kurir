@@ -103,10 +103,10 @@ public class DoJekPinLocationMapFragment extends DoSendPinLocationMapFragment{
     @Override
     public VerificationError verifyStep() {
 
-        if(!inDoSendCoverageArea){
+        if(!inDoJekCoverageArea){
             return new VerificationError("Jarak terlalu jauh untuk DOJEK. Gunakan DOCAR sebagai alternatif.");
         }
-        if(!inDoMoveCoverageArea){
+        if(!inDoCarCoverageArea){
             return new VerificationError("Jarak terlalu jauh. Tidak ada layanan.");
         }
 
@@ -118,6 +118,8 @@ public class DoJekPinLocationMapFragment extends DoSendPinLocationMapFragment{
             if (!canDrawRoute()) {
                 return new VerificationError("Pilih rute lokasi anda.");
             }
+            //TODO : check location based service / kedua rute masih dalam 1 kabupaten (dojek, dosend) atau propinsi (domove, docar) dan exception propinsi kecil2
+
             DoSendHelper.getInstance().setPacketRoute(origin, destination);
             DoSendHelper.getInstance().addDoJekOrder(payment.getText(), serviceCode, (route == null || route.getDistance() == null ? "" : route.getDistance().getValue()), price);
             //showActivity( DoSendOrderActivity.class );

@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
+import id.co.kurindo.kurindo.model.TUser;
 
 
 /**
@@ -82,29 +84,40 @@ public class DummyContent {
         addProduct(shop.getId(),products);
         */
 
-        Shop shop = new Shop(3, "BURYAMI001", "BURYAMI", "Bubur Ayam Istimewa\nDiolah dari bahan segar dan bumbu rempah asli & sehat, Non MSG", "buryami_iconshop.png", "buryami_bannershop.png", "0811542188", "Jl. Syarifudin Yoes \ndepan HER Guesthouse (seberang Pelangi B Point)\nOpen at 06.30 - 11.00", "OPEN", "BPN02", "Balikpapan Tengah & Kota");
+        //Shop shop = new Shop(3, "BURYAMI001", "BURYAMI", "Bubur Ayam Istimewa\nDiolah dari bahan segar dan bumbu rempah asli & sehat, Non MSG", "buryami_iconshop.png", "buryami_bannershop.png", "0811542188", "Jl. Syarifudin Yoes \ndepan HER Guesthouse (seberang Pelangi B Point)\nOpen at 06.30 - 11.00", "OPEN", "BPN02", "Balikpapan Tengah & Kota");
+        Shop shop = new Shop(3, "BURYAMI001", "BURYAMI", "Bubur Ayam Istimewa\nDiolah dari bahan segar dan bumbu rempah asli & sehat, Non MSG", "buryami_iconshop.png", "buryami_bannershop.png", "OPEN");
         List<Product> products = new ArrayList<>();
         Product p11 = new Product(12, "BURYAMI010", "Bubur Ayam Komplit", "Bubur Ayam Komplit", R.drawable.buryami010, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p11);
         Product p12 = new Product(13, "BURYAMI011", "Bubur Ayam Basah", "Bubur Ayam Basah", R.drawable.buryami011, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p12);
         //shop.setProducts(products);
-        shop.getAddress().setLocation(new LatLng(-0.3220503,117.429754));
+        TUser u = new TUser();
+        Address addr = new Address();
+        addr.setLocation(new LatLng(-0.3220503,117.429754));
+        u.setAddress(addr);
+        shop.setPic(u);
         addShop(shop);
         addProduct(shop.getId(),products);
 
-        shop = new Shop(4, "HONEYMOON001", "HONEYMOON", "","honeymoon_iconshop.png", "honeymoon_bannershop.png", "Info dan pemesanan: 0812-5630-2990", "Balikpapan Regency\nCastarica JE3 02", "OPEN", "BPN02", "Balikpapan Tengah & Kota");
+        //shop = new Shop(4, "HONEYMOON001", "HONEYMOON", "","honeymoon_iconshop.png", "honeymoon_bannershop.png", "Info dan pemesanan: 0812-5630-2990", "Balikpapan Regency\nCastarica JE3 02", "OPEN");
+        shop = new Shop(4, "HONEYMOON001", "HONEYMOON", "","honeymoon_iconshop.png", "honeymoon_bannershop.png", "OPEN");
         products = new ArrayList<>();
         Product p = new Product(13, "HONEYMOON001", "Madu Premium", "Madu Premium", R.drawable.honeymoon001, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
         p = new Product(14, "HONEYMOON002", "Madu Organik", "Madu Organik", R.drawable.honeymoon002, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
         //shop.setProducts(products);
-        shop.getAddress().setLocation(new LatLng(-0.3420503,117.429754));
+        u = new TUser();
+        addr = new Address();
+        addr.setLocation(new LatLng(-0.3420503,117.429754));
+        u.setAddress(addr);
+        shop.setPic(u);
         addShop(shop);
         addProduct(shop.getId(),products);
 
-        shop = new Shop(5, "MANGONCEL001", "MANGONCEL", "","mangoncel_iconshop.png", "mangoncel_bannershop.png", "Info dan pemesanan:\nIkhwan 085387180678\nAkhwat 081254406406", "Jl.Indrakila, Strat 3, \nGg.pandega, RT 32, No 56 \n\nInstagram : @mang_oncel", "OPEN", "BPN07", "Balikpapan Utara");
+        //shop = new Shop(5, "MANGONCEL001", "MANGONCEL", "","mangoncel_iconshop.png", "mangoncel_bannershop.png", "Info dan pemesanan:\nIkhwan 085387180678\nAkhwat 081254406406", "Jl.Indrakila, Strat 3, \nGg.pandega, RT 32, No 56 \n\nInstagram : @mang_oncel", "OPEN", "BPN02", "Balikpapan Tenagh & Kota");
+        shop = new Shop(5, "MANGONCEL001", "MANGONCEL", "","mangoncel_iconshop.png", "mangoncel_bannershop.png", "OPEN");
         products = new ArrayList<>();
         p = new Product(15, "MANGONCEL001", "Es Krim Cup Coklat", "Es Krim Cup Coklat", R.drawable.mangoncel001, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
@@ -115,14 +128,16 @@ public class DummyContent {
         p = new Product(18, "MANGONCEL004", "Es Krim Cup Strawberry", "Es Krim Cup Strawberry", R.drawable.mangoncel004, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
         //shop.setProducts(products);
-        shop.getAddress().setLocation(new LatLng(-0.3520503,117.429754));
+        u = new TUser();
+        addr = new Address();
+        addr.setLocation(new LatLng(-0.3520503,117.429754));
+        u.setAddress(addr);
+        shop.setPic(u);
         addShop(shop);
         addProduct(shop.getId(),products);
 
 
-        News n = new News(1, "Wakaf", "Wakaf", "Wakaf", R.drawable.wakaf_annasai);
-        addNews(n);
-        n = new News(2, "DO-Send", "DO-Send", "DO-Send", R.drawable.banner_dosend);
+        News n = new News(2, "DO-Send", "DO-Send", "DO-Send", R.drawable.banner_dosend);
         addNews(n);
         n = new News(3, "DO-Jek", "DO-Jek", "DO-Jek", R.drawable.banner_dojek);
         addNews(n);
@@ -138,8 +153,6 @@ public class DummyContent {
         n = new News(8, "DO-Move", "DO-Move", "DO-Move", R.drawable.banner_domove);
         addNews(n);
         n = new News(9, "DO-Client", "DO-Client", "DO-Client", R.drawable.banner_doclient);
-        addNews(n);
-        n = new News(10, "Wika-WH", "Wika-WH", "Wika-WH", R.drawable.banner_wikawh);
         addNews(n);
     }
 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textStyle="bold"
+        android:text="Konfirmasi Data Toko" android:layout_marginBottom="20dp"/>
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:textStyle="bold"
+            android:text="Backdrop" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:layout_weight="1"
+            android:id="@+id/imageViewBackdrop" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+            <LinearLayout
+                android:layout_width="wrap_content" android:layout_weight=".3"
+                android:layout_height="match_parent" android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:textStyle="bold"
+                    android:text="Brand/ Logo" />
+                <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/imageViewBanner" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content" android:layout_weight=".7"
+                android:layout_height="match_parent" android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:textStyle="bold"
+                    android:text="Data Toko" android:layout_marginBottom="10dp"/>
+                <TextView
+                    android:id="@+id/tvShopName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Nama Toko"/>
+                <TextView
+                    android:id="@+id/tvShopDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Motto"/>
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:textStyle="bold"
+            android:text="Contact: " android:layout_marginBottom="10dp" android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/tvShopContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="Contact"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:textStyle="bold"
+            android:text="Alamat" android:layout_marginBottom="10dp" android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/tvShopAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="Address"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

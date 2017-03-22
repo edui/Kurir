@@ -54,31 +54,36 @@ public class ProductGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder iholder, int position) {
+        MyItemHolder holder = (MyItemHolder) iholder;
         Product model = data.get(position);
         if(model != null){
-            if(model.getImageName() == null){
-                ((MyItemHolder) holder).mImg.setImageResource(model.getDrawable());
-            }
-            else{
-                int resId = context.getResources().getIdentifier(model.getImageName().substring(0,model.getImageName().length()-4),"drawable",context.getPackageName());
-                if(resId == 0){
-                Glide.with(context).load(AppConfig.urlProductImage(model.getImageName()))
-                        .thumbnail(0.5f)
-                        .crossFade()
-                        .placeholder(R.drawable.placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(((MyItemHolder) holder).mImg);
-                }else{
-                    ((MyItemHolder) holder).mImg.setImageResource(resId);
+            try {
+                if(model.getImageName() == null){
+                    holder.mImg.setImageResource(model.getDrawable());
                 }
+                else{
+                    int resId = context.getResources().getIdentifier(model.getImageName().substring(0,model.getImageName().length()-4),"drawable",context.getPackageName());
+                    if(resId == 0){
+                    Glide.with(context).load(AppConfig.urlProductImage(model.getImageName()))
+                            .thumbnail(0.5f)
+                            .crossFade()
+                            .placeholder(R.drawable.placeholder)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.mImg);
+                    }else{
+                        holder.mImg.setImageResource(resId);
+                    }
+                }
+            }catch (Exception e){
+                Log.d("ProductGridAdapter", model.getName() +" : "+position);
             }
 
             //((MyItemHolder) holder).mProductDescription.setText(model.getDescription());
-            ((MyItemHolder) holder).mProductTitle.setText(model.getName());
-            ((MyItemHolder) holder).mProductPrice.setText(AppConfig.formatCurrency(model.getPrice().doubleValue()));
-            ((MyItemHolder) holder).mProductStatus.setText(model.getQuantity() > 0? "Ada" : "Kosong");
-            ((MyItemHolder) holder).mProductStatus.setBackgroundColor(model.getQuantity() > 0? Color.rgb(59,156,101) : Color.rgb(189,42,34));
+            holder.mProductTitle.setText(model.getName());
+            holder.mProductPrice.setText(AppConfig.formatCurrency(model.getPrice().doubleValue()));
+            holder.mProductStatus.setText(model.getQuantity() > 0? "Ada" : "Kosong");
+            holder.mProductStatus.setBackgroundColor(model.getQuantity() > 0? Color.rgb(59,156,101) : Color.rgb(189,42,34));
         }
 
     }

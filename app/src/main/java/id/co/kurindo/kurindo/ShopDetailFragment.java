@@ -34,6 +34,7 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
@@ -129,10 +130,10 @@ public class ShopDetailFragment extends BaseFragment {
         if(shop != null){
             loadBackdropImage();
             collapsingToolbar.setTitle(" ");
-            author.setText(shop.getAddress().toStringFormatted());
-            quote.setText( shop.getTelepon()==null? "": shop.getTelepon()) ;
+            author.setText(shop.getPic().getAddress().toStringFormatted());
+            quote.setText( shop.getPic().getPhone()==null? "": shop.getPic().getPhone()) ;
             tvOpenStatus.setText(shop.getStatus());
-            if(shop.getStatus().equalsIgnoreCase(AppConfig.CLOSED)) {
+            if(shop.getStatus()==null || shop.getStatus().equalsIgnoreCase(AppConfig.CLOSED)) {
                 openStatusImg.setImageResource(R.drawable.closed_icon);
                 tvOpenStatus.setTextColor(Color.RED);
             }else{
@@ -161,10 +162,13 @@ public class ShopDetailFragment extends BaseFragment {
             if(products == null ) products = new ArrayList<>();
 
             HashMap<String, String > params = new HashMap<>();
-            params.put("form-user", db.getUserEmail());
+            params.put("form-user", db.getUserPhone());
             params.put("form-type", "SHOP");
             params.put("form-tag", shop.getCode());
             params.put("form-activity", "View "+shop.getName());
+            Address addr = ViewHelper.getInstance().getLastAddress();
+            params.put("form-lat", (addr.getLocation()==null? "0" : ""+addr.getLocation().latitude) );
+            params.put("form-lng", (addr.getLocation() == null ? "0" : ""+addr.getLocation().longitude));
             addRequest("req_logger", Request.Method.POST, AppConfig.URL_LOGGING, new Response.Listener() {
                 @Override
                 public void onResponse(Object o) {
@@ -211,6 +215,7 @@ public class ShopDetailFragment extends BaseFragment {
                         Bundle bundle = new Bundle();
                         //bundle.putParcelable("product",p);
                         //bundle.putParcelable("shop",shop);
+                        bundle.putBoolean("editMode",false);
                         ViewHelper.getInstance().setProduct(p);
                         ((ShopActivity)getActivity()).showActivity(ProductActivity.class, bundle);
                     }

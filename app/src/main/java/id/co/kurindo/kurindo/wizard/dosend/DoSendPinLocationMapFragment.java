@@ -207,6 +207,8 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
     SupportMapFragment mapFragment;
     protected boolean inDoSendCoverageArea = true;
     protected boolean inDoMoveCoverageArea = true;
+    protected boolean inDoJekCoverageArea = true;
+    protected boolean inDoCarCoverageArea = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -293,6 +295,9 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
                         break;
                     case R.id.radio_domove:
                         doType = AppConfig.KEY_DOMOVE;
+                        break;
+                    case R.id.radio_docar:
+                        doType = AppConfig.KEY_DOCAR;
                         break;
                 }
                 if(canDrawRoute()) requestprice();
@@ -485,11 +490,11 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
         mLocationMarkerText.setText("Set "+(destinationMode? "Tujuan Anda" : "Lokasi Anda"));
     }
     public void moveCameraToLocation(LatLng location, float zoom){
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(70).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(AppConfig.DEFAULT_TILT_MAP).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
     public void moveCameraToLocation(LatLng location){
-        moveCameraToLocation(location, 19f);
+        moveCameraToLocation(location, AppConfig.DEFAULT_ZOOM_MAP);
     }
     public void onClick(View v) {
         //TODO
@@ -692,10 +697,25 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
             dist = Integer.parseInt(route.getDistance().getValue());
         }catch (Exception e){}
         if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM ){
-            if(!doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)) {
+            if(doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
                 //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
                 Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
                 inDoSendCoverageArea = false;
+            }else if(doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
+                if(dist > AppConfig.MAX_DOMOVE_COVERAGE_KM ){
+                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
+                    inDoMoveCoverageArea = false;
+                }
+            }else if(doType.equalsIgnoreCase(AppConfig.KEY_DOJEK)){
+                if(dist > AppConfig.MAX_DOJEK_COVERAGE_KM ){
+                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-CAR.", LENGTH_SHORT).show();
+                    inDoJekCoverageArea = false;
+                }
+            }else if(doType.equalsIgnoreCase(AppConfig.KEY_DOCAR)){
+                if(dist > AppConfig.MAX_DOCAR_COVERAGE_KM ){
+                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
+                    inDoCarCoverageArea = false;
+                }
             }else{
                 if(dist > AppConfig.MAX_DOMOVE_COVERAGE_KM ){
                     Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
@@ -1272,6 +1292,8 @@ public class DoSendPinLocationMapFragment extends BaseStepFragment
             if (!canDrawRoute()) {
                 return new VerificationError("Pilih rute lokasi anda.");
             }
+            //TODO : check location based service / kedua rute masih dalam 1 kabupaten (dojek, dosend) atau propinsi (domove, docar) dan exception propinsi kecil2
+
             DoSendHelper.getInstance().setPacketRoute(origin, destination);
             DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, (route == null || route.getDistance() == null ? "" : route.getDistance().getValue()), price);
             //showActivity( DoSendOrderActivity.class );

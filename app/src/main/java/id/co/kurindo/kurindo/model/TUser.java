@@ -190,6 +190,7 @@ public class TUser implements Parcelable {
         String formatted = "";
         formatted += getName();
         if(phone != null) formatted += ", "+phone;
+        if(email != null) formatted += ", "+email;
         return formatted;
     }
 }

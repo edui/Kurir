@@ -20,22 +20,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.kurindo.kurindo.adapter.ShopAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.base.BaseActivity;
+import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadShopTask;
 import id.co.kurindo.kurindo.util.DummyContent;
+import id.co.kurindo.kurindo.util.ParserUtil;
 
 /**
  * Created by DwiM on 11/9/2016.
  */
-public class DirectoryFragment extends Fragment {
+public class DirectoryFragment extends BaseFragment {
     private static final String TAG = "DirectoryFragment";
 
     ShopAdapter mAdapter;
@@ -43,6 +48,8 @@ public class DirectoryFragment extends Fragment {
     ArrayList<Shop> shops = new ArrayList<>();
     private ListenableAsyncTask loadShopTask;
     private ListenableAsyncTask loadNewsTask;
+
+    int counter = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,12 +77,21 @@ public class DirectoryFragment extends Fragment {
                         //bundle.putSerializable("shop", model);
                         //bundle.putParcelable("shop", model);
                         ViewHelper.getInstance().setShop(model);
-                        ((MainDrawerActivity)getActivity()).showActivity(ShopActivity.class, bundle);
+                        ((BaseActivity)getActivity()).showActivity(ShopActivity.class, bundle);
                     }
                 }));
 
-        load_shops("1");
+        //load_shops("1");
+        //load_shops_location();
         return  view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        counter++;
+        if(counter % 9 == 1)
+            load_shops_location();
     }
 
     private void loadNewsDummy() {
@@ -102,6 +118,62 @@ public class DirectoryFragment extends Fragment {
         });
         //loadShopTask.execute("1");
         load_shops("1");
+    }
+
+    private void load_shops_location(){
+        String URI = AppConfig.URL_SHOP_LOCATIONBASED_LIST;
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("kab", ViewHelper.getInstance().getLastAddress().getKabupaten());
+        addRequest("request_locationbased_shop", Request.Method.POST, URI, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "request_locationbased_shop Response: " + response.toString());
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    String message = jObj.getString("message");
+                    boolean ok = "OK".equalsIgnoreCase(message);
+                    if (ok) {
+                        shops.clear();
+                        ParserUtil parser= new ParserUtil();
+
+                        JSONArray datas = jObj.getJSONArray("data");
+                        for (int j = 0; j < datas.length(); j++) {
+                            JSONObject obj = datas.getJSONObject(j);
+                            /*
+                            int id = obj.getInt("id");
+                            String code = obj.getString("code");
+                            String name = obj.getString("name");
+                            String link = obj.getString("link");
+                            String banner = obj.getString("banner");
+                            String backdrop = obj.getString("backdrop");
+                            //String bannerOnly = obj.getString("bannerOnly");
+                            //String backdropOnly = obj.getString("backdropOnly");
+                            String status= obj.getString("status");
+                            String motto = obj.getString("description");
+                            String phone = obj.getString("phone");
+                            String alamat= obj.getString("alamat");
+                            String city= obj.getString("city");
+                            String cityText= obj.getString("cityText");
+                            Shop shop = new Shop(id, code, name, motto, banner, backdrop, status);
+                            */
+                            Shop shop = parser.parserTShop(obj);
+                            shops.add(shop);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                Log.e(TAG, "request_locationbased_shop Error: " + volleyError.getMessage());
+                Toast.makeText(getActivity(),volleyError.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }, params, getKurindoHeaders());
+
     }
 
     private void load_shops(String... params){
@@ -132,13 +204,14 @@ public class DirectoryFragment extends Fragment {
                             String backdrop = obj.getString("backdrop");
                             //String bannerOnly = obj.getString("bannerOnly");
                             //String backdropOnly = obj.getString("backdropOnly");
-                            String phone = obj.getString("phone");
-                            String alamat= obj.getString("alamat");
                             String status= obj.getString("status");
                             String motto = obj.getString("description");
+
+                            String phone = obj.getString("phone");
+                            String alamat= obj.getString("alamat");
                             String city= obj.getString("city");
                             String cityText= obj.getString("cityText");
-                            Shop shop = new Shop(id, code, name, motto, banner, backdrop, phone, alamat, status, city, cityText);
+                            Shop shop = new Shop(id, code, name, motto, banner, backdrop, status);
                             shops.add(shop);
                         }
                         mAdapter.notifyDataSetChanged();

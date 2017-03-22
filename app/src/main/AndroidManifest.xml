@@ -54,14 +54,6 @@
             android:icon="@drawable/logo_kurindo"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".MonitorPacketActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainDrawerActivity" />
-        </activity>
-        <activity
             android:name=".AdminMonitorOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
@@ -213,6 +205,48 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".wizard.dojek.DoJekOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".ShopListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".wizard.signup.SignupWizardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.shopadm.AddShopActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.shopadm.AddProductActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.shopadm.AddShopBranchActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.dowash.DoWashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.doservice.DoServiceActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.domart.DoMartActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.help.ShopOpenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.help.KurirOpenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 

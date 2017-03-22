@@ -1,8 +1,13 @@
 package id.co.kurindo.kurindo;
 
+import android.app.Application;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -11,6 +16,14 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -24,6 +37,10 @@ import java.util.Map;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
+import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.map.DataParser;
+import id.co.kurindo.kurindo.map.MapUtils;
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadNewsTask;
@@ -32,13 +49,15 @@ import id.co.kurindo.kurindo.task.LoadNewsTask;
  * Created by DwiM on 11/16/2016.
  */
 
-public class SplashScreenActivity extends AppCompatActivity {
+public class SplashScreenActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static final String TAG = "SplashScreenActivity";
 
     boolean done = false;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
+        buildGoogleApiClient();
         Thread timer = new Thread() {
             public void run(){
                 while(!done){
@@ -64,7 +83,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 if(newsList != null && newsList.size() > 0){
                     AppController.getInstance().banners = newsList;
                 }
-                done = true;
+                //done = true;
             }
         });
         timer.start();
@@ -127,5 +146,173 @@ public class SplashScreenActivity extends AppCompatActivity {
             AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
         }
     }
+
+
+    public void addRequest(final String tag_string_req, int method, String url, Response.Listener responseListener, Response.ErrorListener errorListener, final Map<String, String> params, final Map<String, String> headers){
+        final StringRequest strReq = new StringRequest(method,url, responseListener, errorListener){
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if(params == null) return super.getParams();
+                return params;
+            }
+            public Map<String, String> getHeaders() throws AuthFailureError{
+                if(headers == null) return super.getHeaders();
+                return headers;
+            }
+        };
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void requestAddress(LatLng latLng) {
+        String url = MapUtils.getGeocodeUrl(latLng);
+        addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //Log.d(TAG, "requestAddress Response: " + response.toString());
+                List<List<HashMap<String, String>>> routes = null;
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                    if(OK){
+                        DataParser parser = new DataParser();
+                        Address address = parser.parseAddress(jObj);
+                        ViewHelper.getInstance().setLastAddress(address);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                done = true;
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                done = true;
+            }
+        }, null, null);
+    }
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{ android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+
+            return;
+        }
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            Log.d(TAG, "ON connected ");
+            requestAddress(new LatLng( mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            this.mLastLocation = mLastLocation;
+
+        } else
+            try {
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        try {
+            LocationRequest mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(10000);
+            mLocationRequest.setFastestInterval(5000);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Connection suspended");
+        mGoogleApiClient.connect();
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        try {
+            if (location != null){
+                //changeMap(location);
+            }
+
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this.getApplicationContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .enableAutoManage(this, 0 /* clientId */, this)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .build();
+    }
+
+
+    @Override
+    public void onStart() {
+        try {
+            mGoogleApiClient.connect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        try {
+
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                //finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public GoogleApiClient mGoogleApiClient;
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION= 2;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION= 3;
+    protected Location mLastLocation;
 
 }

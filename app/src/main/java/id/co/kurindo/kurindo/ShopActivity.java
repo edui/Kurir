@@ -36,6 +36,10 @@ public class ShopActivity extends KurindoActivity {
 
     @Override
     public Class getFragmentClass() {
+        Bundle bundle = getIntent().getExtras();
+        boolean viewCity = bundle.getBoolean("viewCity");
+        if(viewCity) return ShopCityTabFragment.class;
+
         return ShopDetailFragment.class;
     }
 

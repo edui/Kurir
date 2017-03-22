@@ -113,7 +113,7 @@ public abstract class BaseDrawerActivity extends KurindoWithCartActivity {
         return NAV_DRAWER_ITEM_INVALID;
     }
 
-    protected void openDrawer() {
+    public void openDrawer() {
         if(drawerLayout == null)
             return;
 

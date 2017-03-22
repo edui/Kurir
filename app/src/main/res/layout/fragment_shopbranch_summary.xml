@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        android:layout_height="fill_parent" android:background="@color/white"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:fitsSystemWindows="true">
+        <LinearLayout
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:weightSum="1">
+            <ImageView android:src="@drawable/do_send_icon"
+                android:id="@+id/ivProductImage" android:layout_weight=".2"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal" />
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_weight=".8"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView
+                    android:id="@+id/TextViewTitle"
+                    android:textSize="15dp" android:gravity="center_vertical|left"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Data Cabang">
+                </TextView>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical">
+
+        <!--Put form controls here-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+            android:text="Data Pengelola">
+        </TextView>
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Telepon" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Telepon" />
+        </android.support.v7.widget.LinearLayoutCompat>
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Level" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Level" />
+        </android.support.v7.widget.LinearLayoutCompat>
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Tipe" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Tipe" />
+        </android.support.v7.widget.LinearLayoutCompat>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Detil Alamat">
+            </TextView>
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Alamat" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                android:text="Alamat" />
+        </android.support.v7.widget.LinearLayoutCompat>
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Desa" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Desa" />
+            </android.support.v7.widget.LinearLayoutCompat>
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Kecamatan" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Kecamatan" />
+            </android.support.v7.widget.LinearLayoutCompat>
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Kabupaten" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Kabupaten" />
+            </android.support.v7.widget.LinearLayoutCompat>
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Propinsi" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Propinsi" />
+            </android.support.v7.widget.LinearLayoutCompat>
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="10">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Negara" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="5" android:textStyle="bold"
+                    android:text="Negara" />
+            </android.support.v7.widget.LinearLayoutCompat>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
+

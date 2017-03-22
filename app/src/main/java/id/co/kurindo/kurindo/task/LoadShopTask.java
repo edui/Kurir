@@ -58,13 +58,15 @@ public class LoadShopTask extends ListenableAsyncTask<Object, Void, List>{
                             String link = obj.getString("link");
                             String banner = obj.getString("banner");
                             String backdrop = obj.getString("backdrop");
-                            String phone = obj.getString("phone");
-                            String alamat= obj.getString("alamat");
                             String status= obj.getString("status");
                             String motto = obj.getString("motto");
+
+                            String phone = obj.getString("phone");
+                            String alamat= obj.getString("alamat");
                             String city= obj.getString("city");
                             String cityText= obj.getString("cityText");
-                            Shop shop = new Shop(id, code, name, motto, banner, backdrop, phone, alamat, status, city, cityText);
+                            //Shop shop = new Shop(id, code, name, motto, banner, backdrop, phone, alamat, status, city, cityText);
+                            Shop shop = new Shop(id, code, name, motto, banner, backdrop, status);
                             dataList.add(shop);
                         }
                     }

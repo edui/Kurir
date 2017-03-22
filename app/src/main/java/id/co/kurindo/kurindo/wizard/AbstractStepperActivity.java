@@ -68,6 +68,11 @@ public abstract class AbstractStepperActivity extends BaseActivity implements St
 
     protected abstract AbstractStepAdapter getStepperAdapter();
 
+    @Override
+    public boolean providesActivityToolbar() {
+        return false;
+    }
+
     protected ActionBar setupToolbar() {
         ActionBar ab = super.setupToolbar();
         if(ab != null) ab.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);

@@ -24,6 +24,8 @@ import id.co.kurindo.kurindo.adapter.ButtonAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseActivity;
+import id.co.kurindo.kurindo.base.BaseDrawerActivity;
+import id.co.kurindo.kurindo.base.KurindoBaseDrawerActivity;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.map.MapsActivity;
 import id.co.kurindo.kurindo.model.ImageModel;
@@ -32,6 +34,8 @@ import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.wizard.dojek.DoJekOrderActivity;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
+import id.co.kurindo.kurindo.wizard.doservice.DoServiceActivity;
+import id.co.kurindo.kurindo.wizard.dowash.DoWashActivity;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -221,16 +225,22 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             ((BaseActivity)getActivity()).showActivity(DoJekOrderActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_wash_icon){
                             bundle.putInt("do_type", R.drawable.do_wash_icon);
-                            ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                            ((BaseActivity)getActivity()).showActivity(DoWashActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_service_icon){
                             bundle.putInt("do_type", R.drawable.do_service_icon);
-                            ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                            ((BaseActivity)getActivity()).showActivity(DoServiceActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_service_icon){
                             bundle.putInt("do_type", R.drawable.do_service_icon);
                             ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_hijamah_icon){
                             bundle.putInt("do_type", R.drawable.do_hijamah_icon);
                             ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                        }else if(model.getDrawable() == R.drawable.do_shop_icon){
+                            bundle.putInt("do_type", R.drawable.do_shop_icon);
+                            ((BaseActivity)getActivity()).showActivity(MapsActivity.class, bundle);
+                        }else if(model.getDrawable() == R.drawable.squad){
+                            bundle.putInt("do_type", R.drawable.squad);
+                            ((BaseDrawerActivity)getActivity()).openDrawer();
                         }else{
                             bundle.putString("class", "kerjasama");
                             ((BaseActivity)getActivity()).showActivity(KerjasamaActivity.class, bundle);
@@ -407,8 +417,14 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
 
         ImageModel model5 = new ImageModel(R.drawable.do_hijamah_icon, "Terapi Hijamah");
         data.add(model5);
+        ImageModel model9 = new ImageModel(R.drawable.do_shop_icon, "Titip Belanja");
+        data.add(model9);
+
         ImageModel model8 = new ImageModel(R.drawable.doclient_icon, "Kerjasama");
         data.add(model8);
+
+        ImageModel model10 = new ImageModel(R.drawable.squad, "Menu Lainnya");
+        data.add(model10);
     }
 
     public void onSliderClick(BaseSliderView slider) {

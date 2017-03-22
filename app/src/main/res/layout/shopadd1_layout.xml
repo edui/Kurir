@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textStyle="bold"
+        android:text="Data Toko" android:layout_marginBottom="10dp">
+    </TextView>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/inlay_shopname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/input_shopname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_store_black_18dp"
+            android:hint="Nama Toko" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/inlay_shopdescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/input_shopdescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_description_black_18dp"
+            android:hint="Deskripsi Toko" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/inlay_shopwebsite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/input_shopwebsite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/connect"
+            android:hint="Website" />
+    </android.support.design.widget.TextInputLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+        <TextView
+            android:layout_width="wrap_content" android:gravity="center_vertical|left"
+            android:layout_height="wrap_content" android:text="@string/category" android:layout_weight=".7"/>
+        <Spinner
+            android:id="@+id/input_category" android:layout_weight=".3"
+            android:layout_margin="8dp" android:layout_gravity="center_vertical|left" android:gravity="center_vertical|left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textStyle="bold"
+        android:text="Data Pengelola / Contact" android:layout_marginBottom="10dp" android:layout_marginTop="5dp">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+        <TextView
+            android:layout_width="wrap_content" android:layout_weight=".4"
+            android:layout_height="wrap_content" android:text="Email"/>
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="wrap_content" android:layout_weight=".6"
+            android:layout_height="wrap_content" android:text="Email"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+        <TextView
+            android:layout_width="wrap_content" android:layout_weight=".4"
+            android:layout_height="wrap_content" android:text="Telepon"/>
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="wrap_content" android:layout_weight=".6"
+            android:layout_height="wrap_content" android:text="Telepon"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+        <TextView
+            android:layout_width="wrap_content" android:layout_weight=".4"
+            android:layout_height="wrap_content" android:text="Alamat"/>
+        <TextView
+            android:id="@+id/tvAlamat"
+            android:layout_width="wrap_content" android:layout_weight=".6"
+            android:layout_height="wrap_content" android:text="Kecamatan"/>
+    </LinearLayout>
+
+</LinearLayout>

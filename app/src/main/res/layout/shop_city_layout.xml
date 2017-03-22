@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <fragment
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>
+    <LinearLayout
+        android:layout_width="match_parent" android:visibility="gone"
+        android:layout_height="wrap_content" android:orientation="horizontal">
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/addBranchCity"
+            android:layout_width="match_parent" android:theme="@style/AppTheme.Button"
+            android:layout_height="wrap_content" android:text="Tambah Cabang"/>
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/rgLayoutType"
+        android:layout_width="match_parent" android:layout_gravity="center_horizontal|top"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:weightSum="1"
+        android:gravity="left"
+        android:orientation="horizontal" >
+        <RadioButton
+            android:id="@+id/radio_main"
+            android:layout_width="wrap_content" android:padding="5dp" android:layout_weight=".5"
+            android:background="@drawable/btn_toggle_selector" android:button="@null" android:layout_gravity="center_horizontal|top" android:gravity="center_horizontal|top"
+            android:layout_height="40dp" android:text="LIST CABANG" android:textSize="12dp" />
+        <RadioButton
+            android:id="@+id/radio_request"
+            android:layout_width="wrap_content" android:padding="5dp" android:layout_weight=".5"
+            android:background="@drawable/btn_toggle_selector" android:button="@null" android:layout_gravity="center_horizontal|top" android:gravity="center_horizontal|top" android:checked="true"
+            android:layout_height="40dp" android:text="REQUEST BARU" android:textSize="12dp" />
+    </RadioGroup>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+</LinearLayout>

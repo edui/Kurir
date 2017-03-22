@@ -26,6 +26,7 @@
     <string name="action">Action</string>
     <string name="order">Order</string>
     <string name="price">Harga</string>
+    <string name="price_rp">Harga (Rp)</string>
     <string name="total_shipping_cost">Biaya Kurir</string>
     <string name="total_price">Total Harga</string>
     <string name="payment">Payment</string>
@@ -51,6 +52,50 @@
         <item>Laki-Laki</item>
         <item>Perempuan</item>
     </string-array>
+    <string-array name="levels_array">
+        <item>Kecamatan</item>
+        <item>Kabupaten</item>
+        <item>Kota</item>
+        <item>Propinsi</item>
+        <item>Negara</item>
+    </string-array>
+    <string-array name="shop_categories_array">
+        <item>Umum</item>
+        <item>Souvenier</item>
+        <item>Fashion</item>
+        <item>Kuliner</item>
+        <item>Herbal</item>
+    </string-array>
+    <string-array name="doservice_layanan_array">
+        <item></item>
+        <item>Cuci AC</item>
+        <item>Service AC</item>
+        <item>Cuci &#38; Service AC</item>
+        <item>Pasang AC</item>
+        <item>Bongkar AC</item>
+        <item>Relokasi AC</item>
+    </string-array>
+    <string-array name="doservice_tipeac_array">
+        <item></item>
+        <item>Split 0.5 - 1 PK</item>
+        <item>Split 1.5 - 2 PK</item>
+        <item>Inverter 0.5 - 1 PK</item>
+        <item>Inverter 1.5 - 2 PK</item>
+        <item>Cassete</item>
+        <item>Standing</item>
+        <item>Central</item>
+    </string-array>
+    <string-array name="doservice_lokasi_array">
+        <item></item>
+        <item>Rumah</item>
+        <item>Toko</item>
+        <item>Swalayan</item>
+        <item>Kantor</item>
+    </string-array>
+    <string-array name="tipe_product_array">
+        <item>Produk</item>
+        <item>Jasa</item>
+    </string-array>
 
     <string name="title_activity_maps">Map</string>
     <string name="no_maps">Google Maps V2 not available!</string>
@@ -62,4 +107,36 @@
 
     <string name="service_not_available">Sorry, the service is not available</string>
     <string name="invalid_lat_long_used">Invalid latitude or longitude used</string>
+    <string name="shop_information">Shop Information</string>
+    <string name="shop_address">Shop Address</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="product_information">Informasi Produk</string>
+    <string name="dowash_form1">Do Wash Form</string>
+    <string name="branch_information">Form Cabang Toko</string>
+    <string name="telepon">Telepon</string>
+    <string name="telepon_pengirim">Telepon Pengirim</string>
+    <string name="telepon_penerima">Telepon Penerima</string>
+    <string name="telepon_pengelola">Telepon Pengelola</string>
+    <string name="pin_single_location">Pin Single Location</string>
+    <string name="category">Kategori</string>
+    <string name="shop_tools">Perlengkapan Toko</string>
+    <string name="end_user_agreement">End User Agreement</string>
+    <string name="nomor_telepon">Nomor Telepon</string>
+    <string name="enter_valid_phone">Masukkan Nomor Telepon yang Valid</string>
+    <string name="label_regular">Regular</string>
+    <string name="label_flash">Flash</string>
+    <string name="label_express">Express</string>
+    <string name="doservice_form1">Do-Service Form</string>
+    <string name="domart_form">DO-MAR Form</string>
+    <string name="product_name">Nama Produk</string>
+    <string name="product_description_long">Product Description (Long)</string>
+    <string name="product_description_short">Product Description (short)</string>
+    <string name="stock">Stok</string>
+    <string name="image">Gambar</string>
+    <string name="add_image">Tambah Gambar</string>
+    <string name="weight">Berat</string>
+    <string name="product_description">Deskripsi Produk</string>
+    <string name="weight_kg">Berat (Kg)</string>
+    <string name="shop_open_form">Panduan Buka Toko</string>
+    <string name="kurir_open_form">Panduan Menjadi Kurir</string>
 </resources>

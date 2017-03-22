@@ -29,22 +29,48 @@ import id.co.kurindo.kurindo.model.PacketService;
  * Created by DwiM on 11/8/2016.
  */
 public class AppConfig {
-    public static String HOST = "https://kurindo.co.id";
-    //public static String DEV_HOST = "http://10.0.2.2/kurindo";
-    //public static String DEV_HOST = "http://172.30.3.58/kurindo";
-    public static String DEV_HOST = HOST;
+    public static String API_VERSION = "v1";
+
+    //public static String HOST = "https://kurindo.co.id";//+"/"+API_VERSION;
+    //public static String API_HOST = "http://10.0.2.2/kurindo";
+    public static String BASE_HOST = "http://172.30.3.58/kurindo";
+    public static String API_HOST = BASE_HOST+"/"+API_VERSION;
+    public static String HOST = API_HOST;
+    //public static String API_HOST = HOST;
     public static String USER_AGENT = "KURINDROID";
 
     public static String FCM_TOKEN = null;
     public static String SECRET_KEY = "AIzaSyCIVhOu83YxppEIlQEtqV0KCEW-JFDWAKA-KURINDROID";
 
+    //active link since v1 API
+    public static String URL_BACKEND_SIGNUP = HOST + "/backend/sign_up/json";
+    public static String URL_BACKEND_SIGNIN = HOST + "/backend/sign_in/json";
+    public static String URL_BACKEND_RECOVERY_PHONE = HOST + "/backend/recovery_p";
+    public static  String URL_BACKEND_ACTIVATION_PHONE = HOST + "/backend/activation_p";
+
+    public static String URL_USER_CITY_UPDATE =   API_HOST + "/user/city/update";
+
+    public static String URL_MY_SHOP_LIST = API_HOST + "/shop/myshops";
+    public static String URL_SHOP_PREPIC_LIST = API_HOST + "/shop/prepic";
+    public static String URL_SHOP_ADD =API_HOST + "/shop/add";
+    public static String URL_SHOP_UPDATE=API_HOST + "/shop/update";
+    public static String URL_SHOP_LOCATIONBASED_LIST = HOST + "/shop/locationbased/list";
+
+    public static String URL_SHOP_PRODUCT_ADD =API_HOST + "/shop/product/add";
+    public static String URL_SHOP_PRODUCT_UPDATE=API_HOST + "/shop/product/update";
+
+    public static String URL_PRICE_KM= API_HOST + "/tariff/km";
+    public static String URL_LOGGING = HOST + "/logging";
+
+
+
+    //active link before v1 API
     // Server user login url
     public static String URL_LOGIN = HOST + "/backend/login/json";
 
     // Server user register url
     public static String URL_REGISTER = HOST + "/backend/signup/json";
 
-    public static String URL_LOGGING = HOST + "/logging";
 
     public static  String URL_ACCOUNT_ACTIVATION = HOST + "/activation";
     public static String URL_ACCOUNT_RECOVERY = HOST + "/recovery";
@@ -79,28 +105,40 @@ public class AppConfig {
     public static String URL_LIST_NEWKURIR = HOST + "/users/new/{type}";
     public static String URL_KURIR_APPROVED =  HOST + "/user/kurir/approved";
 
-    public static String URL_PRICE_KM= DEV_HOST + "/tariff/km";
 
     public static String URL_NEWS= HOST + "/news";
     public static String URL_SHOP_LIST = HOST + "/shops/list/{page}";
     public static String URL_SHOP_PRODUCTS = HOST + "/shop/{shop_id}/product/{page}";
     public static String URL_REGISTER_FCM = HOST + "/refresh/fcm";
 
-    public static String URL_DOSEND_ORDER = DEV_HOST + "/torder/dosend";
-    public static String URL_TORDER_HISTORY = DEV_HOST + "/torder/history";
-    public static String URL_TORDER_ACTION = DEV_HOST + "/torder/action";
-    public static String URL_TORDER_MYORDERS = DEV_HOST + "/torder/myorders";
-    public static String URL_TORDER_REALTIME = DEV_HOST + "/torder/realtime";
-    public static String URL_TORDER_MYTASKS = DEV_HOST + "/torder/myjob";
-    public static String URL_TORDER_ADDPIC = DEV_HOST + "/torder/addpic";;
-    public static String URL_TORDER_REJECT = DEV_HOST + "/torder/reject";
+    public static String URL_SHOP_CITY_LIST = API_HOST + "/shop/city_list";
+
+    public static String URL_DOSEND_ORDER = API_HOST + "/torder/dosend";
+    public static String URL_TORDER_HISTORY = API_HOST + "/torder/history";
+    public static String URL_TORDER_ACTION = API_HOST + "/torder/action";
+    public static String URL_TORDER_MYORDERS = API_HOST + "/torder/myorders";
+    public static String URL_TORDER_REALTIME = API_HOST + "/torder/realtime";
+    public static String URL_TORDER_MYTASKS = API_HOST + "/torder/myjob";
+    public static String URL_TORDER_ADDPIC = API_HOST + "/torder/addpic";;
+    public static String URL_TORDER_REJECT = API_HOST + "/torder/reject";
 
     public static final String KEY_KURIR= "KURIR";
     public static final String KEY_AGENT= "AGEN";
     public static final String KEY_PELANGGAN= "PELANGGAN";
-    public static final String KEY_SHOPOWNER= "SHOPOWNER";
+    public static final String KEY_SHOPPIC= "SHOPPIC";
+    public static final String KEY_SHOPKURIR= "SHOPKURIR";
+    public static final String KEY_KURIRSHOP= "KURIRSHOP";
+    public static final String KEY_SHOPKEC= "SHOPKEC";
+    public static final String KEY_SHOPKAB= "SHOPKAB";
+    public static final String KEY_SHOPPROP= "SHOPPROP";
+    public static final String KEY_SHOPNEG= "SHOPNEG";
+
     public static final String KEY_OPERATOR= "OPERATOR";
     public static final String KEY_ADMINISTRATOR= "ADMIN";
+    public static final String KEY_ADMINKEC= "ADMINKEC";
+    public static final String KEY_ADMINKAB= "ADMINKAB";
+    public static final String KEY_ADMINPROP= "ADMINPROP";
+    public static final String KEY_ADMINNEG= "ADMINNEG";
     public static final String KEY_ROOT= "ROOT";
 
     public static final String KEY_KUR050= "KUR050";
@@ -131,10 +169,21 @@ public class AppConfig {
     public static final String CLOSED = "CLOSED";
     public static final String OPEN = "OPEN";
     public static final String ISI_SALDO = "ISI SALDO";
-    public static int MAX_DOSEND_COVERAGE_KM = 30000;
-    public static int MAX_DOMOVE_COVERAGE_KM = 100000;
+    public static int MAX_DOSEND_COVERAGE_KM = 35000;
+    public static int MAX_DOMOVE_COVERAGE_KM = 150000;
+    public static int MAX_DOJEK_COVERAGE_KM = 50000;
+    public static int MAX_DOCAR_COVERAGE_KM = 300000;
+    public static float DEFAULT_TILT_MAP = 0;
+    public static float DEFAULT_ZOOM_MAP = 19f;
+    public static float MAP_ZOOM_OUT = 10f;
 
     public static SimpleDateFormat sdf;
+    public static float BRAND_MAX_WIDTH = 150;
+    public static float BRAND_MAX_HEIGHT = 150;
+    public static float BACKDROP_MAX_WIDTH = 388;
+    public static float BACKDROP_MAX_HEIGHT = 160;
+    public static float BANNER_MAX_WIDTH = 388;
+    public static float BANNER_MAX_HEIGHT = 160;
 
     public static String getStatusText(String status){
         String statusText = "";
@@ -259,8 +308,8 @@ public class AppConfig {
         return Resources.getSystem().getIdentifier(resourceName, type, null);
     }
 
-    private static String bannerUrl =HOST+"/img/banner/";
-    private static String shopUrl =HOST+"/img/shop/";
+    private static String bannerUrl =BASE_HOST+"/img/banner/";
+    private static String shopUrl =BASE_HOST+"/img/shop/";
 
     public static String urlBannerImage(String banner) {
         return bannerUrl+""+banner;

@@ -15,8 +15,6 @@ public class Shop implements Parcelable{
     private int id;
     private String name;
     private String motto;
-    private String telepon;
-    private String owner;
     private String link;
     private String backdrop;
     private String banner;
@@ -25,13 +23,14 @@ public class Shop implements Parcelable{
     private String status;
     private String code;
     private String category;
+    private TUser pic;
     private Address address;
     private List<Product> products = new ArrayList<Product>();
 
     public Shop(){
 
     }
-    public Shop(int id, String code, String name, String motto, String banner, String backdrop, String telepon, String alamat, String status, String city, String cityText){
+    public Shop(int id, String code, String name, String motto, String banner, String backdrop, String status){
         this.id = id;
         this.code = code;
         this.name= name;
@@ -39,14 +38,10 @@ public class Shop implements Parcelable{
         this.backdrop= backdrop;
         this.bannerOnly = banner;
         this.backdropOnly= backdrop;
-        this.telepon= telepon;
         this.status= status;
         this.motto= motto;
-        address = new Address();
-        address .setAlamat(alamat);
-        address.setCity( new City(city, cityText) );
     }
-    public Shop(int id, String code, String name, String motto, String bannerOnly, String backdropOnly, String banner, String backdrop, String telepon, String alamat, String status, String city, String cityText){
+    public Shop(int id, String code, String name, String motto, String bannerOnly, String backdropOnly, String banner, String backdrop, String status){
         this.id = id;
         this.code = code;
         this.name= name;
@@ -54,19 +49,13 @@ public class Shop implements Parcelable{
         this.backdrop= backdrop;
         this.bannerOnly = bannerOnly;
         this.backdropOnly= backdropOnly;
-        this.telepon= telepon;
         this.status= status;
         this.motto= motto;
-        address = new Address();
-        address .setAlamat(alamat);
-        address.setCity( new City(city, cityText) );
     }
 ///*
     protected Shop(Parcel in) {
         id = in.readInt();
         name = in.readString();
-        telepon = in.readString();
-        owner = in.readString();
         link = in.readString();
         backdrop = in.readString();
         banner = in.readString();
@@ -74,10 +63,19 @@ public class Shop implements Parcelable{
         bannerOnly = in.readString();
         status = in.readString();
         motto = in.readString();
-        address = in.readParcelable(Address.class.getClassLoader());
-        products = new ArrayList<Product>();
-        in.readTypedList(products, Product.CREATOR);
-    }
+        category = in.readString();
+        try{
+            pic = in.readParcelable(TUser.class.getClassLoader());
+        }catch (Exception e){}
+        try{
+            address = in.readParcelable(Address.class.getClassLoader());
+        }catch (Exception e){}
+
+        try{
+            products = new ArrayList<Product>();
+            in.readTypedList(products, Product.CREATOR);
+        }catch (Exception e){}
+        }
 
     public static final Creator<Shop> CREATOR = new Creator<Shop>() {
         @Override
@@ -115,30 +113,13 @@ public class Shop implements Parcelable{
         this.name = name;
     }
 
-    public String getOwner() {
-        return owner;
+    public TUser getPic() {
+        return pic;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setPic(TUser pic) {
+        this.pic = pic;
     }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public String getTelepon() {
-        return telepon;
-    }
-
-    public void setTelepon(String telepon) {
-        this.telepon = telepon;
-    }
-
 
     public List<Product> getProducts() {
         return products;
@@ -212,6 +193,14 @@ public class Shop implements Parcelable{
         this.motto = motto;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     ///*
     @Override
     public int describeContents() {
@@ -222,8 +211,6 @@ public class Shop implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt( id);
         dest.writeString( name);
-        dest.writeString( telepon);
-        dest.writeString( owner);
         dest.writeString( link);
         dest.writeString(backdrop);
         dest.writeString(banner);
@@ -231,6 +218,8 @@ public class Shop implements Parcelable{
         dest.writeString(bannerOnly);
         dest.writeString(status);
         dest.writeString(motto);
+        dest.writeString(category);
+        dest.writeParcelable( pic, flags);
         dest.writeParcelable( address, flags);
         dest.writeTypedList(products);
     }

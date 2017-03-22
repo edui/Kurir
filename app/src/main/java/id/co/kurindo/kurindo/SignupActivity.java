@@ -45,17 +45,19 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
+import id.co.kurindo.kurindo.helper.SignUpHelper;
 import id.co.kurindo.kurindo.model.City;
+import id.co.kurindo.kurindo.model.TUser;
 
 public class SignupActivity extends AppCompatActivity {
-    private static final String TAG = "SignupActivity";
+    private static final String TAG = "SignupWizardActivity";
 
     @Bind(R.id.input_firstname) EditText _firstnameText;
     @Bind(R.id.input_lastname) EditText _lastnameText;
     @Bind(R.id.input_email) EditText _emailText;
 
     @Bind(R.id.input_phone) PhoneInputLayout _phoneText;
-    @Bind(R.id.city_spinner)    Spinner _citySpinner;
+    //@Bind(R.id.city_spinner)    Spinner _citySpinner;
     @Bind(R.id.gender_spinner)    Spinner _genderSpinner;
 
     @Bind(R.id.btn_signup) Button _signupButton;
@@ -64,7 +66,7 @@ public class SignupActivity extends AppCompatActivity {
     private SessionManager session;
     private SQLiteHandler db;
     private ProgressDialog progressDialog;
-    CityAdapter cityAdapter;
+    //CityAdapter cityAdapter;
     private String role = AppConfig.KEY_PELANGGAN;
     private String city = "ID";
     private String gender = "Laki-laki";
@@ -131,6 +133,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void setup_city_list() {
+        /*
         cityAdapter = new CityAdapter(getApplicationContext(), cityList);
         _citySpinner.setAdapter(cityAdapter);
         _citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -146,6 +149,7 @@ public class SignupActivity extends AppCompatActivity {
         });
 
         request_city("KEC");
+        */
        //new LoadCityTask().execute();
 
     }
@@ -184,6 +188,8 @@ public class SignupActivity extends AppCompatActivity {
         String phone =  _phoneText.getPhoneNumber();
         //if(phone.startsWith("0")){ phone = _phoneText.getPhoneNumber().getCountryCode()+""+phone;}
         // TODONE: Implement your own signup logic here.
+
+        signup_wizard(firstname, lastname, email, phone, role);
         signup_process(firstname, lastname, email, phone, role);
         /*new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -195,6 +201,17 @@ public class SignupActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                 }, 3000);*/
+    }
+
+    private void signup_wizard(String firstname, String lastname, String email, String phone, String role) {
+        TUser user = new TUser();
+        user.setFirstname(firstname);
+        user.setLastname(lastname);
+        user.setEmail(email);
+        user.setPhone(phone);
+        user.setRole(role);
+        SignUpHelper.getInstance().setUser(user);
+
     }
 
     private void signup_process(final String firstname, final String lastname, final String email, final String phone, final String role){
@@ -407,7 +424,7 @@ public class SignupActivity extends AppCompatActivity {
                             City city = new City(cities.getJSONObject(j));
                             cityList.add(city);
                         }
-                        cityAdapter.notifyDataSetChanged();
+                        //cityAdapter.notifyDataSetChanged();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

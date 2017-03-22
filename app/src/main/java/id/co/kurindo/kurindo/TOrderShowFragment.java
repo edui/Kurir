@@ -342,7 +342,7 @@ public class TOrderShowFragment extends BaseFragment {
     }
 
     private void setup_pembeli() {
-        if(order.getBuyer() != null) {
+        if(order != null && order.getBuyer() != null) {
             tvPembeli.setText(order.getBuyer().getFirstname() + " " + order.getBuyer().getLastname()
                     + " "+order.getBuyer().getPhone()+"\n"
                     + order.getBuyer().getAddress().toStringFormatted());

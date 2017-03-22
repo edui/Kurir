@@ -234,7 +234,7 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
                 HashMap<String, String> params = new HashMap<>();
 
                 params.put("awb",(order ==null? null : order.getAwb()));
-                params.put("pic", user.getEmail());
+                params.put("pic", user.getPhone());
                 params.put("user_agent", AppConfig.USER_AGENT);
 
                 return params;

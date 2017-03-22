@@ -37,6 +37,7 @@ import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.wizard.signup.SignupWizardActivity;
 
 /**
  * Created by dwim on 1/6/2017.
@@ -48,6 +49,7 @@ public class LoginFragment extends BaseFragment {
     private static final int REQUEST_SIGNUP = 0;
     private static final int REQUEST_ACTIVATION = 1;
     private static final int REQUEST_WAITINGAPPROVAL = 2;
+    private static final int REQUEST_SignupWizardActivity = 3;
 
     @Nullable
     @Bind(R.id.input_email)
@@ -188,12 +190,12 @@ public class LoginFragment extends BaseFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
+                        /*FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
                         try {
                             instanceId.deleteInstanceId();
                         } catch (IOException e) {
                             e.printStackTrace();
-                        }
+                        }*/
                         final String token = FirebaseInstanceId.getInstance().getToken();
 
                         String tag_string_req = "req_recovery_account";
@@ -258,6 +260,7 @@ public class LoginFragment extends BaseFragment {
         boolean active = true;
         boolean approved = true;
         String role = null;
+        String city = null;
         //if(email == null || email.isEmpty()){
         HashMap users = db.getUserDetails();
         if(users != null){
@@ -274,6 +277,12 @@ public class LoginFragment extends BaseFragment {
             Object approvedObj= users.get("approved");
             try { active = Boolean.parseBoolean(activeObj.toString());}catch (Exception e) {}
             try { approved = Boolean.parseBoolean(approvedObj.toString());}catch (Exception e) {}
+
+            Object cityObj = users.get("city");
+            if(cityObj != null){
+                city = cityObj.toString();
+            }
+
         }
         //}
         if(!active){
@@ -282,6 +291,10 @@ public class LoginFragment extends BaseFragment {
         if(!approved ) {
             if(!role.equalsIgnoreCase(AppConfig.KEY_PELANGGAN)){
                 request_checkStatusAccount(email);
+            }
+        }else {
+            if(city ==null || city.isEmpty()){
+                showPinAddressForm();
             }
         }
     }
@@ -385,7 +398,7 @@ public class LoginFragment extends BaseFragment {
         intent.putExtra("email", _emailText.getText().toString());
         startActivityForResult(intent, REQUEST_ACTIVATION);
     }
-    private void showActivationLayout() {
+    public void showActivationLayout() {
         _activationLayout.setVisibility(View.VISIBLE);
         _loginLayout.setVisibility(View.GONE);
         _recoveryLayout.setVisibility(View.GONE);
@@ -527,8 +540,13 @@ public class LoginFragment extends BaseFragment {
                             session.setAutoLogin(_chkAutoLogin.isChecked());
                             session.setActive(active);
 
-                            // Launch main activity
-                            onAlreadyLogin();
+                            if(city ==null || city.isEmpty()){
+                                showPinAddressForm();
+                            }else{
+                                // Launch main activity
+                                Toast.makeText(getContext(), "Login Successfully.", Toast.LENGTH_LONG).show();
+                                onAlreadyLogin();
+                            }
                         }else{
                             showActivationLayout();
                         }
@@ -579,6 +597,11 @@ public class LoginFragment extends BaseFragment {
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void showPinAddressForm() {
+        Intent intent = new Intent(getContext(), SignupWizardActivity.class);
+        startActivityForResult(intent, REQUEST_SignupWizardActivity);
     }
 
     @Override
@@ -641,6 +664,7 @@ public class LoginFragment extends BaseFragment {
 
                     // Check for error node in json
                     if (!error) {
+                        _loginButton.setEnabled(true);
 
                         //TODO: Remove sqllite table user to user_address
                         // user successfully logged in
@@ -675,9 +699,13 @@ public class LoginFragment extends BaseFragment {
                         session.setLoginData(role, city);
                         session.setAutoLogin(_chkAutoLogin.isChecked());
 
-                        // Launch main activity
-                        onAlreadyLogin();
-
+                        if(city ==null || city.isEmpty() || city.equalsIgnoreCase("null") ){
+                            showPinAddressForm();
+                        }else{
+                            // Launch main activity
+                            Toast.makeText(getContext(), "Login Successfully.", Toast.LENGTH_LONG).show();
+                            onAlreadyLogin();
+                        }
                         update_token(api_key);
                     } else {
                         boolean active= jObj.getBoolean("active");
@@ -753,6 +781,11 @@ public class LoginFragment extends BaseFragment {
                 //showMainPage();
                 //this.finish();
             }
+        } else if (requestCode == REQUEST_SignupWizardActivity) {
+            if (resultCode == getActivity().RESULT_OK) {
+                Toast.makeText(getContext(), "Login Successfully.", Toast.LENGTH_LONG).show();
+                onAlreadyLogin();
+            }
         }
     }
 
@@ -771,8 +804,6 @@ public class LoginFragment extends BaseFragment {
     }
 
     public void onLoginSuccess() {
-        Toast.makeText(getContext(), "Login Successfully.", Toast.LENGTH_LONG).show();
-
         _activationLayout.setVisibility(View.GONE);
         _loginLayout.setVisibility(View.VISIBLE);
         _recoverLink.setVisibility(View.VISIBLE);

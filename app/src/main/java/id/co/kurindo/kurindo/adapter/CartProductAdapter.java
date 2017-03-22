@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.android.tonyvu.sc.model.Cart;
 import com.android.tonyvu.sc.util.CartHelper;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -48,37 +50,47 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder vholder, final int position) {
+        final ViewHolder holder = (ViewHolder) vholder;
         final Cart cart = CartHelper.getCart();
         final CartItem cartItem = getItem(position);
-        ((ViewHolder)holder).tvProductTitle.setText(cartItem.getProduct().getName());
-        ((ViewHolder)holder).tvProductPrice.setText(AppConfig.formatCurrency(cartItem.getProduct().getPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
-        ((ViewHolder)holder).quantityStr.setText(String.valueOf(cartItem.getQuantity()));
-        ((ViewHolder)holder).inputSpecialRequest.setText(cartItem.getProduct().getNotes());
+        holder.tvProductTitle.setText(cartItem.getProduct().getName());
+        holder.tvProductPrice.setText(AppConfig.formatCurrency(cartItem.getProduct().getPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+        holder.quantityStr.setText(String.valueOf(cartItem.getQuantity()));
+        holder.inputSpecialRequest.setText(cartItem.getProduct().getNotes());
 
         int resId = this.context.getResources().getIdentifier(cartItem.getProduct().getImageName().substring(0,cartItem.getProduct().getImageName().length()-4), "drawable", this.context.getPackageName());
-        if(resId >0) ((ViewHolder)holder).ivProductImage.setImageResource(resId);
+        if(resId >0) {
+            holder.ivProductImage.setImageResource(resId);
+        }else {
+            Glide.with(context).load(AppConfig.urlProductImage(cartItem.getProduct().getImageName() ))
+                    .thumbnail(0.5f)
+                    .crossFade()
+                    .placeholder(R.drawable.placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.ivProductImage);
+        }
 
-        ((ViewHolder)holder).incrementBtn.setOnClickListener(new View.OnClickListener() {
+        holder.incrementBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemClickListener.onIncrementBtnClick(v, position, ((ViewHolder)holder).quantityStr);
+                itemClickListener.onIncrementBtnClick(v, position, holder.quantityStr);
             }
         });
-        ((ViewHolder)holder).decrementBtn.setOnClickListener(new View.OnClickListener() {
+        holder.decrementBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemClickListener.onDecrementBtnClick(v, position, ((ViewHolder)holder).quantityStr);
+                itemClickListener.onDecrementBtnClick(v, position, holder.quantityStr);
             }
         });
-        ((ViewHolder)holder).deleteBtn.setOnClickListener(new View.OnClickListener() {
+        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 itemClickListener.onDeleteBtnClick(v, position);
             }
         });
 
-        ((ViewHolder)holder).viewBtn.setOnClickListener(new View.OnClickListener() {
+        holder.viewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 itemClickListener.onViewBtnClick(v, position);

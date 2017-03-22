@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
@@ -26,6 +27,7 @@ import id.co.kurindo.kurindo.util.DummyContent;
 public class NewsFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ListenableAsyncTask.AsyncTaskListener {
     private static final String TAG = "NewsFragment";
 
+    int counter = 0;
     ProgressBar progressBar;
 
     ArrayList<News> data = new ArrayList<>();
@@ -82,7 +84,11 @@ public class NewsFragment extends Fragment implements BaseSliderView.OnSliderCli
         */
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        loadNewsTask.execute("latest");
+        counter++;
+        if(counter % 9 == 1){
+            loadNewsTask.execute("latest");
+
+        }
         progressBar.setVisibility(View.GONE);
         onPostExecute(null);
         return view;

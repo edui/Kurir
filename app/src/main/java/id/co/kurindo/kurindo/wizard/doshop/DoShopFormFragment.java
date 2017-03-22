@@ -117,6 +117,7 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
         progressDialog = new ProgressDialog(getActivity(),R.style.CustomDialog);
 
         _teleponPenerimaText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
+        _teleponPenerimaText.setHint(R.string.telepon_penerima);
 
         return v;
     }
@@ -216,11 +217,11 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
             //db.addRecipient(namaPenerima,teleponPenerima, genderPenerima, alamatPenerima,kota_penerima.getCode(), kota_penerima.getText());
         }
 
-        TUser user = db.toTUser(db.getUserDetails());
+        TUser user = db.getUser();
         order.setBuyer(user);
 
         String orderStr = gson.toJson(DoShopHelper.getInstance().getOrder());
-        Log.d(TAG, "place_an_order: "+orderStr);
+        //Log.d(TAG, "place_an_order: "+orderStr);
         params.put("order", orderStr);
 
         process_order(params, handler);
