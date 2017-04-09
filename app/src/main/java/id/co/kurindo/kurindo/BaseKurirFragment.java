@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Timer;
 
 import butterknife.Bind;
+import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.adapter.UserAdapter;
 import id.co.kurindo.kurindo.base.BaseFragment;
+import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
 
 /**
@@ -31,7 +33,7 @@ public abstract class BaseKurirFragment extends BaseFragment implements View.OnC
     @Bind(R.id.list)
     RecyclerView daftarKurir;
 
-    ArrayList<User> users = new ArrayList<>();
+    ArrayList<TUser> users = new ArrayList<>();
     Timer t ;
 
     @Bind(R.id.progressBar1)
@@ -39,7 +41,7 @@ public abstract class BaseKurirFragment extends BaseFragment implements View.OnC
     @Bind(R.id.TextViewTitle)
     TextView textView;
 
-    UserAdapter userAdapter;
+    TUserAdapter userAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public abstract class BaseKurirFragment extends BaseFragment implements View.OnC
         daftarKurir.setLayoutManager(new GridLayoutManager(getContext(), 1));
         daftarKurir.setHasFixedSize(true);
 
-        userAdapter = new UserAdapter(getContext(), users);
+        userAdapter = new TUserAdapter(getContext(), users);
         daftarKurir.setAdapter(userAdapter);
 
         refreshBtn.setOnClickListener(this);

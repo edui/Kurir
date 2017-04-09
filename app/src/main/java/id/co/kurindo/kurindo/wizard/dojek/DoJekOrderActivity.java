@@ -1,12 +1,17 @@
 package id.co.kurindo.kurindo.wizard.dojek;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Toast;
+import android.view.ViewGroup;
 
+import com.stepstone.stepper.Step;
+import com.stepstone.stepper.VerificationError;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.R;
@@ -14,8 +19,7 @@ import id.co.kurindo.kurindo.TOrderShowActivity;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
-import id.co.kurindo.kurindo.wizard.dosend.DoSendFormFragment;
-import id.co.kurindo.kurindo.wizard.dosend.DoSendPinLocationMapFragment;
+import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 /**
  * Created by dwim on 2/7/2017.
@@ -32,6 +36,7 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
         if(bundle != null) doType = bundle.getString("do_type");
         DoSendHelper.getInstance().clearAll();
 
+        DoSendHelper.getInstance().setDoType(doType);
         super.onCreate(savedInstanceState);
     }
 
@@ -77,7 +82,9 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
                 case 0:
                     return DoJekPinLocationMapFragment.newInstance(doType);
                 case 1:
-                    return new DoJekFormFragment();
+                    if(DoSendHelper.getInstance().getDoType().equalsIgnoreCase(AppConfig.KEY_DOCAR))
+                        return new DoCarForm1();
+                    else     return new DoJekFormFragment();
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }
@@ -121,4 +128,5 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
             }
         }
     }
+
 }

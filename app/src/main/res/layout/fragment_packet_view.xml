@@ -6,7 +6,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:textColor="@color/white"
-            android:text="Detil Paket" android:textStyle="italic" android:gravity="center"
+            android:text="Detil Alamat" android:textStyle="italic" android:gravity="center"
             android:textSize="16dp" android:layout_marginTop="10dp"
             />
 
@@ -23,16 +23,16 @@
                 android:id="@+id/text_berat_paket"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16dp" android:textColor="@color/white"
-                android:text="Berat paket" android:layout_weight=".5"
+                android:textSize="14dp" android:textColor="@color/white"
+                android:text="Berat paket" android:layout_weight=".4"
                 />
 
             <TextView
                 android:id="@+id/text_ongkos_paket"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16dp" android:textColor="@color/white"
-                android:text="Ongkos Paket" android:layout_weight=".5"
+                android:textSize="14dp" android:textColor="@color/white"
+                android:text="Ongkos Paket" android:layout_weight=".6"
                 />
         </LinearLayout>
         <LinearLayout
@@ -56,6 +56,7 @@
                 android:layout_width="match_parent" android:layout_marginTop="10dp" android:layout_weight=".5"
                 android:layout_height="wrap_content" android:orientation="vertical">
                 <TextView
+                    android:id="@+id/text_title_pengirim"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Pengirim" android:layout_gravity="center_horizontal" android:textStyle="italic|bold"
@@ -101,6 +102,7 @@
                 android:layout_width="match_parent" android:gravity="right" android:layout_marginTop="10dp" android:layout_weight=".5"
                 android:layout_height="wrap_content" android:orientation="vertical">
                 <TextView
+                    android:id="@+id/text_title_penerima"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Penerima" android:layout_gravity="center_horizontal" android:textStyle="italic|bold"

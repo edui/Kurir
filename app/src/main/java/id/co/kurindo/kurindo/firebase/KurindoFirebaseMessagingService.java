@@ -2,6 +2,7 @@ package id.co.kurindo.kurindo.firebase;
 
 
 import android.annotation.SuppressLint;
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -57,11 +58,12 @@ public class KurindoFirebaseMessagingService extends FirebaseMessagingService {
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
+        Map<String, String> data = null;
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
-            Map<String, String> data = remoteMessage.getData();
+            data = remoteMessage.getData();
 
         }
 
@@ -73,7 +75,7 @@ public class KurindoFirebaseMessagingService extends FirebaseMessagingService {
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
         String messageBody = remoteMessage.getNotification().getBody();
-        sendNotification(messageBody);
+        sendNotification(messageBody, data);
         //sendNotificationBigStyle(messageBody);
     }
 
@@ -84,9 +86,11 @@ public class KurindoFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String messageBody, Map<String, String> data) {
         Intent intent = new Intent(this, MainDrawerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //intent.setAction("")
+        //intent.putExtra("yourpackage.notifyId", id);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
@@ -158,4 +162,19 @@ public class KurindoFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
+    public static class NotificationActionService extends IntentService {
+        public NotificationActionService() {
+            super(NotificationActionService.class.getSimpleName());
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            String action = intent.getAction();
+            Log.d("onHandleIntent","Received notification action: " + action);
+            /*if (ACTION_1.equals(action)) {
+                // TODO: handle action 1.
+                // If you want to cancel the notification: NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID);
+            }*/
+        }
+    }
 }

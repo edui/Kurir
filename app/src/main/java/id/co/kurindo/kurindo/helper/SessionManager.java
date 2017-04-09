@@ -103,10 +103,15 @@ public class SessionManager {
             String role = pref.getString(KEY_ROLE, "client");
             return role.equalsIgnoreCase(AppConfig.KEY_OPERATOR);
         }
-        public boolean isAdministrator(){
-            String role = pref.getString(KEY_ROLE, "client");
-            return (role.equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKEC) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKAB) || role.equalsIgnoreCase(AppConfig.KEY_ADMINPROP) || role.equalsIgnoreCase(AppConfig.KEY_ADMINNEG));
-        }
+    public boolean isAdministrator(){
+        String role = pref.getString(KEY_ROLE, "client");
+        return (role.equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKEC) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKAB) || role.equalsIgnoreCase(AppConfig.KEY_ADMINPROP) || role.equalsIgnoreCase(AppConfig.KEY_ADMINNEG));
+    }
+
+    public boolean isSuperAdministrator(){
+        String role = pref.getString(KEY_ROLE, "client");
+        return (role.equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR));
+    }
 
     public void clear() {
     }

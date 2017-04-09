@@ -30,6 +30,7 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
         if(bundle != null) doType = bundle.getString("do_type");
         DoSendHelper.getInstance().clearAll();
 
+        DoSendHelper.getInstance().setDoType(doType);
         super.onCreate(savedInstanceState);
     }
 

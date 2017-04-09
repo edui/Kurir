@@ -95,5 +95,13 @@
             android:layout_width="wrap_content" android:layout_weight=".6"
             android:layout_height="wrap_content" android:text="Kecamatan"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/tvInfoPilih" android:layout_marginBottom="10dp" android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="atau Pilih dari Daftar berikut"/>
+    <Spinner
+        android:id="@+id/pengelola_spinner" android:layout_marginBottom="10dp" android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -8,6 +8,8 @@ import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
+import id.co.kurindo.kurindo.TOrderShowActivity;
+import id.co.kurindo.kurindo.helper.DoServiceHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
 public class DoServiceActivity extends AbstractStepperActivity {
@@ -25,14 +27,15 @@ public class DoServiceActivity extends AbstractStepperActivity {
 
     @Override
     public void onStepSelected(int newStepPosition) {
-        mCompleteNavigationButton.setText("Dalam Pengembangan");
+        mCompleteNavigationButton.setText("Confirm Order");
 
         step = newStepPosition;
     }
 
     @Override
     public void onCompleted(View completeButton) {
-
+        showActivity(TOrderShowActivity.class);
+        DoServiceHelper.getInstance().clearOrder();
         finish();
     }
 
@@ -51,7 +54,7 @@ public class DoServiceActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return new DoServiceForm1();
+                    return new DoServiceForm2();
                 case 1:
                     return new DoServiceAddressForm();
                 default:

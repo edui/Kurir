@@ -28,14 +28,19 @@ public class TOrder implements Parcelable{
     private String updated_by;
     private String user_agent;
     private String agen;
+    private String pickup;
+    private String droptime;
 
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private int totalQuantity = 0;
+    private BigDecimal  cod = BigDecimal.ZERO;
 
     private TUser pic;
     private TUser pembeli;
     private Set<CartItem> products;
     private Set<TPacket> packets = new LinkedHashSet<>();
+    private Set<DoService> services;
+    private TUser place;
 
     public TOrder(){
 
@@ -75,6 +80,7 @@ public class TOrder implements Parcelable{
         try {
             pic = in.readParcelable(User.class.getClassLoader());
         }catch (Exception e){}
+        pickup = in.readString();
         updated_date = in.readString();
         updated_by = in.readString();
     }
@@ -105,6 +111,13 @@ public class TOrder implements Parcelable{
 
     public void setAwb(String awb) {
         this.awb = awb;
+        if(services != null){
+            Object[] datas  = services.toArray();
+            for (int i = 0; i < datas.length; i++) {
+                DoService data = (DoService) datas[i];
+                data.setAwb(awb);
+            }
+        }
     }
 
     public TUser getBuyer() {
@@ -254,6 +267,46 @@ public class TOrder implements Parcelable{
         this.updated_by = updated_by;
     }
 
+    public String getPickup() {
+        return pickup;
+    }
+
+    public void setPickup(String pickup_time) {
+        this.pickup = pickup_time;
+    }
+
+    public Set<DoService> getServices() {
+        return services;
+    }
+
+    public void setServices(Set<DoService> services) {
+        this.services = services;
+    }
+
+    public BigDecimal getCod() {
+        return cod;
+    }
+
+    public void setCod(BigDecimal cod) {
+        this.cod = cod;
+    }
+
+    public TUser getPlace() {
+        return place;
+    }
+
+    public void setPlace(TUser place) {
+        this.place = place;
+    }
+
+    public String getDroptime() {
+        return droptime;
+    }
+
+    public void setDroptime(String droptime) {
+        this.droptime = droptime;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -280,9 +333,9 @@ public class TOrder implements Parcelable{
         if(packets != null) alPac.addAll(packets);
         dest.writeTypedList(alPac);
         if(pic != null) dest.writeParcelable(pic, flags);
+        dest.writeString(pickup);
         dest.writeString(updated_date);
         dest.writeString(updated_by);
     }
-
 
 }

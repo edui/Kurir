@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.HashMap;
 
 import id.co.kurindo.kurindo.AdminMonitorOrderActivity;
+import id.co.kurindo.kurindo.BranchActivity;
 import id.co.kurindo.kurindo.BuildConfig;
 import id.co.kurindo.kurindo.KerjasamaActivity;
 import id.co.kurindo.kurindo.KurirActivity;
@@ -18,12 +19,14 @@ import id.co.kurindo.kurindo.LuarKotaFragment;
 import id.co.kurindo.kurindo.MonitorOrderActivity;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.SettingsActivity;
+import id.co.kurindo.kurindo.ShopPicActivity;
 import id.co.kurindo.kurindo.ShoppingCartActivity;
 import id.co.kurindo.kurindo.TabFragment;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ShopAdmHelper;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
+import id.co.kurindo.kurindo.wizard.help.KurindoOpenActivity;
 import id.co.kurindo.kurindo.wizard.help.KurirOpenActivity;
 import id.co.kurindo.kurindo.wizard.help.ShopOpenActivity;
 import id.co.kurindo.kurindo.wizard.shopadm.AddShopActivity;
@@ -119,6 +122,12 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
                 bundle.putString("extra", "ADMIN");
                 showActivity(AdminMonitorOrderActivity.class, bundle);
                 break;
+            case R.id.nav_item_admin_manage:
+                showActivity(BranchActivity.class);
+                break;
+            case R.id.nav_item_shoppic_manage:
+                showActivity(ShopPicActivity.class);
+                break;
             case R.id.nav_item_history_order:
                 bundle.putString("extra", "PELANGGAN");
                 showActivity(MonitorOrderActivity.class, bundle);
@@ -141,6 +150,9 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
             case R.id.nav_item_kurir_open:
                 showActivity(KurirOpenActivity.class);
                 break;
+            case R.id.nav_item_kurindo_open:
+                showActivity(KurindoOpenActivity.class);
+                break;
 
             case R.id.nav_item_settings:
                 showActivity(SettingsActivity.class);
@@ -160,18 +172,19 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
         // Check if user is already logged in or not
         if (session.isLoggedIn())
         {
+            boolean superadmin = false;
             boolean admin = false;
             boolean kurir = false;
             boolean agent = false;
             boolean pelanggan = false;
             boolean shoppic = false;
 /*
-            boolean shopkurir = false;
-            boolean kurirshop = false;
-            boolean shopkec = false;
-            boolean shopkab = false;
-            boolean shopprop = false;
-            boolean shopneg = false;
+            boolean shopkurir = false; //shop owner kurir dia sendiri
+            boolean kurirshop = false; //kurir yg punya shop
+            boolean shopkec = false; ?
+            boolean shopkab = false; ?
+            boolean shopprop = false; ?
+            boolean shopneg = false; ?
             boolean adminkec = false;
             boolean adminkab = false;
             boolean adminprop = false;
@@ -186,12 +199,21 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
             if(session.isPelanggan()) pelanggan = true;
             if(session.isAdministrator()) {
                 admin = true;
+                shoppic = true;
+                pelanggan = true;
+            }
+            if(session.isSuperAdministrator()) {
+                superadmin = true;
+                shoppic = true;
+                pelanggan = true;
             }
 
             navigationView.getMenu().setGroupVisible(R.id.group_customer_id, pelanggan);
             navigationView.getMenu().setGroupVisible(R.id.group_agent_id, agent);
             navigationView.getMenu().setGroupVisible(R.id.group_kurir_id, kurir);
             navigationView.getMenu().setGroupVisible(R.id.group_admin_id, admin);
+            navigationView.getMenu().setGroupVisible(R.id.group_admin_super_id, superadmin);
+            navigationView.getMenu().setGroupVisible(R.id.group_shop_id, shoppic);
 
             setupHeader(true);
         } else
@@ -200,6 +222,7 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
             navigationView.getMenu().setGroupVisible(R.id.group_agent_id, false);
             navigationView.getMenu().setGroupVisible(R.id.group_customer_id, false);
             navigationView.getMenu().setGroupVisible(R.id.group_admin_id, false);
+            navigationView.getMenu().setGroupVisible(R.id.group_admin_super_id, false);
             navigationView.getMenu().setGroupVisible(R.id.group_shop_id, false);
 
             setupHeader(false);

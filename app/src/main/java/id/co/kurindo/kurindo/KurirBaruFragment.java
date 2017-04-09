@@ -39,17 +39,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import id.co.kurindo.kurindo.adapter.KurirAdapter;
+import id.co.kurindo.kurindo.adapter.TKurirAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.model.Address;
+import id.co.kurindo.kurindo.model.City;
+import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.util.ParserUtil;
 
 /**
  * Created by DwiM on 12/12/2016.
  */
 
-public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter.OnItemClickListener {
+public class KurirBaruFragment extends BaseKurirFragment {
     private static final String TAG = "KurirBaruFragment";
-    KurirAdapter userAdapter;
+    TKurirAdapter userAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +68,30 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
         daftarKurir.setLayoutManager(new GridLayoutManager(getContext(), 1));
         daftarKurir.setHasFixedSize(true);
 
-        userAdapter = new KurirAdapter(getContext(), users, this);
+        userAdapter = new TKurirAdapter(getContext(), users, new TKurirAdapter.OnItemClickListener() {
+            @Override
+            public void onApprovedButtonClick(View view, final int position) {
+                final TUser u = users.get(position);
+                final Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message mesg) {
+                        throw new RuntimeException();
+                    }
+                };
+
+                DialogInterface.OnClickListener YesClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        approved_kurir(u, position, handler);
+                    }
+                };
+                showConfirmationDialog("Konfirmasi","Anda Yakin akan menjadikan user '"+u.getFirstname()+ " "+u.getLastname()+"' sebagai KURIR  ?", YesClickListener, null);
+
+                // loop till a runtime exception is triggered.
+                try { Looper.loop(); }
+                catch(RuntimeException e2) {}
+            }
+        });
         daftarKurir.setAdapter(userAdapter);
 
         refreshBtn.setOnClickListener(this);
@@ -83,13 +111,13 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
             @Override
             public void run() {
 
-                String param = params[0].toString();
-                String URI = AppConfig.URL_LIST_NEWKURIR;
-                URI = URI.replace("/{type}", "/"+param);
+                final String param = params[0].toString();
+                String URI = AppConfig.URL_LIST_NEWKURIR_LOCATIONBASED;
+                //URI = URI.replace("/{type}", "/"+param);
 
                 progressBar.setVisibility(View.VISIBLE);
                 String tag_string_req = "req_monitor_kurir_new";
-                StringRequest strReq = new StringRequest(Request.Method.GET,
+                StringRequest strReq = new StringRequest(Request.Method.POST,
                         URI, new Response.Listener<String>() {
 
                     @Override
@@ -104,31 +132,39 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
                             // Check for error node in json
                             if (!error) {
 
-                                GsonBuilder builder = new GsonBuilder();
+                                /*GsonBuilder builder = new GsonBuilder();
                                 builder.setPrettyPrinting();
                                 Gson gson = builder.create();
+                                */
 
                                 JSONArray datas = jObj.getJSONArray("data");
                                 if(datas != null && datas.length() > 0){
                                     users.clear();
 
-                                    for (int i = 0; i < datas.length(); i++) {
-                                        JSONObject data = datas.optJSONObject(i);
-
-                                        User user = gson.fromJson(data.toString(), User.class);
-                                        users.add(user);
+                                    ParserUtil parser = new ParserUtil();
+                                    for (int j = 0; j < datas.length(); j++) {
+                                        JSONObject data = datas.optJSONObject(j);
+                                        TUser recipient = parser.parserUser(data);
+                                        /*
+                                        TUser recipient = gson.fromJson(datas.getString(j), TUser.class);
+                                        Address addr= gson.fromJson(datas.getString(j), Address.class);
+                                        recipient.setAddress(addr);
+                                        City city = gson.fromJson(datas.getString(j),City.class);
+                                        addr.setCity(city);
+                                        */
+                                        users.add(recipient);
                                     }
                                     userAdapter.notifyDataSetChanged();
                                 }
                             } else {
                                 // Error in login. Get the error message
                                 String errorMsg = jObj.getString("message");
-                                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), ""+errorMsg, Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
                             // JSON error
                             e.printStackTrace();
-                            Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Json error " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                         progressBar.setVisibility(View.GONE);
                     }
@@ -137,7 +173,8 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "MonitorKurir Error: " + error.getMessage());
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        if(getContext() != null )
+                            Toast.makeText(getContext(), "Network Error "+error.getMessage(), Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
                     }
                 }) {
@@ -147,6 +184,7 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
                         // Posting parameters to  url
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("form-type", "json");
+                        params.put("type", param);
 
                         return params;
                     }
@@ -168,31 +206,7 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
 
     }
 
-
-    @Override
-    public void onApprovedButtonClick(View view, final int position) {
-        final User u = users.get(position);
-        final Handler handler = new Handler() {
-            @Override
-            public void handleMessage(Message mesg) {
-                throw new RuntimeException();
-            }
-        };
-
-        DialogInterface.OnClickListener YesClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                approved_kurir(u, position, handler);
-            }
-        };
-        showConfirmationDialog("Konfirmasi","Anda Yakin akan menjadikan user '"+u.getFirstname()+ " "+u.getLastname()+"' sebagai KURIR  ?", YesClickListener, null);
-
-        // loop till a runtime exception is triggered.
-        try { Looper.loop(); }
-        catch(RuntimeException e2) {}
-    }
-
-    private void approved_kurir(final User u, final int position, final Handler handler) {
+    private void approved_kurir(final TUser u, final int position, final Handler handler) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -221,12 +235,12 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
                             } else {
                                 //Get the error message
                                 String errorMsg = jObj.getString("message");
-                                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), ""+errorMsg, Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
                             // JSON error
                             e.printStackTrace();
-                            Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Json error " + e.getMessage(), Toast.LENGTH_LONG).show();
                             handler.handleMessage(null);
                             progressBar.setVisibility(View.GONE);
                         }
@@ -239,7 +253,7 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Kurir Approval Error: " + error.getMessage());
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Network Error "+error.getMessage(), Toast.LENGTH_LONG).show();
                         handler.handleMessage(null);
                         progressBar.setVisibility(View.GONE);
                     }
@@ -249,7 +263,7 @@ public class KurirBaruFragment extends BaseKurirFragment implements KurirAdapter
                     protected Map<String, String> getParams() {
                         // Posting parameters to  url
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("kurir", u.getEmail());
+                        params.put("kurir", u.getPhone());
 
                         return params;
                     }

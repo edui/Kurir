@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+    <ImageView
+        android:id="@+id/ivHelpIcon"
+        android:src="@drawable/doclient_icon"
+        android:layout_width="wrap_content" android:layout_weight=".4"
+        android:layout_height="80dp"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center_horizontal" />
+    <TextView
+        android:id="@+id/tvHelpTitle"
+        android:layout_width="wrap_content" android:layout_weight=".6"
+        android:layout_height="wrap_content" android:layout_margin="10dp"
+        android:textSize="20sp" android:textColor="@color/colorPrimaryDark"
+        android:text="Form Minat">
+    </TextView>
+</LinearLayout>
+<ScrollView
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="match_parent" android:layout_margin="5dp"
+    android:layout_height="wrap_content" android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/TextViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textSize="14sp" android:textStyle="bold"
+        android:text="Daftar sebagai:" android:layout_margin="8dp">
+    </TextView>
+    <RadioGroup
+        android:id="@+id/radio_group_role"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/radio_shoppic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_shoppic" android:checked="true"
+            />
+
+        <RadioButton android:id="@+id/radio_kurir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_kurir"
+            />
+        <RadioButton android:id="@+id/radio_mitra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_mitra"
+            />
+    </RadioGroup>
+    <LinearLayout
+        android:id="@+id/input_layout_shopres"
+        android:layout_width="match_parent" android:layout_margin="10dp"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="RESELLER / CABANG dari Toko berikut: "/>
+        <TextView
+            android:id="@+id/tvShopSelected"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Toko"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/input_layout_shoppic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical">
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/input_layout_mitra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical">
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/input_layout_kurir"
+        android:orientation="vertical" android:layout_marginTop="8dp" android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_nik"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="NIK/ Nomor KTP" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_simc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Nomor SIM C" />
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal" android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:weightSum="10">
+        <CheckBox
+            android:id="@+id/chkAgrement"
+            android:layout_width="wrap_content" android:text="Saya SETUJU dengan syarat dan ketentuan ini"
+            android:layout_height="wrap_content" android:layout_weight="6">
+        </CheckBox>
+
+        <ImageView android:src="@drawable/ic_info_outline_black_18dp"
+            android:id="@+id/ivAgrement"
+            android:layout_width="wrap_content" android:layout_weight="2"
+            android:layout_height="30dp"
+            android:layout_gravity="center" />
+        <ImageView android:src="@drawable/ic_lock_black"
+            android:id="@+id/ivAgrement2"
+            android:layout_width="wrap_content" android:layout_weight="2"
+            android:layout_height="30dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+    <!-- Signup Button -->
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_signup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:padding="12dp"
+        android:background="@color/colorPrimaryDark" android:textColor="@color/white"
+        android:text="Kirim Minat"/>
+    </LinearLayout>
+</ScrollView>
+</LinearLayout>

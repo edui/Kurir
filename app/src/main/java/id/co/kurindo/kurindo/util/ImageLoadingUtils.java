@@ -149,7 +149,7 @@ public class ImageLoadingUtils {
 		canvas.setMatrix(scaleMatrix);
 		canvas.drawBitmap(bmp, middleX - bmp.getWidth()/2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
 
-
+		/*
 		ExifInterface exif;
 		try {
 			exif = new ExifInterface(filePath);
@@ -171,6 +171,7 @@ public class ImageLoadingUtils {
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}
+		*/
 
 		return scaledBitmap;
 	}

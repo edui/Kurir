@@ -1,5 +1,6 @@
 package id.co.kurindo.kurindo;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -50,6 +51,13 @@ public class DirectoryFragment extends BaseFragment {
     private ListenableAsyncTask loadNewsTask;
 
     int counter = 0;
+    Context context;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getActivity();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,15 +66,15 @@ public class DirectoryFragment extends BaseFragment {
         loadNewsDummy();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context, 3));
         mRecyclerView.setHasFixedSize(true);
 
 
-        //mAdapter = new GalleryAdapter(getContext(), data);
-        mAdapter = new ShopAdapter(getContext(), shops);
+        //mAdapter = new GalleryAdapter(context, data);
+        mAdapter = new ShopAdapter(context, shops);
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(context,
                 new RecyclerItemClickListener.OnItemClickListener() {
 
                     @Override
@@ -90,8 +98,7 @@ public class DirectoryFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         counter++;
-        if(counter % 9 == 1)
-            load_shops_location();
+        if(counter % 9 == 1) load_shops_location();
     }
 
     private void loadNewsDummy() {
@@ -100,7 +107,7 @@ public class DirectoryFragment extends BaseFragment {
     }
 
     private void loadNews() {
-        loadShopTask = (ListenableAsyncTask) new LoadShopTask(getContext());
+        loadShopTask = (ListenableAsyncTask) new LoadShopTask(context);
         loadShopTask.listenWith(new ListenableAsyncTask.AsyncTaskListener() {
             @Override
             public void onPostExecute(Object o) {
@@ -120,10 +127,10 @@ public class DirectoryFragment extends BaseFragment {
         load_shops("1");
     }
 
-    private void load_shops_location(){
+    public void load_shops_location(){
         String URI = AppConfig.URL_SHOP_LOCATIONBASED_LIST;
         Map<String, String> params = new HashMap<String, String>();
-        params.put("kab", ViewHelper.getInstance().getLastAddress().getKabupaten());
+        params.put("city", (ViewHelper.getInstance().getLastAddress()==null? "Balikpapan": ViewHelper.getInstance().getLastAddress().getKabupaten() ));
         addRequest("request_locationbased_shop", Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -170,7 +177,7 @@ public class DirectoryFragment extends BaseFragment {
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
                 Log.e(TAG, "request_locationbased_shop Error: " + volleyError.getMessage());
-                Toast.makeText(getActivity(),volleyError.getMessage(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(),volleyError.getMessage(), Toast.LENGTH_LONG).show();
             }
         }, params, getKurindoHeaders());
 

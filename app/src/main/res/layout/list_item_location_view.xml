@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:background="@color/white"
+    android:layout_height="wrap_content" android:orientation="vertical"
+    android:padding="5dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center" android:weightSum="1"
+            >
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_weight=".5"
+                android:layout_height="match_parent" android:orientation="vertical" android:gravity="center_vertical|right" android:layout_gravity="center_vertical|left">
+                <ImageView
+                    android:id="@+id/service_icon"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:scaleType="centerCrop" android:layout_gravity="center"
+                    android:src="@drawable/do_send_icon"/>
+                <ImageView
+                    android:id="@+id/service_code_icon"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerCrop" android:layout_gravity="center"
+                    android:src="@drawable/icon_nds"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left">
+                <TextView
+                    android:id="@+id/awbTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No. Resi" android:layout_gravity="center" android:gravity="center"
+                    android:textSize="16dp" android:textStyle="bold"
+                    />
+                <ImageView
+                    android:id="@+id/resi_qrcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:scaleType="centerCrop" android:layout_gravity="center"
+                    android:src="@drawable/icon_nds"/>
+                <TextView
+                    android:id="@+id/statusTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Status" android:layout_gravity="center" android:gravity="center"
+                    android:textSize="12dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_marginTop="10dp" android:weightSum="1"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"  android:layout_weight=".5"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Pick-up Time"
+                    android:layout_gravity="center" android:gravity="center"/>
+                <TextView
+                    android:id="@+id/tvPickupTime"
+                    android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"
+                    android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:layout_gravity="center"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"  android:layout_weight=".5"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Drop Time"
+                    android:layout_gravity="center" android:gravity="center"/>
+                <TextView
+                    android:id="@+id/tvDropTime"
+                    android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"
+                    android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:layout_gravity="center"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+    <include layout="@layout/fragment_location_view" />
+
+</LinearLayout>

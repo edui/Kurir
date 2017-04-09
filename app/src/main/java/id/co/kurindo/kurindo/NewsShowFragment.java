@@ -78,12 +78,12 @@ public class NewsShowFragment extends BaseFragment {
                 e.printStackTrace();
             }*/
 
-            if(newsDescription.getText() == null || newsDescription.getText().equals("")){
+            //if(newsDescription.getText() == null || newsDescription.getText().equals("")){
                 newsDescription.setText(news.getContent());
-            }
+            //}
 
             HashMap<String, String > params = new HashMap<>();
-            params.put("form-user", db.getUserEmail());
+            params.put("form-user", db.getUserPhone());
             params.put("form-type", "NEWS");
             params.put("form-tag", news.getTitle());
             params.put("form-activity", "View "+news.getTitle());

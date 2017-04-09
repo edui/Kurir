@@ -12,10 +12,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.model.TOrder;
+import id.co.kurindo.kurindo.model.TPacket;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -320,9 +322,23 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     protected void setupTextAndStatus(MyItemHolder holder, TOrder order, int position) {
         holder.awbText.setText(order.getAwb());
-        holder.namaPengirimText.setText(order.getBuyer() ==null? "": order.getBuyer().getFirstname() + " "+order.getBuyer().getLastname());
+        String nama = "";
+        if(order.getBuyer() !=null && order.getBuyer().getAddress() != null){
+            nama +=order.getBuyer().getFirstname() + " "+order.getBuyer().getLastname()+"\n("+order.getBuyer().getAddress().getKecamatan()+")";
+        }
+        holder.namaPengirimText.setText(nama);
         holder.teleponPengirimText.setText(order.getBuyer() ==null? "": order.getBuyer().getPhone());
-        holder.kotaAsalText.setText(order.getBuyer() ==null? "": "dari "+order.getBuyer().getAddress().getKecamatan());
+        String orderAt = "di ";
+        if(order.getPlace() != null && order.getPlace().getAddress() != null){
+            orderAt += order.getPlace().getAddress().getKecamatan();
+        }else if(order.getPackets() != null && !order.getPackets().isEmpty()){
+            List l = new ArrayList(order.getPackets());
+            TPacket p = (TPacket) l.get(0);
+            if(p != null && p.getOrigin() != null && p.getOrigin().getAddress() != null){
+                orderAt += p.getOrigin().getAddress().getKecamatan();
+            }
+        }
+        holder.kotaAsalText.setText(orderAt);
 
         if(order.getPic() != null && !order.getPic().getFirstname().isEmpty()){
             holder.picText.setVisibility(View.VISIBLE);
@@ -332,7 +348,8 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
 
         holder.statusText.setText( AppConfig.getOrderStatusText( order.getStatus() ) );
-        holder.createdText.setText(order.getCreated_date());
+        String joined = "\n"+AppConfig.getTimeAgo(order.getCreated_date());
+        holder.createdText.setText(order.getCreated_date()+joined);
     }
 
     protected void setupUpdateBtn(MyItemHolder holder, TOrder order, final int position) {

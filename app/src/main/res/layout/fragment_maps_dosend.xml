@@ -30,7 +30,7 @@
                 android:src="@drawable/origin_pin"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center|top"
-                android:padding="5dp"/>
+                android:padding="2dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent" android:layout_weight=".15"
@@ -42,8 +42,8 @@
                     android:layout_width="match_parent">
                     <TextView
                         android:id="@+id/tvOrigin"
-                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="1" android:maxLines="1" android:inputType="text"
-                        android:layout_height="wrap_content" android:text="Set Lokasi Anda" android:layout_gravity="center_vertical" />
+                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="2" android:maxLines="2"
+                        android:layout_height="40dp" android:text="Set Lokasi Anda" android:gravity="fill|center_vertical|left" android:layout_gravity="fill|center_vertical|left" />
                     <id.co.kurindo.kurindo.map.ClearableAutoCompleteTextView
                         android:id="@+id/tvOriginAutoComplete"
                         android:layout_width="match_parent"
@@ -54,14 +54,14 @@
                         android:id="@+id/ivAddOriginNotes"
                         android:layout_width="match_parent" android:layout_weight=".8"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_create_black_18dp"
+                        android:src="@drawable/ic_description_black_18dp"
                         android:layout_alignParentRight="true"
                         android:layout_gravity="right|top"
-                        android:padding="5dp"/>
+                        android:padding="2dp"/>
                 </LinearLayout>
                 <EditText
                     android:id="@+id/etOriginNotes"
-                    android:layout_width="match_parent"
+                    android:layout_width="match_parent" android:textSize="10sp"
                     android:layout_height="wrap_content" android:hint="Add Notes" android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
@@ -77,7 +77,7 @@
                 android:src="@drawable/destination_pin"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center|top"
-                android:padding="5dp"/>
+                android:padding="2dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent" android:layout_weight=".15"
@@ -89,8 +89,8 @@
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
                     <TextView
                         android:id="@+id/tvDestination"
-                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="1" android:maxLines="1" android:inputType="text"
-                        android:layout_height="wrap_content" android:text="Set Tujuan Anda" android:layout_gravity="center_vertical"/>
+                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="2" android:maxLines="2"
+                        android:layout_height="40dp" android:text="Set Tujuan Anda" android:gravity="fill|center_vertical|left" android:layout_gravity="fill|center_vertical|left"/>
                     <id.co.kurindo.kurindo.map.ClearableAutoCompleteTextView
                         android:id="@+id/tvDestinationAutoComplete"
                         android:layout_width="match_parent"
@@ -101,14 +101,14 @@
                         android:id="@+id/ivAddDestinationNotes"
                         android:layout_width="match_parent" android:layout_weight=".8"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_create_black_18dp"
+                        android:src="@drawable/ic_description_black_18dp"
                         android:layout_alignParentRight="true"
                         android:layout_gravity="right|top"
-                        android:padding="5dp"/>
+                        android:padding="2dp"/>
                 </LinearLayout>
                 <EditText
                     android:id="@+id/etDestinationNotes"
-                    android:layout_width="match_parent"
+                    android:layout_width="match_parent" android:textSize="10sp"
                     android:layout_height="wrap_content" android:hint="Add Notes" android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
@@ -129,8 +129,7 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".MapsActivity" />
+            android:layout_height="match_parent" />
         <LinearLayout
             android:id="@+id/locationMarker" android:visibility="gone"
             android:layout_width="wrap_content"
@@ -184,7 +183,7 @@
                     <TextView
                         android:id="@+id/tvPriceInfo"
                         android:layout_width="wrap_content" android:gravity="center_vertical|left" android:textColor="@color/white" android:textStyle="bold"
-                        android:layout_height="match_parent" android:text="Rp 10.000"/>
+                        android:layout_height="match_parent" android:text="000"/>
                 </LinearLayout>
                 <ImageView
                     android:id="@+id/ivSwitchInfo"
@@ -207,43 +206,80 @@
                 android:id="@+id/rgDoType"
                 android:layout_width="wrap_content" android:layout_gravity="center"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:weightSum="1"
                 android:gravity="center"
                 android:orientation="horizontal" >
                 <RadioButton
                     android:id="@+id/radio_dosend"
-                    android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
+                    android:layout_width="50dp" android:padding="10dp" android:layout_weight=".5"
                     android:background="@drawable/btn_dosend_selector" android:button="@null" android:gravity="center"
-                    android:layout_height="60dp" android:text="" android:textSize="12sp" />
+                    android:layout_height="50dp" android:text="" android:textSize="12sp" />
                 <RadioButton
                     android:id="@+id/radio_dojek" android:visibility="gone"
-                    android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
+                    android:layout_width="50dp" android:padding="10dp" android:layout_weight=".5"
                     android:background="@drawable/btn_dojek_selector" android:button="@null" android:gravity="center" android:checked="true"
-                    android:layout_height="60dp" android:text="" android:textSize="12sp" />
+                    android:layout_height="50dp" android:text="" android:textSize="12sp" />
                 <RadioButton
                     android:id="@+id/radio_docar" android:visibility="gone"
-                    android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
+                    android:layout_width="50dp" android:padding="10dp" android:layout_weight=".5"
                     android:background="@drawable/btn_docar_selector" android:button="@null" android:gravity="center" android:checked="true"
-                    android:layout_height="60dp" android:text="" android:textSize="12sp" />
+                    android:layout_height="50dp" android:text="" android:textSize="12sp" />
                 <RadioButton
                     android:id="@+id/radio_domove"
-                    android:layout_width="60dp" android:padding="10dp" android:layout_weight=".5"
+                    android:layout_width="50dp" android:padding="10dp" android:layout_weight=".5"
                     android:background="@drawable/btn_domove_selector" android:button="@null" android:gravity="center"
-                    android:layout_height="60dp" android:text="" android:textSize="12sp" />
+                    android:layout_height="50dp" android:text="" android:textSize="12sp" />
             </RadioGroup>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
-                <TextView
-                    android:layout_width="match_parent" android:layout_weight=".65"
-                    android:layout_height="wrap_content"
-                    android:text="Jenis Layanan" android:layout_margin="5dp">
-                </TextView>
-                <Spinner
-                    android:id="@+id/input_service_code" android:layout_weight=".35"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:layout_width="wrap_content" android:layout_weight=".5" android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="Jenis Layanan" android:layout_margin="1dp">
+                    </TextView>
+                    <Spinner
+                        android:id="@+id/input_service_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content" android:layout_weight=".5" android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_gravity="center" android:gravity="center"
+                        android:text="Berat (Kg)" android:layout_margin="1dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:weightSum="1" android:gravity="center" android:orientation="horizontal" >
+                        <android.support.v7.widget.AppCompatButton
+                            style="@style/QuantityPickerButtonStyle"
+                            android:text="-" android:textColor="@color/colorPrimary" android:textSize="14dp" android:textAlignment="center"
+                            android:id="@+id/decrementBtn" android:hint="Decrement"
+                            />
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/quantityStr" android:layout_weight=".6"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/input_berat_barang"
+                                android:layout_width="match_parent" android:gravity="center"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold" android:textSize="12dp" android:textColor="@color/colorPrimaryDark"
+                                android:text="1" />
+                        </android.support.design.widget.TextInputLayout>
+                        <android.support.v7.widget.AppCompatButton
+                            style="@style/QuantityPickerButtonStyle"
+                            android:text="+" android:textColor="@color/colorPrimary" android:textSize="14dp" android:textAlignment="center"
+                            android:id="@+id/incrementBtn" android:hint="Increment"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 

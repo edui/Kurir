@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -81,12 +82,17 @@ public class LoginPhoneFragment extends BaseFragment {
     private SessionManager session;
     private SQLiteHandler db;
     private ProgressDialog progressDialog;
+    
+    Context context;
 
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflateAndBind(inflater, container, R.layout.fragment_login_phone);
+
+        progressDialog = new ProgressDialog(getActivity(),R.style.CustomDialog);
 
         phoneInput.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
         phoneInput.setHint(R.string.nomor_telepon);
@@ -101,7 +107,7 @@ public class LoginPhoneFragment extends BaseFragment {
             checkStatusAccount();
 
             // User is already logged in. Take him to main activity
-            onAlreadyLogin();
+            //onAlreadyLogin();
         }
 //session.setActive(true);
         User user = db.toUser(db.getUserDetails() );
@@ -109,12 +115,10 @@ public class LoginPhoneFragment extends BaseFragment {
             phoneInput.setPhoneNumber(user.getPhone());
             _activationPhoneText.setPhoneNumber(user.getPhone());
             _recoveryPhoneText.setPhoneNumber(user.getPhone());
-            if(!session.isActivated()){
-                showActivationLayout(user.getPhone());
-            }
+            //if(!session.isActivated()){
+            //    showActivationLayout(user.getPhone());
+            //}
         }
-
-        progressDialog = new ProgressDialog(getActivity(),R.style.AppTheme);
 
         //checkStatusAccount();
 
@@ -148,6 +152,7 @@ public class LoginPhoneFragment extends BaseFragment {
             }
         });
 
+
         return v;
 
     }
@@ -175,11 +180,13 @@ public class LoginPhoneFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getContext();
+
         // SQLite database handler
-        db = new SQLiteHandler(getContext());
+        db = new SQLiteHandler(context);
         //db.onUpgrade(db.getWritableDatabase(), 0, 1);
         // Session manager
-        session = new SessionManager(getContext());
+        session = new SessionManager(context);
         //session.setLogin(false);
 
     }
@@ -225,12 +232,12 @@ public class LoginPhoneFragment extends BaseFragment {
                                         session.setActive(false);
                                         showActivationLayout(phone);;
                                     }else{
-                                        Toast.makeText(getContext(),message, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context,message, Toast.LENGTH_SHORT).show();
                                     }
                                 } catch (JSONException e) {
                                     // JSON error
                                     e.printStackTrace();
-                                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     _recoverButton.setEnabled(true);
                                 }
                                 progressDialog.dismiss();
@@ -240,7 +247,7 @@ public class LoginPhoneFragment extends BaseFragment {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 Log.e(TAG, "Recovery Error: " + error.getMessage());
-                                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
 
                                 _recoverButton.setEnabled(true);
                                 progressDialog.dismiss();
@@ -290,71 +297,81 @@ public class LoginPhoneFragment extends BaseFragment {
             try { active = Boolean.parseBoolean(activeObj.toString());}catch (Exception e) {}
             try { approved = Boolean.parseBoolean(approvedObj.toString());}catch (Exception e) {}
 
-            Object cityObj = users.get("city");
-            if(cityObj != null){
-                city = cityObj.toString();
-            }
-
         }
         //}
         if(!active){
-            showActivationPage();
-        }else
-        if(!approved ) {
+            showActivationLayout(phone);
+        }else if(!approved ) {
             if(!role.equalsIgnoreCase(AppConfig.KEY_PELANGGAN)){
                 request_checkStatusAccount(phone);
             }
         }else {
+            request_checkStatusAccount(phone);
+            /*
+            Object cityObj = users.get("city");
+            if(cityObj != null){
+                city = cityObj.toString();
+            }
             if(city ==null || city.isEmpty()){
                 showPinAddressForm();
-            }
+            }*/
         }
     }
 
     private void request_checkStatusAccount(final String phone){
         if(getActivity() != null){
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("checking account status....");
+            progressDialog.show();
+
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     String tag_string_req = "req_status_account";
-                    StringRequest strReq = new StringRequest(Request.Method.GET,
-                            AppConfig.URL_ACCOUNT_STATUS + "/"+phone, new Response.Listener<String>() {
+                    StringRequest strReq = new StringRequest(Request.Method.POST,
+                            AppConfig.URL_ACCOUNT_STATUS_P, new Response.Listener<String>() {
 
                         @Override
                         public void onResponse(String response) {
                             Log.d(TAG, "Login > CheckStatus Response: " + response.toString());
-                            //hideDialog();
 
                             try {
                                 JSONObject jObj = new JSONObject(response);
-                                boolean error = jObj.getBoolean("error");
-
+                                String message = jObj.getString("message");
+                                //boolean error = jObj.getBoolean("error");
+                                boolean ok = "OK".equalsIgnoreCase(message);
                                 // Check for error node in json
-                                if (!error) {
+                                if (ok) {
                                     // Now store the user in SQLite
                                     boolean approved = jObj.getBoolean("approved");
                                     boolean active = jObj.getBoolean("active");
                                     String role = jObj.getString("role");
+                                    String city = jObj.getString("city");
 
                                     if(!active){
-                                        showActivationPage();
+                                        showActivationLayout(phone);
                                     }else {
                                         if (approved) {
+                                            String api= jObj.getString("api");
                                             //update user detail
-                                            db.updateUserPhone(phone, role, active, approved);
+                                            db.updateUserPhone(phone, role, city, api, active, approved);
                                         }
-                                        showMainPage();
+                                        if(city ==null || city.isEmpty() || city.equalsIgnoreCase("null")){
+                                            showPinAddressForm();
+                                        }else{
+                                            showMainPage();
+                                        }
                                     }
                                 } else {
                                     // Error in login. Get the error message
-                                    String errorMsg = jObj.getString("message");
-                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                    //String errorMsg = jObj.getString("message");
+                                    Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
                                     _loginButton.setEnabled(true);
                                 }
                             } catch (JSONException e) {
                                 // JSON error
                                 e.printStackTrace();
-                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 _loginButton.setEnabled(true);
                             }
 
@@ -365,7 +382,7 @@ public class LoginPhoneFragment extends BaseFragment {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(TAG, "Login Error: " + error.getMessage());
-                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Login Error: "+error.getMessage(), Toast.LENGTH_SHORT).show();
 
                             _loginButton.setEnabled(true);
                             progressDialog.dismiss();
@@ -377,10 +394,15 @@ public class LoginPhoneFragment extends BaseFragment {
                             // Posting parameters to  url
                             Map<String, String> params = new HashMap<String, String>();
                             params.put("form-type", "json");
+                            params.put("form-phone", phone);
 
                             return params;
                         }
 
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            return getKurindoHeaders();
+                        }
                     };
 
                     // Adding request to request queue
@@ -399,14 +421,14 @@ public class LoginPhoneFragment extends BaseFragment {
     }
 
     private void showWaitingApprovalPage() {
-        Intent intent = new Intent(getContext(), WaitingApprovalActivity.class);
+        Intent intent = new Intent(context, WaitingApprovalActivity.class);
         intent.putExtra("phone", phoneInput.getPhoneNumber());
         startActivityForResult(intent, REQUEST_WAITINGAPPROVAL);
         getActivity().finish();
     }
 
     private void showActivationPage(){
-        Intent intent = new Intent(getContext(), ActivationActivity.class);
+        Intent intent = new Intent(context, ActivationActivity.class);
         intent.putExtra("phone", phoneInput.getPhoneNumber());
         startActivityForResult(intent, REQUEST_ACTIVATION);
     }
@@ -436,6 +458,8 @@ public class LoginPhoneFragment extends BaseFragment {
             _loginLayout.setVisibility(View.VISIBLE);
             _recoveryLayout.setVisibility(View.GONE);
             _recoverLink.setVisibility(View.VISIBLE);
+
+            _loginButton.setEnabled(true);
         }
     }
 
@@ -497,7 +521,7 @@ public class LoginPhoneFragment extends BaseFragment {
     }
 
     private void onActivationFailed() {
-        Toast.makeText(getContext(), "Activation failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Activation failed", Toast.LENGTH_LONG).show();
         _activationButton.setEnabled(true);
     }
 
@@ -523,7 +547,7 @@ public class LoginPhoneFragment extends BaseFragment {
                         // User successfully stored in MySQL
                         //store_user_information(jObj);
                         // Show Validation Page
-                        Toast.makeText(getContext(), "User successfully activated!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "User successfully activated!", Toast.LENGTH_LONG).show();
 
                         boolean active = jObj.getBoolean("active");
                         if(active){
@@ -570,9 +594,11 @@ public class LoginPhoneFragment extends BaseFragment {
 
                             if(city ==null || city.isEmpty()){
                                 showPinAddressForm();
+                                //onLoginSuccess();
                             }else{
+                                db.addAddress(tuser, "HOMEBASE");
                                 // Launch main activity
-                                Toast.makeText(getContext(), "Login Successfully.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Login Successfully.", Toast.LENGTH_LONG).show();
                                 onAlreadyLogin();
                             }
                         }else{
@@ -589,12 +615,12 @@ public class LoginPhoneFragment extends BaseFragment {
 
                         // Error occurred in registration. Get the error
                         // message
-                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                         _activationButton.setEnabled(true);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     _activationButton.setEnabled(true);
                 }
                 progressDialog.dismiss();
@@ -604,7 +630,7 @@ public class LoginPhoneFragment extends BaseFragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Activation Error: " + error.getMessage());
-                Toast.makeText(getContext(),error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context,error.getMessage(), Toast.LENGTH_LONG).show();
                 _activationButton.setEnabled(true);
                 progressDialog.dismiss();
             }
@@ -627,7 +653,7 @@ public class LoginPhoneFragment extends BaseFragment {
     }
 
     private void showPinAddressForm() {
-        Intent intent = new Intent(getContext(), SignupWizardActivity.class);
+        Intent intent = new Intent(context, SignupWizardActivity.class);
         startActivityForResult(intent, REQUEST_SignupWizardActivity);
     }
 
@@ -719,20 +745,24 @@ public class LoginPhoneFragment extends BaseFragment {
                         if(city ==null || city.isEmpty() || city.equalsIgnoreCase("null") ){
                             showPinAddressForm();
                         }else{
+                            db.addAddress(tuser, "HOMEBASE");
                             // Launch main activity
-                            Toast.makeText(getContext(), "Login Successfully.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Login Successfully.", Toast.LENGTH_LONG).show();
                             onAlreadyLogin();
                         }
                         update_token(tuser.getApi_key());
+                    } else if(message.equalsIgnoreCase("WRONG")){
+                        Toast.makeText(context, "Incorrect Account or Password.", Toast.LENGTH_LONG).show();
+                        _loginButton.setEnabled(true);
                     } else {
                         boolean active= jObj.getBoolean("active");
                         boolean approved= jObj.getBoolean("approved");
 
                         // Error in login. Get the error message
-                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                         _loginButton.setEnabled(true);
 
-                        if(!active){
+                        if(!active && !message.equalsIgnoreCase("Invalid Account.")){
                             showActivationLayout(phone);
                         }
                         /*else
@@ -743,7 +773,7 @@ public class LoginPhoneFragment extends BaseFragment {
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     _loginButton.setEnabled(true);
                 }
 
@@ -754,7 +784,7 @@ public class LoginPhoneFragment extends BaseFragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Login Error: " + error.getMessage());
-                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
 
                 _loginButton.setEnabled(true);
                 progressDialog.dismiss();
@@ -799,8 +829,10 @@ public class LoginPhoneFragment extends BaseFragment {
             }
         } else if (requestCode == REQUEST_SignupWizardActivity) {
             if (resultCode == getActivity().RESULT_OK) {
-                Toast.makeText(getContext(), "Login Successfully.", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Login Successfully.", Toast.LENGTH_LONG).show();
                 onAlreadyLogin();
+            }else{
+                showLoginLayout();
             }
         }
     }
@@ -814,22 +846,18 @@ public class LoginPhoneFragment extends BaseFragment {
 
     public void onAlreadyLogin() {
         //if auto login -> finish -> show MainDrawerActivity
-        Intent intent = new Intent(getContext(), MainDrawerActivity.class);
+        Intent intent = new Intent(context, MainDrawerActivity.class);
         startActivity(intent);
         onLoginSuccess();
     }
 
     public void onLoginSuccess() {
-        _activationLayout.setVisibility(View.GONE);
-        _loginLayout.setVisibility(View.VISIBLE);
-        _recoverLink.setVisibility(View.VISIBLE);
-        _recoveryLayout.setVisibility(View.GONE);
-        _loginButton.setEnabled(true);
+        showLoginLayout();
         getActivity().finish();
     }
 
     public void onLoginFailed() {
-        Toast.makeText(getContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Login failed", Toast.LENGTH_LONG).show();
 
         _loginButton.setEnabled(true);
     }
@@ -859,7 +887,7 @@ public class LoginPhoneFragment extends BaseFragment {
         if(AppConfig.FCM_TOKEN != null){
             String tag_string_req = "req_sendRegistrationToServer";
 
-            final SQLiteHandler db = new SQLiteHandler(getContext());
+            final SQLiteHandler db = new SQLiteHandler(context);
 
             StringRequest strReq = new StringRequest(Request.Method.POST,
                     AppConfig.URL_REGISTER_FCM, new Response.Listener<String>() {

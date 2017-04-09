@@ -40,17 +40,22 @@ import java.util.Set;
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.adapter.CartViewAdapter;
+import id.co.kurindo.kurindo.adapter.DoServiceViewAdapter;
+import id.co.kurindo.kurindo.adapter.LocationViewAdapter;
 import id.co.kurindo.kurindo.adapter.TPacketViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.map.LocationMapViewsActivity;
 import id.co.kurindo.kurindo.map.MapViewsActivity;
 import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.StatusHistory;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
+import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.dosend.AcceptTOrderActivity;
 import id.co.kurindo.kurindo.wizard.dosend.RejectTOrderActivity;
 
@@ -92,6 +97,9 @@ public class TOrderShowFragment extends BaseFragment {
     TextView tvPengiriman;
     @Bind(R.id.tvPembeli)
     TextView tvPembeli;
+
+    @Bind(R.id.tvPayment)
+    TextView tvPayment;
 
     @Bind(R.id.kur200Btn)
     ImageButton kur200Btn;
@@ -288,16 +296,14 @@ public class TOrderShowFragment extends BaseFragment {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        GsonBuilder builder = new GsonBuilder();
-                        builder.setPrettyPrinting();
-                        Gson gson = builder.create();
-
                         JSONArray jArr = jObj.getJSONArray("histories");
                         if(jArr.length() > 0){
                             historyList.clear();
+                            ParserUtil parser = new ParserUtil();
                             for (int i = 0; i < jArr.length(); i++) {
-                                StatusHistory hist = gson.fromJson(jArr.get(i).toString(), StatusHistory.class);
+                                //StatusHistory hist = gson.fromJson(jArr.get(i).toString(), StatusHistory.class);
                                 //User by = gson.fromJson(jArr.getJSONObject(i).get("created_by").toString(), User.class);
+                                StatusHistory hist = parser.parserHistory(jArr.getJSONObject(i));
                                 historyList.add(hist);
                             }
                         }
@@ -313,7 +319,7 @@ public class TOrderShowFragment extends BaseFragment {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Process_order Error: " + error.getMessage());
                 Toast.makeText(getContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+                        "Network Error : "+error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
 
@@ -352,17 +358,39 @@ public class TOrderShowFragment extends BaseFragment {
     private void setup_shipping() {
         lvRecipientItems.setLayoutManager(new GridLayoutManager(getContext(), 1));
         lvRecipientItems.setHasFixedSize(true);
-        List<TPacket> packets = new ArrayList<>();
-        if(order.getPackets().size() > 0) packets.addAll( order.getPackets());
         tvPengiriman.setVisibility(View.VISIBLE);
-        TPacketViewAdapter adapter = new TPacketViewAdapter(getContext(), packets, order, new TPacketViewAdapter.OnItemClickListener() {
-            @Override
-            public void onViewRouteButtonClick(View view, int position, TPacket packet) {
-                ViewHelper.getInstance().setPacket(packet);
-                ((BaseActivity)getActivity()).showActivity(MapViewsActivity.class);
+
+        if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSERVICE) || order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOWASH)){
+            LocationViewAdapter adapter = new LocationViewAdapter(getContext(), order, new LocationViewAdapter.OnItemClickListener() {
+                @Override
+                public void onViewLocationButtonClick(View view, int position, TUser location) {
+                    ViewHelper.getInstance().setLocation(location);
+                    ((BaseActivity)getActivity()).showActivity(LocationMapViewsActivity.class);
+
+                }
+            });
+            lvRecipientItems.setAdapter(adapter);
+            tvPengiriman.setText(getString(R.string.location_address));
+
+        }else{
+            List<TPacket> packets = new ArrayList<>();
+            if(order.getPackets().size() > 0) packets.addAll( order.getPackets());
+            if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
+                tvPengiriman.setText(getString(R.string.packet));
+            }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOJEK)){
+                tvPengiriman.setText(getString(R.string.detail_dojek));
+            }else{
+                tvPengiriman.setText(getString(R.string.location_address));
             }
-        });
-        lvRecipientItems.setAdapter(adapter);
+            TPacketViewAdapter adapter = new TPacketViewAdapter(getContext(), packets, order, new TPacketViewAdapter.OnItemClickListener() {
+                @Override
+                public void onViewRouteButtonClick(View view, int position, TPacket packet) {
+                    ViewHelper.getInstance().setPacket(packet);
+                    ((BaseActivity)getActivity()).showActivity(MapViewsActivity.class);
+                }
+            });
+            lvRecipientItems.setAdapter(adapter);
+        }
 
         /*
         if(order.getRecipients().size() > 0){
@@ -375,13 +403,18 @@ public class TOrderShowFragment extends BaseFragment {
     private void setup_products() {
         lvCartItems.setLayoutManager(new GridLayoutManager(getContext(), 1));
         lvCartItems.setHasFixedSize(true);
+        if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSERVICE) || order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOWASH)){
+            DoServiceViewAdapter cartAdapter = new DoServiceViewAdapter(getActivity(), (order.getServices()==null? new ArrayList() : new ArrayList(order.getServices())));
+            lvCartItems.setAdapter(cartAdapter);
+
+        //}else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSEND) || order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOJEK) || order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSHOP)){
+        }else {
+            CartViewAdapter cartAdapter = new CartViewAdapter(getActivity(), getCartItemsPlusHeader(order));
+            lvCartItems.setAdapter(cartAdapter);
+        }
 
         tvTotalPrice.setText(AppConfig.formatCurrency(order.getTotalPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
-
-        CartViewAdapter cartAdapter = new CartViewAdapter(getActivity(), getCartItemsPlusHeader(order));
-        lvCartItems.setAdapter(cartAdapter);
-
-        tvPageTitle.setText("Detail Order");
+        tvPageTitle.setText("Detail Order "+order.getService_type());
 
         updateStatus();
     }
@@ -389,6 +422,8 @@ public class TOrderShowFragment extends BaseFragment {
     private void updateStatus() {
         tvAwbTitle.setText("No. Resi : "+order.getAwb() +"\nStatus : "+ AppConfig.getOrderStatusText(order.getStatus()));
         tvAwbTitle.setVisibility(View.VISIBLE);
+
+        tvPayment.setText(order==null || order.getPayment()==null?"":order.getPayment());
 
         kur200Btn.setVisibility(View.GONE);
         kur999Btn.setVisibility(View.GONE);

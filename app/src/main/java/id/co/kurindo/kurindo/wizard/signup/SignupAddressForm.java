@@ -57,7 +57,6 @@ public class SignupAddressForm extends SinglePinLocationMapFragment {
         super.onClick_mLocationMarkerText();
         displayAddressText();
         hidepanel(false);
-        originMode = false;
     }
 
     private void displayAddressText() {
@@ -85,7 +84,7 @@ public class SignupAddressForm extends SinglePinLocationMapFragment {
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message mesg) {
-                throw new RuntimeException();
+                throw new RuntimeException("RuntimeException");
             }
         };
 

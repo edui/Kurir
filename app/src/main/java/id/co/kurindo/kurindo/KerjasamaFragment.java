@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -156,6 +157,10 @@ public class KerjasamaFragment extends BaseFragment {
                 return params;
             }
 
+            @Override
+            public Map<String, String> getHeaders() {
+                return getKurindoHeaders();
+            }
         };
 
         // Adding request to request queue

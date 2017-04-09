@@ -1,0 +1,90 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+
+
+    <LinearLayout
+        android:id="@+id/container_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+    <include layout="@layout/include_toolbar" />
+    <LinearLayout
+            android:id="@+id/address_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/origin_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:minHeight="50dp"
+            android:orientation="horizontal" android:weightSum="1">
+            <ImageView
+                android:id="@+id/iconOrigin"
+                android:layout_width="match_parent" android:layout_weight=".85"
+                android:layout_height="wrap_content"
+                android:src="@drawable/origin_pin"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center|top"
+                android:padding="5dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_weight=".15"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/tvOriginLayout"
+                    android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1"
+                    android:layout_width="match_parent">
+                    <TextView
+                        android:id="@+id/tvOrigin"
+                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="1" android:maxLines="1" android:inputType="text"
+                        android:layout_height="wrap_content" android:text="Set Lokasi Anda" android:layout_gravity="center_vertical" />
+                    <id.co.kurindo.kurindo.map.ClearableAutoCompleteTextView
+                        android:id="@+id/tvOriginAutoComplete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Set Lokasi Anda" android:visibility="gone"/>
+                    <ImageView
+                        android:id="@+id/ivAddOriginNotes" android:visibility="gone"
+                        android:layout_width="match_parent" android:layout_weight=".8"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_create_black_18dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right|top"
+                        android:padding="5dp"/>
+                </LinearLayout>
+                <EditText
+                    android:id="@+id/etOriginNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:hint="Add Notes" android:visibility="gone"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/container_toolbar">
+
+        <fragment
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".map.MapViewsActivity" />
+
+    </FrameLayout>
+
+</RelativeLayout>

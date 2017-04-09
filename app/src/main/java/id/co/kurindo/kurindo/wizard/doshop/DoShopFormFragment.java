@@ -163,10 +163,10 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
 
     private void process_order(Map<String, String> params, final Handler handler) {
         String url = AppConfig.URL_DOSEND_ORDER;
-        addRequest("request_dosend_order", Request.Method.POST, url, new Response.Listener<String>() {
+        addRequest("request_doshop_order", Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "request_dosend_order Response: " + response.toString());
+                Log.d(TAG, "request_doshop_order Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
@@ -194,7 +194,7 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-                invalid = new VerificationError("VolleyError : " + volleyError.getMessage());
+                invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
                 progressDialog.dismiss();
                 handler.handleMessage(null);
             }
@@ -239,7 +239,7 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message mesg) {
-                throw new RuntimeException();
+                throw new RuntimeException("RuntimeException");
             }
         };
 

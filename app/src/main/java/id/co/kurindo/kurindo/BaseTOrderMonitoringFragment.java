@@ -171,7 +171,8 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ((requestCode == ACCEPTED_REQUEST_CODE ||requestCode == REJECTED_REQUEST_CODE )&& resultCode == Activity.RESULT_OK) {
-            TOrder order = data.getExtras().getParcelable("order");
+            //TOrder order = data.getExtras().getParcelable("order");
+            TOrder order = ViewHelper.getInstance().getOrder();
             if(order != null) {
                 int position = orders.indexOf(selectedOrder);
                 this.selectedOrder = order;
@@ -213,7 +214,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
                                 } else {
                                     // Error in login. Get the error message
                                     String errorMsg = jObj.getString("message");
-                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), ""+errorMsg, Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 // JSON error
@@ -229,7 +230,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(TAG, "Booking Error: " + error.getMessage());
-                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Network Error "+error.getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                             handler.handleMessage(null);
                         }

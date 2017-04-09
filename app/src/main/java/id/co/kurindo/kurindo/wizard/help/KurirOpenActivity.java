@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 import id.co.kurindo.kurindo.wizard.domart.DoMartForm1;
 
@@ -54,7 +55,7 @@ public class KurirOpenActivity extends AbstractStepperActivity {
                 case 0:
                     return new KurirOpenForm1();
                 case 1:
-                    return new KurirOpenForm1();
+                    return KurindoMinatForm.newInstance(AppConfig.KEY_KURIR);
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }

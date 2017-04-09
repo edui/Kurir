@@ -122,7 +122,8 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
                                 } else {
                                     // Error in login. Get the error message
                                     String errorMsg = jObj.getString("message");
-                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                    if(errorMsg.equalsIgnoreCase("No Order Found."))  orders.clear();
+                                    Toast.makeText(getContext(), ""+errorMsg, Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 // JSON error
@@ -137,7 +138,7 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
-                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Network Error : "+error.getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                             refreshBtn.setVisibility(View.VISIBLE);
                         }

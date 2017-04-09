@@ -13,6 +13,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.StringUtils;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -20,6 +21,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -31,9 +33,10 @@ import id.co.kurindo.kurindo.model.PacketService;
 public class AppConfig {
     public static String API_VERSION = "v1";
 
-    //public static String HOST = "https://kurindo.co.id";//+"/"+API_VERSION;
-    //public static String API_HOST = "http://10.0.2.2/kurindo";
-    public static String BASE_HOST = "http://172.30.3.58/kurindo";
+    public static String BASE_HOST = "https://kurindo.co.id";//+"/"+API_VERSION;
+    //public static String BASE_HOST = "http://10.0.2.2/kurindo";
+    //public static String BASE_HOST = "http://192.168.43.25/kurindo";
+    //public static String BASE_HOST = "http://172.30.3.58/kurindo";
     public static String API_HOST = BASE_HOST+"/"+API_VERSION;
     public static String HOST = API_HOST;
     //public static String API_HOST = HOST;
@@ -45,10 +48,8 @@ public class AppConfig {
     //active link since v1 API
     public static String URL_BACKEND_SIGNUP = HOST + "/backend/sign_up/json";
     public static String URL_BACKEND_SIGNIN = HOST + "/backend/sign_in/json";
-    public static String URL_BACKEND_RECOVERY_PHONE = HOST + "/backend/recovery_p";
-    public static  String URL_BACKEND_ACTIVATION_PHONE = HOST + "/backend/activation_p";
-
-    public static String URL_USER_CITY_UPDATE =   API_HOST + "/user/city/update";
+    public static String URL_BACKEND_RECOVERY_PHONE = HOST + "/backend/recovery/json";
+    public static  String URL_BACKEND_ACTIVATION_PHONE = HOST + "/backend/activation/json";
 
     public static String URL_MY_SHOP_LIST = API_HOST + "/shop/myshops";
     public static String URL_SHOP_PREPIC_LIST = API_HOST + "/shop/prepic";
@@ -59,26 +60,46 @@ public class AppConfig {
     public static String URL_SHOP_PRODUCT_ADD =API_HOST + "/shop/product/add";
     public static String URL_SHOP_PRODUCT_UPDATE=API_HOST + "/shop/product/update";
 
+    public static String URL_SHOP_LIST = HOST + "/shops/list/{page}";
+    public static String URL_SHOP_PRODUCTS = HOST + "/shop/{shop_id}/products/{page}";
+    public static String URL_SHOP_CITY_LIST = API_HOST + "/shop/city_list";
+
     public static String URL_PRICE_KM= API_HOST + "/tariff/km";
+    public static String URL_CALC_PRICE_KM= API_HOST + "/calculate/km";
     public static String URL_LOGGING = HOST + "/logging";
+    public static String URL_REGISTER_FCM = HOST + "/refresh/newfirebase";
+    public static String URL_MINAT_FORM = HOST + "/minat";
 
+    public static String URL_LIST_KURIR_LOCATIONBASED = HOST + "/tusers/online";
+    public static String URL_LIST_NEWKURIR_LOCATIONBASED = HOST + "/tusers/new";
 
+    public static String URL_USER_CITY_UPDATE =   API_HOST + "/tuser/city/update";
+    public static  String URL_ACCOUNT_STATUS_P = HOST + "/tuser/status";
+    public static String URL_KURIR_APPROVED =  HOST + "/tuser/kurir/approved";
+
+    public static  String URL_SENT_MESSAGE = HOST + "/send_message";
+    public static  String URL_SENT_KERJASAMA= HOST + "/message/kerjasama";
+
+    public static String URL_DOSEND_ORDER = API_HOST + "/torder/dosend";
+    public static String URL_TORDER_HISTORY = API_HOST + "/torder/history";
+    public static String URL_TORDER_ACTION = API_HOST + "/torder/action";
+    public static String URL_TORDER_MYORDERS = API_HOST + "/torder/myorders";
+    public static String URL_TORDER_REALTIME = API_HOST + "/torder/realtime";
+    public static String URL_TORDER_MYTASKS = API_HOST + "/torder/myjob";
+    public static String URL_TORDER_ADDPIC = API_HOST + "/torder/addpic";;
+    public static String URL_TORDER_REJECT = API_HOST + "/torder/reject";
+
+    public static String URL_PRICE_REQUEST = API_HOST + "/tariff/do";
+    public static String URL_NEWS= HOST + "/news";
 
     //active link before v1 API
     // Server user login url
     public static String URL_LOGIN = HOST + "/backend/login/json";
-
-    // Server user register url
     public static String URL_REGISTER = HOST + "/backend/signup/json";
-
 
     public static  String URL_ACCOUNT_ACTIVATION = HOST + "/activation";
     public static String URL_ACCOUNT_RECOVERY = HOST + "/recovery";
-
     public static  String URL_ACCOUNT_STATUS = HOST + "/user/status";
-
-    public static  String URL_SENT_MESSAGE = HOST + "/send_message";
-    public static  String URL_SENT_KERJASAMA= HOST + "/message_kerjasama";
 
     public static String URL_PLACE_ORDER = HOST + "/packet/addordernew";
     public static String URL_PLACE_ORDER_SHOP = HOST + "/shop/addordernew";
@@ -103,41 +124,27 @@ public class AppConfig {
     public static String URL_LIST_CITY_KURINDO = HOST + "/city/list/kurir";
     public static String URL_LIST_KURIR = HOST + "/users/online/{type}";
     public static String URL_LIST_NEWKURIR = HOST + "/users/new/{type}";
-    public static String URL_KURIR_APPROVED =  HOST + "/user/kurir/approved";
 
 
-    public static String URL_NEWS= HOST + "/news";
-    public static String URL_SHOP_LIST = HOST + "/shops/list/{page}";
-    public static String URL_SHOP_PRODUCTS = HOST + "/shop/{shop_id}/product/{page}";
-    public static String URL_REGISTER_FCM = HOST + "/refresh/fcm";
-
-    public static String URL_SHOP_CITY_LIST = API_HOST + "/shop/city_list";
-
-    public static String URL_DOSEND_ORDER = API_HOST + "/torder/dosend";
-    public static String URL_TORDER_HISTORY = API_HOST + "/torder/history";
-    public static String URL_TORDER_ACTION = API_HOST + "/torder/action";
-    public static String URL_TORDER_MYORDERS = API_HOST + "/torder/myorders";
-    public static String URL_TORDER_REALTIME = API_HOST + "/torder/realtime";
-    public static String URL_TORDER_MYTASKS = API_HOST + "/torder/myjob";
-    public static String URL_TORDER_ADDPIC = API_HOST + "/torder/addpic";;
-    public static String URL_TORDER_REJECT = API_HOST + "/torder/reject";
 
     public static final String KEY_KURIR= "KURIR";
     public static final String KEY_AGENT= "AGEN";
     public static final String KEY_PELANGGAN= "PELANGGAN";
     public static final String KEY_SHOPPIC= "SHOPPIC";
+    public static final String KEY_SHOPRESS = "SHOPRESS";
     public static final String KEY_SHOPKURIR= "SHOPKURIR";
     public static final String KEY_KURIRSHOP= "KURIRSHOP";
     public static final String KEY_SHOPKEC= "SHOPKEC";
     public static final String KEY_SHOPKAB= "SHOPKAB";
-    public static final String KEY_SHOPPROP= "SHOPPROP";
+    public static final String KEY_SHOPPROP= "SHOPPROV";
     public static final String KEY_SHOPNEG= "SHOPNEG";
+    public static final String KEY_MITRA = "MITRA";
 
     public static final String KEY_OPERATOR= "OPERATOR";
     public static final String KEY_ADMINISTRATOR= "ADMIN";
     public static final String KEY_ADMINKEC= "ADMINKEC";
     public static final String KEY_ADMINKAB= "ADMINKAB";
-    public static final String KEY_ADMINPROP= "ADMINPROP";
+    public static final String KEY_ADMINPROP= "ADMINPROV";
     public static final String KEY_ADMINNEG= "ADMINNEG";
     public static final String KEY_ROOT= "ROOT";
 
@@ -156,6 +163,7 @@ public class AppConfig {
     public static final String PACKET_SDS = "SDS";
     public static final String PACKET_NDS = "NDS";
     public static final String PACKET_ENS = "ENS";
+    public static final String PACKET_NDNS = "NDNS";
     public static final String KEY_DOSEND = "DO-SEND";
     public static final String KEY_DOJEK = "DO-JEK";
     public static final String KEY_DOWASH = "DO-WASH";
@@ -164,6 +172,7 @@ public class AppConfig {
     public static final String KEY_DOCAR = "DO-CAR";
     public static final String KEY_DOMOVE = "DO-MOVE";
     public static final String KEY_DOSHOP = "DO-SHOP";
+    public static final String KEY_DOMART = "DO-MART";
 
     public static final String DEFAULT_COUNTRY = "ID";
     public static final String CLOSED = "CLOSED";
@@ -174,7 +183,7 @@ public class AppConfig {
     public static int MAX_DOJEK_COVERAGE_KM = 50000;
     public static int MAX_DOCAR_COVERAGE_KM = 300000;
     public static float DEFAULT_TILT_MAP = 0;
-    public static float DEFAULT_ZOOM_MAP = 19f;
+    public static float DEFAULT_ZOOM_MAP = 15f;
     public static float MAP_ZOOM_OUT = 10f;
 
     public static SimpleDateFormat sdf;
@@ -184,7 +193,15 @@ public class AppConfig {
     public static float BACKDROP_MAX_HEIGHT = 160;
     public static float BANNER_MAX_WIDTH = 388;
     public static float BANNER_MAX_HEIGHT = 160;
+    public static int START_SDS = 5;
+    public static int START_ENS = 18;
+    public static int END_ENS = 22;
+    public static int MIN_WEIGHT_DOWASH = 3;
+    public static String CASH_PAYMENT = "TUNAI";
 
+    public static boolean isNightService(String service){
+        return service.equalsIgnoreCase(PACKET_ENS) || service.equalsIgnoreCase(PACKET_NDNS);
+    }
     public static String getStatusText(String status){
         String statusText = "";
         switch (status){
@@ -302,6 +319,9 @@ public class AppConfig {
         PacketService service3 = new PacketService("ENS", "Extra Night Service", "Kiriman Express setelah jam 6 malam");
         packetServiceList.add(service3);
 
+        PacketService service4 = new PacketService("NDNS", "Next Day Night Service", "Kiriman setelah jam 6 malam Esok hari");
+        packetServiceList.add(service4);
+
         return packetServiceList;
     }
     public static int getResourceId(String resourceName, String type){
@@ -357,7 +377,7 @@ public class AppConfig {
         String timeformat = dateInput;
         try {
             long now = System.currentTimeMillis();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date convertedDate = dateFormat.parse(dateInput);
             CharSequence relavetime1 = DateUtils.getRelativeTimeSpanString(
                     convertedDate.getTime(),
@@ -405,5 +425,22 @@ public class AppConfig {
             str = format.format(amount/1000) + " km";
         }
         return str;
+    }
+
+    public static String pad(int c) {
+        if(c >= 10)
+            return String.valueOf(c);
+        else
+            return "0" + String.valueOf(c);
+    }
+
+    public static String formatPickup(int hour, int minute, String serviceCode) {
+        Calendar c = Calendar.getInstance();
+        if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_NDS)){
+            c.add(Calendar.DATE, 1);
+        }
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, minute);
+        return getSimpleDateFormat().format(c.getTime());
     }
 }

@@ -46,6 +46,8 @@ import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static android.app.Activity.RESULT_OK;
@@ -104,12 +106,13 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
         final String param = params[0].toString();
         //String param2 = null;
         //if(params.length > 1) param2 = params[1].toString();
-        String URI = AppConfig.URL_LIST_KURIR;
-        URI = URI.replace("{type}", param);
-
-        StringRequest cityReq = new StringRequest(Request.Method.GET,
-                URI, new Response.Listener<String>() {
-
+        String URI = AppConfig.URL_LIST_KURIR_LOCATIONBASED;
+        //URI = URI.replace("{type}", param);
+        final String tag_string_req = "req_list_kurir";
+        HashMap<String, String > maps = new HashMap<>();
+        maps.put("form-type", "json");
+        maps.put("type", param);
+        addRequest(tag_string_req , Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "list KURIR Response: " + response.toString());
@@ -117,19 +120,17 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
                     JSONObject jObj = new JSONObject(response);
                     boolean success = jObj.getBoolean("success");
                     if (success) {
-
-
-                        GsonBuilder builder = new GsonBuilder();
-                        builder.setPrettyPrinting();
-                        Gson gson = builder.create();
-
+                        ParserUtil parser = new ParserUtil();
                         JSONArray datas = jObj.getJSONArray("data");
                         for (int j = 0; j < datas.length(); j++) {
+                            TUser recipient = parser.parserUser(datas.getJSONObject(j));
+                            /*
                             TUser recipient = gson.fromJson(datas.getString(j), TUser.class);
                             Address addr= gson.fromJson(datas.getString(j), Address.class);
                             recipient.setAddress(addr);
                             City city = gson.fromJson(datas.getString(j),City.class);
                             addr.setCity(city);
+                            */
                             data.add(recipient);
                         }
                         mUserAdapter.notifyDataSetChanged();
@@ -140,15 +141,10 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
             }
         }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "list KURIR Error: " + error.getMessage());
-                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.d(tag_string_req, ""+volleyError.getMessage());
             }
-        });
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(cityReq);
+        }, maps, getKurindoHeaders());
 
     }
 

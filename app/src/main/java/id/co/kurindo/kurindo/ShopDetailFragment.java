@@ -1,10 +1,12 @@
 package id.co.kurindo.kurindo;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import id.co.kurindo.kurindo.adapter.EndlessRecyclerViewScrollListener;
 import id.co.kurindo.kurindo.adapter.ProductGridAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
@@ -40,12 +43,10 @@ import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadProductTask;
 import id.co.kurindo.kurindo.util.DummyContent;
+import id.co.kurindo.kurindo.wizard.help.KurirOpenActivity;
+import id.co.kurindo.kurindo.wizard.help.ShopOpenActivity;
+import id.co.kurindo.kurindo.wizard.help.ShopResellerOpenActivity;
 
-/**
- * Shows the quote detail page.
- *
- * Created by Andreas Schrade on 14.12.2015.
- */
 public class ShopDetailFragment extends BaseFragment {
 
     /**
@@ -78,6 +79,9 @@ public class ShopDetailFragment extends BaseFragment {
     @Bind(R.id.appbar)
     AppBarLayout appBarLayout;
 
+    @Bind(R.id.btnJadiReseller)
+    AppCompatButton btnJadiResseler;
+
     private Shop shop;
     ProductGridAdapter mAdapter;
     RecyclerView mRecyclerView;
@@ -85,6 +89,8 @@ public class ShopDetailFragment extends BaseFragment {
     private ListenableAsyncTask loadNewsTask;
     static List<Product> products = new ArrayList<>();
     private EndlessRecyclerViewScrollListener loadMoreListener;
+
+    Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -167,8 +173,8 @@ public class ShopDetailFragment extends BaseFragment {
             params.put("form-tag", shop.getCode());
             params.put("form-activity", "View "+shop.getName());
             Address addr = ViewHelper.getInstance().getLastAddress();
-            params.put("form-lat", (addr.getLocation()==null? "0" : ""+addr.getLocation().latitude) );
-            params.put("form-lng", (addr.getLocation() == null ? "0" : ""+addr.getLocation().longitude));
+            params.put("form-lat", (addr == null || addr.getLocation()==null? "0" : ""+addr.getLocation().latitude) );
+            params.put("form-lng", (addr == null || addr.getLocation() == null ? "0" : ""+addr.getLocation().longitude));
             addRequest("req_logger", Request.Method.POST, AppConfig.URL_LOGGING, new Response.Listener() {
                 @Override
                 public void onResponse(Object o) {
@@ -183,6 +189,12 @@ public class ShopDetailFragment extends BaseFragment {
         }
         setupList(rootView);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ViewHelper.getInstance().clearAll();
     }
 
     private void setupList(View rootView) {
@@ -310,6 +322,13 @@ public class ShopDetailFragment extends BaseFragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @OnClick(R.id.btnJadiReseller)
+    public void setBtnJadiResseler_OnClick(){
+        ViewHelper.getInstance().setSelectedShop(true);
+        ((ShopActivity)getActivity()).showActivity(ShopResellerOpenActivity.class);
+
+
+    }
 
     public static ShopDetailFragment newInstance(Shop shop) {
         ShopDetailFragment fragment = new ShopDetailFragment();

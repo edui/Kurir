@@ -14,10 +14,18 @@
         <ImageView
             android:layout_width="80dp" android:gravity="center_vertical|left"
             android:layout_height="80dp" android:src="@drawable/do_wash_icon"/>
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:text="Manifest DO-WASH"  android:textSize="@dimen/header_text_size" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left"
-            android:textStyle="bold"  android:padding="@dimen/common_padding"/>
+            android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp" android:layout_marginBottom="2dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Manifest DO-WASH"  android:textSize="@dimen/header_text_size" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left"
+                android:textStyle="bold"  android:padding="@dimen/common_padding"/>
+            <TextView
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="match_parent" android:textSize="18dp"
+                android:layout_height="wrap_content" android:text="Biaya : Rp 0" android:padding="@dimen/common_padding" android:textStyle="bold"/>
+        </LinearLayout>
     </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
@@ -56,11 +64,46 @@
                 android:layout_height="wrap_content" android:text="Pilih Layanan Anda" android:textStyle="bold" android:padding="2dp" android:layout_marginBottom="5dp"/>
 
             <LinearLayout
+                android:layout_width="match_parent" android:weightSum="1" android:layout_margin="10dp"
+                android:layout_height="wrap_content" android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="wrap_content" android:layout_weight=".5"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content" android:gravity="center" android:layout_gravity="center"
+                            android:layout_height="wrap_content" android:text="Waktu Jemput " />
+                        <TextView
+                            android:id="@+id/tvDay"
+                            android:layout_width="wrap_content" android:gravity="center" android:layout_gravity="center"
+                            android:layout_height="wrap_content" android:text="Hari Ini" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvPickupTime"
+                        android:layout_width="wrap_content" android:textSize="18sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"
+                        android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:layout_gravity="center"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content" android:layout_weight=".5"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content" android:gravity="center" android:layout_gravity="center"
+                        android:layout_height="wrap_content" android:text="Lokasi"/>
+                    <Spinner
+                        android:id="@+id/spLokasi"
+                        android:layout_width="wrap_content" android:gravity="center" android:layout_gravity="center"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="2dp" android:layout_marginBottom="2dp">
                 <TextView
                     android:layout_width="match_parent" android:textColor="@color/white" android:gravity="center" android:textStyle="bold" android:background="@color/colorPrimary"
-                    android:layout_height="wrap_content" android:text="KAOS - KEMEJA - CELANA" android:padding="2dp"/>
+                    android:layout_height="wrap_content" android:text="@string/dowash_type1" android:padding="2dp"/>
                 <LinearLayout
                     android:layout_width="match_parent" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
@@ -72,8 +115,9 @@
                             android:layout_width="match_parent" android:textStyle="bold"
                             android:layout_height="wrap_content" android:text="Rp 0 / Kg"/>
                         <TextView
+                            android:id="@+id/tvMinBeratInfo"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" android:text="(Min 4 Kg)"/>
+                            android:layout_height="wrap_content" android:text="(Min 3 Kg)"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content" android:layout_weight=".5"
@@ -106,7 +150,7 @@
                 android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="2dp" android:layout_marginBottom="2dp">
                 <TextView
                     android:layout_width="match_parent" android:background="@color/colorPrimary" android:textColor="@color/white" android:gravity="center" android:textStyle="bold"
-                    android:layout_height="wrap_content" android:text="SPREI - BED COVER- GORDYN" android:padding="2dp"/>
+                    android:layout_height="wrap_content" android:text="@string/dowash_type2" android:padding="2dp"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
@@ -150,10 +194,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp" android:layout_marginBottom="2dp">
-                <TextView
-                    android:id="@+id/tvTotalPrice"
-                    android:layout_width="match_parent" android:textSize="18dp"
-                    android:layout_height="wrap_content" android:text="TOTAL : Rp 0" android:padding="2dp" android:textStyle="bold"/>
+
                 <TextView
                     android:layout_width="match_parent" android:textStyle="italic"
                     android:layout_height="wrap_content" android:text="Jangan Khawatir, berat cucian anda akan dihitung ulang kembali dengan timbangan yang dibawa oleh kurir kami." android:padding="2dp"/>

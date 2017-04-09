@@ -103,6 +103,16 @@
                             android:layout_width="wrap_content" android:autoLink="phone"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
+
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/btnJadiReseller"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="ingin jadi reseller?"/>
+                </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Shop;
+import id.co.kurindo.kurindo.model.StatusHistory;
+import id.co.kurindo.kurindo.model.TPrice;
 import id.co.kurindo.kurindo.model.TUser;
 
 /**
@@ -92,4 +94,12 @@ public class ParserUtil {
     public TUser parserUser(JSONObject jObj) {
         return gson.fromJson(jObj.toString(), TUser.class);
     }
+    public StatusHistory parserHistory(JSONObject jObj) {
+        return gson.fromJson(jObj.toString(), StatusHistory.class);
+    }
+
+    public TPrice parserTPrice(JSONObject jObj) {
+        return gson.fromJson(jObj.toString(), TPrice.class);
+    }
+
 }

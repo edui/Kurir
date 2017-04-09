@@ -26,7 +26,7 @@ public class DoWashActivity extends AbstractStepperActivity {
     @Override
     public void onStepSelected(int newStepPosition) {
 
-        mCompleteNavigationButton.setText("Dalam Pengembangan");
+        mCompleteNavigationButton.setText("Confirm Order");
 
         step = newStepPosition;
     }

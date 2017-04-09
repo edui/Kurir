@@ -116,7 +116,7 @@ public class TOrderInProgressFragment extends BaseTOrderMonitoringFragment imple
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
-                            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Network Error: " +error.getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                             refreshBtn.setVisibility(View.VISIBLE);
                         }

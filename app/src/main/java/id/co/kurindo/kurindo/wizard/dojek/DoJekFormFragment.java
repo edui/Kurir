@@ -1,6 +1,8 @@
 package id.co.kurindo.kurindo.wizard.dojek;
 
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,10 +21,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -39,6 +44,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -90,6 +96,14 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     @Bind(R.id.TextViewTitle)
     TextView TextViewTitle;
 
+    @Bind(R.id.tvPickupTime)
+    TextView tvPickupTime;
+    @Bind(R.id.tvPickupTimeText)
+    TextView tvPickupTimeText;
+    @Bind(R.id.tvDropTimeText)
+    TextView tvDropTimeText;
+    @Bind(R.id.swChooseTime)
+    Switch swChooseTime;
 
     @Bind(R.id.chkAgrement)
     CheckBox chkAgrement;
@@ -139,10 +153,16 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     private boolean inputBaruPengirim;
     private Map<String, String> headers;
 
+    String serviceCode;
+    int hour;
+    int minute;
+    Context context;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        session = new SessionManager(getContext());
+        context = getContext();
+        session = new SessionManager(context);
         if(!session.isLoggedIn()){
             ((BaseActivity)getActivity()).showActivity(LoginActivity.class);
             getActivity().finish();
@@ -163,12 +183,29 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
             }
         });
 
+        swChooseTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                boolean on = isChecked;
+                if(on)
+                {
+                    tvPickupTimeText.setBackgroundResource(R.color.cardview_light_background);
+                    tvDropTimeText.setBackgroundResource(R.color.orange);
+                }
+                else
+                {
+                    tvPickupTimeText.setBackgroundResource(R.color.orange);
+                    tvDropTimeText.setBackgroundResource(R.color.cardview_light_background);
+                }
+            }
+        });
+
         setup_gender();
         return v;
     }
 
     private void setup_gender() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.genders_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context,R.array.genders_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         _genderSpinnerPengirim.setAdapter(adapter);
         _genderSpinnerPengirim.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -185,16 +222,98 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         });
 
     }
+    private void cek_with_calendar_time() {
+        Calendar c = Calendar.getInstance();
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
+        cek_time();
+    }
+    private void cek_time() {
+        if(serviceCode != null){
+            if(AppConfig.isNightService(serviceCode)){
+                if(hour+1 >= AppConfig.START_ENS) {
+                    hour++;
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS;
+                    _serviceCodeText.setSelection(0);
+                } else {
+                    hour = AppConfig.START_ENS;
+                }
+            }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_SDS)){
+                if(hour + 1 < AppConfig.START_SDS) {
+                    hour = AppConfig.START_SDS;
+                    _serviceCodeText.setSelection(1);
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS;
+                    _serviceCodeText.setSelection(0);
+                } else if(hour+1 >= AppConfig.START_ENS) {
+                    hour++;
+                    _serviceCodeText.setSelection(2);
+                }else{
+                    _serviceCodeText.setSelection(1);
+                }
+            }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_NDS)){
+                if(hour + 1 < AppConfig.START_SDS) {
+                    hour = AppConfig.START_SDS;
+                    _serviceCodeText.setSelection(0);
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS;
+                } else if(hour+1 >= AppConfig.START_ENS) {
+                    hour++;
+                    _serviceCodeText.setSelection(3);
+                }
+            }
+        }
+        tvPickupTime.setText(AppConfig.pad(hour)+":"+AppConfig.pad(minute));
+    }
+    private void setup_time() {
+        serviceCode = DoSendHelper.getInstance().getServiceCode();
+        _serviceCodeText.setSelection((serviceCode==AppConfig.PACKET_NDS? 0 : (serviceCode==AppConfig.PACKET_SDS ? 1 : (serviceCode==AppConfig.PACKET_ENS ? 2 : 3))));
+
+        Calendar c = Calendar.getInstance();
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
+        cek_with_calendar_time();
+        checkTarif();
+    }
+
+    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
+            if(selectedHour < AppConfig.START_SDS || selectedHour > AppConfig.END_ENS){
+                Toast.makeText(context, "Jam pelayanan antara "+AppConfig.START_SDS +" - "+AppConfig.END_ENS, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            /*
+            if(selectedHour >= AppConfig.START_ENS && !serviceCode.equalsIgnoreCase(AppConfig.PACKET_ENS)){
+                _serviceCodeText.setSelection(2);
+                Toast.makeText(context, "Tarif ENS berlaku", Toast.LENGTH_SHORT).show();
+            }else if(selectedHour < AppConfig.START_ENS ){
+                _serviceCodeText.setSelection(serviceCode.equalsIgnoreCase(AppConfig.PACKET_SDS) ? 1 : 0);
+            }*/
+            hour = selectedHour;
+            minute = selectedMinute;
+            //tvPickupTime.setText(AppConfig.pad(hour)+":"+AppConfig.pad(minute));
+            cek_time();
+        }
+    };
+
+    @OnClick(R.id.tvPickupTime)
+    public void onClick_tvPickupTime(){
+        TimePickerDialog d = new TimePickerDialog(context, timePickerListener, hour, minute, true);
+        d.show();
+    }
 
     private void setup_service() {
         packetServiceList = getPacketServiceList();
-        packetServiceAdapter = new PacketServiceAdapter(getContext(), packetServiceList);
+        packetServiceAdapter = new PacketServiceAdapter(context, packetServiceList);
         _serviceCodeText.setAdapter(packetServiceAdapter);
         _serviceCodeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String serviceCode= packetServiceList.get(position).getCode();
+                serviceCode= packetServiceList.get(position).getCode();
                 DoSendHelper.getInstance().setServiceCode( serviceCode);
+                cek_with_calendar_time();
                 checkTarif();
             }
 
@@ -213,10 +332,10 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         //data.addAll(db.getAddressList());
 /*
         mPenerimaRecipientAdapter = new TUserAdapter(getActivity(), data);
-        pilihListPenerima.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        pilihListPenerima.setLayoutManager(new GridLayoutManager(context, 1));
         pilihListPenerima.setHasFixedSize(true);
         pilihListPenerima.setAdapter(mPenerimaRecipientAdapter);
-        pilihListPenerima.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+        pilihListPenerima.addOnItemTouchListener(new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 mPenerimaRecipientAdapter.selected(position);
@@ -232,10 +351,10 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         }
 
         mPengirimRecipientAdapter = new TUserAdapter(getActivity(), data);
-        pilihListPengirim.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        pilihListPengirim.setLayoutManager(new GridLayoutManager(context, 1));
         pilihListPengirim.setHasFixedSize(true);
         pilihListPengirim.setAdapter(mPengirimRecipientAdapter);
-        pilihListPengirim.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+        pilihListPengirim.addOnItemTouchListener(new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 mPengirimRecipientAdapter .selected(position);
@@ -317,7 +436,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         params.put("berat_kiriman", "1");
         params.put("volume", "0");
 
-        addRequest("request_price_route", Request.Method.POST, AppConfig.URL_PRICE_KM, new Response.Listener<String>() {
+        addRequest("request_price_route", Request.Method.POST, AppConfig.URL_CALC_PRICE_KM, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -338,7 +457,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
             }
-        }, params, null);
+        }, params, getKurindoHeaders());
 
     }
 
@@ -387,7 +506,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
 
 
         TOrder order = DoSendHelper.getInstance().getOrder();
-
+        DoSendHelper.getInstance().addNewProduct(order.getService_code(), order.getTotalPrice().doubleValue());
         //String price = priceText.getText().toString();
         //order.setTotalPrice(new BigDecimal(price));
 
@@ -401,6 +520,15 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         Set packets = new LinkedHashSet();
         packets.add(packet);
         order.setPackets(packets);
+
+
+        if(swChooseTime.isChecked()){
+            order.setDroptime(AppConfig.formatPickup(hour, minute, serviceCode));
+            order.setPickup(null);
+        }else{
+            order.setPickup(AppConfig.formatPickup(hour, minute, serviceCode));
+            order.setDroptime(null);
+        }
 
         TUser user = db.toTUser(db.getUserDetails());
         order.setBuyer(user);
@@ -453,7 +581,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-                invalid = new VerificationError("VolleyError : " + volleyError.getMessage());
+                invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
                 progressDialog.dismiss();
                 handler.handleMessage(null);
             }
@@ -476,7 +604,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message mesg) {
-                throw new RuntimeException();
+                throw new RuntimeException("RuntimeException");
             }
         };
 
@@ -527,7 +655,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
 
 /*        }else{
             if(sender ==null){
-                Toast.makeText(getContext(),"Pilih Pengirim dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
+                Toast.makeText(context,"Pilih Pengirim dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
                 valid=false;
             }
 */
@@ -546,9 +674,14 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     public void onSelected() {
         setup_radio();
         setup_service();
+        setup_time();
         updateUI();
     }
     private void updateUI() {
+        swChooseTime.setChecked(true);
+        swChooseTime.toggle();
+
+
         TextViewTitle.setText("Manifest DoJEK ( Jarak: "+ AppConfig.formatKm( (DoSendHelper.getInstance().getPacket()==null? 0 :DoSendHelper.getInstance().getPacket().getDistance() ))+")");
 
         TUser destination = DoSendHelper.getInstance().getDestination();

@@ -66,8 +66,14 @@
         <item>Kuliner</item>
         <item>Herbal</item>
     </string-array>
-    <string-array name="doservice_layanan_array">
+    <string-array name="dohijamah_layanan_array">
         <item></item>
+        <item>Bekam</item>
+        <item>Fisioterapi</item>
+        <item>Konsultasi</item>
+    </string-array>
+    <string-array name="doservice_layanan_array">
+        <item>-Pilih-</item>
         <item>Cuci AC</item>
         <item>Service AC</item>
         <item>Cuci &#38; Service AC</item>
@@ -76,7 +82,7 @@
         <item>Relokasi AC</item>
     </string-array>
     <string-array name="doservice_tipeac_array">
-        <item></item>
+        <item>-Pilih-</item>
         <item>Split 0.5 - 1 PK</item>
         <item>Split 1.5 - 2 PK</item>
         <item>Inverter 0.5 - 1 PK</item>
@@ -86,7 +92,7 @@
         <item>Central</item>
     </string-array>
     <string-array name="doservice_lokasi_array">
-        <item></item>
+        <item>-Pilih-</item>
         <item>Rumah</item>
         <item>Toko</item>
         <item>Swalayan</item>
@@ -113,21 +119,21 @@
     <string name="product_information">Informasi Produk</string>
     <string name="dowash_form1">Do Wash Form</string>
     <string name="branch_information">Form Cabang Toko</string>
-    <string name="telepon">Telepon</string>
-    <string name="telepon_pengirim">Telepon Pengirim</string>
-    <string name="telepon_penerima">Telepon Penerima</string>
-    <string name="telepon_pengelola">Telepon Pengelola</string>
+    <string name="telepon">WA/Telepon</string>
+    <string name="telepon_pengirim">WA/Telepon Pengirim</string>
+    <string name="telepon_penerima">WA/Telepon Penerima</string>
+    <string name="telepon_pengelola">WA/Telepon Pengelola</string>
     <string name="pin_single_location">Pin Single Location</string>
     <string name="category">Kategori</string>
     <string name="shop_tools">Perlengkapan Toko</string>
     <string name="end_user_agreement">End User Agreement</string>
-    <string name="nomor_telepon">Nomor Telepon</string>
+    <string name="nomor_telepon">Nomor Telepon/WA</string>
     <string name="enter_valid_phone">Masukkan Nomor Telepon yang Valid</string>
-    <string name="label_regular">Regular</string>
-    <string name="label_flash">Flash</string>
-    <string name="label_express">Express</string>
-    <string name="doservice_form1">Do-Service Form</string>
-    <string name="domart_form">DO-MAR Form</string>
+    <string name="label_regular">REGULAR</string>
+    <string name="label_flash">FLASH</string>
+    <string name="label_express">EXPRESS</string>
+    <string name="doservice_form1">Do-SERVICE Form</string>
+    <string name="domart_form">DO-MART Form</string>
     <string name="product_name">Nama Produk</string>
     <string name="product_description_long">Product Description (Long)</string>
     <string name="product_description_short">Product Description (short)</string>
@@ -139,4 +145,15 @@
     <string name="weight_kg">Berat (Kg)</string>
     <string name="shop_open_form">Panduan Buka Toko</string>
     <string name="kurir_open_form">Panduan Menjadi Kurir</string>
+    <string name="dohijamah_form">Do-HIJAMAH Form</string>
+    <string name="docar_form">Do-CAR Form</string>
+    <string name="label_shoppic">Pemilik Toko</string>
+    <string name="label_branch">Mitra Cabang</string>
+    <string name="label_mitra">Mitra Cabang</string>
+    <string name="label_shopres">Reseller Toko</string>
+    <string name="dowash_type1">KAOS - KEMEJA - CELANA</string>
+    <string name="dowash_type2">SPREI - BED COVER- GORDYN</string>
+    <string name="packet">Packet Pengiriman</string>
+    <string name="location_address">Alamat Lokasi</string>
+    <string name="detail_dojek">Detail DO-JEK</string>
 </resources>

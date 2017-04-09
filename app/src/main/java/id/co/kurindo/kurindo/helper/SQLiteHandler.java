@@ -540,6 +540,25 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "User data updated into sqlite: " + id);
     }
 
+    public void updateUserPhone(String phone, String role, String city, String api, boolean active, boolean approved) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PHONE, phone); // Email
+        values.put(KEY_ROLE, role);
+        values.put(KEY_CITY, city);
+        values.put(KEY_API, api);
+        values.put(KEY_ACTIVE, (active ? 1:0));
+        values.put(KEY_APPROVED, (approved ? 1:0));
+
+        String where = KEY_PHONE+" = ?";
+        String[] whereArgs = {phone};
+        long id = db.update(TABLE_USER, values, where, whereArgs);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "User data updated into sqlite: " + id);
+    }
+
     public void updateUserCity(String email, String city) {
         SQLiteDatabase db = this.getWritableDatabase();
 

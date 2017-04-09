@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -14,10 +15,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 
@@ -28,11 +32,13 @@ public class LoadProductTask extends ListenableAsyncTask<Object, Void, List>{
     private static final String TAG = "LoadProductTask";
     private List<Product> dataList;
     private Context context;
-
+    SQLiteHandler db;
     public LoadProductTask(Context context){
         this.context = context;
         this.dataList = new ArrayList<>();
+        db = new SQLiteHandler(context);
     }
+
     @Override
     protected List doInBackground(Object... params) {
         final String param = params[0].toString();
@@ -49,7 +55,8 @@ public class LoadProductTask extends ListenableAsyncTask<Object, Void, List>{
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean success = jObj.getBoolean("success");
+                    String message = jObj.getString("message");
+                    boolean success = "OK".equalsIgnoreCase(message);
                     if (success) {
                         JSONArray datas = jObj.getJSONArray("data");
                         for (int j = 0; j < datas.length(); j++) {
@@ -79,7 +86,24 @@ public class LoadProductTask extends ListenableAsyncTask<Object, Void, List>{
                 Log.e(TAG, "LoadShopTask Error: " + error.getMessage());
                 Toast.makeText(context,error.getMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to  url
+                Map<String, String> params = new HashMap<String, String>();
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String api = db.getUserApi();
+                params.put("Api", api);
+
+                return params;
+            }
+        };
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(cityReq);

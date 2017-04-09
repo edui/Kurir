@@ -406,9 +406,12 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             String address = place.getAddress().toString();
             if(destinationMode){
                 tvDestination.setText(address);
+
+                requestAddress(place.getLatLng());
+
                 Address addr = destination.getAddress();
                 addr.setAlamat(name);
-                addr.setFormattedAddress(address);
+                //addr.setFormattedAddress(address);
                 addr.setLocation( place.getLatLng() );
                 if(origin.getAddress().getLocation() != null) destinationMode = false;
                 destinationChanged = true;
@@ -593,6 +596,65 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         //buttonAddOrder.setVisibility((hide ? View.GONE : View.VISIBLE));
     }
     private void requestAddress(LatLng latLng) {
+        requestAddress(latLng, handler);
+        try { Looper.loop(); }
+        catch(RuntimeException e2) { }
+    }
+
+    private void requestAddress(LatLng latLng, final Handler handler) {
+        String url = MapUtils.getGeocodeUrl(latLng);
+        addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //Log.d(TAG, "requestAddress Response: " + response.toString());
+                List<List<HashMap<String, String>>> routes = null;
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                    if(OK){
+                        DataParser parser = new DataParser();
+                        Address address = parser.parseAddress(jObj);
+                        if(originMode){
+                            tvOrigin.setText(address.getFormattedAddress());
+                            address.setLocation(origin.getAddress().getLocation());
+                            origin.setAddress(  address );
+                            //origin = address.getLocation();
+                            //if(destination.getAddress().getLocation() != null) originMode= false;
+                            originMode= false;
+                        }else if(destinationMode){
+                            tvDestination.setText(address.getFormattedAddress());
+                            address.setLocation(destination.getAddress().getLocation());
+                            destination.setAddress( address );
+                            //destination = address.getLocation();
+                            //if(origin.getAddress().getLocation() != null) destinationMode = false;
+                            destinationMode= false;
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    if(originMode){
+                        if(destination.getAddress().getLocation() != null) originMode= false;
+                    }else if(destinationMode){
+                        if(origin.getAddress().getLocation() != null) destinationMode = false;
+                    }
+                }
+                handler.handleMessage(null);
+                refreshMap();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                if(originMode){
+                    if(destination.getAddress().getLocation() != null) originMode= false;
+                }else if(destinationMode){
+                    if(origin.getAddress().getLocation() != null) destinationMode = false;
+                }
+                handler.handleMessage(null);
+            }
+        }, null, null);
+    }
+    private void requestAddress_inBackground(LatLng latLng) {
         String url = MapUtils.getGeocodeUrl(latLng);
         addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -794,7 +856,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         params.put("berat_kiriman", "1");
         params.put("volume", "0");
 
-        addRequest("request_price_route", Request.Method.POST, AppConfig.URL_PRICE_KM, new Response.Listener<String>() {
+        addRequest("request_price_route", Request.Method.POST, AppConfig.URL_CALC_PRICE_KM, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -833,7 +895,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                 volleyError.printStackTrace();
                 handler.handleMessage(null);
             }
-        }, params, null);
+        }, params, getKurindoHeaders());
 
     }
 

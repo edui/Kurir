@@ -93,7 +93,7 @@ public class LoginFragment extends BaseFragment {
             checkStatusAccount();
 
             // User is already logged in. Take him to main activity
-            onAlreadyLogin();
+            //onAlreadyLogin();
         }
 //session.setActive(true);
         User user = db.toUser(db.getUserDetails() );

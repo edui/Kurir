@@ -87,6 +87,7 @@ import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.Payment;
 import id.co.kurindo.kurindo.model.Route;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.wizard.BaseLocationMapFragment;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendPinLocationMapFragment;
 
@@ -98,7 +99,11 @@ import static android.widget.Toast.LENGTH_SHORT;
  * Created by dwim on 2/14/2017.
  */
 
-public class DoJekPinLocationMapFragment extends DoSendPinLocationMapFragment{
+public class DoJekPinLocationMapFragment extends BaseLocationMapFragment{
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_maps_dojek;
+    }
 
     @Override
     public VerificationError verifyStep() {
@@ -126,7 +131,7 @@ public class DoJekPinLocationMapFragment extends DoSendPinLocationMapFragment{
             //finish();
         }else{
             //Toast.makeText(getContext(), "Not Available", LENGTH_SHORT).show();
-            return new VerificationError(doType+" Not Available");
+            return new VerificationError(doType+" : available soon.");
         }
         return null;
 

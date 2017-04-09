@@ -144,12 +144,12 @@ public class ShopDetailAdmFragment extends BaseFragment {
                 quote.setText( shop.getPic().getPhone()==null? "": shop.getPic().getPhone()) ;
             }
             tvOpenStatus.setText(shop.getStatus());
-            if(shop.getStatus() != null && shop.getStatus().equalsIgnoreCase(AppConfig.CLOSED)) {
-                openStatusImg.setImageResource(R.drawable.closed_icon);
-                tvOpenStatus.setTextColor(Color.RED);
-            }else{
+            if(shop.getStatus() != null  && shop.getStatus().equalsIgnoreCase(AppConfig.OPEN)) {
                 openStatusImg.setImageResource(R.drawable.open_icon);
                 tvOpenStatus.setTextColor(Color.GREEN);
+            }else{
+                openStatusImg.setImageResource(R.drawable.closed_icon);
+                tvOpenStatus.setTextColor(Color.RED);
             }
             appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                 boolean isShow = false;
@@ -171,29 +171,32 @@ public class ShopDetailAdmFragment extends BaseFragment {
 
             products = shop.getProducts();
             if(products == null ) products = new ArrayList<>();
-
-            HashMap<String, String > params = new HashMap<>();
-            params.put("form-user", db.getUserPhone());
-            params.put("form-type", "SHOP-ADM");
-            params.put("form-tag", shop.getCode());
-            params.put("form-activity", "View "+shop.getName());
-            Address addr = ViewHelper.getInstance().getLastAddress();
-            params.put("form-lat", (addr.getLocation()==null? "0" : ""+addr.getLocation().latitude) );
-            params.put("form-lng", (addr.getLocation() == null ? "0" : ""+addr.getLocation().longitude));
-            addRequest("req_logger", Request.Method.POST, AppConfig.URL_LOGGING, new Response.Listener() {
-                @Override
-                public void onResponse(Object o) {
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-
-                }
-            }, params, getKurindoHeaders());
+            logging();
         }
         setupList(rootView);
         return rootView;
+    }
+
+    private void logging() {
+        HashMap<String, String > params = new HashMap<>();
+        params.put("form-user", db.getUserPhone());
+        params.put("form-type", "SHOP-ADM");
+        params.put("form-tag", shop.getCode());
+        params.put("form-activity", "View "+shop.getName());
+        Address addr = ViewHelper.getInstance().getLastAddress();
+        params.put("form-lat", (addr==null || addr.getLocation()==null? "0" : ""+addr.getLocation().latitude) );
+        params.put("form-lng", (addr==null || addr.getLocation() == null ? "0" : ""+addr.getLocation().longitude));
+        addRequest("req_logger", Request.Method.POST, AppConfig.URL_LOGGING, new Response.Listener() {
+            @Override
+            public void onResponse(Object o) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        }, params, getKurindoHeaders());
     }
 
     private void setupList(View rootView) {

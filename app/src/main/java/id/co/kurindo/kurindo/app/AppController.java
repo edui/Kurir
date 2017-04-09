@@ -1,6 +1,8 @@
 package id.co.kurindo.kurindo.app;
 
-import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -11,12 +13,11 @@ import com.android.volley.toolbox.Volley;
 import java.util.List;
 
 import id.co.kurindo.kurindo.model.News;
-import id.co.kurindo.kurindo.task.LoadCityTask;
 
 /**
  * Created by DwiM on 11/8/2016.
  */
-public class AppController extends Application {
+public class AppController extends MultiDexApplication {
 
     public static final String TAG = AppController.class.getSimpleName();
 
@@ -30,6 +31,11 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+    }
+
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(context);
+        MultiDex.install(this);
     }
 
     public static synchronized AppController getInstance() {

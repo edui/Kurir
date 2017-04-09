@@ -1,6 +1,8 @@
 package id.co.kurindo.kurindo.wizard.dosend;
 
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,11 +19,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -38,6 +44,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -82,6 +89,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
     @Bind(R.id.input_info_barang) EditText _infoBarangText;
     @Bind(R.id.input_service_code) Spinner _serviceCodeText;
+    @Bind(R.id.input_cod) EditText codText;
 
     @Bind(R.id.input_berat_barang) EditText _beratBarangText;
     @Bind(R.id.incrementBtn) AppCompatButton incrementBtn;
@@ -92,6 +100,14 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     @Bind(R.id.TextViewTitle)
     TextView TextViewTitle;
 
+    @Bind(R.id.tvPickupTime)
+    TextView tvPickupTime;
+    @Bind(R.id.tvPickupTimeText)
+    TextView tvPickupTimeText;
+    @Bind(R.id.tvDropTimeText)
+    TextView tvDropTimeText;
+    @Bind(R.id.swChooseTime)
+    Switch swChooseTime;
 
     @Bind(R.id.chkAgrement)
     CheckBox chkAgrement;
@@ -135,6 +151,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     //private City kota_pengirim;
     //private City kota_penerima;
     float berat_kiriman = 1;
+    protected float volume = 0;
 
     private List<City> cityList = new ArrayList<>();
     private List<PacketService> packetServiceList;
@@ -142,10 +159,16 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     private boolean inputBaruPenerima;
     private Map<String, String> headers;
 
+    String serviceCode;
+    int hour;
+    int minute;
+    Context context;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        session = new SessionManager(getContext());
+        context = getContext();
+        session = new SessionManager(context);
         if(!session.isLoggedIn()){
             ((BaseActivity)getActivity()).showActivity(LoginActivity.class);
             getActivity().finish();
@@ -166,9 +189,106 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             }
         });
 
+        swChooseTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                boolean on = isChecked;
+                if(on)
+                {
+                    tvPickupTimeText.setBackgroundResource(R.color.cardview_light_background);
+                    tvDropTimeText.setBackgroundResource(R.color.orange);
+                }
+                else
+                {
+                    tvPickupTimeText.setBackgroundResource(R.color.orange);
+                    tvDropTimeText.setBackgroundResource(R.color.cardview_light_background);
+                }
+            }
+        });
         return v;
     }
-    //*
+    private void cek_with_calendar_time() {
+        Calendar c = Calendar.getInstance();
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
+        cek_time();
+    }
+
+    private void cek_time() {
+        if(serviceCode != null){
+            if(AppConfig.isNightService(serviceCode)){
+                if(hour+1 >= AppConfig.START_ENS) {
+                    hour++;
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS;
+                    _serviceCodeText.setSelection(0);
+                } else {
+                    hour = AppConfig.START_ENS;
+                }
+            }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_SDS)){
+                if(hour + 1 < AppConfig.START_SDS) {
+                    hour = AppConfig.START_SDS;
+                    _serviceCodeText.setSelection(1);
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS;
+                    _serviceCodeText.setSelection(0);
+                } else if(hour+1 >= AppConfig.START_ENS) {
+                    hour++;
+                    _serviceCodeText.setSelection(2);
+                }else{
+                    hour++;
+                    _serviceCodeText.setSelection(1);
+                }
+            }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_NDS)){
+                if(hour + 1 < AppConfig.START_SDS) {
+                    hour = AppConfig.START_SDS;
+                    _serviceCodeText.setSelection(0);
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS;
+                } else if(hour+1 >= AppConfig.START_ENS) {
+                    hour = AppConfig.START_SDS;
+                    //hour++;
+                    //_serviceCodeText.setSelection(3);
+                }
+            }
+        }
+        tvPickupTime.setText(AppConfig.pad(hour)+":"+AppConfig.pad(minute));
+    }
+    private void setup_time() {
+        serviceCode = DoSendHelper.getInstance().getServiceCode();
+        _serviceCodeText.setSelection((serviceCode==AppConfig.PACKET_NDS? 0 : (serviceCode==AppConfig.PACKET_SDS ? 1 : (serviceCode==AppConfig.PACKET_ENS ? 2 : 3))));
+
+        cek_with_calendar_time();
+        checkTarif();
+    }
+
+    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
+            if(selectedHour < AppConfig.START_SDS || selectedHour > AppConfig.END_ENS){
+                Toast.makeText(context, "Jam pelayanan antara "+AppConfig.START_SDS +" - "+AppConfig.END_ENS, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            /*
+            if(selectedHour >= AppConfig.START_ENS && !serviceCode.equalsIgnoreCase(AppConfig.PACKET_ENS)){
+                _serviceCodeText.setSelection(2);
+                Toast.makeText(context, "Tarif ENS berlaku", Toast.LENGTH_SHORT).show();
+            }else if(selectedHour < AppConfig.START_ENS ){
+                _serviceCodeText.setSelection(serviceCode.equalsIgnoreCase(AppConfig.PACKET_SDS) ? 1 : 0);
+            }*/
+            hour = selectedHour;
+            minute = selectedMinute;
+            //tvPickupTime.setText(AppConfig.pad(hour)+":"+AppConfig.pad(minute));
+            cek_time();
+        }
+    };
+
+    @OnClick(R.id.tvPickupTime)
+    public void onClick_tvPickupTime(){
+        TimePickerDialog d = new TimePickerDialog(context, timePickerListener, hour, minute, true);
+        d.show();
+    }
+        //*
     @OnClick(R.id.incrementBtn)
     public void onClick_incrementBtn(){
         //float q = 0;
@@ -196,13 +316,14 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     }//*/
     private void setup_service() {
         packetServiceList = getPacketServiceList();
-        packetServiceAdapter = new PacketServiceAdapter(getContext(), packetServiceList);
+        packetServiceAdapter = new PacketServiceAdapter(context, packetServiceList);
         _serviceCodeText.setAdapter(packetServiceAdapter);
         _serviceCodeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String serviceCode= packetServiceList.get(position).getCode();
+                serviceCode= packetServiceList.get(position).getCode();
                 DoSendHelper.getInstance().setServiceCode( serviceCode);
+                cek_with_calendar_time();
                 checkTarif();
             }
 
@@ -218,10 +339,10 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         //data.addAll(db.getAddressList());
 /*
         mPenerimaRecipientAdapter = new TUserAdapter(getActivity(), data);
-        pilihListPenerima.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        pilihListPenerima.setLayoutManager(new GridLayoutManager(context, 1));
         pilihListPenerima.setHasFixedSize(true);
         pilihListPenerima.setAdapter(mPenerimaRecipientAdapter);
-        pilihListPenerima.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+        pilihListPenerima.addOnItemTouchListener(new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 mPenerimaRecipientAdapter.selected(position);
@@ -237,10 +358,10 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         }
 
         mPengirimRecipientAdapter = new TUserAdapter(getActivity(), data);
-        pilihListPengirim.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        pilihListPengirim.setLayoutManager(new GridLayoutManager(context, 1));
         pilihListPengirim.setHasFixedSize(true);
         pilihListPengirim.setAdapter(mPengirimRecipientAdapter);
-        pilihListPengirim.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+        pilihListPengirim.addOnItemTouchListener(new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 mPengirimRecipientAdapter .selected(position);
@@ -325,11 +446,11 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 } catch (Exception e) {
                 }
                 ;
-                if(berat_kiriman > 0 && (berat_kiriman % 0.25 == 0) ) checkTarif();
+                if(berat_kiriman > 0 && (berat_kiriman % 0.2 == 0) ) checkTarif();
             }
         });
 
-        TextViewTitle.setText("Manifest Paket ( Jarak: "+ AppConfig.formatKm( DoSendHelper.getInstance().getPacket().getDistance() )+")");
+        TextViewTitle.setText("Manifest Paket ( Jarak: "+ AppConfig.formatKm( DoSendHelper.getInstance().getPacket()==null? 0 : DoSendHelper.getInstance().getPacket().getDistance() )+")");
     }
     public List<PacketService> getPacketServiceList() {
         if(packetServiceList ==null){
@@ -345,10 +466,10 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         params.put("destination", (inputBaruPenerima? _alamatPenerimaText.getText().toString(): DoSendHelper.getInstance().getDestination().getAddress().getKecamatan() ));
         params.put("service_code", DoSendHelper.getInstance().getOrder().getService_code());
         params.put("do_type", DoSendHelper.getInstance().getOrder().getService_type());
-        params.put("berat_kiriman", _beratBarangText.getText().toString());
-        params.put("volume", "0");
+        params.put("berat_kiriman", ""+berat_kiriman);
+        params.put("volume", ""+volume);
 
-        addRequest("request_price_route", Request.Method.POST, AppConfig.URL_PRICE_KM, new Response.Listener<String>() {
+        addRequest("request_price_route", Request.Method.POST, AppConfig.URL_CALC_PRICE_KM, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -369,7 +490,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
             }
-        }, params, null);
+        }, params, getKurindoHeaders());
 
     }
 
@@ -413,7 +534,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         }
 
         TOrder order = DoSendHelper.getInstance().getOrder();
-
+        DoSendHelper.getInstance().addNewProduct(order.getService_code(), order.getTotalPrice().doubleValue());
         String beratBarang = _beratBarangText.getText().toString();
         String infoBarang = _infoBarangText.getText().toString();
 
@@ -435,9 +556,22 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         packets.add(packet);
         order.setPackets(packets);
 
+        if(swChooseTime.isChecked()){
+            order.setDroptime(AppConfig.formatPickup(hour, minute, serviceCode));
+            order.setPickup(null);
+        }else{
+            order.setPickup(AppConfig.formatPickup(hour, minute, serviceCode));
+            order.setDroptime(null);
+        }
+
         TUser user = db.toTUser(db.getUserDetails());
         order.setBuyer(user);
 
+        BigDecimal cod = new BigDecimal(0);
+        try{
+            cod = new BigDecimal(codText.getText().toString());
+        }catch (Exception e){}
+        order.setCod(cod);
 
         Map<String, String> params = packet.getAsParams();
         params.put("user_agent", AppConfig.USER_AGENT);
@@ -475,7 +609,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
                         if(inputBaruPengirim) db.addAddress(DoSendHelper.getInstance().getOrigin());
                         if(inputBaruPenerima) db.addAddress(DoSendHelper.getInstance().getDestination());
-
+                        invalid = null;
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -488,7 +622,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-                invalid = new VerificationError("VolleyError : " + volleyError.getMessage());
+                invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
                 progressDialog.dismiss();
                 handler.handleMessage(null);
             }
@@ -511,7 +645,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message mesg) {
-                throw new RuntimeException();
+                throw new RuntimeException("RuntimeException");
             }
         };
 
@@ -562,7 +696,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
 /*        }else{
             if(sender ==null){
-                Toast.makeText(getContext(),"Pilih Pengirim dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
+                Toast.makeText(context,"Pilih Pengirim dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
                 valid=false;
             }
 */
@@ -604,7 +738,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 */
 /*        }else{
             if(receiver ==null){
-                Toast.makeText(getContext(),"Pilih Penerima dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
+                Toast.makeText(context,"Pilih Penerima dari daftar atau inputkan baru.",Toast.LENGTH_LONG);
                 valid=false;
             }*/
         }
@@ -640,9 +774,13 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         setup_berat_barang();
         setup_radio();
         setup_service();
+        setup_time();
         updateUI();
     }
     private void updateUI() {
+        swChooseTime.setChecked(true);
+        swChooseTime.toggle();
+
         TUser destination = DoSendHelper.getInstance().getDestination();
         _teleponPenerimaText.setPhoneNumber("");
         _namaPenerimaText.setText("");
@@ -671,6 +809,11 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 _namaPengirimText.setText(origin.getName());
                 inputBaruPengirim = false;
             }
+        }
+        BigDecimal berat = DoSendHelper.getInstance().getPacket().getBerat_asli();
+        if(berat != null){
+            berat_kiriman = berat.floatValue();
+            _beratBarangText.setText(""+berat_kiriman);
         }
     }
 

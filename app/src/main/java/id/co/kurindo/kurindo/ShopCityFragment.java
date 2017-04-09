@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -97,12 +98,14 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
     protected RadioGroup rgLayoutType;
 
     int count = 0;
-
+    Context context;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         shop = ViewHelper.getInstance().getShop();
+        
+        context = getContext();
     }
 
     @Override
@@ -143,14 +146,14 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
 
     private void setup_list_branch() {
 
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
         mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new ShopBranchAdapter(getContext(), shops);
+        mAdapter = new ShopBranchAdapter(context, shops);
         mRecyclerView.setAdapter(mAdapter);
 
         shops.add(shop);
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(context,
                 new RecyclerItemClickListener.OnItemClickListener() {
 
                     @Override
@@ -166,18 +169,18 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
     }
 
     private void setup_request_baru() {
-        tUserAdapter = new TUserAdapter(getContext(), data);
-        TUser u = new TUser();
+        tUserAdapter = new TUserAdapter(context, data);
+        /*TUser u = new TUser();
         u.setFirstname("asasasa");
         Address addr = new Address();
         addr.setLocation(new LatLng(-0.3320503, 117.429754));
         u.setAddress(addr);
-        data.add(u);
+        data.add(u); */
 
-        mRequestRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        mRequestRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
         mRequestRecyclerView.setHasFixedSize(true);
         mRequestRecyclerView.setAdapter(tUserAdapter);
-        mRequestRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+        mRequestRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 TUser p = data.get(position);
@@ -396,7 +399,7 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

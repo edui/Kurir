@@ -41,8 +41,8 @@
                         android:layout_width="match_parent">
                         <TextView
                             android:id="@+id/tvOrigin"
-                            android:layout_width="match_parent" android:layout_weight=".2" android:lines="1" android:maxLines="1" android:inputType="text"
-                            android:layout_height="wrap_content" android:text="Set Lokasi Anda" android:layout_gravity="center_vertical" />
+                            android:layout_width="match_parent" android:layout_weight=".2" android:lines="2" android:maxLines="2"
+                            android:layout_height="40dp" android:text="Set Lokasi Anda" android:layout_gravity="center_vertical" />
                         <id.co.kurindo.kurindo.map.ClearableAutoCompleteTextView
                             android:id="@+id/tvOriginAutoComplete"
                             android:layout_width="match_parent"
@@ -53,14 +53,14 @@
                             android:id="@+id/ivAddOriginNotes" android:visibility="gone"
                             android:layout_width="match_parent" android:layout_weight=".8"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_create_black_18dp"
+                            android:src="@drawable/ic_description_black_18dp"
                             android:layout_alignParentRight="true"
                             android:layout_gravity="right|top"
                             android:padding="5dp"/>
                     </LinearLayout>
                     <EditText
                         android:id="@+id/etOriginNotes"
-                        android:layout_width="match_parent"
+                        android:layout_width="match_parent" android:textSize="10sp"
                         android:layout_height="wrap_content" android:hint="Add Notes" android:visibility="gone"/>
                 </LinearLayout>
             </LinearLayout>
@@ -121,7 +121,7 @@
             android:layout_alignParentBottom="true"
             >
             <LinearLayout
-                android:id="@+id/orderInfo_layout" android:visibility="gone"
+                android:id="@+id/info_layout" android:visibility="gone"
                 android:layout_width="match_parent" android:background="@color/colorAccent"
                 android:layout_height="40dp" android:orientation="horizontal" android:weightSum="1">
                 <TextView
@@ -132,7 +132,11 @@
                     android:layout_width="wrap_content" android:layout_weight=".1" android:layout_gravity="center" android:gravity="center_vertical|right" android:textColor="@color/white"
                     android:layout_height="wrap_content" android:src="@drawable/ic_expand_more_black_18dp"/>
             </LinearLayout>
-
+            <LinearLayout
+                android:id="@+id/orderInfo_layout" android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:orientation="vertical">
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/service_layout" android:background="@color/white" android:visibility="gone"
                 android:layout_margin="2dp"
@@ -143,22 +147,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
                     <TextView
-                        android:layout_width="wrap_content" android:layout_weight=".4"
+                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Alamat"/>
                     <TextView
                         android:id="@+id/tvAlamat"
-                        android:layout_width="wrap_content" android:layout_weight=".6"
+                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Alamat"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
                     <TextView
-                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="left"
+                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Kecamatan"/>
                     <TextView
                         android:id="@+id/tvKecamatan"
-                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="left"
+                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Kecamatan"/>
                 </LinearLayout>
 
@@ -166,11 +170,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
                     <TextView
-                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="left"
+                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Kabupaten / Kota"/>
                     <TextView
                         android:id="@+id/tvKabupaten"
-                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="left"
+                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Kabupaten"/>
                 </LinearLayout>
 
@@ -178,11 +182,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
                     <TextView
-                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="left"
+                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Propinsi"/>
                     <TextView
                         android:id="@+id/tvPropinsi"
-                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="left"
+                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Propinsi"/>
                 </LinearLayout>
 
@@ -190,11 +194,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
                     <TextView
-                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="left"
+                        android:layout_width="wrap_content" android:layout_weight=".4" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Negara"/>
                     <TextView
                         android:id="@+id/tvNegara"
-                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="left"
+                        android:layout_width="wrap_content" android:layout_weight=".6" android:gravity="start"
                         android:layout_height="wrap_content" android:text="Negara"/>
                 </LinearLayout>
 

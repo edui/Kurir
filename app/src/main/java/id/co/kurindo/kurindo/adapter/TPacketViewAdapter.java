@@ -72,16 +72,33 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             holder._genderPengirimText.setVisibility(View.GONE);
             holder._genderPenerimaText.setVisibility(View.GONE);
-            if(order != null){
+               holder._namaPengirimText.setVisibility(View.VISIBLE);
+               holder._teleponPengirimText.setVisibility(View.VISIBLE);
+               holder._namaPenerimaText.setVisibility(View.VISIBLE);
+               holder._teleponPenerimaText.setVisibility(View.VISIBLE);
+            String beratText ="";
+            String cod="";
+           if(order != null){
                 if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
                     holder.ivServiceIcon.setImageResource(R.drawable.do_send_icon);
+                    beratText = "Berat : "+packet.getBerat_kiriman() + " Kg";
+                    cod = (order.getCod() == null? "": "\nC O D : "+AppConfig.formatCurrency( order.getCod().doubleValue()));
+                    holder._judulPengirimText.setText("Pengirim");
+                    holder._judulPenerimaText.setText("Penerima");
                 }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOJEK)) {
                     holder.ivServiceIcon.setImageResource(R.drawable.do_jek_icon);
+                    beratText = packet.getOrigin().getName()+"\n"+packet.getDestination().getGender()+"\n"+packet.getOrigin().getPhone();
+                    holder._judulPengirimText.setText("Asal");
+                    holder._judulPenerimaText.setText("Tujuan");
+                    holder._namaPengirimText.setVisibility(View.GONE);
+                    holder._teleponPengirimText.setVisibility(View.GONE);
+                    holder._namaPenerimaText.setVisibility(View.GONE);
+                    holder._teleponPenerimaText.setVisibility(View.GONE);
 
-                    holder._genderPengirimText.setVisibility(View.VISIBLE);
-                    holder._genderPenerimaText.setVisibility(View.VISIBLE);
-                    holder._genderPengirimText.setText(packet.getDestination().getGender());
-                    holder._genderPenerimaText.setText(packet.getOrigin().getGender());
+                    //holder._genderPengirimText.setVisibility(View.VISIBLE);
+                    //holder._genderPenerimaText.setVisibility(View.VISIBLE);
+                    //holder._genderPengirimText.setText(packet.getDestination().getGender());
+                    //holder._genderPenerimaText.setText(packet.getOrigin().getGender());
                 }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
                     holder.ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
                 }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {
@@ -90,8 +107,8 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             holder._awbText.setText(order.getAwb());
             holder._infoPaketText.setText(packet.getIsi_kiriman() );
-            holder._beratText.setText("Berat : "+packet.getBerat_kiriman() + " Kg");
-            holder._ongkosPaketText.setText("Biaya : "+ AppConfig.formatCurrency( (packet.getBiaya() == null ? 0 : packet.getBiaya().doubleValue()) ));
+            holder._beratText.setText(beratText);
+            holder._ongkosPaketText.setText("Ongkir : "+ AppConfig.formatCurrency( (packet.getBiaya() == null ? 0 : packet.getBiaya().doubleValue()) ) +cod);
 
             holder._namaPengirimText.setText(packet.getOrigin().getName());
             holder._alamatPengirimText.setText(packet.getOrigin().getAddress().toStringFormatted());
@@ -119,8 +136,17 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                    }
                });
            }
-
-        }
+           if(order.getPickup()==null && order.getDroptime()==null ){
+               holder.tvPickupTimeText.setText("Pickup Time");
+               holder.tvPickupTime.setText("Call Pembeli");
+           }else if(order.getPickup()!=null ){
+               holder.tvPickupTimeText.setText("Pickup Time");
+               holder.tvPickupTime.setText(order.getPickup());
+           }else if(order.getDroptime() != null){
+               holder.tvPickupTimeText.setText("Drop Time");
+               holder.tvPickupTime.setText(order.getDroptime());
+           }
+       }
 
     }
 
@@ -138,6 +164,8 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView _alamatPenerimaText;
         TextView _teleponPenerimaText;
         TextView _kotaPenerimaText;
+        TextView _judulPengirimText;
+        TextView _judulPenerimaText;
 
         TextView _genderPengirimText;
         TextView _genderPenerimaText;
@@ -151,6 +179,8 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ImageView ivServiceCodeIcon;
         ImageView ivServiceIcon;
 
+        TextView tvPickupTime;
+        TextView tvPickupTimeText;
         AppCompatButton btnLihatRute;
 
         public MyItemHolder(View itemView) {
@@ -163,6 +193,8 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
              _alamatPenerimaText = (TextView) itemView.findViewById(R.id.text_alamat_penerima);
              _teleponPenerimaText = (TextView) itemView.findViewById(R.id.text_telepon_penerima);
              _kotaPenerimaText = (TextView) itemView.findViewById(R.id.text_kota_penerima);
+            _judulPengirimText= (TextView) itemView.findViewById(R.id.text_title_pengirim);
+            _judulPenerimaText= (TextView) itemView.findViewById(R.id.text_title_penerima);
 
             _genderPengirimText = (TextView) itemView.findViewById(R.id.text_gender_pengirim);
             _genderPenerimaText = (TextView) itemView.findViewById(R.id.text_gender_penerima);
@@ -172,6 +204,8 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
              _ongkosPaketText= (TextView) itemView.findViewById(R.id.text_ongkos_paket);
              _awbText = (TextView) itemView.findViewById(R.id.awbTextView);
 
+            tvPickupTime= (TextView) itemView.findViewById(R.id.tvPickupTime);
+            tvPickupTimeText= (TextView) itemView.findViewById(R.id.tvPickupTimeText);
             _statusText = (TextView )itemView.findViewById(R.id.statusTextView)    ;
             barcodeView = (ImageView) itemView.findViewById(R.id.resi_qrcode)  ;
             ivServiceCodeIcon = (ImageView) itemView.findViewById(R.id.service_code_icon)  ;

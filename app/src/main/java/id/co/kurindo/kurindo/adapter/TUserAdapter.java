@@ -51,29 +51,36 @@ public class TUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder vholder, final int position) {
         TUser r = data.get(position);
-        ((MyItemHolder) holder).alamat.setText((r.getAddress() == null? "":r.getAddress().getAlamat()));
-        ((MyItemHolder) holder).city.setText((r.getAddress()==null || r.getAddress().getCity() == null?"":r.getAddress().getCity().getText()));
-        ((MyItemHolder) holder).name.setText(r.getName());
-        ((MyItemHolder) holder).phone.setText(r.getPhone());
+        MyItemHolder holder = (MyItemHolder) vholder;
+        if(r.getAddress() != null){
+            holder.alamat.setText(r.getAddress().getAlamat());
+            holder.alamat.setVisibility(View.VISIBLE);
+        }else{
+            holder.alamat.setText("");
+            holder.alamat.setVisibility(View.GONE);
+        }
+        holder.city.setText((r.getAddress()==null || r.getAddress().getCity() == null?"":r.getAddress().getCity().getText()));
+        holder.name.setText(r.getName());
+        holder.phone.setText(r.getPhone());
 
-        if(r.getName() == null || r.getName().isEmpty()) ((MyItemHolder) holder).name.setVisibility(View.GONE);
-        if(r.getPhone() == null || r.getPhone().isEmpty()) ((MyItemHolder) holder).phone.setVisibility(View.GONE);
+        if(r.getName() == null || r.getName().isEmpty()) holder.name.setVisibility(View.GONE);
+        if(r.getPhone() == null || r.getPhone().isEmpty()) holder.phone.setVisibility(View.GONE);
 
         //String color = bgColors[position % bgColors.length];
         if(multiple){
             for (int i = 0; i < selectedItems.size(); i++) {
                 if(position == selectedItems.keyAt(i)) {
-                    ((MyItemHolder) holder).radioSelected.setChecked(true);
+                    holder.radioSelected.setChecked(true);
                     break;
                 }
             }
         }else{
-            ((MyItemHolder) holder).radioSelected.setChecked(position == selected);
+            holder.radioSelected.setChecked(position == selected);
         }
-        ((MyItemHolder) holder).alamat.setBackgroundColor(position == selected? Color.CYAN : Color.TRANSPARENT);
-        ((MyItemHolder) holder).city.setBackgroundColor(position == selected? Color.CYAN : Color.TRANSPARENT);
+        holder.alamat.setBackgroundColor(position == selected? Color.CYAN : Color.TRANSPARENT);
+        holder.city.setBackgroundColor(position == selected? Color.CYAN : Color.TRANSPARENT);
     }
 
     public void setMultipleMode(boolean multiple){

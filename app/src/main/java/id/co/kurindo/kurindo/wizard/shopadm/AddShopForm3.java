@@ -115,7 +115,7 @@ public class AddShopForm3 extends BaseStepFragment implements Step {
         params.put("imageBackdrop",ShopAdmHelper.getInstance().getBitmapBackdropString());
         params.put("shop",ShopAdmHelper.getInstance().getShopJson());
 
-       //Log.d("gson", ShopAdmHelper.getInstance().getBitmapBrandString() );
+        Log.d("gson", ShopAdmHelper.getInstance().getShopJson() );
 
         String url = AppConfig.URL_SHOP_ADD;
         if(editMode){
@@ -138,7 +138,7 @@ public class AddShopForm3 extends BaseStepFragment implements Step {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     volleyError.printStackTrace();
-                    invalid = new VerificationError("VolleyError : " + volleyError.getMessage());
+                    invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
                     handler.handleMessage(null);
                 }
             }, params, getKurindoHeaders());

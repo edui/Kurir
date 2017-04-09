@@ -41,8 +41,8 @@
                     android:layout_width="match_parent">
                     <TextView
                         android:id="@+id/tvOrigin"
-                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="1" android:maxLines="1" android:inputType="text"
-                        android:layout_height="wrap_content" android:text="Set Lokasi Anda" android:layout_gravity="center_vertical" />
+                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="2" android:maxLines="2"
+                        android:layout_height="40dp" android:text="Set Lokasi Anda" android:gravity="center_vertical|fill|left" android:layout_gravity="center_vertical" />
                     <id.co.kurindo.kurindo.map.ClearableAutoCompleteTextView
                         android:id="@+id/tvOriginAutoComplete"
                         android:layout_width="match_parent"
@@ -53,14 +53,14 @@
                         android:id="@+id/ivAddOriginNotes" android:visibility="gone"
                         android:layout_width="match_parent" android:layout_weight=".8"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_create_black_18dp"
+                        android:src="@drawable/ic_description_black_18dp"
                         android:layout_alignParentRight="true"
                         android:layout_gravity="right|top"
                         android:padding="5dp"/>
                 </LinearLayout>
                 <EditText
                     android:id="@+id/etOriginNotes"
-                    android:layout_width="match_parent"
+                    android:layout_width="match_parent" android:textSize="10sp"
                     android:layout_height="wrap_content" android:hint="Add Notes" android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
@@ -88,8 +88,8 @@
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
                     <TextView
                         android:id="@+id/tvDestination"
-                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="1" android:maxLines="1" android:inputType="text"
-                        android:layout_height="wrap_content" android:text="Set Tujuan Anda" android:layout_gravity="center_vertical"/>
+                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="2" android:maxLines="2"
+                        android:layout_height="40dp" android:text="Set Tujuan Anda" android:layout_gravity="center_vertical"/>
                     <id.co.kurindo.kurindo.map.ClearableAutoCompleteTextView
                         android:id="@+id/tvDestinationAutoComplete"
                         android:layout_width="match_parent"
@@ -107,7 +107,7 @@
                 </LinearLayout>
                 <EditText
                     android:id="@+id/etDestinationNotes"
-                    android:layout_width="match_parent"
+                    android:layout_width="match_parent" android:textSize="10sp"
                     android:layout_height="wrap_content" android:hint="Add Notes" android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>

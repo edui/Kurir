@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -105,13 +108,13 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION= 3;
     private static final LatLngBounds BOUNDS_ID = new LatLngBounds(new LatLng(-0, 0), new LatLng(0, 0));
 
-    @Bind(R.id.iconOrigin)
-    protected ImageView ivIconOrigin;
     protected TUserAdapter tUserAdapter;
     protected ArrayList<TUser> data = new ArrayList<>();
 
     @Bind(R.id.tvOrigin)
     public TextView tvOrigin;
+    @Bind(R.id.iconOrigin)
+    protected ImageView ivIconOrigin;
 
     @Bind(R.id.imageMarker)
     protected ImageView imageMarker;
@@ -124,6 +127,8 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     @Bind(R.id.origin_layout)
     protected LinearLayout originLayout;
 
+    @Bind(R.id.info_layout)
+    protected LinearLayout infoLayout;
     @Bind(R.id.orderInfo_layout)
     protected LinearLayout orderLayout;
     @Bind(R.id.service_layout)
@@ -237,6 +242,14 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
                 }
             });
 
+            ivIconOrigin = (ImageView) view.findViewById(R.id.iconOrigin);
+            ivIconOrigin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick_IconOrigin();
+                }
+            });
+
             ivAddOriginNotes = (ImageView) view.findViewById(R.id.ivAddOriginNotes);
             ivAddOriginNotes.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -257,6 +270,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
                 }
             });
 
+            infoLayout = (LinearLayout) view.findViewById(R.id.info_layout);
             orderLayout = (LinearLayout) view.findViewById(R.id.orderInfo_layout);
             serviceLayout = (LinearLayout) view.findViewById(R.id.service_layout);
             ivSwitchInfo = (ImageView) view.findViewById(R.id.ivSwitchInfo);
@@ -310,14 +324,22 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
             String address = place.getAddress().toString();
             if(originMode){
                 tvOrigin.setText(address);
+                etOriginNotes.setText(name);
+                etOriginNotes.setFocusable(false);
+                etOriginNotes.setVisibility(View.VISIBLE);
+                addOriginNote = true;
+                requestAddress(place.getLatLng());
+
                 Address addr = origin.getAddress();
-                addr.setAlamat(name);
-                addr.setFormattedAddress(address);
+                addr.setAlamat(address);
+                //addr.setFormattedAddress(address);
                 addr.setLocation( place.getLatLng());
             }
-            showAddressLayout();
-            refreshMap();
-            if(!canDrawRoute()) moveCameraToLocation( place.getLatLng());
+            //showAddressLayout();
+            //refreshMap();
+            reDrawMarker();
+            //if(!canDrawRoute())
+                moveCameraToLocation( place.getLatLng());
         }
     };
 
@@ -376,6 +398,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
 
         originLayout.setVisibility(View.VISIBLE);
         locationMarkerLayout.setVisibility(View.GONE);
+        infoLayout.setVisibility(View.VISIBLE);
     }
 
     private void changeMarkerIcon(){
@@ -395,6 +418,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         //TODO
     }
 
+
     @OnClick(R.id.iconOrigin)
     public void onClick_IconOrigin(){
         originMode = true;
@@ -408,9 +432,20 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
             origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
             //tvOrigin.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
         }
-        requestAddress(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message mesg) {
+                throw new RuntimeException("RuntimeException");
+            }
+        };
+
+        requestAddress(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), handler);
         mLocationMarkerText.setVisibility(View.GONE);
+
+        //loop till a runtime exception is triggered.
+        try { Looper.loop(); }
+        catch(RuntimeException e2) {}
 
         showAddressLayout();
         //refreshMap();
@@ -427,7 +462,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     @OnClick(R.id.ivSwitchInfo)
     public void OnClick_ivSwitchInfo(){
         showOrderpanel(serviceLayout.isShown());
-        orderLayout.setVisibility(View.VISIBLE );
+        //orderLayout.setVisibility(View.VISIBLE );
         //serviceLayout.setMinimumHeight(100);
         //buttonAddOrder.setVisibility(View.VISIBLE );
     }
@@ -438,11 +473,25 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     }
 
     protected void hidepanel(boolean hide) {
+        infoLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
         orderLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
         serviceLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
         //buttonAddOrder.setVisibility((hide ? View.GONE : View.VISIBLE));
     }
+
     private void requestAddress(LatLng latLng) {
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message mesg) {
+                throw new RuntimeException("RuntimeException");
+            }
+        };
+        requestAddress_inBackground(latLng);
+        //requestAddress(latLng, handler);
+        //try { Looper.loop(); } catch(RuntimeException e2) { }
+    }
+
+    private void requestAddress_inBackground(LatLng latLng) {
         String url = MapUtils.getGeocodeUrl(latLng);
         addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -460,7 +509,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
                             address.setLocation(origin.getAddress().getLocation());
                             origin.setAddress(  address );
                             //origin = address.getLocation();
-                            //originMode= false;
+                            originMode= false;
                         }
                     }
                 }catch (Exception e){
@@ -472,6 +521,41 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
+            }
+        }, null, null);
+    }
+    private void requestAddress(LatLng latLng, final Handler handler) {
+        String url = MapUtils.getGeocodeUrl(latLng);
+        addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //Log.d(TAG, "requestAddress Response: " + response.toString());
+                List<List<HashMap<String, String>>> routes = null;
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                    if(OK){
+                        DataParser parser = new DataParser();
+                        Address address = parser.parseAddress(jObj);
+                        if(originMode){
+                            tvOrigin.setText(address.getFormattedAddress());
+                            address.setLocation(origin.getAddress().getLocation());
+                            origin.setAddress(  address );
+                            //origin = address.getLocation();
+                            originMode= false;
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                if(handler != null) handler.handleMessage(null);
+                refreshMap();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                if(handler != null) handler.handleMessage(null);
             }
         }, null, null);
     }
@@ -590,7 +674,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
             if(origin.getAddress().getLocation() == null) {
                 origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
                 originMode= true;
-                requestAddress(origin.getAddress().getLocation());
+                requestAddress(origin.getAddress().getLocation(), null);
             }
             changeMap(mLastLocation);
             reDrawMarker();

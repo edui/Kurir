@@ -5,6 +5,7 @@ import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
+import id.co.kurindo.kurindo.model.TUser;
 
 /**
  * Created by dwim on 2/12/2017.
@@ -17,6 +18,9 @@ public class ViewHelper {
     Product product;
 
     Address lastAddress;
+    TUser location;
+
+    boolean selectedShop;
 
     private static ViewHelper helper;
     public static ViewHelper getInstance(){
@@ -62,5 +66,27 @@ public class ViewHelper {
 
     public Address getLastAddress() {
         return lastAddress;
+    }
+
+    public void clearAll(){
+        shop = null;
+        product = null;
+        order = null;
+        packet = null;
+        location = null;
+    }
+    public void setSelectedShop(boolean selected){
+        this.selectedShop = selected;
+    }
+    public boolean getSelectedShop(){
+        return this.selectedShop;
+    }
+
+    public TUser getLocation() {
+        return location;
+    }
+
+    public void setLocation(TUser location) {
+        this.location = location;
     }
 }

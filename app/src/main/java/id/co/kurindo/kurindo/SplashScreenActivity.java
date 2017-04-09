@@ -42,8 +42,10 @@ import id.co.kurindo.kurindo.map.DataParser;
 import id.co.kurindo.kurindo.map.MapUtils;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.News;
+import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadNewsTask;
+import id.co.kurindo.kurindo.task.RequestAddressTask;
 
 /**
  * Created by DwiM on 11/16/2016.
@@ -58,6 +60,7 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         buildGoogleApiClient();
+        //onStart();
         Thread timer = new Thread() {
             public void run(){
                 while(!done){
@@ -83,7 +86,7 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
                 if(newsList != null && newsList.size() > 0){
                     AppController.getInstance().banners = newsList;
                 }
-                //done = true;
+                done = true;
             }
         });
         timer.start();
@@ -95,10 +98,14 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
             String tag_string_req = "req_sendRegistrationToServer";
 
             final SQLiteHandler db = new SQLiteHandler(getApplicationContext());
+            String api = db.getUserApi();
 
-            StringRequest strReq = new StringRequest(Request.Method.POST,
-                    AppConfig.URL_REGISTER_FCM, new Response.Listener<String>() {
+            Map<String, String> headers= new HashMap<String, String>();
+            headers.put("Api", api);
 
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("form-token", AppConfig.FCM_TOKEN);
+            addRequest(tag_string_req, Request.Method.POST, AppConfig.URL_REGISTER_FCM, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Log.d(TAG, "update_token Response: " + response.toString());
@@ -116,37 +123,14 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
                     }
                 }
             }, new Response.ErrorListener() {
-
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.e(TAG, "update_token Error: " + error.getMessage());
                 }
-            }) {
+            }, params, headers);
 
-                @Override
-                protected Map<String, String> getParams() {
-                    // Posting parameters to login url
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("form-token", AppConfig.FCM_TOKEN);
-
-                    return params;
-                }
-
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-                    String api = db.getUserApi();
-                    params.put("Api", api);
-
-                    return params;
-                }
-            };
-
-            // Adding request to request queue
-            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
         }
     }
-
 
     public void addRequest(final String tag_string_req, int method, String url, Response.Listener responseListener, Response.ErrorListener errorListener, final Map<String, String> params, final Map<String, String> headers){
         final StringRequest strReq = new StringRequest(method,url, responseListener, errorListener){
@@ -162,44 +146,12 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void requestAddress(LatLng latLng) {
-        String url = MapUtils.getGeocodeUrl(latLng);
-        addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                //Log.d(TAG, "requestAddress Response: " + response.toString());
-                List<List<HashMap<String, String>>> routes = null;
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
-                    if(OK){
-                        DataParser parser = new DataParser();
-                        Address address = parser.parseAddress(jObj);
-                        ViewHelper.getInstance().setLastAddress(address);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                done = true;
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                volleyError.printStackTrace();
-                done = true;
-            }
-        }, null, null);
-    }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "onConnected(@Nullable Bundle bundle)");
+
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -213,7 +165,17 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             Log.d(TAG, "ON connected ");
-            requestAddress(new LatLng( mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            //requestAddress(new LatLng( mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            String url = MapUtils.getGeocodeUrl(new LatLng( mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            RequestAddressTask addr = new RequestAddressTask(this);
+            addr.listenWith(new ListenableAsyncTask.AsyncTaskListener<List>() {
+                @Override
+                public void onPostExecute(List list) {
+                    done = true;
+                }
+            });
+            addr.execute(url);
+
             this.mLastLocation = mLastLocation;
 
         } else
@@ -274,8 +236,8 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
     @Override
     public void onStart() {
         try {
+            //Log.d(TAG, "onStart()");
             mGoogleApiClient.connect();
-
         } catch (Exception e) {
             e.printStackTrace();
         }

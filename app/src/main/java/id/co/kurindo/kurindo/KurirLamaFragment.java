@@ -24,7 +24,11 @@ import java.util.Map;
 
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.model.Address;
+import id.co.kurindo.kurindo.model.City;
+import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.util.ParserUtil;
 
 /**
  * Created by DwiM on 12/12/2016.
@@ -57,15 +61,17 @@ public class KurirLamaFragment extends BaseKurirFragment{
             @Override
             public void run() {
 
-                String param = params[0].toString();
-                String URI = AppConfig.URL_LIST_KURIR;
-                URI = URI.replace("/{type}", "/"+param);
-
+                final String param = params[0].toString();
                 progressBar.setVisibility(View.VISIBLE);
-                String tag_string_req = "req_monitor_kurir_old";
-                StringRequest strReq = new StringRequest(Request.Method.GET,
-                        URI, new Response.Listener<String>() {
 
+                String URI = AppConfig.URL_LIST_KURIR_LOCATIONBASED;
+                //URI = URI.replace("/{type}", "/"+param);
+
+                final String tag_string_req = "req_monitor_kurir_old";
+                HashMap<String, String > maps = new HashMap<>();
+                maps.put("form-type", "json");
+                maps.put("type", param);
+                addRequest(tag_string_req , Request.Method.POST, URI, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d(TAG, "MonitorKurir > Check: Response:" + response.toString());
@@ -78,65 +84,48 @@ public class KurirLamaFragment extends BaseKurirFragment{
                             // Check for error node in json
                             if (!error) {
 
-                                GsonBuilder builder = new GsonBuilder();
-                                builder.setPrettyPrinting();
-                                Gson gson = builder.create();
-
                                 JSONArray datas = jObj.getJSONArray("data");
                                 if(datas != null && datas.length() > 0){
                                     users.clear();
+                                    ParserUtil parser = new ParserUtil();
+                                    for (int j = 0; j < datas.length(); j++) {
+                                        TUser recipient = parser.parserUser(datas.getJSONObject(j));
+                                        /*
+                                        TUser recipient = gson.fromJson(datas.getString(j), TUser.class);
+                                        Address addr= gson.fromJson(datas.getString(j), Address.class);
+                                        recipient.setAddress(addr);
+                                        City city = gson.fromJson(datas.getString(j),City.class);
+                                        addr.setCity(city);
+                                        */
+                                        users.add(recipient);
+                                    }
 
-                                    for (int i = 0; i < datas.length(); i++) {
+                                    /*for (int i = 0; i < datas.length(); i++) {
                                         JSONObject data = datas.optJSONObject(i);
 
                                         User user = gson.fromJson(data.toString(), User.class);
                                         users.add(user);
-                                    }
+                                    }*/
                                     userAdapter.notifyDataSetChanged();
                                 }
                             } else {
                                 // Error in login. Get the error message
                                 String errorMsg = jObj.getString("message");
-                                Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), ""+errorMsg, Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
                             // JSON error
                             e.printStackTrace();
-                            Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Json error " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                         progressBar.setVisibility(View.GONE);
                     }
                 }, new Response.ErrorListener() {
-
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "MonitorKurir Error: " + error.getMessage());
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d(tag_string_req, "Network Error "+volleyError.getMessage());
                     }
-                }) {
-
-                    @Override
-                    protected Map<String, String> getParams() {
-                        // Posting parameters to  url
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("form-type", "json");
-
-                        return params;
-                    }
-
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        String api = db.getUserApi();
-                        params.put("Api", api);
-
-                        return params;
-                    }
-                };
-
-                // Adding request to request queue
-                AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+                }, maps, getKurindoHeaders());
             }
         });
 
