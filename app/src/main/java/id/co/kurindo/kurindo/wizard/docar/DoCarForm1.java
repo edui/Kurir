@@ -1,4 +1,4 @@
-package id.co.kurindo.kurindo.wizard.dojek;
+package id.co.kurindo.kurindo.wizard.docar;
 
 /**
  * Created by aspire on 3/26/2017.
