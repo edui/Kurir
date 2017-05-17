@@ -1,5 +1,5 @@
 
-package id.co.kurindo.kurindo.wizard.help;
+package id.co.kurindo.kurindo.wizard.help.minat;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,8 +11,8 @@ import com.stepstone.stepper.adapter.AbstractStepAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
-public class ShopResellerOpenActivity extends AbstractStepperActivity {
-    private static final String TAG = "ShopResellerOpenActivity";
+public class KurindoOpenActivity extends AbstractStepperActivity {
+    private static final String TAG = "KurindoOpenActivity";
     int step = -1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +56,9 @@ public class ShopResellerOpenActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return new ShopResellerOpenForm1();
+                    return new KurindoOpenForm1();
                 case 1:
-                    return KurindoMinatForm.newInstance(AppConfig.KEY_SHOPPIC);
+                    return KurindoMinatForm.newInstance(AppConfig.KEY_MITRA);
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/padding_small"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/padding_small"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"  android:orientation="horizontal">
+        <ImageView
+            android:layout_width="50dp" android:gravity="center_vertical|left"
+            android:layout_height="50dp" android:src="@drawable/do_car_icon"/>
+        <LinearLayout
+            android:layout_width="match_parent" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left"
+            android:layout_height="50dp" android:orientation="vertical"  android:layout_marginBottom="2dp">
+            <TextView
+                android:layout_width="match_parent"  android:textColor="@color/white" android:gravity="center" android:background="@color/colorPrimary"
+                android:layout_height="wrap_content" android:text="Tentukan Kriteria Layanan" android:textStyle="bold" android:padding="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="2dp" android:layout_marginBottom="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="5dp" android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="match_parent" android:layout_weight=".65" android:layout_gravity="center" android:padding="2dp"
+                    android:layout_height="wrap_content" android:text="Lokasi Rental"/>
+                <Spinner
+                    android:id="@+id/pilihLokasi"
+                    android:layout_width="match_parent" android:layout_weight=".35" android:padding="2dp"
+                    android:layout_height="wrap_content"></Spinner>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="5dp">
+                <TextView
+                    android:layout_width="match_parent" android:layout_weight=".65" android:layout_gravity="center" android:padding="2dp"
+                    android:layout_height="wrap_content" android:text="Tujuan"/>
+                <Spinner
+                    android:id="@+id/pilihTujuan"
+                    android:layout_width="match_parent" android:layout_weight=".35" android:padding="2dp"
+                    android:layout_height="wrap_content"></Spinner>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="5dp">
+                <TextView
+                    android:layout_width="match_parent" android:layout_weight=".65" android:gravity="left|center_vertical"  android:layout_gravity="left|center_vertical" android:padding="2dp"
+                    android:layout_height="wrap_content" android:text="Tanggal Mulai"/>
+                <TextView
+                    android:id="@+id/tvTglMulai"
+                    android:drawableLeft="@drawable/ic_event_black"
+                    android:layout_width="match_parent" android:layout_weight=".35" android:gravity="left|center_vertical" android:layout_gravity="left|center_vertical" android:padding="2dp"
+                    android:layout_height="wrap_content" android:text=""/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="5dp">
+                <TextView
+                    android:layout_width="match_parent" android:layout_weight=".65" android:gravity="left|center_vertical" android:padding="2dp"
+                    android:layout_height="wrap_content" android:text="Tanggal Selesai"/>
+
+                <TextView
+                    android:id="@+id/tvTglSelesai"
+                    android:drawableLeft="@drawable/ic_event_black"
+                    android:layout_width="match_parent" android:layout_weight=".35" android:gravity="left|center_vertical" android:padding="2dp"
+                    android:layout_height="wrap_content" android:text=""/>
+            </LinearLayout>
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="5dp">
+                <LinearLayout
+                    android:layout_width="match_parent" android:layout_weight=".65"
+                    android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="2dp">
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_gravity="left|center_vertical"
+                        android:layout_height="wrap_content" android:text="Durasi"/>
+                    <ImageButton
+                        android:id="@+id/ivInfoDurasi" android:background="@color/white"
+                        android:layout_width="20dp"  android:layout_margin="4dp" android:padding="10dp" android:layout_gravity="right|end|center_vertical" android:gravity="right|end|center_vertical"
+                        android:layout_height="20dp" android:src="@drawable/ic_info_outline_black_18dp"/>
+                </LinearLayout>
+                 <RadioGroup
+                    android:id="@+id/radio_group_durasi" android:gravity="center"
+                    android:layout_width="match_parent" android:layout_weight=".35"
+                    android:layout_height="wrap_content" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
+                    android:orientation="horizontal">
+                    <RadioButton android:id="@+id/radio_8jam"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_8jam"
+                        />
+
+                    <RadioButton android:id="@+id/radio_12jam"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_12jam"
+                        />
+                    <RadioButton android:id="@+id/radio_fullday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_fullday"
+                        />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent" android:layout_weight=".65"
+                    android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="2dp">
+                    <TextView
+                    android:layout_width="wrap_content" android:layout_gravity="left|center_vertical"
+                    android:layout_height="wrap_content" android:text="Fasilitas"/>
+                    <ImageButton
+                        android:id="@+id/ivInfoFasilitas" android:background="@color/white"
+                        android:layout_width="20dp"  android:layout_margin="4dp" android:padding="10dp" android:layout_gravity="right|end|center_vertical" android:gravity="right|end|center_vertical"
+                        android:layout_height="20dp" android:src="@drawable/ic_info_outline_black_18dp"/>
+                </LinearLayout>
+                <RadioGroup
+                    android:id="@+id/radio_group_fasilitas" android:gravity="left|top"
+                    android:layout_width="match_parent" android:layout_weight=".35"
+                    android:layout_height="wrap_content" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
+                    android:orientation="vertical">
+                    <RadioButton android:id="@+id/radio_tanpabbm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_tanpabbm"
+                        />
+
+                    <RadioButton android:id="@+id/radio_bbminclude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_bbminclude"
+                        />
+                    <RadioButton android:id="@+id/radio_allin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_allin"
+                        />
+                </RadioGroup>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

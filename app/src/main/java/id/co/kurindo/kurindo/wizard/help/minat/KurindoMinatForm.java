@@ -1,4 +1,4 @@
-package id.co.kurindo.kurindo.wizard.help;
+package id.co.kurindo.kurindo.wizard.help.minat;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +24,9 @@ import com.android.volley.VolleyError;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import butterknife.Bind;
@@ -41,9 +36,7 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Shop;
-import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.util.LogUtil;
-import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 /**

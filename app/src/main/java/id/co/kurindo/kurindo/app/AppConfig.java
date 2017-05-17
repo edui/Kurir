@@ -200,6 +200,8 @@ public class AppConfig {
     public static float MAP_ZOOM_OUT = 10f;
 
     public static SimpleDateFormat sdf;
+    public static SimpleDateFormat sdf2;
+    public static SimpleDateFormat sdf3;
     public static float BRAND_MAX_WIDTH = 150;
     public static float BRAND_MAX_HEIGHT = 150;
     public static float BACKDROP_MAX_WIDTH = 388;
@@ -435,19 +437,19 @@ public class AppConfig {
     }
 
     public static SimpleDateFormat getDateTimeServerFormat(){
-        if(sdf == null) sdf = new SimpleDateFormat("yyyy-MM-dd HH:m:s");
+        if(sdf == null) sdf = new SimpleDateFormat("yyyy-MM-dd H:m:s");
         //if(sdf == null) sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
         return sdf;
     }
     public static SimpleDateFormat getDateFormat(){
-        if(sdf == null) sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        if(sdf2 == null) sdf2 = new SimpleDateFormat("dd-MMM-yyyy");
         //if(sdf == null) sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
-        return sdf;
+        return sdf2;
     }
     public static SimpleDateFormat getDateTimeFormat(){
-        if(sdf == null) sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+        if(sdf3 == null) sdf3 = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
         //if(sdf == null) sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
-        return sdf;
+        return sdf3;
     }
 
     public static String formatKmDecimal(double amount) {

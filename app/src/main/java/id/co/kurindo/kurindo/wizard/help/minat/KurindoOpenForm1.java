@@ -1,4 +1,4 @@
-package id.co.kurindo.kurindo.wizard.help;
+package id.co.kurindo.kurindo.wizard.help.minat;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

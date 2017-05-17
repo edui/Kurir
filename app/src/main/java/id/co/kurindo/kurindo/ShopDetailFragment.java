@@ -10,7 +10,6 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,9 +43,7 @@ import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadProductTask;
 import id.co.kurindo.kurindo.util.DummyContent;
 import id.co.kurindo.kurindo.util.LogUtil;
-import id.co.kurindo.kurindo.wizard.help.KurirOpenActivity;
-import id.co.kurindo.kurindo.wizard.help.ShopOpenActivity;
-import id.co.kurindo.kurindo.wizard.help.ShopResellerOpenActivity;
+import id.co.kurindo.kurindo.wizard.help.minat.ShopResellerOpenActivity;
 
 public class ShopDetailFragment extends BaseFragment {
 

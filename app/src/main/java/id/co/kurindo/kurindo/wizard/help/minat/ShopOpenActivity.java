@@ -1,5 +1,5 @@
 
-package id.co.kurindo.kurindo.wizard.help;
+package id.co.kurindo.kurindo.wizard.help.minat;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +10,6 @@ import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
-import id.co.kurindo.kurindo.wizard.domart.DoMartForm1;
 
 public class ShopOpenActivity extends AbstractStepperActivity {
     private static final String TAG = "ShopOpenActivity";

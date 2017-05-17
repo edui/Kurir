@@ -6,10 +6,13 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
+import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
@@ -18,11 +21,30 @@ import id.co.kurindo.kurindo.wizard.BaseStepFragment;
  */
 
 public class Welcome1Fragment extends BaseStepFragment implements Step {
+    @Bind(R.id.ivWelcome)
+    ImageView ivWelcome;
+    @Bind(R.id.tvWelcomeContent1)
+    TextView tvWelcomeContent1;
+    @Bind(R.id.tvWelcomeContent2)
+    TextView tvWelcomeContent2;
+    @Bind(R.id.tvWelcomeContent3)
+    TextView tvWelcomeContent3;
+    @Bind(R.id.tvWelcomeTitle1)
+    TextView tvWelcomeTitle1;
+    @Bind(R.id.tvWelcomeTitle2)
+    TextView tvWelcomeTitle2;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_help_welcome1);
-
+        ivWelcome.setImageResource(R.drawable.welcome1);
+        tvWelcomeTitle1.setText("ORDER");
+        tvWelcomeTitle2.setText("( MUDAH & PRAKTIS )");
+        tvWelcomeContent1.setText("Pilih jenis & waktu layanan sesuai keinginan melalui handphone anda.");
+        tvWelcomeContent2.setText("Operasional");
+        tvWelcomeContent3.setText("Jam 06.00 - 18.00 (SDS/NDS)\nJam 18.00 - 22.00 (ENS/NNS)");
         return v;
     }
 

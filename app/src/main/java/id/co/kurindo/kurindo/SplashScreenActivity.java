@@ -22,6 +22,7 @@ import java.util.Map;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
+import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.map.LocationService;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
@@ -35,13 +36,14 @@ import id.co.kurindo.kurindo.wizard.help.start.WelcomeActivity;
 
 public class SplashScreenActivity extends AppCompatActivity {
     private static final String TAG = "SplashScreenActivity";
+    private SessionManager session;
 
     boolean done = false;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
+        session = new SessionManager(this);
         Intent locationService = new Intent(getApplicationContext(), LocationService.class);
         getApplicationContext().startService(locationService);
 
@@ -55,10 +57,13 @@ public class SplashScreenActivity extends AppCompatActivity {
                     }
                 }
                 update_token();
-                //Intent intent = new Intent(getApplicationContext(), WelcomeActivity.class);
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                //Intent intent = new Intent(getApplicationContext(), MainDrawerActivity.class);
-                startActivity(intent);
+                if(session.isLoggedIn()){
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                }else{
+                    Intent intent = new Intent(getApplicationContext(), WelcomeActivity.class);
+                    startActivity(intent);
+                }
                 finish();
             }
         };

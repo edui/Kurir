@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="5dp"
+    android:minHeight="50dp"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="10">
+        <ImageView  android:id="@+id/ivServiceCodeIcon"
+            android:layout_width="wrap_content" android:layout_weight="5" android:scaleType="fitCenter"
+            android:layout_height="wrap_content" android:src="@drawable/icon_nds" />
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnLihatRute" android:layout_weight="5"
+            android:layout_width="wrap_content" android:layout_gravity="center"
+            android:layout_height="wrap_content" android:text="Lihat Rute" android:textColor="@color/white" android:background="@drawable/rounded_corner_map_primary" android:padding="10dp"/>
+    </LinearLayout>
+
+</LinearLayout>

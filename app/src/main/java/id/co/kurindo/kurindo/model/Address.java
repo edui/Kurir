@@ -21,6 +21,7 @@ public class Address implements Parcelable{
     private String rt;
     private String rw;
     private String dusun;
+    @Expose
     private String desa;
     @Expose
     private String kecamatan;
@@ -28,10 +29,13 @@ public class Address implements Parcelable{
     private String kabupaten;
     @Expose
     private String propinsi;
+    @Expose
     private String negara;
     private String kodepos;
+    @Expose
     private LatLng location;
     private String formattedAddress;
+    @Expose
     private String notes;
 
     private City city; //code

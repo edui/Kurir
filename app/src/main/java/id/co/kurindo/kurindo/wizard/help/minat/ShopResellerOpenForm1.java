@@ -1,42 +1,36 @@
-package id.co.kurindo.kurindo.wizard.help;
+package id.co.kurindo.kurindo.wizard.help.minat;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.stepstone.stepper.Step;
-import com.stepstone.stepper.VerificationError;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.wizard.BaseStepFragment;
+import id.co.kurindo.kurindo.wizard.help.minat.KurindoOpenForm1;
 
 /**
  * Created by dwim on 3/15/2017.
  */
 
-public class KurirOpenForm1 extends KurindoOpenForm1 {
-    private static final String TAG = "KurirOpenForm1";
-    VerificationError invalid = null;
-
+public class ShopResellerOpenForm1 extends KurindoOpenForm1 {
+    private static final String TAG = "ShopResellerOpenForm1";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_kurindoopen1);
 
-        tvHelpTitle.setText("Petunjuk untuk menjadi Kurir Kurindo");
-        ivHelpIcon.setImageResource(R.drawable.do_jek_icon);
+        tvHelpTitle.setText("Petunjuk untuk menjadi Reseller Toko di Kurindo");
+        ivHelpIcon.setImageResource(R.drawable.do_shop_icon);
         try {
             //File myFile = new File("/sdcard/filename.txt");
             //FileInputStream iStr = new FileInputStream(myFile);
-            BufferedReader fileReader = new BufferedReader(new InputStreamReader(getContext().getResources().openRawResource(R.raw.open_kurir_guide) ));
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(getContext().getResources().openRawResource(R.raw.open_shop_reseller_guide) ));
             String TextLine= "";
             String TextBuffer = "";
             while ((TextLine= fileReader.readLine()) != null) {
@@ -51,10 +45,9 @@ public class KurirOpenForm1 extends KurindoOpenForm1 {
         return v;
     }
 
-
     @Override
     public int getName() {
-        return R.string.kurir_open_form;
+        return R.string.shop_open_form;
     }
 
 }

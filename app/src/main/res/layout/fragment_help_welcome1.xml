@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tvWelcomeTitle1"
+        style="@style/titleBigBoldTextStyle" android:textColor="@color/white"
+        android:layout_marginTop="5dp" android:gravity="center"
+        android:text="Kurindo"/>
+    <TextView
+        android:id="@+id/tvWelcomeTitle2" android:textColor="@color/white"
+        style="@style/titleBigBoldTextStyle" android:gravity="center" android:textSize="20dp"
+        android:text="Kurindo"/>
+    <ImageView
+        android:id="@+id/ivWelcome"
+        android:layout_width="match_parent" android:layout_marginTop="25dp"
+        android:layout_height="wrap_content" android:src="@drawable/welcome1"/>
+    <TextView
+        android:id="@+id/tvWelcomeContent1" android:layout_gravity="center" android:gravity="center"
+        style="@style/titleTextStyle" android:layout_marginTop="5dp" android:textColor="@color/white"
+        android:text=""/>
+    <TextView
+        android:id="@+id/tvWelcomeContent2" android:layout_gravity="center" android:gravity="center"
+        style="@style/titleBoldTextStyle" android:layout_marginTop="5dp" android:textColor="@color/white"
+        android:text=""/>
+    <TextView
+        android:id="@+id/tvWelcomeContent3" android:layout_gravity="center" android:gravity="center"
+        style="@style/titleTextStyle" android:layout_margin="5dp" android:textColor="@color/white"
+        android:text=""/>
+
+</LinearLayout>

@@ -25,14 +25,12 @@ import id.co.kurindo.kurindo.TabFragment;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ShopAdmHelper;
-import id.co.kurindo.kurindo.wizard.HowToUseActivity;
+import id.co.kurindo.kurindo.wizard.help.HowToUseActivity;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
-import id.co.kurindo.kurindo.wizard.help.KurindoOpenActivity;
-import id.co.kurindo.kurindo.wizard.help.KurirOpenActivity;
-import id.co.kurindo.kurindo.wizard.help.ShopOpenActivity;
+import id.co.kurindo.kurindo.wizard.help.minat.KurindoOpenActivity;
+import id.co.kurindo.kurindo.wizard.help.minat.KurirOpenActivity;
+import id.co.kurindo.kurindo.wizard.help.minat.ShopOpenActivity;
 import id.co.kurindo.kurindo.wizard.shopadm.AddShopActivity;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by aspire on 11/24/2016.

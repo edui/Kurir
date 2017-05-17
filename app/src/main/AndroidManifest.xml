@@ -68,7 +68,7 @@
                 android:value=".MainDrawerActivity" />
         </activity>
         <activity
-            android:name=".wizard.HowToUseActivity"
+            android:name=".wizard.help.HowToUseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
         <activity
@@ -280,19 +280,19 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".wizard.help.ShopResellerOpenActivity"
+            android:name=".wizard.help.minat.ShopResellerOpenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".wizard.help.ShopOpenActivity"
+            android:name=".wizard.help.minat.ShopOpenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".wizard.help.KurirOpenActivity"
+            android:name=".wizard.help.minat.KurirOpenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".wizard.help.KurindoOpenActivity"
+            android:name=".wizard.help.minat.KurindoOpenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 

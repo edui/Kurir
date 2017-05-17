@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:focusable="true" android:focusableInTouchMode="true"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/container_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="@android:color/white"
+            android:layout_height="wrap_content"  android:orientation="horizontal">
+            <ImageView
+                android:layout_width="60dp" android:gravity="center_vertical|left"
+                android:layout_height="60dp" android:src="@drawable/do_mart_icon"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:text="DO-MART"  android:textSize="@dimen/header_text_size" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left"
+                    android:textStyle="bold"  android:padding="@dimen/common_padding"/>
+                <TextView
+                    android:id="@+id/tvTotalPrice"
+                    android:layout_width="match_parent" android:textSize="18dp"
+                    android:layout_height="wrap_content" android:text="" android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/container_toolbar">
+
+    <fragment
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent" android:padding="5dp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent" android:background="@color/white"
+            android:layout_height="wrap_content" android:orientation="vertical"
+            android:layout_alignParentBottom="true"
+            >
+            <LinearLayout
+                android:id="@+id/orderInfo_layout"
+                android:layout_width="match_parent" android:background="@color/colorAccent"
+                android:layout_height="40dp" android:orientation="horizontal" android:weightSum="1">
+                <LinearLayout
+                    android:layout_width="wrap_content" android:layout_weight=".9" android:padding="5dp"
+                    android:layout_height="match_parent" android:orientation="horizontal" >
+                    <TextView
+                        android:id="@+id/tvDistanceInfo"
+                        android:layout_width="wrap_content" android:gravity="center_vertical|left" android:textColor="@color/white"
+                        android:layout_height="match_parent" android:text="Konfirmasi Titipan &amp; Biaya Kirim"/>
+                </LinearLayout>
+                <ImageView
+                    android:id="@+id/ivSwitchInfo"
+                    android:layout_width="wrap_content" android:layout_weight=".1" android:layout_gravity="center" android:gravity="center_vertical|right" android:textColor="@color/white"
+                    android:layout_height="wrap_content" android:src="@drawable/ic_expand_more_black_18dp"/>
+            </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_margin="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:padding="1dp" android:divider="#b5b5b5" android:dividerHeight="1dp" />
+
+            <LinearLayout
+                android:id="@+id/service_layout" android:background="@color/white" android:visibility="gone"
+                android:layout_margin="1dp"
+                android:layout_height="1dp" android:minHeight="1dp"
+                android:layout_width="match_parent" android:orientation="vertical">
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal" android:layout_marginTop="5dp"
+                android:layout_width="match_parent" android:layout_marginBottom="12dp"
+                android:layout_height="wrap_content" android:weightSum="10">
+                <CheckBox
+                    android:id="@+id/chkAgrement"
+                    android:layout_width="wrap_content" android:text="Saya SETUJU dengan syarat dan ketentuan ini"
+                    android:layout_height="wrap_content" android:layout_weight="7">
+                </CheckBox>
+
+                <ImageView android:src="@drawable/ic_info_outline_black_18dp"
+                    android:id="@+id/ivAgrement"
+                    android:layout_width="wrap_content" android:layout_weight="3"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
