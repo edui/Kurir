@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content" android:orientation="vertical">
                 <TextView
                     android:id="@+id/TextViewTitle"
-                    android:textSize="15dp" android:gravity="center_vertical|left"
+                    android:textSize="15dp" android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Manifest DoJEK">

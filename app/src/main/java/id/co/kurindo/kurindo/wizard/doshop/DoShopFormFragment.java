@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo.wizard.doshop;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,6 +46,7 @@ import id.co.kurindo.kurindo.adapter.CartViewAdapter;
 import id.co.kurindo.kurindo.adapter.TPacketViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseActivity;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ViewHelper;
@@ -52,6 +54,7 @@ import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 
@@ -62,6 +65,7 @@ import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 public class DoShopFormFragment extends BaseStepFragment implements Step{
     private static final String TAG = "DoShopFormFragment";
     VerificationError invalid = null;
+    ProgressDialog progressBar;
 
     @Bind(R.id.input_nama_penerima)    EditText _namaPenerimaText;
     @Bind(R.id.input_alamat_penerima) EditText _alamatPenerimaText;
@@ -75,7 +79,6 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
 
     @Bind(R.id.ivDoType)
     ImageView ivDoType;
-    ProgressDialog progressDialog;
 
     TOrder order;
     @Bind(R.id.tvPengiriman)
@@ -86,8 +89,9 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
     RecyclerView lvCartItems;
 
     boolean inputBaruPenerima = true;
-
+    Context context;
     private static final String LAYOUT_RESOURCE_ID_ARG_KEY = "messageResourceId";
+
     private static DoShopFormFragment newInstance(@LayoutRes int layoutResId) {
         Bundle args = new Bundle();
         args.putInt(LAYOUT_RESOURCE_ID_ARG_KEY, layoutResId);
@@ -107,14 +111,15 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
         }
 
         if(order == null) order = new TOrder();
+        context = getContext();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_doshop_form);
         //inflater.inflate(R.layout.fragment_confirm_shop_checkout, container, false);
+        progressBar = new ProgressDialogCustom(context);
         setupToolbar(v);
-        progressDialog = new ProgressDialog(getActivity(),R.style.CustomDialog);
 
         _teleponPenerimaText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
         _teleponPenerimaText.setHint(R.string.telepon_penerima);
@@ -166,7 +171,7 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
         addRequest("request_doshop_order", Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "request_doshop_order Response: " + response.toString());
+                LogUtil.logD(TAG, "request_doshop_order Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
@@ -187,7 +192,7 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
                     e.printStackTrace();
                     invalid = new VerificationError("Json error: " + e.getMessage());
                 }
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
@@ -195,12 +200,14 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
                 invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, params, getKurindoHeaders());
     }
     private void place_order(Handler handler) {
+        progressBar.setMessage("Sedang memproses pesanan anda....");
+        progressBar.show();
         Map<String, String> params = new HashMap<>();
         params.put("user_agent", AppConfig.USER_AGENT);
 
@@ -249,7 +256,7 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
                 place_order(handler);
             }
         };
-        showConfirmationDialog("Confirm Order","Anda Yakin akan membeli produk tersebut?", YesClickListener, null);
+        showConfirmationDialog("Konfirmasi","Anda akan membeli produk layanan "+AppConfig.KEY_DOSHOP+" ?", YesClickListener, null);
 
         //loop till a runtime exception is triggered.
         try { Looper.loop(); }

@@ -27,6 +27,7 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.Constant;
 import id.co.kurindo.kurindo.model.ImageModel;
 import id.co.kurindo.kurindo.model.Product;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -76,7 +77,7 @@ public class ProductGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     }
                 }
             }catch (Exception e){
-                Log.d("ProductGridAdapter", model.getName() +" : "+position);
+                LogUtil.logD("ProductGridAdapter", model.getName() +" : "+position);
             }
 
             //((MyItemHolder) holder).mProductDescription.setText(model.getDescription());

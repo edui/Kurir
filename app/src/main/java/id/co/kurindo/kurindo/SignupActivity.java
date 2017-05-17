@@ -48,6 +48,7 @@ import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.SignUpHelper;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupWizardActivity";
@@ -217,14 +218,14 @@ public class SignupActivity extends AppCompatActivity {
     private void signup_process(final String firstname, final String lastname, final String email, final String phone, final String role){
         String tag_string_req = "req_signup";
         final String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Token: " + token);
+        LogUtil.logD(TAG, "Token: " + token);
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response.toString());
+                LogUtil.logD(TAG, "Register Response: " + response.toString());
                 //hideDialog();
 
                 try {
@@ -265,7 +266,7 @@ public class SignupActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Registration Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 error.printStackTrace();
@@ -414,7 +415,7 @@ public class SignupActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response.toString());
+                LogUtil.logD(TAG, "Register Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean success = jObj.getBoolean("success");
@@ -434,7 +435,7 @@ public class SignupActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Registration Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
 
             }

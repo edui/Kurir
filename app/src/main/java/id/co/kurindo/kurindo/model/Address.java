@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -15,13 +16,17 @@ import java.util.Map;
  */
 public class Address implements Parcelable{
 
+    @Expose
     private String alamat;
     private String rt;
     private String rw;
     private String dusun;
     private String desa;
+    @Expose
     private String kecamatan;
+    @Expose
     private String kabupaten;
+    @Expose
     private String propinsi;
     private String negara;
     private String kodepos;
@@ -248,5 +253,12 @@ public class Address implements Parcelable{
         if(kecamatan!= null) formatted += ", "+kecamatan;
 
         return formatted ;
+    }
+
+    public String toStringKecKab() {
+        String formatted = "";
+        if(kecamatan!= null) formatted = kecamatan;
+        if(kabupaten!= null) formatted += ", "+kabupaten;
+        return formatted;
     }
 }

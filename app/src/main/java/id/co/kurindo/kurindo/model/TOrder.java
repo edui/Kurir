@@ -3,6 +3,8 @@ package id.co.kurindo.kurindo.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -14,12 +16,19 @@ import java.util.Set;
  */
 
 public class TOrder implements Parcelable{
+    @Expose
     private int id;
+    @Expose
     private String awb;
+    @Expose
     private String service_type;
+    @Expose
     private String service_code;
+    @Expose
     private String payment;
+    @Expose
     private String status;
+    @Expose
     private String statusText;
 
     private String created_date;
@@ -28,19 +37,34 @@ public class TOrder implements Parcelable{
     private String updated_by;
     private String user_agent;
     private String agen;
+    @Expose
     private String pickup;
+    @Expose
     private String droptime;
 
+    @Expose
     private BigDecimal totalPrice = BigDecimal.ZERO;
+    @Expose
     private int totalQuantity = 0;
+    @Expose
     private BigDecimal  cod = BigDecimal.ZERO;
 
+    @Expose(serialize = false)
     private TUser pic;
+    @Expose(serialize = false)
     private TUser pembeli;
+    @Expose
     private Set<CartItem> products;
+    @Expose
     private Set<TPacket> packets = new LinkedHashSet<>();
+    @Expose
     private Set<DoService> services;
+    @Expose
     private TUser place;
+    @Expose
+    private Set<DoMart> marts;
+    @Expose
+    private DoCarRental docar;
 
     public TOrder(){
 
@@ -307,6 +331,14 @@ public class TOrder implements Parcelable{
         this.droptime = droptime;
     }
 
+    public Set<DoMart> getMarts() {
+        return marts;
+    }
+
+    public void setMarts(Set<DoMart> marts) {
+        this.marts = marts;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -338,4 +370,11 @@ public class TOrder implements Parcelable{
         dest.writeString(updated_by);
     }
 
+    public void setDocar(DoCarRental docar) {
+        this.docar = docar;
+    }
+
+    public DoCarRental getDocar() {
+        return docar;
+    }
 }

@@ -339,7 +339,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
              }
          });
 
-        packetServiceAdapter = new PacketServiceAdapter(this, AppConfig.getPacketServiceList(), 1);
+        packetServiceAdapter = new PacketServiceAdapter(this, AppConfig.getPacketServiceList(doType), 1);
         _serviceCodeText.setAdapter(packetServiceAdapter);
         _serviceCodeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

@@ -26,6 +26,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -48,6 +49,8 @@ public class TOrderInProgressFragment extends BaseTOrderMonitoringFragment imple
     CheckBox doCarChk;
     @Bind(R.id.checkBox7)
     CheckBox doMoveChk;
+    @Bind(R.id.checkBox8)
+    CheckBox doMartChk;
 
     String params="";
 
@@ -85,7 +88,7 @@ public class TOrderInProgressFragment extends BaseTOrderMonitoringFragment imple
 
                         @Override
                         public void onResponse(String response) {
-                            Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
+                            LogUtil.logD(TAG, "MonitorOrder > Check: Response:" + response.toString());
                             //hideDialog();
 
                             try {
@@ -101,12 +104,12 @@ public class TOrderInProgressFragment extends BaseTOrderMonitoringFragment imple
                                 } else {
                                     // Error in login. Get the error message
                                     String errorMsg = jObj.getString("message");
-                                    Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 // JSON error
                                 e.printStackTrace();
-                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                             progressBar.setVisibility(View.GONE);
                             refreshBtn.setVisibility(View.VISIBLE);
@@ -115,8 +118,8 @@ public class TOrderInProgressFragment extends BaseTOrderMonitoringFragment imple
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
-                            Toast.makeText(getContext(), "Network Error: " +error.getMessage(), Toast.LENGTH_LONG).show();
+                            LogUtil.logE(TAG, "MonitorOrder Error: " + error.getMessage());
+                            Toast.makeText(context, "Network Error: " +error.getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                             refreshBtn.setVisibility(View.VISIBLE);
                         }
@@ -135,11 +138,7 @@ public class TOrderInProgressFragment extends BaseTOrderMonitoringFragment imple
 
                         @Override
                         public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            String api = db.getUserApi();
-                            params.put("Api", api);
-
-                            return params;
+                           return getKurindoHeaders();
                         }
                     };
 
@@ -179,6 +178,9 @@ public class TOrderInProgressFragment extends BaseTOrderMonitoringFragment imple
                 break;
             case R.id.checkBox7:
                 params = AppConfig.KEY_DOMOVE;
+                break;
+            case R.id.checkBox8:
+                params = AppConfig.KEY_DOMART;
                 break;
             default:
         }

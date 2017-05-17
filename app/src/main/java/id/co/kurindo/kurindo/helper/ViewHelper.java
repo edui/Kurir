@@ -89,4 +89,25 @@ public class ViewHelper {
     public void setLocation(TUser location) {
         this.location = location;
     }
+
+
+    protected TUser tempUser;
+    protected String id;
+
+    public void setTUser(TUser origin) {
+        this.tempUser = origin;
+    }
+
+    public TUser getTUser() {
+        return tempUser;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 }

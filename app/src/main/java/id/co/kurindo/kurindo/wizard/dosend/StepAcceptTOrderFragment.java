@@ -1,7 +1,10 @@
 package id.co.kurindo.kurindo.wizard.dosend;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +51,7 @@ import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
@@ -60,7 +65,8 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
     private static final String TAG = "StepAcceptTOrderFragment";
     @Bind(R.id.tv_formTitle)
     TextView tvformTitle;
-
+    @Bind(R.id.layoutReject)
+    LinearLayout layoutReject;
     @Bind(R.id.list)
     RecyclerView mRecyclerView;
     TUserAdapter mUserAdapter;
@@ -68,21 +74,38 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
     TUser user;
     TOrder order;
 
+    Context context;
+    private ProgressDialog progressBar;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_accept_order);
 
+        context = getContext();
+        setupProgressbar();
+
         //order = ((AcceptOrderActivity)getActivity()).getOrder();
         order = ViewHelper.getInstance().getOrder();
-
+        layoutReject.setVisibility(View.GONE);
         tvformTitle.setText("Accept Order --> Pilih Kurir");
 
         setup_list();
         return v;
     }
-
+    private void setupProgressbar() {
+        progressBar = new ProgressDialog(context);
+        progressBar.setCancelable(true);
+        //progressBar.setTitle("Kurindo");
+        progressBar.setMessage("Loading...");
+        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        //progressBar.setProgressStyle(R.style.ProgressBar);
+    }
     private void setup_list() {
+        data.clear();
+        request_list_kurir("KURIR");
+
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -97,12 +120,12 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
                         user = data.get(position);
                     }
                 }));
-        data.clear();
-        request_list_kurir("KURIR");
+
         request_list_kurir("ADMIN");
     }
 
     private void request_list_kurir(String...params) {
+        progressBar.show();
         final String param = params[0].toString();
         //String param2 = null;
         //if(params.length > 1) param2 = params[1].toString();
@@ -115,7 +138,7 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
         addRequest(tag_string_req , Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "list KURIR Response: " + response.toString());
+                LogUtil.logD(TAG, "list KURIR Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean success = jObj.getBoolean("success");
@@ -138,11 +161,13 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Log.d(tag_string_req, ""+volleyError.getMessage());
+                LogUtil.logD(tag_string_req, ""+volleyError.getMessage());
+                progressBar.dismiss();
             }
         }, maps, getKurindoHeaders());
 
@@ -185,6 +210,8 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
     }
 
     private VerificationError place_order(final Handler handler) {
+        progressBar.show();
+
         String tag_string_req = "req_place_order";
         final VerificationError[] verify = {null};
 
@@ -193,7 +220,7 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Process_order Response: " + response.toString());
+                LogUtil.logD(TAG, "Process_order Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
@@ -213,13 +240,15 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
                     e.printStackTrace();
                     verify[0] = new VerificationError("Error"+e.getMessage());
                 }
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Process_order Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Process_order Error: " + error.getMessage());
                 verify[0] = new VerificationError("Error"+error.getMessage());
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }) {
@@ -237,11 +266,7 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String api = db.getUserApi();
-                params.put("Api", api);
-
-                return params;
+                return getKurindoHeaders();
             }
 
         };

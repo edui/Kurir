@@ -1,106 +1,30 @@
 package id.co.kurindo.kurindo.wizard.dosend;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
-import id.co.kurindo.kurindo.adapter.PaymentAdapter;
-import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
-import id.co.kurindo.kurindo.map.DataParser;
-import id.co.kurindo.kurindo.map.MapUtils;
-import id.co.kurindo.kurindo.map.PlaceArrayAdapter;
-import id.co.kurindo.kurindo.model.Address;
-import id.co.kurindo.kurindo.model.PacketService;
-import id.co.kurindo.kurindo.model.Payment;
-import id.co.kurindo.kurindo.model.Route;
-import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.wizard.BaseLocationMapFragment;
-import id.co.kurindo.kurindo.wizard.BaseStepFragment;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-import static android.widget.Toast.LENGTH_SHORT;
+import id.co.kurindo.kurindo.wizard.dojek.DoJekOrderActivity;
 
 /**
  * Created by dwim on 2/14/2017.
@@ -109,11 +33,16 @@ import static android.widget.Toast.LENGTH_SHORT;
 public class DoSendPinLocationMapFragment extends BaseLocationMapFragment {
 
 
-    @Bind(R.id.input_berat_barang) TextView _beratBarangText;
+    @Bind(R.id.input_berat_barang) protected TextView _beratBarangText;
     @Bind(R.id.incrementBtn)
-    AppCompatButton incrementBtn;
-    @Bind(R.id.decrementBtn) AppCompatButton decrementBtn;
+    protected AppCompatButton incrementBtn;
+    @Bind(R.id.decrementBtn) protected AppCompatButton decrementBtn;
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
 
     public int getLayout() {
         return R.layout.fragment_maps_dosend;
@@ -122,7 +51,17 @@ public class DoSendPinLocationMapFragment extends BaseLocationMapFragment {
     @Override
     protected void afterOnCreateView() {
         super.afterOnCreateView();
-        setup_berat_barang();
+        updateUI();
+    }
+
+    @Override
+    protected void rgDoType_onCheckedChanged(RadioGroup group, int checkedId) {
+        super.rgDoType_onCheckedChanged(group, checkedId);
+        FragmentActivity act = getActivity();
+        if(act instanceof DoSendOrderActivity){
+            ((DoSendOrderActivity) act).doType = doType;
+            ((DoSendOrderActivity) act).getStepperAdapter();
+        }
     }
 
     @OnClick(R.id.incrementBtn)
@@ -131,7 +70,7 @@ public class DoSendPinLocationMapFragment extends BaseLocationMapFragment {
         //try{ q = Float.parseFloat(_beratBarangText.getText().toString());}catch (Exception e){};
         //q +=0.1;
         BigDecimal b = new BigDecimal(_beratBarangText.getText().toString());
-        b = b.add(new BigDecimal(0.25));
+        b = b.add(new BigDecimal(0.1));
         _beratBarangText.setText(""+b.floatValue());
         beratKiriman = b.floatValue();
 
@@ -145,7 +84,7 @@ public class DoSendPinLocationMapFragment extends BaseLocationMapFragment {
         //if(q < 1) q = 1;
 
         BigDecimal b = new BigDecimal(_beratBarangText.getText().toString());
-        b = b.subtract(new BigDecimal(0.25));
+        b = b.subtract(new BigDecimal(0.1));
         if(b.floatValue() < 1) b = new BigDecimal(1);
         _beratBarangText.setText(""+b.floatValue());
         beratKiriman = b.floatValue();
@@ -164,14 +103,25 @@ public class DoSendPinLocationMapFragment extends BaseLocationMapFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
 
+            Handler handler = new Handler(Looper.getMainLooper());
+            Runnable runnable;
             @Override
-            public void afterTextChanged(Editable v) {
-                try {
-                    beratKiriman = Float.parseFloat(v.toString());
-                } catch (Exception e) {
-                }
-                ;
-                if(beratKiriman > 0 && (beratKiriman % 0.25 == 0) ) requestprice();
+            public void afterTextChanged(final Editable v) {
+                handler.removeCallbacks(runnable);
+                runnable =new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            beratKiriman = Float.parseFloat(v.toString());
+                        } catch (Exception e) {
+                        }
+
+                        if(beratKiriman >= AppConfig.MIN_WEIGHT_DOSEND) {
+                            requestprice();
+                        }
+                    }
+                };
+                handler.postDelayed(runnable, 800);
             }
         });
     }
@@ -183,35 +133,46 @@ public class DoSendPinLocationMapFragment extends BaseLocationMapFragment {
         if(!inDoMoveCoverageArea){
             return new VerificationError("Jarak terlalu jauh. Tidak ada layanan.");
         }
+        if(route ==null || route.getDistance() == null || route.getDistance().getText().isEmpty() || route.getDistance().getText().equalsIgnoreCase("null") ){
+            return new VerificationError("Rute dan Jarak tidak diketahui. Silahkan dicoba lagi.");
+        }
 
         String onotes = etOriginNotes.getText().toString();
         String dnotes = etDestinationNotes.getText().toString();
         origin.getAddress().setNotes(onotes);
         destination.getAddress().setNotes(dnotes);
+        if (!canDrawRoute()) {
+            return new VerificationError("Pilih rute lokasi anda.");
+        }
+
+
+        DoSendHelper.getInstance().setPacketRoute(origin, destination);
         if( doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
-            if (!canDrawRoute()) {
-                return new VerificationError("Pilih rute lokasi anda.");
-            }
             //TODO : check location based service / kedua rute masih dalam 1 kabupaten (dojek, dosend) atau propinsi (domove, docar) dan exception propinsi kecil2
 
-            DoSendHelper.getInstance().setPacketRoute(origin, destination);
             DoSendHelper.getInstance().addDoSendOrder(payment.getText(), serviceCode, (route == null || route.getDistance() == null ? "" : route.getDistance().getValue()), price, beratKiriman);
             //showActivity( DoSendOrderActivity.class );
             //finish();
         }else{
             //Toast.makeText(getContext(), "Not Available", LENGTH_SHORT).show();
-            return new VerificationError(doType+" Not Available");
+            DoSendHelper.getInstance().addDoMoveOrder(payment.getText(), serviceCode, (route == null || route.getDistance() == null ? "" : route.getDistance().getValue()), price, beratKiriman);
+            //return new VerificationError(doType+" Not Available");
         }
         return null;
     }
 
     protected void updateUI() {
 
+        setup_berat_barang();
+
         radioDoSend.setVisibility(View.VISIBLE);
         radioDoMove.setVisibility(View.VISIBLE);
         radioDoJek.setVisibility(View.GONE);
         radioDoCar.setVisibility(View.GONE);
 
+        if(DoSendHelper.getInstance().getDoType() != null){
+            this.doType = DoSendHelper.getInstance().getDoType();
+        }
         switch (this.doType){
             case AppConfig.KEY_DOSEND:
                 rgDoType.check(R.id.radio_dosend);
@@ -223,11 +184,15 @@ public class DoSendPinLocationMapFragment extends BaseLocationMapFragment {
     }
 
     static DoSendPinLocationMapFragment instance ;
-    protected static Fragment newInstance(String keyDosend) {
-        if (instance == null) {
+    protected static Fragment newInstance(String keyDo) {
+        Bundle bundle = new Bundle();
+        if (instance == null || !instance.doType.equalsIgnoreCase(keyDo)) {
             instance = new DoSendPinLocationMapFragment();
+            instance.setArguments(bundle);
         }
-        instance.setDoType(keyDosend);
+        bundle = instance.getArguments();
+        bundle.putString("doType", keyDo);
+        instance.setDoType(keyDo);
         return instance;
     }
 

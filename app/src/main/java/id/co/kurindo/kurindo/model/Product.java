@@ -265,7 +265,9 @@ public class Product implements Saleable, Parcelable{
     public void setUnit(String unit) {
         this.unit = unit;
     }
-
+    public BigDecimal getTotalPrice(){
+        return getPrice().multiply(new BigDecimal(getQuantity().intValue()));
+    }
     ///*
     @Override
     public int describeContents() {

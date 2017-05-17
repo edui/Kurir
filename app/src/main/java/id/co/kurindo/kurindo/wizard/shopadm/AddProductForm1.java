@@ -45,6 +45,7 @@ import id.co.kurindo.kurindo.helper.ShopAdmHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.util.ImageLoadingUtils;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static android.app.Activity.RESULT_OK;
@@ -267,7 +268,7 @@ public class AddProductForm1 extends BaseStepFragment implements Step {
             addRequest("request_update_product", Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d(TAG, "request_update_product Response: " + response.toString());
+                    LogUtil.logD(TAG, "request_update_product Response: " + response.toString());
                     try {
                         JSONObject jObj = new JSONObject(response);
                         String message = jObj.getString("message");
@@ -290,7 +291,7 @@ public class AddProductForm1 extends BaseStepFragment implements Step {
             addRequest("request_add_product", Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d(TAG, "request_add_product Response: " + response.toString());
+                    LogUtil.logD(TAG, "request_add_product Response: " + response.toString());
                     try {
                         JSONObject jObj = new JSONObject(response);
                         String message = jObj.getString("message");

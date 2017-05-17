@@ -33,6 +33,7 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DoServiceHelper;
 import id.co.kurindo.kurindo.model.TPrice;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
@@ -88,7 +89,7 @@ public class DoServiceForm1 extends BaseStepFragment implements Step {
         addRequest(tag_string_Req, Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, tag_string_Req+" Response: " + response.toString());
+                LogUtil.logD(TAG, tag_string_Req+" Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     String message = jObj.getString("message");

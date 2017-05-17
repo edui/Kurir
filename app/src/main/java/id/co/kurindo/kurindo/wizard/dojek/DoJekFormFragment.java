@@ -4,12 +4,14 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
@@ -58,6 +60,7 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseActivity;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ViewHelper;
@@ -91,6 +94,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     ImageView ivProductImage;
 
 
+    double tariff;
     @Bind(R.id.priceText)
     TextView priceText;
     @Bind(R.id.TextViewTitle)
@@ -134,9 +138,9 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     //TUserAdapter mPengirimRecipientAdapter;
     //TUser sender;
     //TUser receiver;
+    //SessionManager session;
 
-    ProgressDialog progressDialog;
-    SessionManager session;
+    ProgressDialog progressBar;
 
     //CityAdapter cityPengirimAdapter;
     //CityAdapter cityPenerimaAdapter;
@@ -157,6 +161,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     int hour;
     int minute;
     Context context;
+    String doType = AppConfig.KEY_DOJEK;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -168,14 +173,18 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
             getActivity().finish();
             return ;
         }
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            String d = bundle.getString("doType");
+            if(d != null) doType = d;
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_dojek_form);
-
-        progressDialog = new ProgressDialog(getActivity(), CustomDialog);
+        progressBar = new ProgressDialogCustom(context);
         ivAgrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,51 +237,52 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         minute = c.get(Calendar.MINUTE);
         cek_time();
     }
+
     private void cek_time() {
         if(serviceCode != null){
             if(AppConfig.isNightService(serviceCode)){
                 if(hour+1 >= AppConfig.START_ENS) {
                     hour++;
                 } else if(hour+1 >= AppConfig.END_ENS) {
-                    hour = AppConfig.START_SDS;
-                    _serviceCodeText.setSelection(0);
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
                 } else {
                     hour = AppConfig.START_ENS;
                 }
             }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_SDS)){
                 if(hour + 1 < AppConfig.START_SDS) {
-                    hour = AppConfig.START_SDS;
-                    _serviceCodeText.setSelection(1);
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(0); //sds
                 } else if(hour+1 >= AppConfig.END_ENS) {
-                    hour = AppConfig.START_SDS;
-                    _serviceCodeText.setSelection(0);
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
                 } else if(hour+1 >= AppConfig.START_ENS) {
                     hour++;
-                    _serviceCodeText.setSelection(2);
+                    _serviceCodeText.setSelection(2); //nds
                 }else{
-                    _serviceCodeText.setSelection(1);
+                    hour++;
+                    _serviceCodeText.setSelection(0); //sds
                 }
             }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_NDS)){
                 if(hour + 1 < AppConfig.START_SDS) {
-                    hour = AppConfig.START_SDS;
-                    _serviceCodeText.setSelection(0);
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
                 } else if(hour+1 >= AppConfig.END_ENS) {
-                    hour = AppConfig.START_SDS;
+                    hour = AppConfig.START_SDS +2;
                 } else if(hour+1 >= AppConfig.START_ENS) {
-                    hour++;
-                    _serviceCodeText.setSelection(3);
+                    hour = AppConfig.START_SDS +2;
+                    //hour++;
+                    //_serviceCodeText.setSelection(3);
                 }
             }
         }
         tvPickupTime.setText(AppConfig.pad(hour)+":"+AppConfig.pad(minute));
     }
+
     private void setup_time() {
         serviceCode = DoSendHelper.getInstance().getServiceCode();
         _serviceCodeText.setSelection((serviceCode==AppConfig.PACKET_NDS? 0 : (serviceCode==AppConfig.PACKET_SDS ? 1 : (serviceCode==AppConfig.PACKET_ENS ? 2 : 3))));
 
-        Calendar c = Calendar.getInstance();
-        hour = c.get(Calendar.HOUR_OF_DAY);
-        minute = c.get(Calendar.MINUTE);
         cek_with_calendar_time();
         checkTarif();
     }
@@ -421,52 +431,69 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     }
     public List<PacketService> getPacketServiceList() {
         if(packetServiceList ==null){
-            packetServiceList = AppConfig.getPacketServiceList();
+            packetServiceList = AppConfig.getPacketServiceList(doType);
         }
         return packetServiceList;
     }
     private void checkTarif(){
+        progressBar.setMessage("Loading. Please wait....");
+        progressBar.show();
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting(); builder.serializeNulls();
+        builder.excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+
+        Address originAddr = DoSendHelper.getInstance().getOrigin().getAddress() ;
+        Address destinationAddr = DoSendHelper.getInstance().getDestination().getAddress() ;
+
         HashMap<String, String> params = new HashMap();
+        if(DoSendHelper.getInstance().getPacket() !=null){
+            params.put("distance", ""+ DoSendHelper.getInstance().getPacket().getDistance());
+            //params.put("origin", (inputBaruPengirim?  _alamatPengirimText.getText().toString() : DoSendHelper.getInstance().getOrigin().getAddress().getKecamatan() ));
+            //params.put("destination", (DoSendHelper.getInstance().getDestination() == null? "" : DoSendHelper.getInstance().getDestination().getAddress().getKecamatan() ));
+            params.put("origin", gson.toJson(originAddr));
+            params.put("destination", gson.toJson(destinationAddr));
+            params.put("service_code", DoSendHelper.getInstance().getOrder().getService_code());
+            params.put("do_type", DoSendHelper.getInstance().getOrder().getService_type());
+            params.put("berat_kiriman", "1");
+            params.put("volume", "0");
 
-        params.put("distance", ""+ DoSendHelper.getInstance().getPacket().getDistance());
-        params.put("origin", (inputBaruPengirim?  _alamatPengirimText.getText().toString() : DoSendHelper.getInstance().getOrigin().getAddress().getKecamatan() ));
-        params.put("destination", (DoSendHelper.getInstance().getDestination() == null? "" : DoSendHelper.getInstance().getDestination().getAddress().getKecamatan() ));
-        params.put("service_code", DoSendHelper.getInstance().getOrder().getService_code());
-        params.put("do_type", DoSendHelper.getInstance().getOrder().getService_type());
-        params.put("berat_kiriman", "1");
-        params.put("volume", "0");
-
-        addRequest("request_price_route", Request.Method.POST, AppConfig.URL_CALC_PRICE_KM, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    Log.d(TAG, "requestprice Response: " + response.toString());
-                    JSONObject jObj = new JSONObject(response);
-                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
-                    if(OK){
-                        double tariff = jObj.getDouble("tarif");
-                        DoSendHelper.getInstance().getOrder().setTotalPrice( new BigDecimal( tariff ) ) ;
-                        priceText.setText(AppConfig.formatCurrency(tariff));
+            tariff = 0;
+            addRequest("request_price_route", Request.Method.POST, AppConfig.URL_CALC_PRICE_KM, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        Log.d(TAG, "requestprice Response: " + response.toString());
+                        JSONObject jObj = new JSONObject(response);
+                        boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                        if(OK){
+                            tariff = jObj.getDouble("tarif");
+                            DoSendHelper.getInstance().getOrder().setTotalPrice( new BigDecimal( tariff ) ) ;
+                            priceText.setText(AppConfig.formatCurrency(tariff));
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
+                    progressBar.dismiss();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                volleyError.printStackTrace();
-            }
-        }, params, getKurindoHeaders());
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    volleyError.printStackTrace();
+                    progressBar.dismiss();
+                }
+            }, params, getKurindoHeaders());
+
+        }
 
     }
 
     private void place_an_order(Handler handler) {
         Log.d(TAG, "place_an_order");
 
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Processing your Order....");
-        progressDialog.show();
+        progressBar.setIndeterminate(true);
+        progressBar.setMessage("Processing your Order....");
+        progressBar.show();
 
         if(inputBaruPengirim){
             String namaPengirim = _namaPengirimText.getText().toString();
@@ -574,7 +601,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
                     e.printStackTrace();
                     invalid = new VerificationError("Json error: " + e.getMessage());
                 }
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
@@ -582,7 +609,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
                 invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, params, getKurindoHeaders());
@@ -600,7 +627,9 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
         if(!valid){
             return new VerificationError("Invalid Data. Please check.");
         }
-
+        if(tariff == 0){
+            return new VerificationError("Invalid Data. Tarif belum terhitung.");
+        }
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message mesg) {
@@ -614,7 +643,7 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
                 place_an_order(handler);
             }
         };
-        showConfirmationDialog("Confirm Order","Anda Yakin akan membeli produk tersebut?", YesClickListener, null);
+        showConfirmationDialog("Konfirmasi","Anda akan memesan layanan "+doType+"?", YesClickListener, null);
 
         // loop till a runtime exception is triggered.
         try { Looper.loop(); }
@@ -680,9 +709,9 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
     private void updateUI() {
         swChooseTime.setChecked(true);
         swChooseTime.toggle();
-
-
-        TextViewTitle.setText("Manifest DoJEK ( Jarak: "+ AppConfig.formatKm( (DoSendHelper.getInstance().getPacket()==null? 0 :DoSendHelper.getInstance().getPacket().getDistance() ))+")");
+        doType = DoSendHelper.getInstance().getDoType();
+        ivProductImage.setImageResource((doType.equalsIgnoreCase(AppConfig.KEY_DOJEK)? R.drawable.do_jek_icon : R.drawable.do_car_icon));
+        TextViewTitle.setText(""+doType+" ( Jarak: "+ AppConfig.formatKm( (DoSendHelper.getInstance().getPacket()==null? 0 :DoSendHelper.getInstance().getPacket().getDistance() ))+")");
 
         TUser destination = DoSendHelper.getInstance().getDestination();
         if(destination != null ){
@@ -713,4 +742,11 @@ public class DoJekFormFragment extends BaseStepFragment implements Step {
 
     }
 
+    public static Fragment newInstance(String doType) {
+        Bundle bundle = new Bundle();
+        bundle.putString("doType", doType);
+        DoJekFormFragment f = new DoJekFormFragment();
+        f.setArguments(bundle);
+        return f;
+    }
 }

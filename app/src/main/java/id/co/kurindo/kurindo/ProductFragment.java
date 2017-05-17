@@ -37,6 +37,7 @@ import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.util.DummyContent;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -114,12 +115,12 @@ public class ProductFragment extends BaseFragment {
         params.put("form-tag", product.getCode());
         params.put("form-activity", "View "+product.getName());
         Address addr = ViewHelper.getInstance().getLastAddress();
-        params.put("form-lat", (addr.getLocation()==null? "0" : ""+addr.getLocation().latitude) );
-        params.put("form-lng", (addr.getLocation() == null ? "0" : ""+addr.getLocation().longitude));
+        params.put("form-lat", (addr == null  || addr.getLocation()==null? "0" : ""+addr.getLocation().latitude) );
+        params.put("form-lng", (addr == null  || addr.getLocation() == null ? "0" : ""+addr.getLocation().longitude));
         addRequest("req_logger", Request.Method.POST, AppConfig.URL_LOGGING, new Response.Listener() {
             @Override
             public void onResponse(Object o) {
-                Log.d(TAG, "req_logger Response: " + o.toString());
+                LogUtil.logD(TAG, "req_logger Response: " + o.toString());
 
             }
         }, new Response.ErrorListener() {
@@ -159,7 +160,7 @@ public class ProductFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Cart cart = CartHelper.getCart();
-                Log.d(TAG, "Adding product: " + product.getName());
+                LogUtil.logD(TAG, "Adding product: " + product.getName());
                 if(inputSpecialRequest.getText() != null && inputSpecialRequest.getText().length() > 0){
                     product.setNotes(inputSpecialRequest.getText().toString());
                 }

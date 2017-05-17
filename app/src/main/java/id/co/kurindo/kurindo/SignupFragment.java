@@ -1,7 +1,9 @@
 package id.co.kurindo.kurindo;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -41,11 +43,13 @@ import butterknife.Bind;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseFragment;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.SignUpHelper;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.signup.SignupWizardActivity;
 
@@ -94,7 +98,7 @@ public class SignupFragment extends BaseFragment {
 
     private SessionManager session;
     private SQLiteHandler db;
-    private ProgressDialog progressDialog;
+    private ProgressDialog progressBar;
     //CityAdapter cityAdapter;
     private String role = AppConfig.KEY_PELANGGAN;
     private String city;
@@ -103,11 +107,25 @@ public class SignupFragment extends BaseFragment {
     private List<City> cityList = new ArrayList<>();
     private int REQUEST_SignupWizardActivity = 1;
 
+    Context context;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // SQLite database handler
+        db = new SQLiteHandler(getContext());
+
+        // Session manager
+        session = new SessionManager(getContext());
+
+        context = getContext();
+        progressBar = new ProgressDialogCustom(context);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.activity_signup);
-
 
         // Check if user is already logged in or not
         //if (session.isLoggedIn()) {
@@ -156,7 +174,6 @@ public class SignupFragment extends BaseFragment {
         _phoneText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
         _phoneText.setHint(R.string.telepon);
 
-        /*
         ivAgrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,6 +186,7 @@ public class SignupFragment extends BaseFragment {
                 showPopupWindow("Kurindo \nPrivacy Policy", R.raw.privacy_policy, R.drawable.icon_syarat_ketentuan);
             }
         });
+        /*
         */
 
         return v;
@@ -178,17 +196,6 @@ public class SignupFragment extends BaseFragment {
         _kurirLayout.setVisibility(b?View.VISIBLE:View.GONE);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // SQLite database handler
-        db = new SQLiteHandler(getContext());
-
-        // Session manager
-        session = new SessionManager(getContext());
-        progressDialog = new ProgressDialog(getActivity(),R.style.AppTheme);
-
-    }
 
     private void setup_gender_list() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.genders_array, android.R.layout.simple_spinner_item);
@@ -238,14 +245,14 @@ public class SignupFragment extends BaseFragment {
     }
 
     private void hidePDialog() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
+        if (progressBar != null) {
+            progressBar.dismiss();
+            progressBar = null;
         }
     }
 
     public void signup() {
-        Log.d(TAG, "Signup");
+        LogUtil.logD(TAG, "Signup");
 
         if (!validate()) {
             onSignupFailed();
@@ -254,9 +261,9 @@ public class SignupFragment extends BaseFragment {
 
         _signupButton.setEnabled(false);
 
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
+        progressBar.setIndeterminate(true);
+        progressBar.setMessage("Creating Account...");
+        progressBar.show();
 
         String firstname = _firstnameText.getText().toString();
         String lastname = _lastnameText.getText().toString();
@@ -311,14 +318,14 @@ public class SignupFragment extends BaseFragment {
             e.printStackTrace();
         }*/
         final String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Token: " + token);
+        LogUtil.logD(TAG, "Token: " + token);
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_BACKEND_SIGNUP, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response.toString());
+                LogUtil.logD(TAG, "Register Response: " + response.toString());
                 //hideDialog();
 
                 try {
@@ -352,17 +359,17 @@ public class SignupFragment extends BaseFragment {
                     _signupButton.setEnabled(true);
                 }
 
-                progressDialog.dismiss();
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Registration Error: " + error.getMessage());
                 Toast.makeText(getContext(),error.getMessage(), Toast.LENGTH_LONG).show();
                 error.printStackTrace();
                 _signupButton.setEnabled(true);
-                progressDialog.dismiss();
+                progressBar.dismiss();
             }
         }) {
 
@@ -430,7 +437,7 @@ public class SignupFragment extends BaseFragment {
             e.printStackTrace();
             Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
             _signupButton.setEnabled(true);
-            progressDialog.dismiss();
+            progressBar.dismiss();
         }
     }
 
@@ -463,7 +470,7 @@ public class SignupFragment extends BaseFragment {
         Toast.makeText(getContext(), "Registration  failed", Toast.LENGTH_SHORT).show();
 
         _signupButton.setEnabled(true);
-        progressDialog.dismiss();
+        progressBar.dismiss();
     }
     public void onRadioButtonClicked(View view) {
         // Is the button now checked?
@@ -561,7 +568,7 @@ public class SignupFragment extends BaseFragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response.toString());
+                LogUtil.logD(TAG, "Register Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean success = jObj.getBoolean("success");
@@ -581,7 +588,7 @@ public class SignupFragment extends BaseFragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Registration Error: " + error.getMessage());
                 //Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
 
             }

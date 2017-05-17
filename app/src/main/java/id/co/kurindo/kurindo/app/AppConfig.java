@@ -13,8 +13,8 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.StringUtils;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import id.co.kurindo.kurindo.model.PacketService;
+import id.co.kurindo.kurindo.model.Vehicle;
 
 /**
  * Created by DwiM on 11/8/2016.
@@ -33,10 +34,10 @@ import id.co.kurindo.kurindo.model.PacketService;
 public class AppConfig {
     public static String API_VERSION = "v1";
 
-    public static String BASE_HOST = "https://kurindo.co.id";//+"/"+API_VERSION;
+    //public static String BASE_HOST = "https://kurindo.id";//+"/"+API_VERSION;
     //public static String BASE_HOST = "http://10.0.2.2/kurindo";
     //public static String BASE_HOST = "http://192.168.43.25/kurindo";
-    //public static String BASE_HOST = "http://172.30.3.58/kurindo";
+    public static String BASE_HOST = "http://172.30.3.58/kurindo";
     public static String API_HOST = BASE_HOST+"/"+API_VERSION;
     public static String HOST = API_HOST;
     //public static String API_HOST = HOST;
@@ -56,6 +57,7 @@ public class AppConfig {
     public static String URL_SHOP_ADD =API_HOST + "/shop/add";
     public static String URL_SHOP_UPDATE=API_HOST + "/shop/update";
     public static String URL_SHOP_LOCATIONBASED_LIST = HOST + "/shop/locationbased/list";
+    public static String URL_SHOP_CITYBASED = HOST + "/shop/citybased/";
 
     public static String URL_SHOP_PRODUCT_ADD =API_HOST + "/shop/product/add";
     public static String URL_SHOP_PRODUCT_UPDATE=API_HOST + "/shop/product/update";
@@ -67,6 +69,7 @@ public class AppConfig {
     public static String URL_PRICE_KM= API_HOST + "/tariff/km";
     public static String URL_CALC_PRICE_KM= API_HOST + "/calculate/km";
     public static String URL_LOGGING = HOST + "/logging";
+    public static String URL_UPDATE_POSITION = HOST + "/position/update";
     public static String URL_REGISTER_FCM = HOST + "/refresh/newfirebase";
     public static String URL_MINAT_FORM = HOST + "/minat";
 
@@ -88,9 +91,14 @@ public class AppConfig {
     public static String URL_TORDER_MYTASKS = API_HOST + "/torder/myjob";
     public static String URL_TORDER_ADDPIC = API_HOST + "/torder/addpic";;
     public static String URL_TORDER_REJECT = API_HOST + "/torder/reject";
+    public static String URL_TORDER_RETRIEVE_AWB = API_HOST + "/torder/awb";
 
     public static String URL_PRICE_REQUEST = API_HOST + "/tariff/do";
     public static String URL_NEWS= HOST + "/news";
+    public static String URL_RETRIEVE_BRANCHES = API_HOST + "/branch/service";
+    public static String URL_RETRIEVE_SERVICES = API_HOST + "/do/services";
+    public static String URL_RETRIEVE_CAR_VEHICLES = API_HOST + "/do/cars/vehicle/list";
+
 
     //active link before v1 API
     // Server user login url
@@ -136,7 +144,7 @@ public class AppConfig {
     public static final String KEY_KURIRSHOP= "KURIRSHOP";
     public static final String KEY_SHOPKEC= "SHOPKEC";
     public static final String KEY_SHOPKAB= "SHOPKAB";
-    public static final String KEY_SHOPPROP= "SHOPPROV";
+    public static final String KEY_SHOPPROV = "SHOPPROV";
     public static final String KEY_SHOPNEG= "SHOPNEG";
     public static final String KEY_MITRA = "MITRA";
 
@@ -144,7 +152,7 @@ public class AppConfig {
     public static final String KEY_ADMINISTRATOR= "ADMIN";
     public static final String KEY_ADMINKEC= "ADMINKEC";
     public static final String KEY_ADMINKAB= "ADMINKAB";
-    public static final String KEY_ADMINPROP= "ADMINPROV";
+    public static final String KEY_ADMINPROV = "ADMINPROV";
     public static final String KEY_ADMINNEG= "ADMINNEG";
     public static final String KEY_ROOT= "ROOT";
 
@@ -163,7 +171,7 @@ public class AppConfig {
     public static final String PACKET_SDS = "SDS";
     public static final String PACKET_NDS = "NDS";
     public static final String PACKET_ENS = "ENS";
-    public static final String PACKET_NDNS = "NDNS";
+    public static final String PACKET_NNS = "NNS";
     public static final String KEY_DOSEND = "DO-SEND";
     public static final String KEY_DOJEK = "DO-JEK";
     public static final String KEY_DOWASH = "DO-WASH";
@@ -173,6 +181,11 @@ public class AppConfig {
     public static final String KEY_DOMOVE = "DO-MOVE";
     public static final String KEY_DOSHOP = "DO-SHOP";
     public static final String KEY_DOMART = "DO-MART";
+
+    public static final String KEY_RENTAL = "RENTAL";
+    public static final String KEY_WISATA = "WISATA";
+
+    public static final String KEY_CHARGE = "CHARGE";
 
     public static final String DEFAULT_COUNTRY = "ID";
     public static final String CLOSED = "CLOSED";
@@ -197,10 +210,19 @@ public class AppConfig {
     public static int START_ENS = 18;
     public static int END_ENS = 22;
     public static int MIN_WEIGHT_DOWASH = 3;
+    public static int MIN_WEIGHT_DOSEND = 3;
     public static String CASH_PAYMENT = "TUNAI";
+    public static String HOMEBASE = "HOMEBASE";
+
+    public static String DOMOVE_PICKUP_BAK = "PICKUP_BAK";
+    public static String DOMOVE_BLIND_VAN = "BLIND_VAN";
+    public static String DOMOVE_ENGKEL_BAK = "ENGKEL_BAK";
+    public static String DOMOVE_ENGKEL_BOX = "ENGKEL_BOX";
+
+    public static BigDecimal DOMART_FEE = new BigDecimal(2500);
 
     public static boolean isNightService(String service){
-        return service.equalsIgnoreCase(PACKET_ENS) || service.equalsIgnoreCase(PACKET_NDNS);
+        return service.equalsIgnoreCase(PACKET_ENS) || service.equalsIgnoreCase(PACKET_NNS);
     }
     public static String getStatusText(String status){
         String statusText = "";
@@ -247,12 +269,16 @@ public class AppConfig {
 
     public static String formatCurrency(double amount)
     {
+       return CURRENCY+ ""+formatAmmount(amount);
+    }
+    public static String formatAmmount(double amount)
+    {
         NumberFormat format = NumberFormat.getInstance();
         format.setMaximumFractionDigits(2);
         format.setGroupingUsed(true);
         //Currency currency = Currency.getInstance(Constant.CURRENCY);
         //format.setCurrency(currency);
-       return CURRENCY+ ""+format.format(amount);
+        return format.format(amount);
     }
     public static String formatDate(String pdate)
     {
@@ -308,18 +334,18 @@ public class AppConfig {
         }
         return statusText;
     }
-    public static List<PacketService> getPacketServiceList() {
+    public static List<PacketService> getPacketServiceList(String doType) {
         List<PacketService> packetServiceList = new ArrayList<>();
-        PacketService service2 = new PacketService("NDS", "Next Day Service", "Kiriman Ekonomis untuk Esok hari");
-        packetServiceList.add(service2);
-
-        PacketService service = new PacketService("SDS", "Same Day Service", "Kiriman Express (hari yang sama)");
+        PacketService service = new PacketService("SDS", "Same Day Service", (doType!=null && doType.equalsIgnoreCase(KEY_DOSEND)? "Kiriman ":"Layanan ")+"Express (hari yang sama)");
         packetServiceList.add(service);
 
-        PacketService service3 = new PacketService("ENS", "Extra Night Service", "Kiriman Express setelah jam 6 malam");
+        PacketService service3 = new PacketService("ENS", "Extra Night Service", (doType!=null && doType.equalsIgnoreCase(KEY_DOSEND)? "Kiriman ":"Layanan ")+"Express setelah jam 6 malam");
         packetServiceList.add(service3);
 
-        PacketService service4 = new PacketService("NDNS", "Next Day Night Service", "Kiriman setelah jam 6 malam Esok hari");
+        PacketService service2 = new PacketService("NDS", "Next Day Service", (doType!=null && doType.equalsIgnoreCase(KEY_DOSEND)? "Kiriman ":"Layanan ")+"Ekonomis untuk Esok hari");
+        packetServiceList.add(service2);
+
+        PacketService service4 = new PacketService("NNS", "NextDay Night Service", (doType!=null && doType.equalsIgnoreCase(KEY_DOSEND)? "Kiriman ":"Layanan ")+"setelah jam 6 malam Esok hari");
         packetServiceList.add(service4);
 
         return packetServiceList;
@@ -330,6 +356,7 @@ public class AppConfig {
 
     private static String bannerUrl =BASE_HOST+"/img/banner/";
     private static String shopUrl =BASE_HOST+"/img/shop/";
+    private static String vehicleUrl =BASE_HOST+"/img/vehicle/";
 
     public static String urlBannerImage(String banner) {
         return bannerUrl+""+banner;
@@ -341,6 +368,10 @@ public class AppConfig {
 
     public static String urlProductImage(String imageName) {
         return shopUrl + ""+imageName;
+    }
+
+    public static String urlVehicleImage(String image) {
+        return vehicleUrl + ""+image;
     }
 
     public static Bitmap encodeContentsToBarcode(String data, BarcodeFormat format) {
@@ -377,7 +408,8 @@ public class AppConfig {
         String timeformat = dateInput;
         try {
             long now = System.currentTimeMillis();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //SimpleDateFormat dateFormat = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
+            SimpleDateFormat dateFormat = getDateTimeServerFormat();
             Date convertedDate = dateFormat.parse(dateInput);
             CharSequence relavetime1 = DateUtils.getRelativeTimeSpanString(
                     convertedDate.getTime(),
@@ -402,8 +434,19 @@ public class AppConfig {
         context.startActivity(i);
     }
 
-    public static SimpleDateFormat getSimpleDateFormat(){
-        if(sdf == null) sdf = new SimpleDateFormat("yyyy-MM-dd h:m:s");
+    public static SimpleDateFormat getDateTimeServerFormat(){
+        if(sdf == null) sdf = new SimpleDateFormat("yyyy-MM-dd HH:m:s");
+        //if(sdf == null) sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
+        return sdf;
+    }
+    public static SimpleDateFormat getDateFormat(){
+        if(sdf == null) sdf = new SimpleDateFormat("dd-MMM-yyyy");
+        //if(sdf == null) sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
+        return sdf;
+    }
+    public static SimpleDateFormat getDateTimeFormat(){
+        if(sdf == null) sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+        //if(sdf == null) sdf = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
         return sdf;
     }
 
@@ -441,6 +484,74 @@ public class AppConfig {
         }
         c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
-        return getSimpleDateFormat().format(c.getTime());
+        return getDateTimeServerFormat().format(c.getTime());
     }
+
+    public static List<Vehicle> getDoCarServices() {
+        List<Vehicle> datas = new ArrayList<>();
+        datas.add(new Vehicle("Shuttle - Antar - Jemput", "Layanan antar jemput dari suatu tempat ke tujuan yang diinginkan.", "Avanza/Xenia, Innova", null, "do_car_icon.png"));
+        datas.add(new Vehicle("Rental Mobil", "Layanan sewa mobil untuk dalam kota maupun luar kota.", "Avanza/Xenia, Innova", null, "avanza1.png"));
+        //datas.add(new Vehicle("Wisata", "Layanan sewa armada untuk wisata.", "Bus, Bison", null, "bus1"));
+        return datas;
+    }
+
+    public static List<Vehicle> getDoCarWisataServices() {
+        List<Vehicle> datas = new ArrayList<>();
+        datas.add(new Vehicle("Bus Besar", "Layanan wisata jarak jauh dan dekat dengan nyaman.", "Hino, Marcedes Benz", null, "bus1.png"));
+        datas.add(new Vehicle("Bus Sedang", "Layanan wisata jarak dekat.", "Bus", null, "bus2.png"));
+        datas.add(new Vehicle("Bus Kecil", "Layanan wisata jarak dekat.", "AC", null, "bus4.png"));
+        datas.add(new Vehicle("Bison", "Layanan wisata jarak dekat untuk keluarga.", "AC", null, "elf1.png"));
+        return datas;
+    }
+
+    public static List<Vehicle> getDoCarRentalServices() {
+        List<Vehicle> datas = new ArrayList<>();
+        Vehicle v1 = new Vehicle("Innova", "Layanan nyaman.", "A, B, C", null, "do_car_icon");
+        v1.setRating(5);
+        v1.setAc(5);
+        v1.setKebersihan(5);
+        v1.setKondisi(5);
+        v1.setBbm("Bensin");
+        v1.setTahun("2015");
+        v1.setMerk("Toyota");
+        v1.setJenis("MPV");
+        v1.setTransmisi("Manual");
+        v1.setDayamuat("6");
+        datas.add(v1);
+        v1 = new Vehicle("Avanza", "Layanan nyaman.", "G", null, "do_car_icon");
+        v1.setRating(5);
+        v1.setAc(5);
+        v1.setKebersihan(5);
+        v1.setKondisi(5);
+        v1.setBbm("Bensin");
+        v1.setTahun("2015");
+        v1.setMerk("Toyota");
+        v1.setJenis("MPV");
+        v1.setTransmisi("Manual");
+        v1.setDayamuat("6");
+        datas.add(v1);
+        v1 = new Vehicle("Xenia", "Layanan nyaman.", "L", null, "do_car_icon");
+        v1.setRating(5);
+        v1.setAc(5);
+        v1.setKebersihan(5);
+        v1.setKondisi(5);
+        v1.setBbm("Bensin");
+        v1.setTahun("2015");
+        v1.setMerk("Daihatsu");
+        v1.setJenis("MPV");
+        v1.setTransmisi("Manual");
+        v1.setDayamuat("6");
+        datas.add(v1);
+        return datas;
+    }
+
+    public static List<Vehicle> getDoMoveServices() {
+        List<Vehicle> datas = new ArrayList<>();
+        datas.add(new Vehicle("PICKUP BAK", "Mobil Pickup dengan bak.", "Ukuran 200x130x120", "Berat Maks 1000Kg", "do_move_icon"));
+        datas.add(new Vehicle("PICKUP BOX / BLIND VAN", "Mobil Pickup dengan box.", "Ukuran 200x130x130", "Berat Maks 1000Kg", "do_move_icon"));
+        datas.add(new Vehicle("ENGKEL BAK", "Mobil Pickup dengan bak.", "Ukuran 300x160x130", "Berat Maks 2000Kg", "do_move_icon"));
+        datas.add(new Vehicle("ENGKEL BOX", "Mobil Box tertutup.", "Ukuran 300x160x160", "Berat Maks 2000Kg", "do_move_icon"));
+        return datas;
+    }
+
 }

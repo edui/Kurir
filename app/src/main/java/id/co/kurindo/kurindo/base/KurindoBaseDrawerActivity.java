@@ -25,6 +25,7 @@ import id.co.kurindo.kurindo.TabFragment;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ShopAdmHelper;
+import id.co.kurindo.kurindo.wizard.HowToUseActivity;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
 import id.co.kurindo.kurindo.wizard.help.KurindoOpenActivity;
 import id.co.kurindo.kurindo.wizard.help.KurirOpenActivity;
@@ -83,6 +84,9 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
     protected void goToNavDrawerItem(int item) {
         Bundle bundle = new Bundle();
         switch (item) {
+            case R.id.nav_item_howtouse:
+                showActivity(HowToUseActivity.class);
+                break;
             case R.id.nav_item_kiriman_luar_kota:
                 showFragment(LuarKotaFragment.class);
                 break;
@@ -236,12 +240,12 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
         TextView versiontxt = (TextView) headerLayout.findViewById(R.id.versiTxt);
         int versionCode = BuildConfig.VERSION_CODE;
         String versionName = BuildConfig.VERSION_NAME;
-        versiontxt.setText("Versi "+versionName +" (build "+versionCode+")");
+        versiontxt.setText("versi "+versionName +" (build "+versionCode+")");
 
         loginBtn = (AppCompatButton) headerLayout.findViewById(R.id.mainLoginBtn);
         if(param){
             HashMap user = db.getUserDetails();
-            txt.setText(user.get("firstname") + " " + user.get("lastname") +" ("+user.get("role")+")");
+            txt.setText(user.get("firstname") + " " + user.get("lastname") +"\n("+user.get("role")+")");
             navigationView.getMenu().findItem(R.id.nav_item_logout).setVisible(true);
             loginBtn.setVisibility(View.GONE);
         }else{
@@ -284,4 +288,5 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
         }
 
     }
+
 }

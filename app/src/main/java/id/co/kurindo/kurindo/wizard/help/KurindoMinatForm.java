@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo.wizard.help;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,9 +38,11 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
@@ -85,7 +88,8 @@ public class KurindoMinatForm extends BaseStepFragment implements Step {
     ImageView ivAgrement2;
 
     String role = AppConfig.KEY_SHOPPIC;
-    ProgressDialog progressDialog;
+    protected ProgressDialog progressBar;
+    Context context;
 
     boolean process = false;
 
@@ -95,14 +99,14 @@ public class KurindoMinatForm extends BaseStepFragment implements Step {
         Bundle bundle = getArguments();
         if(bundle != null)
             role= bundle.getString("role");
-
+        context = getContext();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_kurindominat);
-        progressDialog = new ProgressDialog(getActivity(),R.style.AppTheme);
+        progressBar = new ProgressDialogCustom(context);
 
         ivAgrement.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +123,6 @@ public class KurindoMinatForm extends BaseStepFragment implements Step {
 
         return v;
     }
-
     private void setup_radio() {
         roleRadioGroup.setEnabled(true);
         roleRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
@@ -218,11 +221,12 @@ public class KurindoMinatForm extends BaseStepFragment implements Step {
             maps.put("shopid", ""+ViewHelper.getInstance().getShop().getId());
         }
         process = true;
-        progressDialog.show();
+        progressBar.setMessage("sedang mengirimkan minat anda....");
+        progressBar.show();
         addRequest(tag_string_req , Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, tag_string_req +" > Response:" + response.toString());
+                LogUtil.logD(TAG, tag_string_req +" > Response:" + response.toString());
                 boolean ok = false;
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -242,15 +246,15 @@ public class KurindoMinatForm extends BaseStepFragment implements Step {
                     if(getContext() != null)
                         Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 process = false;
                 if(ok) getActivity().finish();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Log.d(tag_string_req, ""+volleyError.getMessage());
-                progressDialog.dismiss();
+                LogUtil.logD(tag_string_req, ""+volleyError.getMessage());
+                progressBar.dismiss();
                 process = false;
             }
         }, maps, getKurindoHeaders());

@@ -69,6 +69,8 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_nds);
             }else if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_ENS)) {
                 holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
+            }else if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_NNS)) {
+                holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_nns);
             }
             holder._genderPengirimText.setVisibility(View.GONE);
             holder._genderPenerimaText.setVisibility(View.GONE);
@@ -99,6 +101,22 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     //holder._genderPenerimaText.setVisibility(View.VISIBLE);
                     //holder._genderPengirimText.setText(packet.getDestination().getGender());
                     //holder._genderPenerimaText.setText(packet.getOrigin().getGender());
+                }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOMOVE)) {
+                    holder.ivServiceIcon.setImageResource(R.drawable.do_move_icon);
+                    beratText = "Berat : "+packet.getBerat_kiriman() + " Kg";
+                    cod = (order.getCod() == null? "": "\nC O D : "+AppConfig.formatCurrency( order.getCod().doubleValue()));
+                    holder._judulPengirimText.setText("Pengirim");
+                    holder._judulPenerimaText.setText("Penerima");
+                }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOCAR)) {
+                    holder.ivServiceIcon.setImageResource(R.drawable.do_car_icon);
+                    beratText = packet.getOrigin().getName()+"\n"+packet.getDestination().getGender()+"\n"+packet.getOrigin().getPhone();
+                    holder._judulPengirimText.setText("Asal");
+                    holder._judulPenerimaText.setText("Tujuan");
+                    holder._namaPengirimText.setVisibility(View.GONE);
+                    holder._teleponPengirimText.setVisibility(View.GONE);
+                    holder._namaPenerimaText.setVisibility(View.GONE);
+                    holder._teleponPenerimaText.setVisibility(View.GONE);
+
                 }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOWASH)) {
                     holder.ivServiceIcon.setImageResource(R.drawable.do_wash_icon);
                 }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {

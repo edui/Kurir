@@ -45,11 +45,16 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.KurindoActivity;
 import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.model.DoMart;
 import id.co.kurindo.kurindo.model.Route;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TUser;
@@ -102,7 +107,7 @@ public class MapViewsActivity extends KurindoActivity implements OnMapReadyCallb
     Location mLastLocation;
     Marker originMarker;
     Marker destinationMarker;
-
+    List<TUser> waypoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,20 +116,36 @@ public class MapViewsActivity extends KurindoActivity implements OnMapReadyCallb
         ButterKnife.bind(this);
 
         order = ViewHelper.getInstance().getOrder();
-
-        if(ViewHelper.getInstance().getPacket() != null && ViewHelper.getInstance().getPacket().getDestination() != null && ViewHelper.getInstance().getPacket().getOrigin() != null){
-            origin = ViewHelper.getInstance().getPacket().getOrigin();
-            destination = ViewHelper.getInstance().getPacket().getDestination();
-
-            tvOrigin.setText(origin.getAddress().toStringFormatted());
-            tvDestination.setText(destination.getAddress().toStringFormatted());
-            if(origin.getAddress().getNotes() != null && !origin.getAddress().getNotes().isEmpty()){
-                etOriginNotes.setText(origin.getAddress().getNotes());
-                etOriginNotes.setVisibility(View.VISIBLE);
+        if(order != null){
+            if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOMART)){
+                for(DoMart dom : order.getMarts()){
+                    origin = dom.getOrigin();
+                    if(waypoints == null){
+                        waypoints = new ArrayList<>();
+                    }
+                    waypoints.add(dom.getOrigin());
+                }
+                destination = ViewHelper.getInstance().getOrder().getPlace();
+            }else{
+                if(ViewHelper.getInstance().getPacket() != null && ViewHelper.getInstance().getPacket().getDestination() != null && ViewHelper.getInstance().getPacket().getOrigin() != null){
+                    origin = ViewHelper.getInstance().getPacket().getOrigin();
+                    destination = ViewHelper.getInstance().getPacket().getDestination();
+                }
             }
-            if(destination.getAddress().getNotes() != null && !destination.getAddress().getNotes().isEmpty()){
-                etDestinationNotes.setText(destination.getAddress().getNotes());
-                etDestinationNotes.setVisibility(View.VISIBLE);
+
+            if(origin != null){
+                tvOrigin.setText(origin.getAddress().toStringFormatted());
+                if(origin.getAddress().getNotes() != null && !origin.getAddress().getNotes().isEmpty()){
+                    etOriginNotes.setText(origin.getAddress().getNotes());
+                    etOriginNotes.setVisibility(View.VISIBLE);
+                }
+            }
+            if(destination != null){
+                tvDestination.setText(destination.getAddress().toStringFormatted());
+                if(destination.getAddress().getNotes() != null && !destination.getAddress().getNotes().isEmpty()){
+                    etDestinationNotes.setText(destination.getAddress().getNotes());
+                    etDestinationNotes.setVisibility(View.VISIBLE);
+                }
             }
         }
         mContext = this;
@@ -168,7 +189,7 @@ public class MapViewsActivity extends KurindoActivity implements OnMapReadyCallb
     }
 
     private boolean canDrawRoute() {
-        return (origin.getAddress().getLocation() != null && destination.getAddress().getLocation() != null);
+        return (origin.getAddress() != null && origin.getAddress().getLocation() != null && origin.getAddress() != null && destination.getAddress().getLocation() != null);
     }
 
     @Override

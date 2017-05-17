@@ -1,107 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="fill_parent"
+    android:orientation="vertical" android:layout_width="fill_parent" android:background="@color/white"
     android:layout_height="fill_parent">
-    <LinearLayout android:orientation="vertical"
-        android:layout_width="match_parent"
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="match_parent" android:background="@color/white"
         android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/order_service_icon"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="centerCrop" android:layout_gravity="center"
+            android:src="@drawable/do_send_icon"/>
+        <LinearLayout
+            android:layout_width="wrap_content" android:background="@color/white"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvPageTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:padding="3dp"
+                    android:gravity="center" android:layout_marginBottom="3dp" android:visibility="gone"
+                    android:textSize="16dp" android:text="Detail Order"/>
 
-        <TextView
-            android:id="@+id/tvPageTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:padding="3dp"
-            android:gravity="center" android:layout_marginBottom="3dp"
-            android:textSize="16dp" android:text="Detail Order"/>
+                <TextView
+                    android:id="@+id/tvAwbTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:padding="3dp"
+                    android:gravity="center" android:layout_marginBottom="3dp"
+                    android:textSize="14dp" android:text="AWB" android:visibility="gone"/>
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvAwbTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:padding="3dp"
-            android:gravity="center" android:layout_marginBottom="3dp"
-            android:textSize="14dp" android:text="AWB" android:visibility="gone"/>
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center"
+                android:layout_height="wrap_content" android:background="@color/white"
+                android:orientation="horizontal"  >
+                <ImageButton
+                    android:id="@+id/kur999Btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:layout_weight="5"
+                    android:background="@color/white"
+                    android:src="@drawable/reject_booking_icon"/>
+
+                <ImageButton
+                    android:id="@+id/kur200Btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:layout_weight="5"
+                    android:background="@color/white"
+                    android:src="@drawable/accept_booking_icon"/>
+                <ImageButton
+                    android:id="@+id/kur100Btn"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/reject_booking_icon" android:visibility="gone" />
+                <ImageButton
+                    android:id="@+id/kur200BtnS"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/accept_booking_icon" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/kur300Btn"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/status01_0_icon" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/kur310Btn"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/status03_0_icon" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/kur350Btn"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/status06_0_icon" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/kur500Btn"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/status04_0_icon" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/kur400Btn"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/status05_0_icon" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/kur900Btn"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/kur910Btn"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/transfer" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/kur999BtnS"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
+                <ImageButton
+                    android:id="@+id/infoStatus"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:background="@color/white" android:layout_margin="5dp"
+                    android:src="@drawable/ic_info_outline_black_18dp" />
+
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
-    <android.support.v7.widget.LinearLayoutCompat
-        android:layout_alignParentBottom="true" android:background="@color/white"
-        android:layout_width="match_parent" android:weightSum="10"
-        android:layout_height="wrap_content" android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/kur999Btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_weight="5"
-            android:background="@color/white"
-            android:src="@drawable/reject_booking_icon"/>
-
-        <ImageButton
-            android:id="@+id/kur200Btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_weight="5"
-            android:background="@color/white"
-            android:src="@drawable/accept_booking_icon"/>
-    </android.support.v7.widget.LinearLayoutCompat>
-
-    <LinearLayout
-        android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center"
-        android:layout_height="wrap_content" android:background="@color/white"
-        android:orientation="horizontal"  >
-        <ImageButton
-            android:id="@+id/kur100Btn"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/reject_booking_icon" android:visibility="gone" />
-        <ImageButton
-            android:id="@+id/kur200BtnS"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/accept_booking_icon" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/kur300Btn"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/status01_0_icon" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/kur310Btn"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/status03_0_icon" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/kur350Btn"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/status06_0_icon" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/kur500Btn"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/status04_0_icon" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/kur400Btn"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/status05_0_icon" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/kur900Btn"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/kur910Btn"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/transfer" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/kur999BtnS"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/reject_booking_icon" android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/infoStatus"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@color/white" android:layout_margin="5dp"
-            android:src="@drawable/ic_info_outline_black_18dp" />
-
-    </LinearLayout>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -137,7 +145,7 @@
                 android:id="@+id/tvPembeli"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/total_price" />
+                android:text="" />
 
         </LinearLayout>
 
@@ -154,7 +162,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tvCartHeader"
+                android:id="@+id/tvCartTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary" android:textColor="@color/white"

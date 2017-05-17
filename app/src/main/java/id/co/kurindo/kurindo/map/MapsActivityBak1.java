@@ -306,7 +306,7 @@ public class MapsActivityBak1 extends KurindoActivity implements OnMapReadyCallb
              }
          });
 
-        packetServiceAdapter = new PacketServiceAdapter(this, AppConfig.getPacketServiceList(), 1);
+        packetServiceAdapter = new PacketServiceAdapter(this, AppConfig.getPacketServiceList(doType), 1);
         _serviceCodeText.setAdapter(packetServiceAdapter);
         _serviceCodeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

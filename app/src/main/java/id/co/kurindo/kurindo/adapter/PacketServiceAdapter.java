@@ -73,8 +73,8 @@ public class PacketServiceAdapter extends BaseAdapter {
         }else if(paket.getCode().equalsIgnoreCase(AppConfig.PACKET_NDS)){
             ivCode.setImageResource(R.drawable.icon_nds);
             etd.setBackgroundColor(Color.argb(200,15,131,180));
-        }else if(paket.getCode().equalsIgnoreCase(AppConfig.PACKET_NDNS)){
-            ivCode.setImageResource(R.drawable.icon_ens);
+        }else if(paket.getCode().equalsIgnoreCase(AppConfig.PACKET_NNS)){
+            ivCode.setImageResource(R.drawable.icon_nns);
             etd.setBackgroundColor(Color.argb(200,44,39,85));
         }else{
             ivCode.setImageResource(R.drawable.icon_ens);

@@ -8,33 +8,46 @@ import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
+import id.co.kurindo.kurindo.TOrderShowActivity;
+import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.helper.DoMartHelper;
+import id.co.kurindo.kurindo.helper.DoServiceHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 import id.co.kurindo.kurindo.wizard.doservice.DoServiceAddressForm;
 import id.co.kurindo.kurindo.wizard.doservice.DoServiceForm1;
 
+import static id.co.kurindo.kurindo.util.LogUtil.makeLogTag;
+
 public class DoMartActivity extends AbstractStepperActivity {
-    private static final String TAG = "DoMartActivity";
+    private static final String TAG = makeLogTag(DoMartActivity.class);
     int step = -1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    protected AbstractStepAdapter getStepperAdapter() {
-        return new MyStepperAdapter(getSupportFragmentManager());
+
+    protected AbstractStepAdapter getStepperAdapter(int startingStepPosition) {
+        stepAdapter = getStepperAdapter();
+        mStepperLayout.setAdapter(stepAdapter, startingStepPosition);
+        return stepAdapter;
     }
 
+    protected AbstractStepAdapter getStepperAdapter() {
+        stepAdapter = new MyStepperAdapter(getSupportFragmentManager());
+        return stepAdapter;
+    }
     @Override
     public void onStepSelected(int newStepPosition) {
 
-
+        mCompleteNavigationButton.setText("Order "+ AppConfig.KEY_DOMART);
         step = newStepPosition;
     }
 
     @Override
     public void onCompleted(View completeButton) {
-
+        showActivity(TOrderShowActivity.class);
+        DoMartHelper.getInstance().clearOrder();
         finish();
     }
 
@@ -55,7 +68,7 @@ public class DoMartActivity extends AbstractStepperActivity {
                 case 0:
                     return new DoMartForm1();
                 case 1:
-                    return new DoMartForm1();
+                    return new DoMartForm2();
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }
@@ -63,7 +76,7 @@ public class DoMartActivity extends AbstractStepperActivity {
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
     }
 }

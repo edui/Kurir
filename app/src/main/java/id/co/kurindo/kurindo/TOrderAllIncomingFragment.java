@@ -25,6 +25,7 @@ import java.util.Map;
 import butterknife.Bind;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -47,6 +48,8 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
     CheckBox doCarChk;
     @Bind(R.id.checkBox7)
     CheckBox doMoveChk;
+    @Bind(R.id.checkBox8)
+    CheckBox doMartChk;
 
     String params="";
     int doSendCount = 0;
@@ -57,6 +60,7 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
     int doCarCount = 0;
     int doMoveCount = 0;
     int doShopCount = 0;
+    int doMartCount = 0;
 
     @Nullable
     @Override
@@ -91,7 +95,7 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
 
                         @Override
                         public void onResponse(String response) {
-                            Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
+                            LogUtil.logD(TAG, "MonitorOrder > Check: Response:" + response.toString());
                             //hideDialog();
 
                             try {
@@ -111,6 +115,7 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
                                         doCarCount = bundle.getInt(AppConfig.KEY_DOCAR);
                                         doMoveCount = bundle.getInt(AppConfig.KEY_DOMOVE);
                                         doShopCount = bundle.getInt(AppConfig.KEY_DOSHOP);
+                                        doMartCount = bundle.getInt(AppConfig.KEY_DOMART);
                                     }
                                     doSendChk.setText(doSendCount > 0 ? ""+doSendCount : "");
                                     doJekChk.setText(doJekCount > 0 ? ""+doJekCount:"");
@@ -119,16 +124,17 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
                                     doHijamahChk.setText(doHijamahCount > 0 ? ""+doHijamahCount:"");
                                     doCarChk.setText(doCarCount > 0 ? ""+doCarCount:"");
                                     doMoveChk.setText(doMoveCount > 0 ? ""+doMoveCount:"");
+                                    doMartChk.setText(doMartCount > 0 ? ""+doMartCount:"");
                                 } else {
                                     // Error in login. Get the error message
                                     String errorMsg = jObj.getString("message");
                                     if(errorMsg.equalsIgnoreCase("No Order Found."))  orders.clear();
-                                    Toast.makeText(getContext(), ""+errorMsg, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, ""+errorMsg, Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 // JSON error
                                 e.printStackTrace();
-                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                             progressBar.setVisibility(View.GONE);
                             refreshBtn.setVisibility(View.VISIBLE);
@@ -137,8 +143,8 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
-                            Toast.makeText(getContext(), "Network Error : "+error.getMessage(), Toast.LENGTH_LONG).show();
+                            LogUtil.logE(TAG, "MonitorOrder Error: " + error.getMessage());
+                            Toast.makeText(context, "Network Error : "+error.getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                             refreshBtn.setVisibility(View.VISIBLE);
                         }
@@ -155,11 +161,7 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
 
                         @Override
                         public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            String api = db.getUserApi();
-                            params.put("Api", api);
-
-                            return params;
+                            return getKurindoHeaders();
                         }
                     };
 
@@ -199,6 +201,9 @@ public class TOrderAllIncomingFragment extends BaseTOrderMonitoringFragment impl
                 break;
             case R.id.checkBox7:
                 params = AppConfig.KEY_DOMOVE;
+                break;
+            case R.id.checkBox8:
+                params = AppConfig.KEY_DOMART;
                 break;
             default:
         }

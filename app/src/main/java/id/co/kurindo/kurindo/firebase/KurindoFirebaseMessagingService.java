@@ -21,10 +21,17 @@ import android.view.WindowManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Map;
 
+import id.co.kurindo.kurindo.LoginActivity;
+import id.co.kurindo.kurindo.LoginPhoneFragment;
 import id.co.kurindo.kurindo.MainDrawerActivity;
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.TOrderShowActivity;
 import id.co.kurindo.kurindo.app.AppConfig;
 
 /**
@@ -88,9 +95,35 @@ public class KurindoFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void sendNotification(String messageBody, Map<String, String> data) {
         Intent intent = new Intent(this, MainDrawerActivity.class);
+        if(data != null && data.size() > 0){
+            String data1 = data.get("kurindo");
+            try {
+                JSONObject obj = new JSONObject(data1);
+                if(obj != null){
+
+                    String action = obj.getString("action");
+                    if(action != null && action.equalsIgnoreCase("detil_pesanan")) {
+                        intent = new Intent(this, TOrderShowActivity.class);
+                        String awb = obj.getString("awb");
+                        intent.putExtra("awb", awb);
+                        intent.putExtra("load", true);
+                    }else if(action != null && action.equalsIgnoreCase("activation")){
+                        intent = new Intent(this, LoginActivity.class);
+                        intent.putExtra("activation", true);
+                        String code = obj.getString("code");
+                        intent.putExtra("code", code);
+                        String phone = obj.getString("phone");
+                        intent.putExtra("phone", phone);
+                    }
+                    intent.setAction(action);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        //intent.setAction("")
-        //intent.putExtra("yourpackage.notifyId", id);
+
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);

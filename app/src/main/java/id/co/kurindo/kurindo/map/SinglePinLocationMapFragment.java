@@ -3,10 +3,12 @@ package id.co.kurindo.kurindo.map;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -75,9 +77,11 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.Route;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -93,20 +97,20 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
 
     public GoogleMap mMap;
     public GoogleApiClient mGoogleApiClient;
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static String TAG = "MAP LOCATION";
+    protected final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    protected static String TAG = "SinglePinLocationMapFragment";
     public Context mContext;
 
     @Bind(R.id.locationMarkertext)
     public TextView mLocationMarkerText;
-    private LatLng mCenterLatLong;
+    protected LatLng mCenterLatLong;
     @Bind(R.id.locationMarker)
     public LinearLayout locationMarkerLayout;
 
-    private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION= 2;
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION= 3;
-    private static final LatLngBounds BOUNDS_ID = new LatLngBounds(new LatLng(-0, 0), new LatLng(0, 0));
+    protected static final int REQUEST_CODE_AUTOCOMPLETE = 1;
+    protected static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION= 2;
+    protected static final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION= 3;
+    protected static final LatLngBounds BOUNDS_ID = new LatLngBounds(new LatLng(-0, 0), new LatLng(0, 0));
 
     protected TUserAdapter tUserAdapter;
     protected ArrayList<TUser> data = new ArrayList<>();
@@ -143,13 +147,16 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     protected AutoCompleteTextView mOriginAutoCompleteTextView;
     protected PlaceArrayAdapter mPlaceArrayAdapter;
 
+    protected TUser tempUserAddress;
     protected Route route;
     protected TUser origin = new TUser();
     protected Location mLastLocation;
     protected Marker originMarker;
 
     public SupportMapFragment mapFragment;
-    View view;
+    protected View view;
+
+    protected ProgressDialog progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -161,6 +168,8 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mContext = getContext();
+
         if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null)
@@ -171,13 +180,14 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         } catch (InflateException e) {
             e.printStackTrace();
         }
-        mContext = getContext();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         //mapFragment.getMapAsync(this);
         //buildGoogleApiClient();
 
         initialize();
+        progressBar = new ProgressDialogCustom(mContext);
+
         showAddressLayout();
 
         tUserAdapter = new TUserAdapter(getContext(), data);
@@ -193,7 +203,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
                 Log.i("", "Selected: " + item.description);
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
                 placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-                Log.i("", "Fetching details for ID: " + item.placeId);
+                LogUtil.logI("", "Fetching details for ID: " + item.placeId);
             }
         };
         mOriginAutoCompleteTextView.setOnItemClickListener(adapterOnItemClik);
@@ -231,6 +241,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         return view;
 
     }
+
 
     private void initialize() {
         if(tvOrigin == null || mLocationMarkerText == null){
@@ -313,9 +324,10 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         @Override
         public void onResult(PlaceBuffer places) {
             if (!places.getStatus().isSuccess()) {
-                Log.e("ResultCallback", "Place query did not complete. Error: " +places.getStatus().toString());
+                LogUtil.logE("ResultCallback", "Place query did not complete. Error: " +places.getStatus().toString());
                 return;
             }
+            progressBar.show();
             // Selecting the first object buffer.
             final Place place = places.get(0);
             CharSequence attributions = places.getAttributions();
@@ -340,6 +352,12 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
             reDrawMarker();
             //if(!canDrawRoute())
                 moveCameraToLocation( place.getLatLng());
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            progressBar.dismiss();
         }
     };
 
@@ -357,6 +375,10 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         if(originMode){
             originMode = false;
             showAddressLayout();
+            if(tempUserAddress != null) {
+                origin = (route!= null && route.getOrigin() != null? route.getOrigin(): tempUserAddress);
+                tempUserAddress = null;
+            }
             if(origin != null && origin.getAddress().getLocation() != null)
                 moveCameraToLocation(origin.getAddress().getLocation());
             showMap();
@@ -428,6 +450,8 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
 
     @OnClick(R.id.locationMarkertext)
     public void onClick_mLocationMarkerText(){
+        progressBar.show();
+
         if(originMode){
             origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
             //tvOrigin.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
@@ -450,6 +474,8 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         showAddressLayout();
         //refreshMap();
         //startIntentService(mLastLocation);
+        tempUserAddress = null;
+        progressBar.dismiss();
     }
 
     protected void showMap() {
@@ -496,7 +522,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //Log.d(TAG, "requestAddress Response: " + response.toString());
+                //LogUtil.logD(TAG, "requestAddress Response: " + response.toString());
                 List<List<HashMap<String, String>>> routes = null;
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -529,7 +555,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //Log.d(TAG, "requestAddress Response: " + response.toString());
+                //LogUtil.logD(TAG, "requestAddress Response: " + response.toString());
                 List<List<HashMap<String, String>>> routes = null;
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -606,7 +632,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "OnMapReady");
+        LogUtil.logD(TAG, "OnMapReady");
         mMap = googleMap;
         mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
             @Override
@@ -625,7 +651,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                Log.d("Camera position change" + "", cameraPosition + "");
+                LogUtil.logD("Camera position change" + "", cameraPosition + "");
                 mCenterLatLong = cameraPosition.target;
 
                 //mMap.clear();
@@ -670,7 +696,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         }
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Log.d(TAG, "ON connected ");
+            LogUtil.logD(TAG, "ON connected ");
             if(origin.getAddress().getLocation() == null) {
                 origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
                 originMode= true;
@@ -706,7 +732,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Connection suspended");
+        LogUtil.logI(TAG, "Connection suspended");
         mGoogleApiClient.connect();
     }
 
@@ -780,7 +806,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
 
     private void changeMap(Location location) {
 
-        Log.d(TAG, "Reaching map" + mMap);
+        LogUtil.logD(TAG, "Reaching map" + mMap);
 
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

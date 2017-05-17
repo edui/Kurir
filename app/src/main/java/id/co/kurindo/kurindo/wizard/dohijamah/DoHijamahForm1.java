@@ -1,5 +1,7 @@
 package id.co.kurindo.kurindo.wizard.dohijamah;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +19,7 @@ import com.stepstone.stepper.VerificationError;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 /**
@@ -26,6 +29,8 @@ import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 public class DoHijamahForm1 extends BaseStepFragment implements Step {
     private static final String TAG = "DoHijamahForm1";
     VerificationError invalid = null;
+    Context context;
+    ProgressDialog progressBar;
 
     @Bind(R.id.pilihLayanan)
     Spinner pilihLayanan;
@@ -40,11 +45,18 @@ public class DoHijamahForm1 extends BaseStepFragment implements Step {
 
     @Bind(R.id.tvTotalPrice)
     TextView tvTotalPrice;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getContext();
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_dohijamah1);
+        progressBar = new ProgressDialogCustom(context);
+
         return v;
     }
     private void setup_spinner() {

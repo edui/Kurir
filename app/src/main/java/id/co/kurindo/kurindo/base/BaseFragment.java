@@ -59,7 +59,7 @@ public class BaseFragment extends Fragment {
         View view = inflater.inflate(layout, container, false);
         ButterKnife.bind(this, view);
 
-        LogUtil.logD(TAG, ">>> view inflated");
+        //LogUtil.logD(TAG, ">>> view inflated");
         return view;
     }
 
@@ -202,6 +202,7 @@ public class BaseFragment extends Fragment {
         if(api != null && !api.isEmpty()){
             headers = new HashMap<>();
             headers.put("Api", api);
+            headers.put("Authorization", api);
         }
         return headers;
     }

@@ -53,7 +53,7 @@ public class DirectoryFragment1 extends Fragment {
                     data.clear();
                     ImageModel imageModel = new ImageModel();
                     imageModel.setName("test");
-                    imageModel.setDrawable(R.drawable.cover_kurindo);
+                    imageModel.setDrawable(R.drawable.cover1);
                     data.add(imageModel);
                 }
                 mAdapter.notifyDataSetChanged();

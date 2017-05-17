@@ -3,26 +3,40 @@ package id.co.kurindo.kurindo.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by dwim on 2/9/2017.
  */
 
-public class TUser implements Parcelable {
+public class TUser implements Parcelable, Cloneable {
+    @Expose(serialize = false)
     private String firstname;
+    @Expose(serialize = false)
     private String lastname;
 
+    @Expose(serialize = false)
     private String email;
     private String phone;
+    @Expose(serialize = false)
     private String gender = "DEFAULT";
+    @Expose(serialize = false)
     private Address address;
 
+    @Expose(serialize = false)
     private String role;
+    @Expose(serialize = false)
     private String nik;
+    @Expose(serialize = false)
     private String simc;
 
+    @Expose(serialize = false)
     private boolean active;
+    @Expose(serialize = false)
     private boolean approved;
+    @Expose(serialize = false)
     private String created_at;
+
     private String api_key;
 
     public TUser() {
@@ -192,5 +206,10 @@ public class TUser implements Parcelable {
         if(phone != null) formatted += ", "+phone;
         if(email != null) formatted += ", "+email;
         return formatted;
+    }
+
+    @Override
+    public TUser clone() throws CloneNotSupportedException {
+        return (TUser) super.clone();
     }
 }

@@ -30,6 +30,7 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.Product;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.doshop.DoShopCheckoutActivity;
 
 /**
@@ -80,7 +81,7 @@ public class ShoppingCartFragment extends BaseFragment implements CartProductAda
         bClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Clearing the shopping cart");
+                LogUtil.logD(TAG, "Clearing the shopping cart");
                 cart.clear();
                 cartAdapter.updateCartItems(getCartItems(cart));
                 cartAdapter.notifyDataSetChanged();
@@ -154,7 +155,7 @@ public class ShoppingCartFragment extends BaseFragment implements CartProductAda
 
     private List<CartItem> getCartItems(Cart cart) {
         List<CartItem> cartItems = new ArrayList<CartItem>();
-        Log.d(TAG, "Current shopping cart: " + cart);
+        LogUtil.logD(TAG, "Current shopping cart: " + cart);
 
         Map<Saleable, Integer> itemMap = cart.getItemWithQuantity();
 
@@ -165,7 +166,7 @@ public class ShoppingCartFragment extends BaseFragment implements CartProductAda
             cartItems.add(cartItem);
         }
 
-        Log.d(TAG, "Cart item list: " + cartItems);
+        LogUtil.logD(TAG, "Cart item list: " + cartItems);
         return cartItems;
     }
 
@@ -205,7 +206,7 @@ public class ShoppingCartFragment extends BaseFragment implements CartProductAda
         Cart cart = CartHelper.getCart();
         List<CartItem> cartItems = getCartItems(cart);
         Product product = cartItems.get(position).getProduct();
-        Log.d(TAG, "Viewing product: " + product.getName());
+        LogUtil.logD(TAG, "Viewing product: " + product.getName());
         //bundle.putSerializable("product", product);
         bundle.putParcelable("product", product);
         bundle.putString("shopid", ""+product.getShopid());

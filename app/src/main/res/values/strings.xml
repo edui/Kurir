@@ -72,6 +72,11 @@
         <item>Fisioterapi</item>
         <item>Konsultasi</item>
     </string-array>
+    <string-array name="pilih_lokasi_array">
+        <item>Lokasi saat ini</item>
+        <item>Homebase</item>
+    </string-array>
+
     <string-array name="doservice_layanan_array">
         <item>-Pilih-</item>
         <item>Cuci AC</item>
@@ -101,6 +106,12 @@
     <string-array name="tipe_product_array">
         <item>Produk</item>
         <item>Jasa</item>
+    </string-array>
+    <string-array name="docar_tujuan_array">
+        <item>City Tour</item>
+        <item>Dalam Kota</item>
+        <item>Luar Kota</item>
+        <item>Shuttle - Antar Jemput</item>
     </string-array>
 
     <string name="title_activity_maps">Map</string>
@@ -155,5 +166,40 @@
     <string name="dowash_type2">SPREI - BED COVER- GORDYN</string>
     <string name="packet">Packet Pengiriman</string>
     <string name="location_address">Alamat Lokasi</string>
-    <string name="detail_dojek">Detail DO-JEK</string>
+    <string name="detail">Detail</string>
+    <string name="label_docar_shuttle">Shuttle - Antar -Jemput</string>
+    <string name="label_docar_rental">Rental Mobil</string>
+    <string name="label_docar_wisata">Wisata</string>
+    <string name="label_fullday">Full Day</string>
+    <string name="label_12jam">12 Jam</string>
+    <string name="label_8jam">8 jam</string>
+    <string name="label_allin">All In</string>
+    <string name="label_bbminclude">Sopir &#38; BBM</string>
+    <string name="label_tanpabbm">Sopir Tanpa BBM</string>
+    <string name="label_dengansopir">Dengan Sopir</string>
+    <string name="label_tanpasopir">Tanpa Sopir</string>
+    <string name="domove_form">DO-MOVE Form</string>
+    <string name="label_reason1">Mohon maaf, Kurir kami sedang full order, Silahkan untuk memilih pilihan jam pickup/drop point di waktu yang lain</string>
+    <string name="label_reason2">Mohon maaf, Hari ini kami sedang libur beroperasi dan mohon maaf atas ketidaknyamanannya</string>
+    <string name="label_reason3">Orderan tidak relevan, mohon ulangi kembali membuat order yang baru</string>
+    <string name="label_reason4">Mohon maaf, Layanan belum tersedia di area anda</string>
+    <string name="label_reason5">Tuliskan alasan lainnya</string>
+    <string name="detail_titipan">Detail Titipan</string>
+    <string name="pengiriman">Pengiriman</string>
+    <string name="detil_layanan">Detil Layanan</string>
+    <string name="titip_belanja">Titipan Belanja</string>
+    <string name="detail_product">Detail Product</string>
+    <string name="spesifikasi_mobil">Spesifikasi Mobil</string>
+    <string name="deskripsi_mobil">Deskripsi Mobil</string>
+    <string name="detail_pesanan">Detail Pemesanan</string>
+    <string name="tujuan">Tujuan</string>
+    <string name="tanggal">Tanggal</string>
+    <string name="durasi">Durasi</string>
+    <string name="fasilitas">Fasilitas</string>
+    <string name="include_biaya">biaya termasuk :</string>
+    <string name="exclude_biaya">tidak termasuk :</string>
+    <string name="catatan">Catatan</string>
+    <string name="label_tunai">Tunai</string>
+    <string name="label_transfer_uangmuka">Transfer Uang Muka (25%)</string>
+    <string name="label_transfer_semua">Transfer Semua</string>
 </resources>

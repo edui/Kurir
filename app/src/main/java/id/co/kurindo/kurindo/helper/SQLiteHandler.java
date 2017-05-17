@@ -603,7 +603,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_TYPE, type);
+        values.put(KEY_TYPE, type.toUpperCase());
         values.put(KEY_FIRSTNAME, user.getFirstname());
         values.put(KEY_LASTNAME, user.getLastname());
         values.put(KEY_EMAIL, user.getEmail());
@@ -732,9 +732,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
 
+    public TUser getUserAddressByType(String type) {
+        String selectQuery = "SELECT  * FROM " + TABLE_USER_ADDRESS + " WHERE "+KEY_TYPE+" = '"+type.toUpperCase()+"'";
+        return parseUserAddress(selectQuery);
+    }
     public TUser getUserAddress(String phone) {
-        TUser r = new TUser();
         String selectQuery = "SELECT  * FROM " + TABLE_USER_ADDRESS + " WHERE phone = '"+phone+"'";
+        return parseUserAddress(selectQuery);
+
+    }
+    private TUser parseUserAddress(String selectQuery) {
+        TUser r = new TUser();
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -776,5 +784,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Fetching Recipient from Sqlite: ");
         return r;
     }
+
 
 }

@@ -3,24 +3,25 @@ package id.co.kurindo.kurindo.wizard;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +66,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
@@ -73,6 +76,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -84,6 +88,7 @@ import id.co.kurindo.kurindo.adapter.PaymentAdapter;
 import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.map.DataParser;
 import id.co.kurindo.kurindo.map.MapUtils;
@@ -93,7 +98,7 @@ import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.Payment;
 import id.co.kurindo.kurindo.model.Route;
 import id.co.kurindo.kurindo.model.TUser;
-import id.co.kurindo.kurindo.wizard.BaseStepFragment;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -107,17 +112,17 @@ public class BaseLocationMapFragment
         extends BaseStepFragment
         implements Step, OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private GoogleMap mMap;
-    private GoogleApiClient mGoogleApiClient;
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static String TAG = "MAP LOCATION";
-    Context mContext;
+    protected  GoogleMap mMap;
+    protected  GoogleApiClient mGoogleApiClient;
+    protected  final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    protected  static String TAG = "BaseLocationMapFragment";
+    protected Context mContext;
 
     @Bind(R.id.locationMarkertext)
-    TextView mLocationMarkerText;
+    protected TextView mLocationMarkerText;
     private LatLng mCenterLatLong;
     @Bind(R.id.locationMarker)
-    LinearLayout locationMarkerLayout;
+    protected LinearLayout locationMarkerLayout;
 
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION= 2;
@@ -125,27 +130,27 @@ public class BaseLocationMapFragment
     private static final LatLngBounds BOUNDS_ID = new LatLngBounds(new LatLng(-0, 0), new LatLng(0, 0));
 
     @Bind(R.id.iconOrigin)
-    ImageView ivIconOrigin;
+    protected ImageView ivIconOrigin;
     @Bind(R.id.iconDestination)
-    ImageView ivIconDestination;
-    TUserAdapter tUserAdapter;
-    ArrayList<TUser> data = new ArrayList<>();
+    protected ImageView ivIconDestination;
+    protected TUserAdapter tUserAdapter;
+    protected ArrayList<TUser> data = new ArrayList<>();
 
     @Bind(R.id.tvOrigin)
-    TextView tvOrigin;
+    protected TextView tvOrigin;
     @Bind(R.id.tvDestination)
-    TextView tvDestination;
+    protected TextView tvDestination;
     @Bind(R.id.tvDistanceInfo)
-    TextView tvDistanceInfo;
+    protected TextView tvDistanceInfo;
     @Bind(R.id.tvPriceInfo)
-    TextView tvPriceInfo;
+    protected TextView tvPriceInfo;
 
     @Bind(R.id.imageMarker)
-    ImageView imageMarker;
+    protected ImageView imageMarker;
     @Bind(R.id.ivAddOriginNotes)
-    ImageView ivAddOriginNotes;
+    protected ImageView ivAddOriginNotes;
     @Bind(R.id.ivAddDestinationNotes)
-    ImageView ivAddDestinationNotes;
+    protected ImageView ivAddDestinationNotes;
 
     @Bind(R.id.etOriginNotes)
     protected EditText etOriginNotes;
@@ -154,41 +159,42 @@ public class BaseLocationMapFragment
     protected EditText etDestinationNotes;
 
     @Bind(R.id.destination_layout)
-    LinearLayout destinationLayout;
+    protected LinearLayout destinationLayout;
     @Bind(R.id.origin_layout)
-    LinearLayout originLayout;
+    protected LinearLayout originLayout;
 
     @Bind(R.id.orderInfo_layout)
-    LinearLayout orderLayout;
+    protected LinearLayout orderLayout;
     @Bind(R.id.service_layout)
-    LinearLayout serviceLayout;
+    protected LinearLayout serviceLayout;
     @Bind(R.id.ivSwitchInfo)
-    ImageView ivSwitchInfo;
+    protected ImageView ivSwitchInfo;
 
-    boolean originMode = true;
-    boolean destinationMode;
-    boolean addOriginNote;
-    boolean addDestinationNote;
+    protected boolean originMode = true;
+    protected boolean destinationMode;
+    protected boolean addOriginNote;
+    protected boolean addDestinationNote;
 
     @Bind(R.id.tvOriginAutoComplete)
-    AutoCompleteTextView mOriginAutoCompleteTextView;
+    protected AutoCompleteTextView mOriginAutoCompleteTextView;
     @Bind(R.id.tvDestinationAutoComplete)
-    AutoCompleteTextView mDestinationAutoCompleteTextView;
-    PlaceArrayAdapter mPlaceArrayAdapter;
+    protected AutoCompleteTextView mDestinationAutoCompleteTextView;
+    protected PlaceArrayAdapter mPlaceArrayAdapter;
 
     protected Route route;
+    protected TUser tempUserAddress;
     protected TUser origin = new TUser();
     protected TUser destination = new TUser();
-    Location mLastLocation;
-    Marker originMarker;
-    Marker destinationMarker;
+    protected Location mLastLocation;
+    protected Marker originMarker;
+    protected Marker destinationMarker;
 
     //@Bind(R.id.ButtonAddOrder)
     //AppCompatButton buttonAddOrder;
 
     @Bind(R.id.rvPayment)
-    RecyclerView rvPayment;
-    PaymentAdapter paymentAdapter;
+    protected RecyclerView rvPayment;
+    protected PaymentAdapter paymentAdapter;
     protected Payment payment;
 
     @Bind(R.id.rgDoType)
@@ -208,18 +214,20 @@ public class BaseLocationMapFragment
     protected float beratKiriman = 0;
     protected float volume = 0;
 
+    protected boolean updatePlace = false;
 
     @Bind(R.id.input_service_code)
-    Spinner _serviceCodeText;
-    PacketServiceAdapter packetServiceAdapter;
+    protected Spinner _serviceCodeText;
+    protected PacketServiceAdapter packetServiceAdapter;
 
-    SupportMapFragment mapFragment;
+    protected SupportMapFragment mapFragment;
     protected boolean inDoSendCoverageArea = true;
     protected boolean inDoMoveCoverageArea = true;
     protected boolean inDoJekCoverageArea = true;
     protected boolean inDoCarCoverageArea = true;
-    private int layout;
 
+    protected ProgressDialog progressBar;
+    
     public int getLayout() {
         return R.layout.fragment_maps_dosend;
     }
@@ -233,7 +241,6 @@ public class BaseLocationMapFragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflateAndBind(inflater, container, getLayout());
-
         if (DoSendHelper.getInstance().getPacket() != null && DoSendHelper.getInstance().getPacket().getOrigin() != null) {
             origin = DoSendHelper.getInstance().getPacket().getOrigin();
             destination = DoSendHelper.getInstance().getPacket().getDestination();
@@ -246,11 +253,13 @@ public class BaseLocationMapFragment
 
         initialize(view);
 
+        progressBar = new ProgressDialogCustom(mContext);
+
         showAddressLayout();
 
-        tUserAdapter = new TUserAdapter(getContext(), data);
+        tUserAdapter = new TUserAdapter(mContext, data);
 
-        mPlaceArrayAdapter = new PlaceArrayAdapter(getContext(), android.R.layout.simple_list_item_1, BOUNDS_ID, null);
+        mPlaceArrayAdapter = new PlaceArrayAdapter(mContext, android.R.layout.simple_list_item_1, BOUNDS_ID, null);
         mOriginAutoCompleteTextView.setAdapter(mPlaceArrayAdapter);
         mDestinationAutoCompleteTextView.setAdapter(mPlaceArrayAdapter);
 
@@ -259,39 +268,39 @@ public class BaseLocationMapFragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
                 final String placeId = String.valueOf(item.placeId);
-                Log.i("", "Selected: " + item.description);
+                LogUtil.logI("", "Selected: " + item.description);
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
                 placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-                Log.i("", "Fetching details for ID: " + item.placeId);
+                LogUtil.logI("", "Fetching details for ID: " + item.placeId);
             }
         };
         mOriginAutoCompleteTextView.setOnItemClickListener(adapterOnItemClik);
         mDestinationAutoCompleteTextView.setOnItemClickListener(adapterOnItemClik);
-        paymentAdapter = new PaymentAdapter(getContext(), getPaymentData(), new PaymentAdapter.OnItemClickListener() {
+        paymentAdapter = new PaymentAdapter(mContext, getPaymentData(), new PaymentAdapter.OnItemClickListener() {
             @Override
             public void onActionButtonClick(View view, int position) {
                 Payment p = paymentAdapter.getItem(position);
                 if (p.getAction().equalsIgnoreCase(AppConfig.ISI_SALDO)) {
-                    Toast.makeText(getContext(), "TODO : " + AppConfig.ISI_SALDO, LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "TODO : " + AppConfig.ISI_SALDO, LENGTH_SHORT).show();
                 }
             }
         });
         paymentAdapter.selected(1);
         payment = paymentAdapter.getItem(1);
         rvPayment.setAdapter(paymentAdapter);
-        rvPayment.setLayoutManager(new GridLayoutManager(getContext(), 1) {
+        rvPayment.setLayoutManager(new GridLayoutManager(mContext, 1) {
             @Override
             public boolean canScrollVertically() {
                 return false;
             }
         });
         rvPayment.setHasFixedSize(true);
-        rvPayment.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+        rvPayment.addOnItemTouchListener(new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Payment selected = paymentAdapter.getItem(position);
                 if (selected.getCredit() == 0) {
-                    Toast.makeText(getContext(), "Saldo tidak mencukupi. Silahkan isi ulang saldo anda.", LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Saldo tidak mencukupi. Silahkan isi ulang saldo anda.", LENGTH_SHORT).show();
                     position = paymentAdapter.getSelectedPosition();
                 }
                 paymentAdapter.selected(position);
@@ -302,30 +311,17 @@ public class BaseLocationMapFragment
         rgDoType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (group.getCheckedRadioButtonId()) {
-                    case R.id.radio_dosend:
-                        doType = AppConfig.KEY_DOSEND;
-                        break;
-                    case R.id.radio_dojek:
-                        doType = AppConfig.KEY_DOJEK;
-                        break;
-                    case R.id.radio_domove:
-                        doType = AppConfig.KEY_DOMOVE;
-                        break;
-                    case R.id.radio_docar:
-                        doType = AppConfig.KEY_DOCAR;
-                        break;
-                }
-                if (canDrawRoute()) requestprice();
+                rgDoType_onCheckedChanged(group, checkedId);
             }
         });
 
-        packetServiceAdapter = new PacketServiceAdapter(getContext(), AppConfig.getPacketServiceList(), 1);
+        packetServiceAdapter = new PacketServiceAdapter(mContext, AppConfig.getPacketServiceList(doType), 1);
         _serviceCodeText.setAdapter(packetServiceAdapter);
         _serviceCodeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 serviceCode = ((PacketService) parent.getItemAtPosition(position)).getCode();
+                cek_with_calendar_time();
                 if (canDrawRoute()) requestprice();
             }
 
@@ -365,27 +361,138 @@ public class BaseLocationMapFragment
         } else {
             Toast.makeText(mContext, "Location not supported in this device", LENGTH_SHORT).show();
         }
-
+        cek_with_calendar_time();
+        //_serviceCodeText.setSelection(1);
         return view;
 
+    }
+
+    protected void rgDoType_onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (group.getCheckedRadioButtonId()) {
+            case R.id.radio_dosend:
+                doType = AppConfig.KEY_DOSEND;
+                break;
+            case R.id.radio_dojek:
+                doType = AppConfig.KEY_DOJEK;
+                break;
+            case R.id.radio_domove:
+                doType = AppConfig.KEY_DOMOVE;
+                break;
+            case R.id.radio_docar:
+                doType = AppConfig.KEY_DOCAR;
+                break;
+        }
+        if (canDrawRoute()) requestprice();
+    }
+
+
+    int hour;
+    int minute;
+    private void cek_with_calendar_time() {
+        Calendar c = Calendar.getInstance();
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
+        cek_time();
+    }
+
+    private void cek_time() {
+        if(serviceCode != null){
+            if(AppConfig.isNightService(serviceCode)){
+                if(hour+1 >= AppConfig.START_ENS) {
+                    hour++;
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
+                } else {
+                    hour = AppConfig.START_ENS;
+                }
+            }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_SDS)){
+                if(hour + 1 < AppConfig.START_SDS) {
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(0); //sds
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
+                } else if(hour+1 >= AppConfig.START_ENS) {
+                    hour++;
+                    _serviceCodeText.setSelection(2); //nds
+                }else{
+                    hour++;
+                    _serviceCodeText.setSelection(0); //sds
+                }
+            }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_NDS)){
+                if(hour + 1 < AppConfig.START_SDS) {
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
+                } else if(hour+1 >= AppConfig.END_ENS) {
+                    hour = AppConfig.START_SDS +2;
+                } else if(hour+1 >= AppConfig.START_ENS) {
+                    hour = AppConfig.START_SDS +2;
+                    //hour++;
+                    //_serviceCodeText.setSelection(3);
+                }
+            }
+        }
     }
 
     private void initialize(View view) {
 
         if(tvOrigin == null){
             mLocationMarkerText = (TextView) view.findViewById(R.id.locationMarkertext);
+            mLocationMarkerText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick_mLocationMarkerText();
+                }
+            });
             locationMarkerLayout = (LinearLayout) view.findViewById(R.id.locationMarker);
             ivIconOrigin = (ImageView) view.findViewById(R.id.iconOrigin);
+            ivIconOrigin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick_IconOrigin();
+                }
+            });
             ivIconDestination = (ImageView) view.findViewById(R.id.iconDestination);
+            ivIconDestination.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick_IconDestination();
+                }
+            });
 
             tvOrigin = (TextView) view.findViewById(R.id.tvOrigin);
+            tvOrigin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick_tvOrigin();
+                }
+            });
             tvDestination = (TextView) view.findViewById(R.id.tvDestination);
+            tvDestination.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick_tvDestination();
+                }
+            });
             tvDistanceInfo = (TextView) view.findViewById(R.id.tvDistanceInfo);
             tvPriceInfo = (TextView) view.findViewById(R.id.tvPriceInfo);
 
             imageMarker = (ImageView) view.findViewById(R.id.imageMarker);
             ivAddOriginNotes = (ImageView) view.findViewById(R.id.ivAddOriginNotes);
+            ivAddOriginNotes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick_ivAddOriginNotes();
+                }
+            });
             ivAddDestinationNotes = (ImageView) view.findViewById(R.id.ivAddDestinationNotes);
+            ivAddDestinationNotes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick_ivAddDestinationNotes();
+                }
+            });
 
             etOriginNotes = (EditText) view.findViewById(R.id.etOriginNotes);
             etDestinationNotes = (EditText) view.findViewById(R.id.etDestinationNotes);
@@ -395,6 +502,12 @@ public class BaseLocationMapFragment
             orderLayout = (LinearLayout) view.findViewById(R.id.orderInfo_layout);
             serviceLayout = (LinearLayout) view.findViewById(R.id.service_layout);
             ivSwitchInfo = (ImageView) view.findViewById(R.id.ivSwitchInfo);
+            ivSwitchInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    OnClick_ivSwitchInfo();
+                }
+            });
             mOriginAutoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.tvOriginAutoComplete);
             mDestinationAutoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.tvDestinationAutoComplete);
             rvPayment = (RecyclerView) view.findViewById(R.id.rvPayment);
@@ -441,10 +554,11 @@ public class BaseLocationMapFragment
         @Override
         public void onResult(PlaceBuffer places) {
             if (!places.getStatus().isSuccess()) {
-                Log.e("ResultCallback", "Place query did not complete. Error: " +places.getStatus().toString());
+                LogUtil.logE("ResultCallback", "Place query did not complete. Error: " +places.getStatus().toString());
                 return;
             }
 
+            progressBar.show();
 
             // Selecting the first object buffer.
             final Place place = places.get(0);
@@ -452,7 +566,9 @@ public class BaseLocationMapFragment
 
             String name = place.getName().toString();
             String address = place.getAddress().toString();
+            updatePlace = true;
             if(originMode){
+                tempUserAddress = origin;
                 tvOrigin.setText(address);
                 etOriginNotes.setText(name);
                 etOriginNotes.setFocusable(false);
@@ -467,6 +583,7 @@ public class BaseLocationMapFragment
                 //if(destination.getAddress().getLocation() != null) originMode = false;
             }
             if(destinationMode){
+                tempUserAddress = origin;
                 tvDestination.setText(address);
                 etDestinationNotes.setText(name);
                 etDestinationNotes.setFocusable(false);
@@ -488,8 +605,12 @@ public class BaseLocationMapFragment
             reDrawMarker();
             //if(!canDrawRoute())
             moveCameraToLocation( place.getLatLng());
-
-
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            progressBar.dismiss();
 
         }
     };
@@ -510,19 +631,31 @@ public class BaseLocationMapFragment
         if(originMode){
             originMode = false;
             showAddressLayout();
-            if(origin != null && origin.getAddress().getLocation() != null)
-                moveCameraToLocation(origin.getAddress().getLocation());
-            showMap();
-            return true;
+            if(tempUserAddress != null) {
+                origin = (route!= null && route.getOrigin() != null? route.getOrigin(): tempUserAddress);
+                tempUserAddress = null;
+            }
+            //if(!canDrawRoute()){
+                if(origin != null && origin.getAddress().getLocation() != null)
+                    moveCameraToLocation(origin.getAddress().getLocation());
+                showMap();
+                return true;
+            //}
         }
         if(destinationMode){
             destinationMode = false;
             showAddressLayout();
-            if(destination.getAddress().getLocation() == null) moveCameraToLocation(origin.getAddress().getLocation());
-            else moveCameraToLocation(destination.getAddress().getLocation());
-            showMap();
+            if(tempUserAddress != null) {
+                destination = (route != null && route.getDestination() != null? route.getDestination() : tempUserAddress);
+                tempUserAddress = null;
+            }
+            //if(!canDrawRoute()){
+                if(destination.getAddress()==null || destination.getAddress().getLocation() == null) moveCameraToLocation(origin.getAddress().getLocation());
+                else moveCameraToLocation(destination.getAddress().getLocation());
+                showMap();
 
-            return true;
+                return true;
+            //}
         }
         if(canDrawRoute()){
             resetDestination();
@@ -550,6 +683,9 @@ public class BaseLocationMapFragment
         etDestinationNotes.setVisibility(View.GONE);
         destinationMode = true;
         //buttonAddOrder.setVisibility(View.GONE);
+        tvPriceInfo.setText(AppConfig.formatCurrency(0));
+        tvDistanceInfo.setText("Harga ( ~ ) : ");
+
     }
     private void showAddressLayout() {
         tvOrigin.setVisibility(View.VISIBLE);
@@ -598,31 +734,59 @@ public class BaseLocationMapFragment
 
     @OnClick(R.id.locationMarkertext)
     public void onClick_mLocationMarkerText(){
-        if(destinationMode){
-            destination.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
-            //tvDestination.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
-            etDestinationNotes.setText(null);
-            etDestinationNotes.setVisibility(View.GONE);
-            addDestinationNote= false;
-        }else {
-            origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
-            //tvOrigin.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
-            etOriginNotes.setText(null);
-            etOriginNotes.setVisibility(View.GONE);
-            addOriginNote= false;
+        progressBar.show();
+        if(locationDiff()){
+            if(destinationMode){
+                destination.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+                //tvDestination.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
+                etDestinationNotes.setText(null);
+                etDestinationNotes.setVisibility(View.GONE);
+                addDestinationNote= false;
+            }else  if(originMode){
+                origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
+                //tvOrigin.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
+                etOriginNotes.setText(null);
+                etOriginNotes.setVisibility(View.GONE);
+                addOriginNote= false;
+            }
+            requestAddress(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
         }
         inDoSendCoverageArea = true;
         inDoMoveCoverageArea = true;
-        requestAddress(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-
+        updatePlace = false;
+        destinationMode =false;
+        originMode =false;
+        tempUserAddress = null;
         mLocationMarkerText.setVisibility(View.GONE);
 
         showAddressLayout();
 
+        refreshMap();
         //refreshMap();
         //startIntentService(mLastLocation);
-
+        progressBar.dismiss();
     }
+
+    private boolean locationDiff() {
+        if(destinationMode){
+            if(destination ==null || destination.getAddress() == null || destination.getAddress().getLocation() == null || mLastLocation == null) return true;
+            BigDecimal a = BigDecimal.valueOf( destination.getAddress().getLocation().longitude ).setScale(4, BigDecimal.ROUND_HALF_UP);
+            BigDecimal b = BigDecimal.valueOf( mLastLocation.getLongitude() ).setScale(4, BigDecimal.ROUND_HALF_UP);
+            BigDecimal c = BigDecimal.valueOf( destination.getAddress().getLocation().latitude).setScale(4, BigDecimal.ROUND_HALF_UP);
+            BigDecimal d = BigDecimal.valueOf( mLastLocation.getLatitude() ).setScale(4, BigDecimal.ROUND_HALF_UP);
+            return !(a.equals(b) && c.equals(d));
+        }
+        if(originMode){
+            if(origin == null || origin.getAddress() == null || origin.getAddress().getLocation() == null || mLastLocation == null ) return  true;
+            BigDecimal a = BigDecimal.valueOf( origin.getAddress().getLocation().longitude ).setScale(4, BigDecimal.ROUND_HALF_UP);
+            BigDecimal b = BigDecimal.valueOf( mLastLocation.getLongitude() ).setScale(4, BigDecimal.ROUND_HALF_UP);
+            BigDecimal c = BigDecimal.valueOf( origin.getAddress().getLocation().latitude).setScale(4, BigDecimal.ROUND_HALF_UP);
+            BigDecimal d = BigDecimal.valueOf( mLastLocation.getLatitude() ).setScale(4, BigDecimal.ROUND_HALF_UP);
+            return !(a.equals(b) && c.equals(d));
+        }
+        return false;
+    }
+
     @OnClick(R.id.ButtonAddOrder)
     public void onClick_buttonAddOrder(){
         String onotes = etOriginNotes.getText().toString();
@@ -635,7 +799,7 @@ public class BaseLocationMapFragment
             //showActivity( DoSendOrderActivity.class );
             //finish();
         }else{
-            Toast.makeText(getContext(), doType+" : available soon.", LENGTH_SHORT).show();
+            Toast.makeText(mContext, doType+" : available soon.", LENGTH_SHORT).show();
         }
     }
 
@@ -655,6 +819,10 @@ public class BaseLocationMapFragment
         //serviceLayout.setMinimumHeight(100);
         //buttonAddOrder.setVisibility(View.VISIBLE );
     }
+    private void showServicePanel(boolean show){
+        showOrderpanel(!show);
+        orderLayout.setVisibility(View.VISIBLE );
+    }
     private void showOrderpanel(boolean show){
         orderLayout.setVisibility((show ? View.VISIBLE : View.GONE ));
         rvPayment.setVisibility((show ? View.VISIBLE : View.GONE ));
@@ -671,18 +839,30 @@ public class BaseLocationMapFragment
 
 
     private void requestAddress(LatLng latLng) {
+        //progressBar.setVisibility(View.VISIBLE);
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message mesg) {
                 throw new RuntimeException("RuntimeException");
             }
         };
-        requestAddress_inBackground(latLng);
-        //requestAddress(latLng, handler);
-        //try { Looper.loop(); } catch(RuntimeException e2) { }
+        //requestAddress_inBackground(latLng);
+        requestAddress(latLng, handler);
+        try { Looper.loop(); } catch(RuntimeException e2) { }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(!updatePlace){
+            originMode = false;
+            destinationMode = false;
+        }
+        //progressBar.setVisibility(View.GONE);
     }
 
     private void requestAddress_inBackground(LatLng latLng) {
+        progressBar.show();
         String url = MapUtils.getGeocodeUrl(latLng);
         addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -717,7 +897,9 @@ public class BaseLocationMapFragment
                     }else if(destinationMode){
                         if(origin.getAddress().getLocation() != null) destinationMode = false;
                     }
+                    Toast.makeText(mContext, "Error "+e.getMessage(), LENGTH_SHORT).show();
                 }
+                progressBar.dismiss();
                 refreshMap();
             }
         }, new Response.ErrorListener() {
@@ -729,6 +911,8 @@ public class BaseLocationMapFragment
                 }else if(destinationMode){
                     if(origin.getAddress().getLocation() != null) destinationMode = false;
                 }
+                Toast.makeText(mContext, "Network Error "+volleyError.getMessage(), LENGTH_SHORT).show();
+                progressBar.dismiss();
             }
         }, null, null);
     }
@@ -751,14 +935,14 @@ public class BaseLocationMapFragment
                             address.setLocation(origin.getAddress().getLocation());
                             origin.setAddress(  address );
                             //origin = address.getLocation();
-                            if(destination.getAddress().getLocation() != null) originMode= false;
+                            //if(destination.getAddress().getLocation() != null) originMode= false;
                             //originMode= false;
                         }else if(destinationMode){
                             tvDestination.setText(address.getFormattedAddress());
                             address.setLocation(destination.getAddress().getLocation());
                             destination.setAddress( address );
                             //destination = address.getLocation();
-                            if(origin.getAddress().getLocation() != null) destinationMode = false;
+                            //if(origin.getAddress().getLocation() != null) destinationMode = false;
                             //destinationMode= false;
                         }
                     }
@@ -769,9 +953,10 @@ public class BaseLocationMapFragment
                     }else if(destinationMode){
                         if(origin.getAddress().getLocation() != null) destinationMode = false;
                     }
+                    Toast.makeText(mContext, "Error "+e.getMessage(), LENGTH_SHORT).show();
                 }
+                //refreshMap();
                 handler.handleMessage(null);
-                refreshMap();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -782,73 +967,84 @@ public class BaseLocationMapFragment
                 }else if(destinationMode){
                     if(origin.getAddress().getLocation() != null) destinationMode = false;
                 }
+                Toast.makeText(mContext, "Network Error "+volleyError.getMessage(), LENGTH_SHORT).show();
                 handler.handleMessage(null);
             }
         }, null, null);
     }
     private void drawRoute() {
+        boolean next = true;
         if(route != null){
-            DoSendHelper.getInstance().setPacketRoute(origin, destination);
+            next = handleNext();
+            if(next){
+                DoSendHelper.getInstance().setPacketRoute(origin, destination);
 
-            DataParser parser = new DataParser();
-            String snippet = originMarker.getSnippet();
-            originMarker.setSnippet(snippet + "\nEst. Distance :"+ route.getDistance().getText());
-            tvDistanceInfo.setText("Harga ( "+route.getDistance().getText()+" ) : ");
+                DataParser parser = new DataParser();
+                String snippet = originMarker.getSnippet();
+                originMarker.setSnippet(snippet + "\nEst. Distance :"+ route.getDistance().getText());
+                tvDistanceInfo.setText("Harga ( "+route.getDistance().getText()+" ) : ");
 
-            handleNext();
 
-            PolylineOptions lineOptions = parser.drawRoutes(route.getRoutes());
+                PolylineOptions lineOptions = parser.drawRoutes(route.getRoutes());
 
-            // Drawing polyline in the Google Map for the i-th route
-            if(lineOptions != null) {
-                mMap.addPolyline(lineOptions);
+                // Drawing polyline in the Google Map for the i-th route
+                if(lineOptions != null) {
+                    mMap.addPolyline(lineOptions);
 
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 /*
                 List<LatLng> points = lineOptions.getPoints();
                 for (int i = 0; i < points.size(); i++) {
                     builder.include(points.get(i));
                 }*/
-                builder.include(origin.getAddress().getLocation());
-                if(destination.getAddress().getLocation() != null) builder.include(destination.getAddress().getLocation());
+                    builder.include(origin.getAddress().getLocation());
+                    if(destination.getAddress().getLocation() != null) builder.include(destination.getAddress().getLocation());
 
-                LatLngBounds bounds = builder.build();
+                    LatLngBounds bounds = builder.build();
+                    LatLng center = bounds.getCenter();
+                    LatLng northwest = move(center, 109, 109);
+                    LatLng southwest = move(center, -109, -109);
+                    builder.include(northwest);
+                    builder.include(southwest);
+                    bounds = builder.build();
 
-                int width = getResources().getDisplayMetrics().widthPixels;
-                int padding = (int) (width * 0.40); // offset from edges of the map 12% of screen
+                    int width = getResources().getDisplayMetrics().widthPixels;
+                    int padding = (int) (width * 0.40); // offset from edges of the map 12% of screen
 
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                mMap.animateCamera(cu);
-                //moveCameraToLocation(bounds.getCenter(), 16f);
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                    mMap.animateCamera(cu);
+                    //moveCameraToLocation(bounds.getCenter(), 16f);
 
-            }else {
-                Log.d("drawRoutes","without Polylines drawn");
+                }else {
+                    LogUtil.logD("drawRoutes","without Polylines drawn");
+                }
             }
         }
-        if(canDrawRoute() && route != null) {
-            /*Location lo = new Location("Origin");
-            lo.setLatitude(origin.getAddress().getLocation().latitude);
-            lo.setLongitude(origin.getAddress().getLocation().longitude);
-
-            Location ld = new Location("Destination");
-            ld.setLatitude(destination.getAddress().getLocation().latitude);
-            ld.setLongitude(destination.getAddress().getLocation().longitude);
-
-            tvDistanceInfo.setText("Harga ( "+route.getDistance().getText()+" ) : ");
-            //tvPriceInfo.setText("");
-
-            Toast.makeText(getContext(), "Calculate distance : " + lo.distanceTo(ld), LENGTH_SHORT).show();
-            //buttonAddOrder.setVisibility(View.VISIBLE );
-            */
-            showOrderpanel(true);
-        }else {
-            showOrderpanel(false);
-            //buttonAddOrder.setVisibility(View.GONE);
+        if(next) {
+            if(canDrawRoute()) requestprice();
+            showServicePanel(true);
         }
 
     }
+    private static LatLng move(LatLng startLL, double toNorth, double toEast) {
+        double lonDiff = meterToLongitude(toEast, startLL.latitude);
+        double latDiff = meterToLatitude(toNorth);
+        return new LatLng(startLL.latitude + latDiff, startLL.longitude
+                + lonDiff);
+    }
+    static final double EARTHRADIUS = 6366198;
+    private static double meterToLongitude(double meterToEast, double latitude) {
+        double latArc = Math.toRadians(latitude);
+        double radius = Math.cos(latArc) * EARTHRADIUS;
+        double rad = meterToEast / radius;
+        return Math.toDegrees(rad);
+    }
+    private static double meterToLatitude(double meterToNorth) {
+        double rad = meterToNorth / EARTHRADIUS;
+        return Math.toDegrees(rad);
+    }
 
-    public void handleNext(){
+    public boolean handleNext(){
         int dist = 0;
         try{
             dist = Integer.parseInt(route.getDistance().getValue());
@@ -856,33 +1052,36 @@ public class BaseLocationMapFragment
         if(dist > AppConfig.MAX_DOSEND_COVERAGE_KM ){
             if(doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)) {
                 //showErrorDialog("Distance Limited.", "Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.");
-                Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
+                Toast.makeText(mContext, "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-MOVE.", LENGTH_SHORT).show();
                 inDoSendCoverageArea = false;
+                return inDoSendCoverageArea;
             }else if(doType.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
                 if(dist > AppConfig.MAX_DOMOVE_COVERAGE_KM ){
-                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
                     inDoMoveCoverageArea = false;
+                    return inDoMoveCoverageArea;
                 }
             }else if(doType.equalsIgnoreCase(AppConfig.KEY_DOJEK)){
                 if(dist > AppConfig.MAX_DOJEK_COVERAGE_KM ){
-                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-CAR.", LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Silahkan menggunakan jasa DO-CAR.", LENGTH_SHORT).show();
                     inDoJekCoverageArea = false;
+                    return inDoJekCoverageArea;
                 }
             }else if(doType.equalsIgnoreCase(AppConfig.KEY_DOCAR)){
                 if(dist > AppConfig.MAX_DOCAR_COVERAGE_KM ){
-                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
                     inDoCarCoverageArea = false;
+                    return inDoCarCoverageArea;
                 }
             }else{
                 if(dist > AppConfig.MAX_DOMOVE_COVERAGE_KM ){
-                    Toast.makeText(getContext(), "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "( " + route.getDistance().getText() + " ): Jarak terlalu jauh. Tidak ada layanan.", LENGTH_SHORT).show();
                     inDoMoveCoverageArea = false;
+                    return inDoMoveCoverageArea;
                 }
             }
-            showOrderpanel(false);
-        }else{
-            requestprice();
         }
+        return true;
     }
     private void reDrawRoute() {
 
@@ -899,6 +1098,8 @@ public class BaseLocationMapFragment
                         if(OK){
                             DataParser parser = new DataParser();
                             route = parser.parseRoutes(jObj);
+                            route.setDestination(destination.clone());
+                            route.setOrigin(origin.clone());
                             DoSendHelper.getInstance().addRoute(route);
                             drawRoute();
                             //handleNext();
@@ -910,7 +1111,7 @@ public class BaseLocationMapFragment
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    Log.e(TAG, "request_direction_route Error: " + volleyError.getMessage());
+                    LogUtil.logE(TAG, "request_direction_route Error: " + volleyError.getMessage());
                     volleyError.printStackTrace();
                 }
             }, null, null);
@@ -919,35 +1120,54 @@ public class BaseLocationMapFragment
     }
 
     protected void requestprice() {
+        progressBar.setIndeterminate(true);
+        progressBar.show();
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting(); builder.serializeNulls();
+        builder.excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+
+        Address originAddr = DoSendHelper.getInstance().getOrigin().getAddress() ;
+        Address destinationAddr = DoSendHelper.getInstance().getDestination().getAddress() ;
+
         HashMap<String, String> params = new HashMap();
         params.put("distance", (route ==null || route.getDistance()==null? "1" : route.getDistance().getValue()));
-        params.put("origin", origin.getAddress().getKecamatan());//TODO json origin
-        params.put("destination", destination.getAddress().getKecamatan()); //TODO json destination
+        params.put("origin", gson.toJson(originAddr));
+        params.put("destination", gson.toJson(destinationAddr));
         params.put("service_code", serviceCode);
         params.put("do_type", doType);
         params.put("berat_kiriman", ""+beratKiriman);
         params.put("volume", ""+volume);
 
+        price = 0;
         addRequest("request_price_route", Request.Method.POST, AppConfig.URL_CALC_PRICE_KM, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.d(TAG, "requestprice Response: " + response.toString());
+                    LogUtil.logD(TAG, "requestprice Response: " + response.toString());
                     JSONObject jObj = new JSONObject(response);
-                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                    String status = jObj.getString("status");
+                    boolean OK = "OK".equalsIgnoreCase(status);
                     if(OK){
                         double tariff = jObj.getDouble("tarif");
                         price = tariff;
                         tvPriceInfo.setText(AppConfig.formatCurrency(tariff));
+                    }else{
+                        Toast.makeText(mContext, ""+status, LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     e.printStackTrace();
+                    Toast.makeText(mContext, "Error "+e.getMessage(), LENGTH_SHORT).show();
                 }
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
+                Toast.makeText(mContext, "Network Error "+volleyError.getMessage(), LENGTH_SHORT).show();
+                progressBar.dismiss();
             }
         }, params, getKurindoHeaders());
 
@@ -958,7 +1178,7 @@ public class BaseLocationMapFragment
         addRequest("request_distance_route", Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //Log.d(TAG, "drawRoute Response: " + response.toString());
+                //LogUtil.logD(TAG, "drawRoute Response: " + response.toString());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -1075,7 +1295,7 @@ public class BaseLocationMapFragment
         etOriginNotes.setVisibility(addOriginNote? View.VISIBLE : View.GONE);
     }
     @OnClick(R.id.ivAddDestinationNotes)
-    public void ivAddDestinationNotes(){
+    public void onClick_ivAddDestinationNotes(){
         addDestinationNote =!addDestinationNote;
         etDestinationNotes.setVisibility(addDestinationNote? View.VISIBLE : View.GONE);
     }
@@ -1090,12 +1310,13 @@ public class BaseLocationMapFragment
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "OnMapReady");
+        LogUtil.logD(TAG, "OnMapReady");
         mMap = googleMap;
         mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
             @Override
             public void onCameraMoveStarted(int i) {
                 if(!canDrawRoute() || originMode || destinationMode){
+                    LogUtil.logD("started position change","setOnCameraMoveStartedListener");
                     reDrawMarker();
                 }
             }
@@ -1109,8 +1330,9 @@ public class BaseLocationMapFragment
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                Log.d("Camera position change" + "", cameraPosition + "");
+                LogUtil.logD("Camera position change" + "", cameraPosition + "");
                 mCenterLatLong = cameraPosition.target;
+                //updatePlace = false;
 
                 //mMap.clear();
 
@@ -1134,7 +1356,7 @@ public class BaseLocationMapFragment
 
     @Override
     public void onConnected(Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -1154,7 +1376,7 @@ public class BaseLocationMapFragment
         }
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Log.d(TAG, "ON connected ");
+            LogUtil.logD(TAG, "ON connected ");
             if(canDrawRoute()) {
                 drawRoute();
             }else{
@@ -1193,7 +1415,7 @@ public class BaseLocationMapFragment
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Connection suspended");
+        LogUtil.logI(TAG, "Connection suspended");
         mGoogleApiClient.connect();
     }
 
@@ -1271,10 +1493,10 @@ public class BaseLocationMapFragment
 
     private void changeMap(Location location) {
 
-        Log.d(TAG, "Reaching map" + mMap);
+        LogUtil.logD(TAG, "Reaching map" + mMap);
 
 
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -1307,7 +1529,7 @@ public class BaseLocationMapFragment
             //startIntentService(location);
 
         } else {
-            Toast.makeText(getContext(),
+            Toast.makeText(mContext,
                     "Sorry! unable to create maps", LENGTH_SHORT)
                     .show();
         }
@@ -1372,10 +1594,10 @@ public class BaseLocationMapFragment
         dialog.setTitle("Popup Dialog");
 
         RecyclerView list = (RecyclerView) dialog.findViewById(R.id.popupList);
-        list.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        list.setLayoutManager(new GridLayoutManager(mContext, 1));
         list.setHasFixedSize(true);
         list.setAdapter(tUserAdapter);
-        list.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+        list.addOnItemTouchListener(new RecyclerItemClickListener(mContext, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 TUser p = data.get(position);
@@ -1456,7 +1678,7 @@ public class BaseLocationMapFragment
             //showActivity( DoSendOrderActivity.class );
             //finish();
         }else{
-            //Toast.makeText(getContext(), "Not Available", LENGTH_SHORT).show();
+            //Toast.makeText(mContext, "Not Available", LENGTH_SHORT).show();
             return new VerificationError(doType+" Not Available");
         }
         return null;

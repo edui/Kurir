@@ -19,9 +19,16 @@ public class DoHijamahActivity extends AbstractStepperActivity {
         super.onCreate(savedInstanceState);
     }
 
+
     @Override
     protected AbstractStepAdapter getStepperAdapter() {
         return new MyStepperAdapter(getSupportFragmentManager());
+    }
+
+    protected AbstractStepAdapter getStepperAdapter(int startingStepPosition) {
+        stepAdapter = getStepperAdapter();
+        mStepperLayout.setAdapter(stepAdapter, startingStepPosition);
+        return stepAdapter;
     }
 
     @Override

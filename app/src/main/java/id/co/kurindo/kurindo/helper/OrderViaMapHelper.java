@@ -84,24 +84,12 @@ public class OrderViaMapHelper {
         packet.setOrigin(origin);
     }
 
-    public void addDoSendOrder(String payment, String serviceCode, String distance, double price){
-        addDoSendOrder(payment, serviceCode, distance, price, 1);
-    }
-    public void addDoSendOrder(String payment, String serviceCode, String distance, double price, float beratkiriman){
-        addOrder(payment, serviceCode, price);
-        addNewProduct(AppConfig.KEY_DOSEND, price);
-        order.setService_type(AppConfig.KEY_DOSEND);
-        packet.setDistance(Double.parseDouble( distance ));
-        packet.setBerat_asli(new BigDecimal( beratkiriman ));
-        packet.setBerat_kiriman((int)beratkiriman);
-    }
-
     protected void addNewProduct(String code) {
         addNewProduct(code, 0);
     }
 
     public void addNewProduct(String code, double price) {
-        if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND) || code.equalsIgnoreCase(AppConfig.KEY_DOJEK)){
+        if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND) || code.equalsIgnoreCase(AppConfig.KEY_DOJEK) || code.equalsIgnoreCase(AppConfig.KEY_DOCAR) || code.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
             Set items = new LinkedHashSet<>();
             items.add(addCartItem(code, price));
             order.setProducts(items);

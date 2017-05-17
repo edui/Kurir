@@ -23,6 +23,7 @@ import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadNewsTask;
 import id.co.kurindo.kurindo.util.DummyContent;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 public class NewsFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ListenableAsyncTask.AsyncTaskListener {
     private static final String TAG = "NewsFragment";
@@ -107,7 +108,7 @@ public class NewsFragment extends Fragment implements BaseSliderView.OnSliderCli
     public void onPostExecute(Object o) {
         List<News> newsList = (List<News>)o;
         if(newsList == null) newsList = new ArrayList<>();
-        Log.i("loadNewsTask","newsList size:"+newsList.size());
+        LogUtil.logI("loadNewsTask","newsList size:"+newsList.size());
         //data.clear();
         sliderShow1.removeAllSliders();
         sliderShow2.removeAllSliders();

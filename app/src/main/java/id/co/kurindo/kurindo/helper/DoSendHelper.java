@@ -18,7 +18,8 @@ import id.co.kurindo.kurindo.model.TUser;
  */
 
 public class DoSendHelper extends OrderViaMapHelper{
-    Set<Route> routes;
+    Route route;
+    String doMoveType;
 
     static DoSendHelper helper;
 
@@ -27,26 +28,38 @@ public class DoSendHelper extends OrderViaMapHelper{
         return helper;
     }
 
-    public Set<Route> getRoutes() {
-        return routes;
+    public Route getRoute() {
+        return route;
     }
 
-    public void setRoutes(Set<Route> routes) {
-        this.routes = routes;
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     public void addRoute(Route route) {
-        if(routes == null) routes = new LinkedHashSet<>();
-        routes.add(route);
+        this.route = route;
+        if(packet != null) packet.setRoutes(route.getRoutes());
     }
     public void clearRoutes() {
-        if(routes != null) routes.clear();
+        route = null;
     }
 
     @Override
     public void clearAll() {
         super.clearAll();
         clearRoutes();
+    }
+
+    public void addDoSendOrder(String payment, String serviceCode, String distance, double price){
+        addDoSendOrder(payment, serviceCode, distance, price, 1);
+    }
+    public void addDoSendOrder(String payment, String serviceCode, String distance, double price, float beratkiriman){
+        addOrder(payment, serviceCode, price);
+        addNewProduct(AppConfig.KEY_DOSEND, price);
+        order.setService_type(AppConfig.KEY_DOSEND);
+        packet.setDistance(Double.parseDouble( distance ));
+        packet.setBerat_asli(new BigDecimal( beratkiriman ));
+        packet.setBerat_kiriman((int)beratkiriman);
     }
 
     public void addDoJekOrder(String payment, String serviceCode, String distanceStr, double price) {
@@ -58,5 +71,32 @@ public class DoSendHelper extends OrderViaMapHelper{
             distance = Double.parseDouble( distanceStr );
         }catch (Exception e){}
         packet.setDistance(distance);
+    }
+
+    public void addDoCarOrder(String payment, String serviceCode, String distanceStr, double price) {
+        addOrder(payment, serviceCode, price);
+        addNewProduct(AppConfig.KEY_DOCAR);
+        order.setService_type(AppConfig.KEY_DOCAR);
+        double distance = 0;
+        try {
+            distance = Double.parseDouble( distanceStr );
+        }catch (Exception e){}
+        packet.setDistance(distance);
+    }
+
+    public void addDoMoveOrder(String payment, String serviceCode, String distance, double price, float beratkiriman){
+        addOrder(payment, serviceCode, price);
+        addNewProduct(AppConfig.KEY_DOMOVE, price);
+        order.setService_type(AppConfig.KEY_DOMOVE);
+        packet.setDistance(Double.parseDouble( distance ));
+        packet.setBerat_asli(new BigDecimal( beratkiriman ));
+        packet.setBerat_kiriman((int)beratkiriman);
+    }
+    public void setDoMoveType(String doMoveType){
+        this.doMoveType = doMoveType;
+    }
+
+    public String getDoMoveType() {
+        return doMoveType;
     }
 }

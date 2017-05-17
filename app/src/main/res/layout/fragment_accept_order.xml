@@ -4,8 +4,9 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true" android:focusableInTouchMode="true"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="fill_parent">
     <TextView
@@ -24,19 +25,55 @@
         android:padding="1dp" android:divider="#b5b5b5" android:dividerHeight="1dp"
         android:listSelector="@drawable/states_selector_list" android:background="@drawable/list_border"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/inlay_reason"
+    <LinearLayout
+        android:id="@+id/layoutReject"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:visibility="gone">
-
-        <EditText
-            android:id="@+id/input_reason"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <RadioGroup
+            android:id="@+id/radio_group_reason"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_assignment_black"
-            android:hint="Reason" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/radio_reason1"
+                android:layout_width="wrap_content" android:paddingTop="5dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_reason1" android:checked="true"
+                />
 
-</android.support.v7.widget.LinearLayoutCompat>
+            <RadioButton android:id="@+id/radio_reason2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:paddingTop="5dp"
+                android:text="@string/label_reason2"
+                />
+            <RadioButton android:id="@+id/radio_reason3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:paddingTop="5dp"
+                android:text="@string/label_reason3"
+                />
+            <RadioButton android:id="@+id/radio_reason4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:paddingTop="5dp"
+                android:text="@string/label_reason4"
+                />
+            <RadioButton android:id="@+id/radio_reason5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:paddingTop="5dp"
+                android:text="@string/label_reason5"
+                />
+        </RadioGroup>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inlay_reason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/input_reason" android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_assignment_black"
+                android:hint="Reason" />
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+</LinearLayout>
 </ScrollView>

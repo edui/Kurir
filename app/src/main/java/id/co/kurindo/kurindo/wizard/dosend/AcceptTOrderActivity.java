@@ -39,9 +39,15 @@ public class AcceptTOrderActivity extends AbstractStepperActivity {
 
     }
 
-    @Override
+    protected AbstractStepAdapter getStepperAdapter(int startingStepPosition) {
+        stepAdapter = getStepperAdapter();
+        mStepperLayout.setAdapter(stepAdapter, startingStepPosition);
+        return stepAdapter;
+    }
+
     protected AbstractStepAdapter getStepperAdapter() {
-        return new MyStepperAdapter(getSupportFragmentManager());
+        stepAdapter = new MyStepperAdapter(getSupportFragmentManager());
+        return stepAdapter;
     }
 
     @Override

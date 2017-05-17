@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/padding_small"
+    android:paddingTop="@dimen/padding_small"
+    >
+    <LinearLayout
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"  android:orientation="horizontal">
+        <ImageView
+            android:layout_width="50dp" android:gravity="center" android:layout_gravity="center"
+            android:layout_height="50dp" android:src="@drawable/do_car_icon"/>
+        <LinearLayout
+            android:layout_width="match_parent" android:gravity="center"
+            android:layout_height="50dp" android:orientation="vertical" android:layout_marginBottom="2dp">
+            <TextView
+                android:layout_width="match_parent"  android:textColor="@color/white" android:gravity="center" android:background="@color/colorPrimary"
+                android:layout_height="wrap_content" android:text="Konfirmasi" android:textStyle="bold" android:padding="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/llLayout"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_margin">
+            <LinearLayout
+                style="@style/Widget.CardContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent" style="@style/titleBoldTextStyle"
+            android:layout_height="wrap_content" android:text="Informasi kontak yang akan dijemput"/>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inlay_nama_pengirim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_nama_pengirim" style="@style/normalTextStyle"
+                android:drawableLeft="@drawable/ic_person_black"
+                android:hint="Masukkan nama" />
+        </android.support.design.widget.TextInputLayout>
+        <com.lamudi.phonefield.PhoneInputLayout
+            android:id="@+id/input_telepon_pengirim" android:hint="Masukkan Telepon / WA" android:drawableLeft="@drawable/ic_phone_black"
+            style="@style/normalTextStyle" >
+            <ImageButton
+                android:id="@+id/pickcontact"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_phone_black" android:visibility="gone"/>
+        </com.lamudi.phonefield.PhoneInputLayout>
+        <android.support.design.widget.TextInputLayout android:visibility="gone"
+            android:id="@+id/inlay_email_pengirim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_email_pengirim" style="@style/normalTextStyle"
+                android:drawableLeft="@drawable/ic_email_black"
+                android:hint="Masukkan email" />
+        </android.support.design.widget.TextInputLayout>
+        <TextView
+            style="@style/smallTextStyle" android:visibility="gone"
+            android:text="*) Email yang anda masukkan akan digunakan untuk menerima kode verifikasi."/>
+    </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_margin">
+            <LinearLayout
+                style="@style/Widget.CardContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView
+            style="@style/titleBoldTextStyle" android:layout_marginBottom="5dp"
+            android:text="Detail Penjemputan" />
+        <TextView style="@style/normalTextStyle" android:text="Lokasi Penjemputan"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:background="@android:color/white"
+                    android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+                    <ImageView
+                        android:id="@+id/ivAddOriginIcon"
+                        android:layout_width="wrap_content" android:layout_weight=".1"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/origin_pin"
+                        android:layout_gravity="left|top"
+                        android:padding="2dp"/>
+                    <TextView
+                        android:id="@+id/tvOrigin" style="@style/normalTextStyle"  android:gravity="center" android:maxLines="2" android:layout_weight=".8"
+                        android:text="Set Lokasi Penjemputan"/>
+                    <ImageView
+                        android:id="@+id/ivAddOriginNotes"
+                        android:layout_width="wrap_content" android:layout_weight=".2"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_description_black_18dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right|top"
+                        android:padding="2dp"/>
+                </LinearLayout>
+                <EditText
+                    android:id="@+id/etOriginNotes"
+                    android:layout_width="match_parent" android:textSize="10sp"
+                    android:layout_height="wrap_content" android:hint="Add Notes" android:visibility="gone"/>
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_marginTop="5dp" android:layout_marginBottom="5dp" android:weightSum="1"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView
+                android:layout_weight=".5" style="@style/normalTextStyle"
+                android:text="Jam Penjemputan"/>
+            <TextView
+                android:id="@+id/tvPickupTime"
+                style="@style/normalTextStyle" android:theme="@style/AppTheme.Button"
+                android:layout_weight=".5"
+                android:text="10.00"/>
+        </LinearLayout>
+        <TextView
+            style="@style/normalTextStyle"
+            android:layout_weight=".5" android:text="Keterangan Tambahan"/>
+        <EditText
+            android:id="@+id/etNotes" style="@style/normalTextStyle" android:hint="Masukkan permintaan khusus anda"/>
+    </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_margin">
+            <LinearLayout
+                style="@style/Widget.CardContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView style="@style/titleBoldTextStyle" android:layout_marginBottom="5dp" android:text="Metode Pembayaran"/>
+        <LinearLayout
+            android:layout_width="match_parent" android:weightSum="1"
+            android:layout_marginBottom="5dp"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView
+                style="@style/normalTextStyle"
+                android:layout_weight=".5"
+                 android:text="Total Biaya Sewa"/>
+            <TextView
+                android:id="@+id/tvTotalPrice"
+                style="@style/normalTextStyle"
+                android:layout_weight=".5"/>
+        </LinearLayout>
+        <TextView
+            style="@style/normalTextStyle"
+            android:layout_marginBottom="5dp" android:text="Cara Pembayaran"/>
+        <RadioGroup
+            android:id="@+id/rg_cara_bayar" android:gravity="left|top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/radio_cash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_tunai"
+                />
+            <RadioButton android:id="@+id/radio_transfer_dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_transfer_uangmuka"
+                />
+            <RadioButton android:id="@+id/radio_transfer_semua"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_transfer_semua"
+                />
+        </RadioGroup>
+    </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+    </LinearLayout>
+    </ScrollView>
+</LinearLayout>

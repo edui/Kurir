@@ -1,10 +1,18 @@
 package id.co.kurindo.kurindo;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.Log;
@@ -21,32 +29,47 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.lamudi.phonefield.PhoneInputLayout;
+import com.stepstone.stepper.VerificationError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseFragment;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
+import id.co.kurindo.kurindo.map.DataParser;
+import id.co.kurindo.kurindo.map.LocationService;
+import id.co.kurindo.kurindo.map.MapUtils;
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.signup.SignupWizardActivity;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by dwim on 1/6/2017.
  */
 
 public class LoginPhoneFragment extends BaseFragment {
-    private static final String TAG = "LoginFragment";
+    private static final String TAG = "LoginPhoneFragment";
 
     private static final int REQUEST_SIGNUP = 0;
     private static final int REQUEST_ACTIVATION = 1;
@@ -81,18 +104,44 @@ public class LoginPhoneFragment extends BaseFragment {
 
     private SessionManager session;
     private SQLiteHandler db;
-    private ProgressDialog progressDialog;
-    
+    private ProgressDialog progressBar;
+    LatLng location;
     Context context;
 
-    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getContext();
+
+        // SQLite database handler
+        db = new SQLiteHandler(context);
+        //db.onUpgrade(db.getWritableDatabase(), 0, 1);
+        // Session manager
+        session = new SessionManager(context);
+        //session.setLogin(false);
+    }
+
+    private void handleArguments() {
+        final Bundle bundle = getArguments();
+        if(bundle != null) {
+            boolean activation = bundle.getBoolean("activation");
+            if (activation) {
+                String phone = bundle.getString("phone");
+                String code = bundle.getString("code");
+                showActivationLayout(phone);
+                _activationPhoneText.setPhoneNumber(phone);
+                _activationCodeText.setText(code);
+                _activationButton.setEnabled(true);
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflateAndBind(inflater, container, R.layout.fragment_login_phone);
-
-        progressDialog = new ProgressDialog(getActivity(),R.style.CustomDialog);
+        progressBar = new ProgressDialogCustom(context);
 
         phoneInput.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
         phoneInput.setHint(R.string.nomor_telepon);
@@ -152,6 +201,7 @@ public class LoginPhoneFragment extends BaseFragment {
             }
         });
 
+        handleArguments();
 
         return v;
 
@@ -177,21 +227,8 @@ public class LoginPhoneFragment extends BaseFragment {
         }
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        context = getContext();
-
-        // SQLite database handler
-        db = new SQLiteHandler(context);
-        //db.onUpgrade(db.getWritableDatabase(), 0, 1);
-        // Session manager
-        session = new SessionManager(context);
-        //session.setLogin(false);
-
-    }
-
-    private void recovery_account() {
+    @OnClick(R.id.btn_recover)
+    public void recovery_account() {
         boolean valid = true;
         final String phone = _recoveryPhoneText.getPhoneNumber();
         if (_recoveryPhoneText.isValid()) {
@@ -202,6 +239,7 @@ public class LoginPhoneFragment extends BaseFragment {
         }
 
         if(valid){
+            progressBar.show();
             if(getActivity() != null){
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -220,7 +258,7 @@ public class LoginPhoneFragment extends BaseFragment {
 
                             @Override
                             public void onResponse(String response) {
-                                Log.d(TAG, "RecoveryAccount Response: " + response.toString());
+                                LogUtil.logD(TAG, "RecoveryAccount Response: " + response.toString());
 
                                 try {
                                     JSONObject jObj = new JSONObject(response);
@@ -240,17 +278,17 @@ public class LoginPhoneFragment extends BaseFragment {
                                     Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     _recoverButton.setEnabled(true);
                                 }
-                                progressDialog.dismiss();
+                                progressBar.dismiss();
                             }
                         }, new Response.ErrorListener() {
 
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.e(TAG, "Recovery Error: " + error.getMessage());
+                                LogUtil.logE(TAG, "Recovery Error: " + error.getMessage());
                                 Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
 
                                 _recoverButton.setEnabled(true);
-                                progressDialog.dismiss();
+                                progressBar.dismiss();
                             }
                         }) {
                             @Override
@@ -319,12 +357,13 @@ public class LoginPhoneFragment extends BaseFragment {
     }
 
     private void request_checkStatusAccount(final String phone){
-        if(getActivity() != null){
-            progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("checking account status....");
-            progressDialog.show();
+        FragmentActivity activity=  getActivity();
+        if(activity != null){
+            progressBar.setIndeterminate(true);
+            progressBar.setMessage("Loading....");
+            progressBar.show();
 
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     String tag_string_req = "req_status_account";
@@ -333,7 +372,7 @@ public class LoginPhoneFragment extends BaseFragment {
 
                         @Override
                         public void onResponse(String response) {
-                            Log.d(TAG, "Login > CheckStatus Response: " + response.toString());
+                            LogUtil.logD(TAG, "Login > CheckStatus Response: " + response.toString());
 
                             try {
                                 JSONObject jObj = new JSONObject(response);
@@ -357,10 +396,13 @@ public class LoginPhoneFragment extends BaseFragment {
                                             db.updateUserPhone(phone, role, city, api, active, approved);
                                         }
                                         if(city ==null || city.isEmpty() || city.equalsIgnoreCase("null")){
-                                            showPinAddressForm();
-                                        }else{
-                                            showMainPage();
+                                            //showPinAddressForm();
+                                            AppController.getInstance().city = null;
+                                        }else {
+                                            AppController.getInstance().city = city;
                                         }
+                                        showMainPage();
+                                        //}
                                     }
                                 } else {
                                     // Error in login. Get the error message
@@ -375,17 +417,17 @@ public class LoginPhoneFragment extends BaseFragment {
                                 _loginButton.setEnabled(true);
                             }
 
-                            progressDialog.dismiss();
+                            progressBar.dismiss();
                         }
                     }, new Response.ErrorListener() {
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, "Login Error: " + error.getMessage());
+                            LogUtil.logE(TAG, "Login Error: " + error.getMessage());
                             Toast.makeText(context, "Login Error: "+error.getMessage(), Toast.LENGTH_SHORT).show();
 
                             _loginButton.setEnabled(true);
-                            progressDialog.dismiss();
+                            progressBar.dismiss();
                         }
                     }) {
 
@@ -415,7 +457,7 @@ public class LoginPhoneFragment extends BaseFragment {
     }
 
     private void showMainPage() {
-        Intent intent = new Intent(getContext(), MainDrawerActivity.class);
+        Intent intent = new Intent(getActivity(), MainDrawerActivity.class);
         startActivity(intent);
         getActivity().finish();
     }
@@ -443,7 +485,7 @@ public class LoginPhoneFragment extends BaseFragment {
         _recoveryLayout.setVisibility(View.GONE);
         _recoverLink.setVisibility(View.GONE);
 
-
+        _activationButton.setEnabled(true);
         _activationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -468,8 +510,8 @@ public class LoginPhoneFragment extends BaseFragment {
         if(phone !=null && !phone.isEmpty()) phoneInput.setPhoneNumber(phone);
     }
 
-
-    private void activate() {
+    @OnClick(R.id.btn_activation)
+    public void activate() {
         Log.d(TAG, "Activation");
 
         if (!validateActivation()) {
@@ -479,9 +521,9 @@ public class LoginPhoneFragment extends BaseFragment {
 
         _activationButton.setEnabled(false);
 
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Processing activation....");
-        progressDialog.show();
+        progressBar.setIndeterminate(true);
+        progressBar.setMessage("Processing activation....");
+        progressBar.show();
 
         activation_process();
     }
@@ -537,7 +579,7 @@ public class LoginPhoneFragment extends BaseFragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Activation Response: " + response.toString());
+                LogUtil.logD(TAG, "Activation Response: " + response.toString());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -593,14 +635,17 @@ public class LoginPhoneFragment extends BaseFragment {
                             session.setActive(active);
 
                             if(city ==null || city.isEmpty()){
-                                showPinAddressForm();
+                                //showPinAddressForm();
                                 //onLoginSuccess();
+                                AppController.getInstance().city = null;
                             }else{
                                 db.addAddress(tuser, "HOMEBASE");
+                                AppController.getInstance().city = (tuser.getAddress()==null ? null: tuser.getAddress().getKecamatan());
+                            }
                                 // Launch main activity
                                 Toast.makeText(context, "Login Successfully.", Toast.LENGTH_LONG).show();
                                 onAlreadyLogin();
-                            }
+                            //}
                         }else{
                             showActivationLayout(phone);
                         }
@@ -623,16 +668,16 @@ public class LoginPhoneFragment extends BaseFragment {
                     Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     _activationButton.setEnabled(true);
                 }
-                progressDialog.dismiss();
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Activation Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Activation Error: " + error.getMessage());
                 Toast.makeText(context,error.getMessage(), Toast.LENGTH_LONG).show();
                 _activationButton.setEnabled(true);
-                progressDialog.dismiss();
+                progressBar.dismiss();
             }
         }) {
 
@@ -654,7 +699,13 @@ public class LoginPhoneFragment extends BaseFragment {
 
     private void showPinAddressForm() {
         Intent intent = new Intent(context, SignupWizardActivity.class);
-        startActivityForResult(intent, REQUEST_SignupWizardActivity);
+        getActivity().startActivityForResult(intent, REQUEST_SignupWizardActivity);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -666,11 +717,11 @@ public class LoginPhoneFragment extends BaseFragment {
             phoneInput.setPhoneNumber(user.getPhone());
             _activationPhoneText.setPhoneNumber(user.getPhone());
         }
-
     }
 
+    @OnClick(R.id.btn_login)
     public void login() {
-        Log.d(TAG, "Login");
+        LogUtil.logD(TAG, "Login");
 
         if (!validate()) {
             onLoginFailed();
@@ -679,9 +730,9 @@ public class LoginPhoneFragment extends BaseFragment {
 
         _loginButton.setEnabled(false);
 
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        progressBar.setIndeterminate(true);
+        progressBar.setMessage("Authenticating...");
+        progressBar.show();
 
         String phone = phoneInput.getPhoneNumber();
         String password = _passwordText.getText().toString();
@@ -708,7 +759,7 @@ public class LoginPhoneFragment extends BaseFragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
+                LogUtil.logD(TAG, "Login Response: " + response.toString());
                 //hideDialog();
 
                 try {
@@ -743,13 +794,18 @@ public class LoginPhoneFragment extends BaseFragment {
                         session.setAutoLogin(_chkAutoLogin.isChecked());
 
                         if(city ==null || city.isEmpty() || city.equalsIgnoreCase("null") ){
-                            showPinAddressForm();
-                        }else{
-                            db.addAddress(tuser, "HOMEBASE");
+                            //showPinAddressForm();
+                            AppController.getInstance().city = null;
+                        }else {
+                            if(tuser.getAddress() != null ){
+                                db.addAddress(tuser, "HOMEBASE");
+                                AppController.getInstance().city = tuser.getAddress().getKecamatan();
+                            }
+                        }
                             // Launch main activity
                             Toast.makeText(context, "Login Successfully.", Toast.LENGTH_LONG).show();
                             onAlreadyLogin();
-                        }
+                        //}
                         update_token(tuser.getApi_key());
                     } else if(message.equalsIgnoreCase("WRONG")){
                         Toast.makeText(context, "Incorrect Account or Password.", Toast.LENGTH_LONG).show();
@@ -777,17 +833,17 @@ public class LoginPhoneFragment extends BaseFragment {
                     _loginButton.setEnabled(true);
                 }
 
-                progressDialog.dismiss();
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Login Error: " + error.getMessage());
                 Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
 
                 _loginButton.setEnabled(true);
-                progressDialog.dismiss();
+                progressBar.dismiss();
             }
         }) {
 
@@ -894,7 +950,7 @@ public class LoginPhoneFragment extends BaseFragment {
 
                 @Override
                 public void onResponse(String response) {
-                    Log.d(TAG, "update_token Response: " + response.toString());
+                    LogUtil.logD(TAG, "update_token Response: " + response.toString());
 
                     try {
                         JSONObject jObj = new JSONObject(response);
@@ -913,7 +969,7 @@ public class LoginPhoneFragment extends BaseFragment {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "update_token Error: " + error.getMessage());
+                    LogUtil.logE(TAG, "update_token Error: " + error.getMessage());
                 }
             }) {
 
@@ -931,6 +987,7 @@ public class LoginPhoneFragment extends BaseFragment {
                     Map<String, String> params = new HashMap<String, String>();
                     //String api = db.getUserApi();
                     params.put("Api", api_key);
+                    params.put("Authorization", api_key);
 
                     return params;
                 }

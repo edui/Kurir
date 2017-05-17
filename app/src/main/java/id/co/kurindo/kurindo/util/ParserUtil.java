@@ -11,8 +11,10 @@ import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.StatusHistory;
+import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPrice;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.model.Vehicle;
 
 /**
  * Created by dwim on 3/13/2017.
@@ -25,6 +27,10 @@ public class ParserUtil {
         builder.setPrettyPrinting();
         gson = builder.create();
     }
+    public TOrder parseTOrder(JSONObject jObj){
+         return  gson.fromJson(jObj.toString(), TOrder.class);
+    }
+
     public Shop parserTShop(JSONObject jObj){
         return gson.fromJson(jObj.toString(), Shop.class);
     }
@@ -101,5 +107,7 @@ public class ParserUtil {
     public TPrice parserTPrice(JSONObject jObj) {
         return gson.fromJson(jObj.toString(), TPrice.class);
     }
-
+    public Vehicle parseVehicle(JSONObject jObj) {
+        return gson.fromJson(jObj.toString(), Vehicle.class);
+    }
 }

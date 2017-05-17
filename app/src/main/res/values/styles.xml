@@ -62,9 +62,22 @@
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:windowBackground">@null</item>
-        <item name="android:windowFrame">@null</item>
+        <item name="android:windowFrame">@color/colorPrimary</item>
     </style>
-
+    <style name="AppAlertTheme19" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:popupBackground">@null</item>
+    </style>
+    <style name="AppAlertTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@android:color/transparent</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:popupBackground">@null</item>
+    </style>
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
         <item name="colorButtonNormal">@color/colorPrimaryDark</item>
         <item name="android:textColor">@color/white</item>
@@ -77,6 +90,32 @@
         <item name="android:background">#f0f0f0</item>
         <item name="android:textStyle">italic</item>
         <item name="android:padding">5dp</item>
+    </style>
+    <style name="titleBoldTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="titleTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16dp</item>
+    </style>
+    <style name="normalTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+    <style name="normalWrapTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+    <style name="smallTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">10dp</item>
     </style>
     <!--
     <style name="AppTheme.TextGearedSlab">

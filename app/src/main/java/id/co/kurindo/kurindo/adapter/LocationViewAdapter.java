@@ -15,13 +15,9 @@ import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.model.TOrder;
-import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
 
 /**
@@ -64,8 +60,8 @@ public class LocationViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_nds);
             }else if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_ENS)) {
                 holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
-            }else if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_NDNS)) {
-                holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_ens);
+            }else if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_NNS)) {
+                holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_nns);
             }
             if(order != null){
                 if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSERVICE)) {

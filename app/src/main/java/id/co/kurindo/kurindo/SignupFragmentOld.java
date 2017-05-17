@@ -45,6 +45,7 @@ import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.SignUpHelper;
 import id.co.kurindo.kurindo.model.City;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by dwim on 1/6/2017.
@@ -234,7 +235,7 @@ public class SignupFragmentOld extends BaseFragment {
     }
 
     public void signup() {
-        Log.d(TAG, "Signup");
+        LogUtil.logD(TAG, "Signup");
 
         if (!validate()) {
             onSignupFailed();
@@ -276,14 +277,14 @@ public class SignupFragmentOld extends BaseFragment {
             e.printStackTrace();
         }*/
         final String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Token: " + token);
+        LogUtil.logD(TAG, "Token: " + token);
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response.toString());
+                LogUtil.logD(TAG, "Register Response: " + response.toString());
                 //hideDialog();
 
                 try {
@@ -324,7 +325,7 @@ public class SignupFragmentOld extends BaseFragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Registration Error: " + error.getMessage());
                 Toast.makeText(getContext(),error.getMessage(), Toast.LENGTH_LONG).show();
                 error.printStackTrace();
                 _signupButton.setEnabled(true);
@@ -515,7 +516,7 @@ public class SignupFragmentOld extends BaseFragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response.toString());
+                LogUtil.logD(TAG, "Register Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean success = jObj.getBoolean("success");
@@ -535,7 +536,7 @@ public class SignupFragmentOld extends BaseFragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Registration Error: " + error.getMessage());
                 //Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
 
             }

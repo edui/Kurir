@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo.wizard.dowash;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +9,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +44,7 @@ import id.co.kurindo.kurindo.map.SinglePinLocationMapFragment;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.DoService;
 import id.co.kurindo.kurindo.model.TOrder;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static id.co.kurindo.kurindo.R.style.CustomDialog;
@@ -53,7 +56,6 @@ import static id.co.kurindo.kurindo.R.style.CustomDialog;
 public class DoWashAddressForm extends SinglePinLocationMapFragment {
     private static final String TAG = "DoWashAddressForm";
     VerificationError invalid = null;
-    ProgressDialog progressDialog;
 
     @Bind(R.id.tvAlamat)
     TextView tvAlamat;
@@ -83,7 +85,6 @@ public class DoWashAddressForm extends SinglePinLocationMapFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        progressDialog = new ProgressDialog(getActivity(), CustomDialog);
     }
 
     protected int getLayout() {
@@ -159,9 +160,8 @@ public class DoWashAddressForm extends SinglePinLocationMapFragment {
     private void place_an_order(Handler handler) {
         Log.d(TAG, "place_an_order");
 
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Sedang memproses Pesanan....");
-        progressDialog.show();
+        progressBar.setMessage("Sedang memproses Pesanan....");
+        progressBar.show();
 
         TOrder order = DoServiceHelper.getInstance().getOrder();
         order.setPlace(origin);
@@ -174,7 +174,7 @@ public class DoWashAddressForm extends SinglePinLocationMapFragment {
         params.put("user_agent", AppConfig.USER_AGENT);
 
         String orderStr = gson.toJson(DoServiceHelper.getInstance().getOrder());
-        Log.d(TAG, "place_an_order: "+orderStr);
+        LogUtil.logD(TAG, "place_an_order: "+orderStr);
         params.put("order", orderStr);
         process_order(params, handler);
     }
@@ -185,7 +185,7 @@ public class DoWashAddressForm extends SinglePinLocationMapFragment {
         addRequest("request_service_order", Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "request_service_order Response: " + response.toString());
+                LogUtil.logD(TAG, "request_service_order Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
@@ -206,7 +206,7 @@ public class DoWashAddressForm extends SinglePinLocationMapFragment {
                     e.printStackTrace();
                     invalid = new VerificationError("Json error: " + e.getMessage());
                 }
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
@@ -214,7 +214,7 @@ public class DoWashAddressForm extends SinglePinLocationMapFragment {
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
                 invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, params, getKurindoHeaders());
@@ -254,5 +254,17 @@ public class DoWashAddressForm extends SinglePinLocationMapFragment {
     @Override
     public void onError(@NonNull VerificationError error) {
 
+    }
+
+    protected static DoWashAddressForm instance ;
+    protected static Fragment newInstance() {
+        if (instance == null) {
+            instance = new DoWashAddressForm();
+        }
+        return instance;
+    }
+
+    public static DoWashAddressForm getInstance() {
+        return instance;
     }
 }

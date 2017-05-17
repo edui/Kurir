@@ -68,6 +68,10 @@
                 android:value=".MainDrawerActivity" />
         </activity>
         <activity
+            android:name=".wizard.HowToUseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
@@ -145,6 +149,7 @@
                 android:value=".MainDrawerActivity" />
         </activity>
 
+
         <meta-data
             android:name="id.co.kurindo.kurindo.util.GlideConfiguration"
             android:value="GlideModule" />
@@ -159,7 +164,14 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
+        <service android:name=".map.LocationService" />
+        <receiver
+            android:name=".app.ConnectivityReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -174,6 +186,10 @@
 
         <activity
             android:name=".map.MapsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".map.PickAnAddressActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
 
@@ -207,6 +223,22 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".wizard.dojek.DoJekOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.docar.DoCarFormActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.docar.DoCarRentalActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.docar.DoCarActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".wizard.domove.DoMoveActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
@@ -265,13 +297,21 @@
             android:theme="@style/AppTheme" />
 
         <activity
+            android:name=".wizard.help.start.WelcomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".BranchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".ShopPicActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <!--
                 <activity
                     android:name=".PacketOrderActivity"

@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
@@ -37,7 +39,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +48,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoServiceHelper;
 import id.co.kurindo.kurindo.model.DoService;
 import id.co.kurindo.kurindo.model.TOrder;
@@ -54,9 +56,9 @@ import id.co.kurindo.kurindo.model.TPrice;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
-import static android.view.ViewGroup.LayoutParams.FILL_PARENT;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static id.co.kurindo.kurindo.R.style.CustomDialog;
+import static com.android.volley.Request.Method.POST;
 
 /**
  * Created by dwim on 3/15/2017.
@@ -65,7 +67,7 @@ import static id.co.kurindo.kurindo.R.style.CustomDialog;
 public class DoServiceForm2 extends BaseStepFragment implements Step {
     private static final String TAG = "DoServiceForm1";
     VerificationError invalid = null;
-    ProgressDialog progressDialog;
+    ProgressDialog progressBar;
     @Bind((R.id.llLayout))
     LinearLayout baseLayout;
 
@@ -113,14 +115,50 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_doservice2);
 
-        progressDialog = new ProgressDialog(getActivity(), CustomDialog);
         context = getContext();
+        progressBar = new ProgressDialogCustom(context);
+        setup_spinner();
         retrieve_price();
         return v;
     }
-
-
+    private void request_services() {
+        String tag_request = "request_services";
+        String url = AppConfig.URL_RETRIEVE_SERVICES;
+        HashMap<String, String> params = new HashMap();
+        params.put("do_type", AppConfig.KEY_DOSERVICE);
+        addRequest(tag_request, POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    String message =jObj.getString("message");
+                    if(message.equalsIgnoreCase("OK")){
+                        adapter.clear();
+                        JSONArray jArr = jObj.getJSONArray("data");
+                        strLayanan = new String[jArr.length()+1];
+                        strLayanan[0] = "-Pilih-";
+                        for (int i = 0; i < jArr.length(); i++) {
+                            strLayanan[i+1] = jArr.getString(i);
+                        }
+                        adapter.addAll(strLayanan);
+                        adapter.notifyDataSetChanged();
+                    }else{
+                        Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(context, "Error "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Toast.makeText(context, "Network Error ."+volleyError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }, params, getKurindoHeaders());
+    }
     private void retrieve_price() {
+        progressBar.show();
         final String tag_string_Req = "retrieve_price";
         String url = AppConfig.URL_PRICE_REQUEST;
         final HashMap<String, String> params = new HashMap();
@@ -146,21 +184,25 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
-                    //invalid = new VerificationError("Json error: " + e.getMessage());
+                    Toast.makeText(context, "Daftar harga tidak tersedia.", Toast.LENGTH_SHORT).show();
                 }
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError e) {
                 e.printStackTrace();
+                Toast.makeText(context, "Network Error. Gagal menyiapkan harga.", Toast.LENGTH_SHORT).show();
+                progressBar.dismiss();
             }
         }, params, getKurindoHeaders());
     }
 
 
     private void setup_spinner() {
-        adapter = ArrayAdapter.createFromResource(context,R.array.doservice_layanan_array, android.R.layout.simple_spinner_item);
+        adapter = new ArrayAdapter(context ,android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.addAll(strLayanan);
 
         adapter1 = ArrayAdapter.createFromResource(context,R.array.doservice_tipeac_array, android.R.layout.simple_spinner_item);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -168,6 +210,7 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
         adapter2 = ArrayAdapter.createFromResource(context,R.array.doservice_lokasi_array, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        request_services();
     }
 
     private void calculate_price() {
@@ -245,16 +288,24 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
 
     public LinearLayout generateElementLayanan(final DoService data){
         LinearLayout lin = new LinearLayout(getContext());
+        lin.setPadding(5,5,5,5);
+
         lin.setOrientation(LinearLayout.HORIZONTAL);
         TextView tv = new TextView(getContext());
         tv.setText("Layanan");
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        params1.weight = 0.5f;
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params1.weight = 0.6f;
+        params1.bottomMargin = 5;
         //params1.setMargins(5, 5, 5, 5);
         tv.setLayoutParams(params1);
         lin.addView(tv);
+
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params2.weight = 0.4f;
+        params1.bottomMargin = 5;
         Spinner pilihan1 = new Spinner(getContext());
         pilihan1.setAdapter(adapter);
+        pilihan1.setLayoutParams(params2);
 
         lin.addView(pilihan1);
         pilihan1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -277,16 +328,22 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
     }
     public LinearLayout generateElementAcType(final DoService data){
         LinearLayout lin = new LinearLayout(getContext());
+        lin.setPadding(5,5,5,5);
         lin.setOrientation(LinearLayout.HORIZONTAL);
         TextView tv = new TextView(getContext());
         tv.setText("Tipe AC");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        params.weight = 0.5f;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params.weight = 0.6f;
+        params.bottomMargin = 5;
         tv.setLayoutParams(params);
         lin.addView(tv);
 
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params2.weight = 0.4f;
         final Spinner pilihan1 = new Spinner(getContext());
         pilihan1 .setAdapter(adapter1);
+        pilihan1.setLayoutParams(params2);
+
         lin.addView(pilihan1 );
         pilihan1 .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -311,18 +368,19 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
         lin.setOrientation(LinearLayout.HORIZONTAL);
         TextView tv = new TextView(getContext());
         tv.setText("Quantity ");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         params.weight = 0.5f;
         tv.setLayoutParams(params);
         lin.addView(tv);
 
         LinearLayout lin2 = new LinearLayout(getContext());
         lin2.setWeightSum(1);
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         params1.gravity = Gravity.CENTER;
         params1.weight = 0.5f;
         lin2.setLayoutParams(params1);
         lin2.setOrientation(LinearLayout.HORIZONTAL);
+
         AppCompatButton dBtn = new AppCompatButton(getContext());
         AppCompatButton iBtn = new AppCompatButton(getContext());
 
@@ -370,8 +428,8 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
         lin.setOrientation(LinearLayout.HORIZONTAL);
         TextView tv = new TextView(getContext());
         tv.setText("Lokasi ");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        params.weight = 0.5f;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params.weight = 0.6f;
         tv.setLayoutParams(params);
         lin.addView(tv);
 
@@ -388,9 +446,9 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
             }
         });
         pilihan1.setAdapter(adapter2);
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        params1.weight = 0.5f;
-        pilihan1.setLayoutParams(params1);
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params2.weight = 0.4f;
+        pilihan1.setLayoutParams(params2);
         lin.addView(pilihan1 );
         return lin;
     }
@@ -400,13 +458,13 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
         lin.setOrientation(LinearLayout.HORIZONTAL);
         TextView tv = new TextView(getContext());
         tv.setText("Problem / Catatan");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        params.weight = 0.5f;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params.weight = 0.6f;
         tv.setLayoutParams(params);
         lin.addView(tv);
         EditText tvNote = new EditText(getContext());
-        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        params2.weight = 0.5f;
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params2.weight = 0.4f;
         tvNote.setLayoutParams(params2);
         tvNote.setGravity(Gravity.LEFT);
         tvNote.setMinLines(1);
@@ -421,10 +479,18 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
             }
-
+            Handler handler = new Handler(Looper.getMainLooper());
+            Runnable runnable;
             @Override
-            public void afterTextChanged(Editable s) {
-                data.setNotes(s.toString());
+            public void afterTextChanged(final Editable s) {
+                handler.removeCallbacks(runnable);
+                runnable =new Runnable() {
+                    @Override
+                    public void run() {
+                        data.setNotes(s.toString());
+                    }
+                };
+                handler.postDelayed(runnable, 800);
             }
         });
         lin.addView(tvNote);
@@ -439,6 +505,7 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
         Button btnRemove = new Button(getContext());
         btnRemove.setText("Remove");
         btnRemove.setLayoutParams(params);
+        btnRemove.setTextSize(12);
         btnRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -465,6 +532,7 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
     public void generateForm(final int count){
             CardView cv = new CardView(getContext());
             LinearLayout ll = new LinearLayout(new ContextThemeWrapper(context, R.style.Widget_CardContent));
+            ll.setOrientation(LinearLayout.VERTICAL);
             cv.addView(ll);
             baseLayout.addView(cv);
 
@@ -538,14 +606,14 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
     @Override
     public VerificationError verifyStep() {
         if(total.doubleValue() == 0){
-            return new VerificationError("Anda belum memilih layanan dan banyaknya tipe AC yang akan diservice");
+            return new VerificationError("Anda belum memilih layanan atau banyaknya tipe AC yang akan diservice. Harga belum sepakat.");
         }
         TOrder order = DoServiceHelper.getInstance().getOrder();
         Calendar start = Calendar.getInstance();
         start.add(Calendar.DATE, 1);
         start.set(Calendar.HOUR_OF_DAY, hour);
         start.set(Calendar.MINUTE, minute);
-        order.setPickup(AppConfig.getSimpleDateFormat().format( start.getTime() ));
+        order.setPickup(AppConfig.getDateTimeServerFormat().format( start.getTime() ));
         order.setDroptime(null);
 
         next = true;
@@ -557,7 +625,6 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
         if(!next){
             baseLayout.removeView(btnAddItem);
             cek_with_calendar_time();
-            setup_spinner();
             DoServiceHelper.getInstance().clearOrder();
             generateForm(item++);
             baseLayout.addView(btnAddItem);

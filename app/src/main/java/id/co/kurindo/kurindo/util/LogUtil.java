@@ -21,7 +21,7 @@ import id.co.kurindo.kurindo.app.AppController;
  * Created by Andreas Schrade on 14.12.2015.
  */
 public class LogUtil {
-    private static final String LOG_PREFIX = "android_template";
+    private static final String LOG_PREFIX = "KurindoLog_";
 
     private static final boolean LOGGING_ENABLED = true;
     private static final int MAX_TAG_LENGTH = 23;
@@ -43,33 +43,33 @@ public class LogUtil {
 
     public static void logD(final String tag, String message) {
         if (LOGGING_ENABLED) {
-            if (Log.isLoggable(tag, Log.DEBUG)) {
+            //if (Log.isLoggable(tag, Log.DEBUG)) {
                 Log.d(tag, message);
-            }
+            //}
         }
     }
 
     public static void logD(final String tag, String message, Throwable cause) {
         if (LOGGING_ENABLED) {
-            if (Log.isLoggable(tag, Log.DEBUG)) {
+            //if (Log.isLoggable(tag, Log.DEBUG)) {
                 Log.d(tag, message, cause);
-            }
+            //}
         }
     }
 
     public static void logV(final String tag, String message) {
         if (LOGGING_ENABLED) {
-            if (Log.isLoggable(tag, Log.VERBOSE)) {
+            //if (Log.isLoggable(tag, Log.VERBOSE)) {
                 Log.v(tag, message);
-            }
+            //}
         }
     }
 
     public static void logV(final String tag, String message, Throwable cause) {
         if (LOGGING_ENABLED) {
-            if (Log.isLoggable(tag, Log.VERBOSE)) {
+            //if (Log.isLoggable(tag, Log.VERBOSE)) {
                 Log.v(tag, message, cause);
-            }
+            //}
         }
     }
 
@@ -139,7 +139,6 @@ public class LogUtil {
                 Log.e(tag, "logToServer Error: " + error.getMessage());
             }
         }) {
-
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url

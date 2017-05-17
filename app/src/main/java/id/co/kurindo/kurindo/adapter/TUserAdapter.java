@@ -61,7 +61,8 @@ public class TUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             holder.alamat.setText("");
             holder.alamat.setVisibility(View.GONE);
         }
-        holder.city.setText((r.getAddress()==null || r.getAddress().getCity() == null?"":r.getAddress().getCity().getText()));
+        holder.city.setText((r.getAddress()==null || r.getAddress().getCity() == null?"": r.getAddress().getCity().getText()));
+        //holder.city.setText((r.getAddress()==null?"": r.getAddress().toStringKecKab()));
         holder.name.setText(r.getName());
         holder.phone.setText(r.getPhone());
 

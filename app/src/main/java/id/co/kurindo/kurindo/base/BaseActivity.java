@@ -26,6 +26,7 @@ import java.util.Map;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.ShoppingCartActivity;
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 
 /**
@@ -176,6 +177,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         // show it
         alertDialog.show();
     }
+
+    protected void showConfirmationDialog(String title, String message, DialogInterface.OnClickListener YesListener, DialogInterface.OnClickListener NoListener){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getApplicationContext());
+
+        // set title
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, YesListener)
+                .setNegativeButton(R.string.no, NoListener);
+
+        // create alert dialog
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
+    }
+
 }
 
 

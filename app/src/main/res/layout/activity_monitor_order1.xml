@@ -58,6 +58,13 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/do_move_icon"/>
+        <CheckBox
+            android:id="@+id/checkBox8"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/do_mart_icon"/>
     </android.support.v7.widget.LinearLayoutCompat>
     <android.support.v7.widget.LinearLayoutCompat
     android:id="@+id/lineLayout1"

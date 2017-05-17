@@ -7,16 +7,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="6dp"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp">
-
-            <ImageView android:src="@drawable/icon_kurindo"
-                android:layout_width="wrap_content"
-                android:layout_height="72dp"
-                android:layout_marginBottom="24dp"
-                android:layout_gravity="center_horizontal" />
+            android:layout_height="match_parent" android:background="@color/white"
+            android:padding="12dp">
 
             <LinearLayout
                 android:id="@+id/layout_login"
@@ -25,19 +17,17 @@
 
             <com.lamudi.phonefield.PhoneInputLayout
                 android:id="@+id/input_phone" android:hint="Nomor Handphone" android:drawableLeft="@drawable/ic_phone_black"
-                android:layout_width="match_parent"   android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
+               style="@style/normalTextStyle"
+                android:layout_marginTop="8dp"
                 android:textSize="14dp" />
 
             <!-- Password Label -->
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginTop="8dp">
                 <EditText android:id="@+id/input_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    style="@style/normalTextStyle"
                     android:inputType="textPassword"
                     android:drawableLeft="@drawable/ic_lock_black"
                     android:hint="Password"/>
@@ -45,8 +35,7 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_login"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                style="@style/normalTextStyle"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:background="@color/colorPrimaryDark" android:textColor="@color/white"
@@ -54,9 +43,8 @@
                 android:text="Login"/>
             <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/chkAutoLogin"
-                android:layout_height="wrap_content"
-                android:text="Auto Login?" android:checked="true"
-                android:layout_width="fill_parent">
+                style="@style/normalTextStyle"
+                android:text="Auto Login?" android:checked="true">
             </android.support.v7.widget.AppCompatCheckBox>
     </LinearLayout>
     <LinearLayout
@@ -66,13 +54,12 @@
 
         <com.lamudi.phonefield.PhoneInputLayout
             android:id="@+id/input_phone_recovery" android:hint="Nomor Handphone" android:drawableLeft="@drawable/ic_phone_black"
-            android:layout_width="match_parent"   android:layout_height="wrap_content"
+            style="@style/normalTextStyle"
             android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
             android:textSize="14dp" />
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_recover"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                style="@style/normalTextStyle"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:background="@color/colorPrimaryDark" android:textColor="@color/yellow"
@@ -80,25 +67,24 @@
                 android:text="Reset Password"/>
         </LinearLayout>
         <TextView android:id="@+id/link_recover"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            style="@style/titleBoldTextStyle"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="24dp"
             android:text="Lupa Password?"
-            android:gravity="center"
-            android:textSize="16dip"/>
+            android:gravity="center"/>
 
             <LinearLayout
                 android:id="@+id/layout_activation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
                 <TextView
-                    android:layout_width="match_parent" android:gravity="center"
-                    android:layout_height="wrap_content" android:text="Silahkan aktifkan akun anda.\nMasukkan kode aktivasi yang dikirimkan melalui notifikasi atau SMS anda." android:textStyle="bold"/>
+                    style="@style/normalTextStyle"
+                    android:gravity="center"
+                    android:text="Silahkan aktifkan akun anda.\nMasukkan kode aktivasi yang dikirimkan melalui notifikasi atau SMS anda." android:textStyle="bold"/>
 
                 <com.lamudi.phonefield.PhoneInputLayout
                     android:id="@+id/input_activation_phone" android:hint="Nomor Handphone" android:drawableLeft="@drawable/ic_phone_black"
-                    android:layout_width="match_parent"   android:layout_height="wrap_content"
+                    style="@style/normalTextStyle"
                     android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
                     android:textSize="14dp" />
                 <android.support.design.widget.TextInputLayout
@@ -107,8 +93,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp">
                     <EditText android:id="@+id/input_activation_code"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        style="@style/normalTextStyle"
                         android:inputType="number"
                         android:hint="Kode Aktivasi" />
                 </android.support.design.widget.TextInputLayout>
@@ -121,8 +106,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp">
                     <EditText android:id="@+id/input_activation_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        style="@style/normalTextStyle"
                         android:inputType="textPassword"
                         android:hint="Password Baru"/>
                 </android.support.design.widget.TextInputLayout>
@@ -133,16 +117,14 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp">
                     <EditText android:id="@+id/input_activation_password2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        style="@style/normalTextStyle"
                         android:inputType="textPassword"
                         android:hint="Konfirmasi Password"/>
                 </android.support.design.widget.TextInputLayout>
                 <!-- Signup Button -->
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/btn_activation"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    style="@style/normalTextStyle"
                     android:layout_marginTop="24dp"
                     android:layout_marginBottom="24dp"
                     android:padding="12dp"

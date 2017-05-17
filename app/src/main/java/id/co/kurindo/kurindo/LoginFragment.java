@@ -37,6 +37,7 @@ import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.signup.SignupWizardActivity;
 
 /**
@@ -204,7 +205,7 @@ public class LoginFragment extends BaseFragment {
 
                             @Override
                             public void onResponse(String response) {
-                                Log.d(TAG, "RecoveryAccount Response: " + response.toString());
+                                LogUtil.logD(TAG, "RecoveryAccount Response: " + response.toString());
 
                                 try {
                                     JSONObject jObj = new JSONObject(response);
@@ -227,7 +228,7 @@ public class LoginFragment extends BaseFragment {
 
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.e(TAG, "Recovery Error: " + error.getMessage());
+                                LogUtil.logE(TAG, "Recovery Error: " + error.getMessage());
                                 Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
 
                                 _recoverButton.setEnabled(true);
@@ -310,7 +311,7 @@ public class LoginFragment extends BaseFragment {
 
                         @Override
                         public void onResponse(String response) {
-                            Log.d(TAG, "Login > CheckStatus Response: " + response.toString());
+                            LogUtil.logD(TAG, "Login > CheckStatus Response: " + response.toString());
                             //hideDialog();
 
                             try {
@@ -352,7 +353,7 @@ public class LoginFragment extends BaseFragment {
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, "Login Error: " + error.getMessage());
+                            LogUtil.logE(TAG, "Login Error: " + error.getMessage());
                             Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
 
                             _loginButton.setEnabled(true);

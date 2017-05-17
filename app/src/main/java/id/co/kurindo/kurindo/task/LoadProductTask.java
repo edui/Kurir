@@ -100,6 +100,7 @@ public class LoadProductTask extends ListenableAsyncTask<Object, Void, List>{
                 Map<String, String> params = new HashMap<String, String>();
                 String api = db.getUserApi();
                 params.put("Api", api);
+                params.put("Authorization", api);
 
                 return params;
             }

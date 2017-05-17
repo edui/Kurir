@@ -26,6 +26,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by DwiM on 11/10/2016.
@@ -89,7 +90,7 @@ public class WaitingApprovalActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Sending Message Response: " + response.toString());
+                LogUtil.logD(TAG, "Sending Message Response: " + response.toString());
                 //hideDialog();
 
                 try {
@@ -122,7 +123,7 @@ public class WaitingApprovalActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Sending Message Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Sending Message Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();

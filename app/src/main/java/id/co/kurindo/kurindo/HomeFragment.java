@@ -31,9 +31,11 @@ import id.co.kurindo.kurindo.map.MapsActivity;
 import id.co.kurindo.kurindo.model.ImageModel;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
+import id.co.kurindo.kurindo.wizard.docar.DoCarActivity;
 import id.co.kurindo.kurindo.wizard.dohijamah.DoHijamahActivity;
 import id.co.kurindo.kurindo.wizard.dojek.DoJekOrderActivity;
 import id.co.kurindo.kurindo.wizard.domart.DoMartActivity;
+import id.co.kurindo.kurindo.wizard.domove.DoMoveActivity;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
 import id.co.kurindo.kurindo.wizard.doservice.DoServiceActivity;
 import id.co.kurindo.kurindo.wizard.dowash.DoWashActivity;
@@ -217,13 +219,13 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             ((BaseActivity)getActivity()).showActivity(DoSendOrderActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_move_icon) {
                             bundle.putString("do_type", AppConfig.KEY_DOMOVE);
-                            ((BaseActivity)getActivity()).showActivity(DoSendOrderActivity.class, bundle);
+                            ((BaseActivity)getActivity()).showActivity(DoMoveActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_jek_icon){
                             bundle.putString("do_type", AppConfig.KEY_DOJEK);
                             ((BaseActivity)getActivity()).showActivity(DoJekOrderActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_car_icon){
                             bundle.putString("do_type", AppConfig.KEY_DOCAR);
-                            ((BaseActivity)getActivity()).showActivity(DoJekOrderActivity.class, bundle);
+                            ((BaseActivity)getActivity()).showActivity(DoCarActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_wash_icon){
                             bundle.putString("do_type", AppConfig.KEY_DOWASH);
                             ((BaseActivity)getActivity()).showActivity(DoWashActivity.class, bundle);
@@ -282,7 +284,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             );
                             product.setCode(AppConfig.KEY_DOJEK);
                             product.setQuantity(1);
-                            product.setCreated(AppConfig.getSimpleDateFormat().format(new Date()));
+                            product.setCreated(AppConfig.getDateTimeServerFormat().format(new Date()));
                             product.setPrice(new BigDecimal(0));
                             product.setDrawable(model.getDrawable());
                             //bundle.putSerializable("product", product);
@@ -302,7 +304,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                                             "- Harga sudah termasuk ongkos kirim (ambil & antar)\n"
                             );
                             product.setQuantity(1);
-                            product.setCreated(AppConfig.getSimpleDateFormat().format(new Date()));
+                            product.setCreated(AppConfig.getDateTimeServerFormat().format(new Date()));
                             product.setPrice(new BigDecimal(0));
                             product.setDrawable(model.getDrawable());
                             //bundle.putSerializable("product", product);
@@ -323,7 +325,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                                             "- Melayani perbaikan dan pemasangan atau pemindahan AC\n"
                             );
                             product.setQuantity(1);
-                            product.setCreated(AppConfig.getSimpleDateFormat().format(new Date()));
+                            product.setCreated(AppConfig.getDateTimeServerFormat().format(new Date()));
                             product.setPrice(new BigDecimal(0));
                             product.setDrawable(model.getDrawable());
                             //bundle.putSerializable("product", product);
@@ -339,7 +341,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             product.setCode(AppConfig.KEY_DOHIJAMAH);
                             product.setDescription("");
                             product.setQuantity(1);
-                            product.setCreated(AppConfig.getSimpleDateFormat().format(new Date()));
+                            product.setCreated(AppConfig.getDateTimeServerFormat().format(new Date()));
                             product.setPrice(new BigDecimal(0));
                             product.setDrawable(model.getDrawable());
                             //bundle.putSerializable("product", product);
@@ -361,7 +363,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                                             "- Armada yang tersedia: Avansa, Xenia, Innova, Ertiga3. Untuk tipe lain mohon konfirmasi terlebih dahulu.\n"
                             );
                             product.setQuantity(1);
-                            product.setCreated(AppConfig.getSimpleDateFormat().format(new Date()));
+                            product.setCreated(AppConfig.getDateTimeServerFormat().format(new Date()));
                             product.setPrice(new BigDecimal(0));
                             product.setDrawable(model.getDrawable());
                             //bundle.putSerializable("product", product);
@@ -380,7 +382,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                                             "- Sewa angkut 24 jam mulai Rp 300.000,-\n"
                             );
                             product.setQuantity(1);
-                            product.setCreated(AppConfig.getSimpleDateFormat().format(new Date()));
+                            product.setCreated(AppConfig.getDateTimeServerFormat().format(new Date()));
                             product.setPrice(new BigDecimal(0));
                             product.setDrawable(model.getDrawable());
                             //bundle.putSerializable("product", product);

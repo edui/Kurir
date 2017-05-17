@@ -23,18 +23,28 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
     private static final String TAG = "DoSendOrderActivity";
     int step = -1;
     String doType = AppConfig.KEY_DOSEND;
+    String doMoveType = AppConfig.DOMOVE_PICKUP_BAK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null) doType = bundle.getString("do_type");
+        if(bundle != null) {
+            doType = bundle.getString("do_type");
+            doMoveType = bundle.getString("domove_type");
+
+        }
         DoSendHelper.getInstance().clearAll();
 
         DoSendHelper.getInstance().setDoType(doType);
+        DoSendHelper.getInstance().setDoMoveType(doMoveType);
         super.onCreate(savedInstanceState);
     }
 
-
+    protected AbstractStepAdapter getStepperAdapter(int startingStepPosition) {
+        stepAdapter = getStepperAdapter();
+        mStepperLayout.setAdapter(stepAdapter, startingStepPosition);
+        return stepAdapter;
+    }
     @Override
     protected AbstractStepAdapter getStepperAdapter() {
         return new MyStepperAdapter(getSupportFragmentManager(), doType);
@@ -42,12 +52,7 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
 
     @Override
     public void onStepSelected(int newStepPosition) {
-        if(newStepPosition == 1){
-            mCompleteNavigationButton.setText("Confirm Order");
-            //mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_spesial_button_background));
-        }else{
-            mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_default_button_background));
-        }
+        mCompleteNavigationButton.setText("Order "+doType);
 
         step = newStepPosition;
     }
@@ -77,7 +82,7 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
                 case 0:
                     return DoSendPinLocationMapFragment.newInstance(doType);
                 case 1:
-                    return new DoSendFormFragment();
+                    return DoSendFormFragment.newInstance(doType);
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }
@@ -98,11 +103,14 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
                     DoSendHelper.getInstance().clearAll();
                     return super.onSupportNavigateUp();
                 }
+            }else if(f instanceof DoSendFormFragment){
+                super.onBackPressed();
+                return true;
             }else{
                 return super.onSupportNavigateUp();
             }
         }
-        return super.onSupportNavigateUp();
+        return false;
     }
 
 

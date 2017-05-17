@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.List;
 
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.News;
 
 /**
@@ -21,11 +22,12 @@ public class AppController extends MultiDexApplication {
 
     public static final String TAG = AppController.class.getSimpleName();
 
-    private RequestQueue mRequestQueue;
+    protected RequestQueue mRequestQueue;
     //private LoadCityTask loadCityTask;
 
     private static AppController mInstance;
     public static List<News> banners;
+    public static String city = "DUMMY";
 
     @Override
     public void onCreate() {
@@ -76,5 +78,7 @@ public class AppController extends MultiDexApplication {
         }
     }
 
-
+    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
+        ConnectivityReceiver.connectivityReceiverListener = listener;
+    }
 }

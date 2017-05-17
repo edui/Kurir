@@ -237,9 +237,11 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.kur100Btn.setVisibility(View.GONE);
         holder.kur101Btn.setVisibility(View.GONE);
         holder.kur200Btn.setVisibility(View.GONE);
+        holder.kur350Btn.setVisibility(View.GONE);
         holder.kur400Btn.setVisibility(View.GONE);
         holder.kur400Btn.setEnabled(false);
 
+        holder.kur500Btn.setImageResource(R.drawable.status04_0_icon);
         holder.kur500Btn.setVisibility(View.VISIBLE);
         holder.kur500Btn.setEnabled(false);
     }
@@ -386,6 +388,8 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.item_service.setImageResource(R.drawable.do_hijamah_icon);
         }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSHOP)) {
             holder.item_service.setImageResource(R.drawable.do_shop_icon);
+        }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOMART)) {
+            holder.item_service.setImageResource(R.drawable.do_mart_icon);
         }else{
             holder.item_service.setImageResource(R.drawable.icon_nds);
         }

@@ -4,12 +4,14 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
@@ -50,6 +52,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -58,10 +62,12 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.adapter.PacketServiceAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.BaseActivity;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.TOrder;
@@ -69,6 +75,7 @@ import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static id.co.kurindo.kurindo.R.style.CustomDialog;
 
 /**
@@ -97,8 +104,11 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
     @Bind(R.id.priceText)
     TextView priceText;
+    double tariff;
     @Bind(R.id.TextViewTitle)
     TextView TextViewTitle;
+    @Bind(R.id.ivProductImage)
+    ImageView ivProductImage;
 
     @Bind(R.id.tvPickupTime)
     TextView tvPickupTime;
@@ -138,9 +148,9 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     //TUserAdapter mPengirimRecipientAdapter;
     //TUser sender;
     //TUser receiver;
+    //SessionManager session;
 
-    ProgressDialog progressDialog;
-    SessionManager session;
+    ProgressDialog progressBar;
 
     //CityAdapter cityPengirimAdapter;
     //CityAdapter cityPenerimaAdapter;
@@ -150,7 +160,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     private TPacket packet ;
     //private City kota_pengirim;
     //private City kota_penerima;
-    float berat_kiriman = 1;
+    BigDecimal berat_kiriman = new BigDecimal(1);
     protected float volume = 0;
 
     private List<City> cityList = new ArrayList<>();
@@ -163,7 +173,8 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     int hour;
     int minute;
     Context context;
-    
+    String doType = AppConfig.KEY_DOSEND;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,14 +185,20 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             getActivity().finish();
             return ;
         }
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            String d = bundle.getString("doType");
+            if(d != null) doType = d;
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_dosend_form);
+        progressBar = new ProgressDialogCustom(context);
 
-        progressDialog = new ProgressDialog(getActivity(), CustomDialog);
+
         ivAgrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,46 +224,46 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         });
         return v;
     }
+
     private void cek_with_calendar_time() {
         Calendar c = Calendar.getInstance();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
         cek_time();
     }
-
     private void cek_time() {
         if(serviceCode != null){
             if(AppConfig.isNightService(serviceCode)){
                 if(hour+1 >= AppConfig.START_ENS) {
                     hour++;
                 } else if(hour+1 >= AppConfig.END_ENS) {
-                    hour = AppConfig.START_SDS;
-                    _serviceCodeText.setSelection(0);
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
                 } else {
                     hour = AppConfig.START_ENS;
                 }
             }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_SDS)){
                 if(hour + 1 < AppConfig.START_SDS) {
-                    hour = AppConfig.START_SDS;
-                    _serviceCodeText.setSelection(1);
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(0); //sds
                 } else if(hour+1 >= AppConfig.END_ENS) {
-                    hour = AppConfig.START_SDS;
-                    _serviceCodeText.setSelection(0);
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
                 } else if(hour+1 >= AppConfig.START_ENS) {
                     hour++;
-                    _serviceCodeText.setSelection(2);
+                    _serviceCodeText.setSelection(2); //nds
                 }else{
                     hour++;
-                    _serviceCodeText.setSelection(1);
+                    _serviceCodeText.setSelection(0); //sds
                 }
             }else if(serviceCode.equalsIgnoreCase(AppConfig.PACKET_NDS)){
                 if(hour + 1 < AppConfig.START_SDS) {
-                    hour = AppConfig.START_SDS;
-                    _serviceCodeText.setSelection(0);
+                    hour = AppConfig.START_SDS +2;
+                    _serviceCodeText.setSelection(2); //nds
                 } else if(hour+1 >= AppConfig.END_ENS) {
-                    hour = AppConfig.START_SDS;
+                    hour = AppConfig.START_SDS +2;
                 } else if(hour+1 >= AppConfig.START_ENS) {
-                    hour = AppConfig.START_SDS;
+                    hour = AppConfig.START_SDS +2;
                     //hour++;
                     //_serviceCodeText.setSelection(3);
                 }
@@ -254,6 +271,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         }
         tvPickupTime.setText(AppConfig.pad(hour)+":"+AppConfig.pad(minute));
     }
+
     private void setup_time() {
         serviceCode = DoSendHelper.getInstance().getServiceCode();
         _serviceCodeText.setSelection((serviceCode==AppConfig.PACKET_NDS? 0 : (serviceCode==AppConfig.PACKET_SDS ? 1 : (serviceCode==AppConfig.PACKET_ENS ? 2 : 3))));
@@ -309,7 +327,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
 
         BigDecimal b = new BigDecimal(_beratBarangText.getText().toString());
         b = b.subtract(new BigDecimal(0.1));
-        if(b.floatValue() < 1) b = new BigDecimal(1);
+        if(b.intValue() < 1) b = new BigDecimal(1);
         _beratBarangText.setText(""+b.floatValue());
 
         //if(q % 0.5 == 0 && q > 1){checkTarif();        }
@@ -429,7 +447,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     }
     private void setup_berat_barang() {
 
-        _beratBarangText.setText("1");
+        //_beratBarangText.setText("1");
         _beratBarangText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -438,57 +456,84 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
-
+            Handler handler = new Handler(Looper.getMainLooper());
+            Runnable runnable;
             @Override
-            public void afterTextChanged(Editable v) {
-                try {
-                    berat_kiriman = Float.parseFloat(v.toString());
-                } catch (Exception e) {
-                }
-                ;
-                if(berat_kiriman > 0 && (berat_kiriman % 0.2 == 0) ) checkTarif();
+            public void afterTextChanged(final Editable v) {
+                handler.removeCallbacks(runnable);
+                runnable =new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            berat_kiriman = new BigDecimal(v.toString());
+                        } catch (Exception e) {
+                        }
+
+                        if(berat_kiriman.floatValue() >= AppConfig.MIN_WEIGHT_DOSEND) {
+                            checkTarif();
+                        }
+                    }
+                };
+                handler.postDelayed(runnable, 800);
+
             }
         });
-
-        TextViewTitle.setText("Manifest Paket ( Jarak: "+ AppConfig.formatKm( DoSendHelper.getInstance().getPacket()==null? 0 : DoSendHelper.getInstance().getPacket().getDistance() )+")");
     }
     public List<PacketService> getPacketServiceList() {
         if(packetServiceList ==null){
-            packetServiceList = AppConfig.getPacketServiceList();
+            packetServiceList = AppConfig.getPacketServiceList(doType);
         }
         return packetServiceList;
     }
     private void checkTarif(){
+        progressBar.setMessage("Loading. Please wait....");
+        progressBar.show();
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting(); builder.serializeNulls();
+        builder.excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+
+        Address originAddr = DoSendHelper.getInstance().getOrigin().getAddress() ;
+        Address destinationAddr = DoSendHelper.getInstance().getDestination().getAddress() ;
         HashMap<String, String> params = new HashMap();
 
         params.put("distance", ""+ DoSendHelper.getInstance().getPacket().getDistance());
-        params.put("origin", (inputBaruPengirim?  _alamatPengirimText.getText().toString() : DoSendHelper.getInstance().getOrigin().getAddress().getKecamatan() ));
-        params.put("destination", (inputBaruPenerima? _alamatPenerimaText.getText().toString(): DoSendHelper.getInstance().getDestination().getAddress().getKecamatan() ));
+        params.put("origin", gson.toJson(originAddr));
+        params.put("destination", gson.toJson(destinationAddr));
         params.put("service_code", DoSendHelper.getInstance().getOrder().getService_code());
         params.put("do_type", DoSendHelper.getInstance().getOrder().getService_type());
         params.put("berat_kiriman", ""+berat_kiriman);
         params.put("volume", ""+volume);
 
+        tariff = 0;
         addRequest("request_price_route", Request.Method.POST, AppConfig.URL_CALC_PRICE_KM, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     Log.d(TAG, "requestprice Response: " + response.toString());
                     JSONObject jObj = new JSONObject(response);
-                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                    String status = jObj.getString("status");
+                    boolean OK = "OK".equalsIgnoreCase(status);
                     if(OK){
-                        double tariff = jObj.getDouble("tarif");
+                        tariff = jObj.getDouble("tarif");
                         DoSendHelper.getInstance().getOrder().setTotalPrice( new BigDecimal( tariff ) ) ;
                         priceText.setText(AppConfig.formatCurrency(tariff));
+                    }else{
+                        Toast.makeText(context, ""+status, LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     e.printStackTrace();
+                    Toast.makeText(context, "Error "+e.getMessage(), LENGTH_SHORT).show();
                 }
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
+                Toast.makeText(context, "Error "+volleyError.getMessage(), LENGTH_SHORT).show();
+                progressBar.dismiss();
             }
         }, params, getKurindoHeaders());
 
@@ -497,9 +542,9 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     private void place_an_order(Handler handler) {
         Log.d(TAG, "place_an_order");
 
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Processing your Order....");
-        progressDialog.show();
+        progressBar.setIndeterminate(true);
+        progressBar.setMessage("Sedang memproses pesanan anda....");
+        progressBar.show();
 
         if(inputBaruPengirim){
             String namaPengirim = _namaPengirimText.getText().toString();
@@ -552,6 +597,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         packet.setBiaya(order.getTotalPrice());
         packet.setDestination( DoSendHelper.getInstance().getDestination());
         packet.setOrigin( DoSendHelper.getInstance().getOrigin());
+        packet.setCatatan(packet.getCatatan() +" "+DoSendHelper.getInstance().getDoMoveType());
         Set packets = new LinkedHashSet();
         packets.add(packet);
         order.setPackets(packets);
@@ -615,7 +661,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                     e.printStackTrace();
                     invalid = new VerificationError("Json error: " + e.getMessage());
                 }
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
@@ -623,7 +669,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
                 invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
-                progressDialog.dismiss();
+                progressBar.dismiss();
                 handler.handleMessage(null);
             }
         }, params, getKurindoHeaders());
@@ -641,6 +687,9 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         if(!valid){
             return new VerificationError("Invalid Data. Please check.");
         }
+        if(tariff == 0){
+            return new VerificationError("Invalid Data. Tarif belum terhitung.");
+        }
 
         final Handler handler = new Handler() {
             @Override
@@ -655,7 +704,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 place_an_order(handler);
             }
         };
-        showConfirmationDialog("Confirm Order","Anda Yakin akan membeli produk tersebut?", YesClickListener, null);
+        showConfirmationDialog("Konfirmasi","Anda akan memesan layanan "+doType+"?", YesClickListener, null);
 
         // loop till a runtime exception is triggered.
         try { Looper.loop(); }
@@ -781,6 +830,10 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         swChooseTime.setChecked(true);
         swChooseTime.toggle();
 
+        doType = DoSendHelper.getInstance().getDoType();
+        ivProductImage.setImageResource((doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)? R.drawable.do_send_icon : R.drawable.do_move_icon));
+        TextViewTitle.setText(""+doType+" ( Jarak: "+ AppConfig.formatKm( (DoSendHelper.getInstance().getPacket()==null? 0 :DoSendHelper.getInstance().getPacket().getDistance() ))+")");
+
         TUser destination = DoSendHelper.getInstance().getDestination();
         _teleponPenerimaText.setPhoneNumber("");
         _namaPenerimaText.setText("");
@@ -812,14 +865,22 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         }
         BigDecimal berat = DoSendHelper.getInstance().getPacket().getBerat_asli();
         if(berat != null){
-            berat_kiriman = berat.floatValue();
-            _beratBarangText.setText(""+berat_kiriman);
+            berat_kiriman = berat;
+            _beratBarangText.setText(""+berat_kiriman.floatValue());
         }
     }
 
     @Override
     public void onError(@NonNull VerificationError error) {
 
+    }
+
+    public static Fragment newInstance(String doType) {
+        Bundle bundle = new Bundle();
+        bundle.putString("doType", doType);
+        DoSendFormFragment f = new DoSendFormFragment();
+        f.setArguments(bundle);
+        return f;
     }
 
 }

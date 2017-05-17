@@ -6,14 +6,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,24 +31,21 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoServiceHelper;
 import id.co.kurindo.kurindo.model.DoService;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPrice;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
-
-import static id.co.kurindo.kurindo.R.style.CustomDialog;
 
 /**
  * Created by dwim on 3/15/2017.
@@ -58,7 +54,7 @@ import static id.co.kurindo.kurindo.R.style.CustomDialog;
 public class DoWashForm1 extends BaseStepFragment implements Step {
     private static final String TAG = "DoWashForm1";
     VerificationError invalid = null;
-    ProgressDialog progressDialog;
+    ProgressDialog progressBar;
 
     @Bind(R.id.quantityStr)
     TextView quantityStr;
@@ -123,6 +119,7 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getContext();
+        progressBar = new ProgressDialogCustom(context);
     }
 
     @Nullable
@@ -137,7 +134,6 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
         createDo2();
         tvMinBeratInfo.setText("(Min "+AppConfig.MIN_WEIGHT_DOWASH+" Kg)");
         retrieve_price();
-        progressDialog = new ProgressDialog(getActivity(), CustomDialog);
         radioGroupService_OnClick();
 
         radioGroupService.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -155,6 +151,8 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
 
         return v;
     }
+
+
     private void createDo1() {
         if(do1 == null){
             do1 = new DoService();
@@ -179,6 +177,7 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
     }
 
     private void retrieve_price() {
+        progressBar.show();
         final String tag_string_Req = "retrieve_price";
         String url = AppConfig.URL_PRICE_REQUEST;
         final HashMap<String, String> params = new HashMap();
@@ -186,7 +185,7 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
         addRequest(tag_string_Req, Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, tag_string_Req+" Response: " + response.toString());
+                LogUtil.logD(TAG, tag_string_Req+" Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     String message = jObj.getString("message");
@@ -206,13 +205,17 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
+                    Toast.makeText(context, "Daftar harga tidak tersedia.", Toast.LENGTH_SHORT).show();
                     //invalid = new VerificationError("Json error: " + e.getMessage());
                 }
+                progressBar.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError e) {
                 e.printStackTrace();
+                Toast.makeText(context, "Network Error. Gagal menyiapkan harga.", Toast.LENGTH_SHORT).show();
+                progressBar.dismiss();
             }
         }, params, getKurindoHeaders());
     }
@@ -467,8 +470,8 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
         DoServiceHelper.getInstance().addOrder(total, AppConfig.KEY_DOWASH);
         TOrder order = DoServiceHelper.getInstance().getOrder();
         order.setTotalQuantity(do1.getQty()+do2.getQty());
-        order.setPickup(AppConfig.getSimpleDateFormat().format( start.getTime() ));
-        order.setDroptime(AppConfig.getSimpleDateFormat().format( end.getTime() ));
+        order.setPickup(AppConfig.getDateTimeServerFormat().format( start.getTime() ));
+        order.setDroptime(AppConfig.getDateTimeServerFormat().format( end.getTime() ));
         if(layanan.equalsIgnoreCase(getString( R.string.label_flash ))){
             order.setService_code(AppConfig.PACKET_SDS);
         }
@@ -494,5 +497,12 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
     @Override
     public void onError(@NonNull VerificationError error) {
 
+    }
+
+    public static Fragment newInstance() {
+        Bundle bundle = new Bundle();
+        DoWashForm1 f = new DoWashForm1();
+        f.setArguments(bundle);
+        return  f;
     }
 }

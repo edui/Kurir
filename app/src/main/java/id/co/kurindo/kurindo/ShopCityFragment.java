@@ -61,6 +61,7 @@ import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.shopadm.AddProductActivity;
 import id.co.kurindo.kurindo.wizard.shopadm.AddShopBranchActivity;
@@ -194,14 +195,11 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
         HashMap<String, String> params = new HashMap();
         params.put("shop_id", ""+shop.getId());
 
-        HashMap<String, String> headers = new HashMap();
-        headers.put("Api", db.getUserApi());
-
         addRequest("request_data_pengelola", Request.Method.POST, AppConfig.URL_SHOP_PREPIC_LIST, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.d(TAG, "requestDataPengelola Response: " + response.toString());
+                    LogUtil.logD(TAG, "requestDataPengelola Response: " + response.toString());
                     JSONObject jObj = new JSONObject(response);
                     String message = jObj.getString("status");
                     boolean OK = "OK".equalsIgnoreCase(message);
@@ -226,7 +224,7 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
             }
-        }, params, headers);
+        }, params, getKurindoHeaders());
     }
 
     private void load_shops(){
@@ -237,7 +235,7 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
         addRequest("request_shop_city_list", Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "request_shop_city_list Response: " + response.toString());
+                LogUtil.logD(TAG, "request_shop_city_list Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean success = jObj.getBoolean("success");
@@ -261,7 +259,7 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-                Log.e(TAG, "LoadShopTask Error: " + volleyError.getMessage());
+                LogUtil.logE(TAG, "LoadShopTask Error: " + volleyError.getMessage());
                 Toast.makeText(getActivity(),volleyError.getMessage(), Toast.LENGTH_LONG).show();
             }
         }, params, getKurindoHeaders());
@@ -315,12 +313,12 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "OnMapReady");
+        LogUtil.logD(TAG, "OnMapReady");
         mMap = googleMap;
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                Log.d("Camera position change" + "", cameraPosition + "");
+                LogUtil.logD("Camera position change" + "", cameraPosition + "");
                 mCenterLatLong = cameraPosition.target;
 
                 try {
@@ -354,7 +352,7 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
 
     private void changeMap(Location location) {
 
-        Log.d(TAG, "Reaching map" + mMap);
+        LogUtil.logD(TAG, "Reaching map" + mMap);
 
 
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -419,7 +417,7 @@ public class ShopCityFragment extends BaseFragment implements OnMapReadyCallback
         }
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Log.d(TAG, "ON connected ");
+            LogUtil.logD(TAG, "ON connected ");
             moveCameraToLocation(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
             reDrawMarker();
             this.mLastLocation = mLastLocation;

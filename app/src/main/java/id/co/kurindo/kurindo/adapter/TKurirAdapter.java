@@ -64,14 +64,15 @@ public class TKurirAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             holder.alamat.setText(r.getAddress().getAlamat());
         }
         if(r.getAddress() != null && r.getAddress().getCity() != null ){
-            holder.city.setText(r.getAddress().getCity().getText()+"\n"+joined);
+            holder.city.setText(r.getAddress().toStringKecKab()+"\n"+joined);
         }else{
             holder.city.setText("Unknown"+"\n"+joined);
         }
         holder.name.setText(r.getFirstname() + " "+r.getLastname());
         holder.phone.setText(r.getPhone());
         holder.nik.setText("NIK: "+r.getNik());
-        holder.simc.setText("SIM C: "+r.getSimc());
+        String skills = "\n ( "+AppConfig.KEY_DOSEND +", "+AppConfig.KEY_DOJEK + " )";
+        holder.simc.setText("SIM C: "+r.getSimc() + skills);
 
         if(r.getFirstname().isEmpty()) holder.name.setVisibility(View.GONE);
         if(r.getPhone().isEmpty()) holder.phone.setVisibility(View.GONE);

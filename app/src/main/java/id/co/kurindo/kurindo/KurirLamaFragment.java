@@ -28,6 +28,7 @@ import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 
 /**
@@ -74,7 +75,7 @@ public class KurirLamaFragment extends BaseKurirFragment{
                 addRequest(tag_string_req , Request.Method.POST, URI, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "MonitorKurir > Check: Response:" + response.toString());
+                        LogUtil.logD(TAG, "MonitorKurir > Check: Response:" + response.toString());
                         //hideDialog();
 
                         try {
@@ -123,7 +124,7 @@ public class KurirLamaFragment extends BaseKurirFragment{
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d(tag_string_req, "Network Error "+volleyError.getMessage());
+                        LogUtil.logD(tag_string_req, "Network Error "+volleyError.getMessage());
                     }
                 }, maps, getKurindoHeaders());
             }

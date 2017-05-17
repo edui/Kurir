@@ -3,6 +3,7 @@ package id.co.kurindo.kurindo.wizard.doshop;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -63,10 +64,13 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
@@ -84,6 +88,8 @@ import id.co.kurindo.kurindo.adapter.PaymentAdapter;
 import id.co.kurindo.kurindo.adapter.TUserAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
+import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.map.DataParser;
 import id.co.kurindo.kurindo.map.MapUtils;
@@ -94,10 +100,12 @@ import id.co.kurindo.kurindo.model.Payment;
 import id.co.kurindo.kurindo.model.Route;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static android.app.Activity.RESULT_OK;
 import static android.widget.Toast.LENGTH_SHORT;
+import static com.android.volley.Request.Method.POST;
 
 /**
  * Created by dwim on 2/12/2017.
@@ -108,7 +116,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static String TAG = "MAP LOCATION";
+    private static String TAG = "DoShopPinLocationMapFragment";
     Context mContext;
 
     @Bind(R.id.locationMarkertext)
@@ -207,6 +215,10 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
     SupportMapFragment mapFragment;
     boolean inDoSendCoverageArea = true;
     boolean inDoMoveCoverageArea = true;
+    boolean next= true;
+    String shopIdStr = "";
+
+    protected ProgressDialog progressBar;
 
     final Handler handler = new Handler() {
         @Override
@@ -228,6 +240,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflateAndBind(inflater, container, R.layout.fragment_maps_doshop);
         mContext = getContext();
+        progressBar = new ProgressDialogCustom(mContext);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         //SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map);
@@ -250,7 +263,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                 Log.i("", "Selected: " + item.description);
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
                 placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-                Log.i("", "Fetching details for ID: " + item.placeId);
+                LogUtil.logI("", "Fetching details for ID: " + item.placeId);
             }
         };
         mOriginAutoCompleteTextView.setOnItemClickListener(adapterOnItemClik);
@@ -312,7 +325,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         });
         rgDoType.check(R.id.radio_dosend);
 
-        packetServiceAdapter = new PacketServiceAdapter(getContext(), AppConfig.getPacketServiceList(), 1);
+        packetServiceAdapter = new PacketServiceAdapter(getContext(), AppConfig.getPacketServiceList(doType), 1);
         _serviceCodeText.setAdapter(packetServiceAdapter);
         _serviceCodeText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -395,7 +408,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         @Override
         public void onResult(PlaceBuffer places) {
             if (!places.getStatus().isSuccess()) {
-                Log.e("ResultCallback", "Place query did not complete. Error: " +places.getStatus().toString());
+                LogUtil.logE("ResultCallback", "Place query did not complete. Error: " +places.getStatus().toString());
                 return;
             }
             // Selecting the first object buffer.
@@ -413,7 +426,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                 addr.setAlamat(name);
                 //addr.setFormattedAddress(address);
                 addr.setLocation( place.getLatLng() );
-                if(origin.getAddress().getLocation() != null) destinationMode = false;
+                //if(origin.getAddress().getLocation() != null) destinationMode = false;
                 destinationChanged = true;
             }
             showAddressLayout();
@@ -596,9 +609,11 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         //buttonAddOrder.setVisibility((hide ? View.GONE : View.VISIBLE));
     }
     private void requestAddress(LatLng latLng) {
+        progressBar.show();
         requestAddress(latLng, handler);
         try { Looper.loop(); }
         catch(RuntimeException e2) { }
+        progressBar.dismiss();
     }
 
     private void requestAddress(LatLng latLng, final Handler handler) {
@@ -628,6 +643,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                             //destination = address.getLocation();
                             //if(origin.getAddress().getLocation() != null) destinationMode = false;
                             destinationMode= false;
+                            search_shop_by_destination(shopIdStr, destination);
                         }
                     }
                 }catch (Exception e){
@@ -718,7 +734,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                 if(lineOptions != null) {
                     mMap.addPolyline(lineOptions);
                 }else {
-                    Log.d("drawRoutes","without Polylines drawn");
+                    LogUtil.logD("drawRoutes","without Polylines drawn");
                 }
             }
 
@@ -734,6 +750,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
 
             Set<Shop> shops = DoShopHelper.getInstance().getShops();
             for (Shop shop : shops) {
+                if(shop.getAddress() != null)
                 builder.include(shop.getAddress().getLocation());
             }
             if(destination.getAddress().getLocation() != null) builder.include(destination.getAddress().getLocation());
@@ -802,7 +819,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             Response.Listener responseListener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d(TAG, "drawRoute Response: " + response.toString());
+                    LogUtil.logD(TAG, "drawRoute Response: " + response.toString());
                     try {
                         JSONObject jObj = new JSONObject(response);
                         boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
@@ -824,7 +841,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             Response.ErrorListener responseErrorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    Log.e(TAG, "request_direction_route Error: " + volleyError.getMessage());
+                    LogUtil.logE(TAG, "request_direction_route Error: " + volleyError.getMessage());
                     volleyError.printStackTrace();
                     handler.handleMessage(null);
                 }
@@ -847,10 +864,20 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
     }
 
     private void requestprice() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting(); builder.serializeNulls();
+        builder.excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+
+        Address originAddr = DoSendHelper.getInstance().getOrigin().getAddress() ;
+        Address destinationAddr = DoSendHelper.getInstance().getDestination().getAddress() ;
+
         HashMap<String, String> params = new HashMap();
+        //params.put("origin", origin.getName());//TODO json origin
+        //params.put("destination", destination.getAddress().getKecamatan()); //TODO json destination
+        params.put("origin", gson.toJson(originAddr));
+        params.put("destination", gson.toJson(destinationAddr));
         params.put("distance", (route ==null || route.getDistance()==null? "1" : route.getDistance().getValue()));
-        params.put("origin", origin.getName());//TODO json origin
-        params.put("destination", destination.getAddress().getKecamatan()); //TODO json destination
         params.put("service_code", serviceCode);
         params.put("do_type", doType);
         params.put("berat_kiriman", "1");
@@ -860,7 +887,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.d(TAG, "requestprice Response: " + response.toString());
+                    LogUtil.logD(TAG, "requestprice Response: " + response.toString());
                     JSONObject jObj = new JSONObject(response);
                     boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
                     if(OK){
@@ -1046,7 +1073,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "OnMapReady");
+        LogUtil.logD(TAG, "OnMapReady");
         mMap = googleMap;
         mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
             @Override
@@ -1110,7 +1137,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         }
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Log.d(TAG, "ON connected ");
+            LogUtil.logD(TAG, "ON connected ");
             if(canDrawRoute()) {
                 drawRoute();
             }else{
@@ -1151,7 +1178,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Connection suspended");
+        LogUtil.logI(TAG, "Connection suspended");
         mGoogleApiClient.connect();
     }
 
@@ -1229,7 +1256,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
 
     private void changeMap(Location location) {
 
-        Log.d(TAG, "Reaching map" + mMap);
+        LogUtil.logD(TAG, "Reaching map" + mMap);
 
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -1396,6 +1423,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
 
     @Override
     public VerificationError verifyStep() {
+        if(!next) return new VerificationError("Shop doesn't have address.");
         if(!inDoSendCoverageArea){
             return new VerificationError("Jarak terlalu jauh untuk DOSEND. Gunakan DOMOVE sebagai alternatif.");
         }
@@ -1431,19 +1459,64 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
     }
 
     @Override
-    public void onSelected() {
+    public void onSelected()  {
         String t = ""; int i=0;
         Set<Shop> shops = DoShopHelper.getInstance().getShops();
+        shopIdStr = "";
+        String message = "";
         for (Shop shop : shops) {
-            origin = shop.getPic();
-            origin.setLastname(shop.getName());
+            if(shop.getAddress()==null || shop.getAddress().getLocation() == null) {
+                next = false;
+                message +=shop.getName();
+            }
+            //origin = shop.getPic();
+            //origin.setLastname(shop.getName());
             //waypoints.add(shop.getAddress().getLocation());
-            if(i>0) t+= " | ";
-            t += origin.getName();
+            shopIdStr +=""+shop.getId();
+            if(i>0) {
+                t+= " | ";
+                shopIdStr += "|";
+                message += ", ";
+            }
+            t += shop.getName();
             i++;
         }
-        tvOrigin.setText(t);
+        if(!next) Toast.makeText(mContext, "Ada Toko ( "+message+" )yang tidak memiliki alamat. Coba tentukan alamat tujuan lainnya.", LENGTH_SHORT).show();
 
+        tvOrigin.setText(t);
+        onClick_tvDestination();
+    }
+
+    private void search_shop_by_destination(String shopStr, TUser destination) {
+        String tag_request = "search_shop_by_destination";
+        String url = AppConfig.URL_SHOP_CITYBASED;
+        HashMap<String, String> params = new HashMap();
+        params.put("shops", shopStr);
+        params.put("city", destination.getAddress().getKabupaten());
+        addRequest(tag_request, POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    LogUtil.logD(TAG, "search_shop_by_destination Response: " + response.toString());
+                    JSONObject jObj = new JSONObject(response);
+                    String message =jObj.getString("message");
+                    if(message.equalsIgnoreCase("OK")){
+                        JSONArray jArr = jObj.getJSONArray("data");
+                        showMap();
+                    }else{
+                        Toast.makeText(mContext, ""+message, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(mContext, "Error "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Toast.makeText(mContext, "Network Error ."+volleyError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }, params, getKurindoHeaders());
     }
 
     @Override

@@ -1,7 +1,9 @@
 package id.co.kurindo.kurindo;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.KurindoBaseDrawerActivity;
@@ -11,10 +13,10 @@ public class MainDrawerActivity extends KurindoBaseDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         showFragment(TabFragment.class);
     }
 
+    protected int counter = 0;
 
     @Override
     protected void onDestroy() {
@@ -22,6 +24,30 @@ public class MainDrawerActivity extends KurindoBaseDrawerActivity {
         boolean autoLogin = session.isAutoLoggedIn(); //autoLogin=false;
         session.setLogin(autoLogin);
         finish();
+
+        /*
+        if(counter == 0){
+            DialogInterface.OnClickListener YesClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    boolean autoLogin = session.isAutoLoggedIn(); //autoLogin=false;
+                    session.setLogin(autoLogin);
+                    finish();
+                }
+            };
+            DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    counter++;
+                }
+            };
+            showConfirmationDialog("Exit","Yakin anda akan keluar dari aplikasi ?", YesClickListener, NoClickListener);
+        }else{
+            boolean autoLogin = session.isAutoLoggedIn(); //autoLogin=false;
+            session.setLogin(autoLogin);
+            finish();
+        }
+        */
     }
 
     @Override

@@ -1,5 +1,7 @@
 package id.co.kurindo.kurindo.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +16,8 @@ public class Route {
     private double price;
     private TUser origin;
     private TUser destination;
+    private List<Leg> legs;
+    private List<LatLng> bounds;
 
     public List<List<HashMap<String, String>>> getRoutes() {
         return routes;
@@ -61,6 +65,22 @@ public class Route {
 
     public void setDestination(TUser destination) {
         this.destination = destination;
+    }
+
+    public List<LatLng> getBounds() {
+        return bounds;
+    }
+
+    public void setBounds(List<LatLng> bounds) {
+        this.bounds = bounds;
+    }
+
+    public List<Leg> getLegs() {
+        return legs;
+    }
+
+    public void setLegs(List<Leg> legs) {
+        this.legs = legs;
     }
 
     @Override

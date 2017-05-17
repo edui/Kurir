@@ -7,9 +7,13 @@
           android:id="@+id/nav_item_home"
           android:icon="@drawable/ic_home_black_18dp"/>
 
+    <item android:title="Petunjuk Penggunaan"
+        android:id="@+id/nav_item_howtouse"
+        android:icon="@drawable/ic_help_outline_black_18dp"/>
+
     <item android:title="Kiriman Dalam Kota"
           android:id="@+id/nav_item_kiriman_dalam_kota"
-          android:icon="@drawable/ic_shop_black_18dp"/>
+          android:icon="@drawable/ic_shop_black_18dp" android:visible="false"/>
 
     <item android:title="Kiriman Luar Kota"
           android:id="@+id/nav_item_kiriman_luar_kota"

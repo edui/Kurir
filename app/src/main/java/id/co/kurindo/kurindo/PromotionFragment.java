@@ -21,6 +21,7 @@ import id.co.kurindo.kurindo.model.ImageModel;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadNewsTask;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by DwiM on 11/9/2016.
@@ -59,7 +60,7 @@ public class PromotionFragment extends Fragment implements BaseSliderView.OnSlid
     }
     public void onPostExecute(Object o) {
         List<News> newsList = (List<News>)o;
-        Log.i("loadNewsTask","newsList size:"+newsList.size());
+        LogUtil.logI("loadNewsTask","newsList size:"+newsList.size());
         if(newsList != null && newsList.size() > 0){
             sliderShow.removeAllSliders();
             for (int i = 0; i < newsList.size(); i++) {

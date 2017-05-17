@@ -5,7 +5,9 @@ import android.os.Parcelable;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by dwim on 2/9/2017.
@@ -23,6 +25,8 @@ public class TPacket  implements Parcelable {
     private String catatan;
     private String received_by;
     private String received_date;
+    private List<List<HashMap<String, String>>> routes;
+    List<TUser> waypoints;
 
     public TPacket(){
         berat_asli = new BigDecimal(1);
@@ -165,6 +169,22 @@ public class TPacket  implements Parcelable {
 
     public void setReceived_date(String received_date) {
         this.received_date = received_date;
+    }
+
+    public List<List<HashMap<String, String>>> getRoutes() {
+        return routes;
+    }
+
+    public void setRoutes(List<List<HashMap<String, String>>> routes) {
+        this.routes = routes;
+    }
+
+    public List<TUser> getWaypoints() {
+        return waypoints;
+    }
+
+    public void setWaypoints(List<TUser> waypoints) {
+        this.waypoints = waypoints;
     }
 
     public Map<String, String> getAsParams() {

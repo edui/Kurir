@@ -18,4 +18,5 @@
 
     <dimen name="list_row_padding">14.0dip</dimen>
     <dimen name="font_22">20.0sp</dimen>
+    <dimen name="padding_small">4dp</dimen>
 </resources>

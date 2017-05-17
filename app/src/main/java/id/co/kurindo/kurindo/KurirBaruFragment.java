@@ -46,6 +46,7 @@ import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.model.User;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 
 /**
@@ -122,7 +123,7 @@ public class KurirBaruFragment extends BaseKurirFragment {
 
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "MonitorKurir > Check: Response:" + response.toString());
+                        LogUtil.logD(TAG, "MonitorKurir > Check: Response:" + response.toString());
                         //hideDialog();
 
                         try {
@@ -172,7 +173,7 @@ public class KurirBaruFragment extends BaseKurirFragment {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "MonitorKurir Error: " + error.getMessage());
+                        LogUtil.logE(TAG, "MonitorKurir Error: " + error.getMessage());
                         if(getContext() != null )
                             Toast.makeText(getContext(), "Network Error "+error.getMessage(), Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
@@ -191,11 +192,7 @@ public class KurirBaruFragment extends BaseKurirFragment {
 
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        String api = db.getUserApi();
-                        params.put("Api", api);
-
-                        return params;
+                        return getKurindoHeaders();
                     }
                 };
 
@@ -217,7 +214,7 @@ public class KurirBaruFragment extends BaseKurirFragment {
 
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "KURIRBARU > approval: Response: " + response.toString());
+                        LogUtil.logD(TAG, "KURIRBARU > approval: Response: " + response.toString());
                         //hideDialog();
 
                         try {
@@ -252,7 +249,7 @@ public class KurirBaruFragment extends BaseKurirFragment {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Kurir Approval Error: " + error.getMessage());
+                        LogUtil.logE(TAG, "Kurir Approval Error: " + error.getMessage());
                         Toast.makeText(getContext(), "Network Error "+error.getMessage(), Toast.LENGTH_LONG).show();
                         handler.handleMessage(null);
                         progressBar.setVisibility(View.GONE);
@@ -269,11 +266,7 @@ public class KurirBaruFragment extends BaseKurirFragment {
                     }
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        String api = db.getUserApi();
-                        params.put("Api", api);
-
-                        return params;
+                       return getKurindoHeaders();
                     }
 
                 };

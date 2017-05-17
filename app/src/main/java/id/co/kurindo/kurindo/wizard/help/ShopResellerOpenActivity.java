@@ -23,7 +23,11 @@ public class ShopResellerOpenActivity extends AbstractStepperActivity {
     protected AbstractStepAdapter getStepperAdapter() {
         return new MyStepperAdapter(getSupportFragmentManager());
     }
-
+    protected AbstractStepAdapter getStepperAdapter(int startingStepPosition) {
+        stepAdapter = getStepperAdapter();
+        mStepperLayout.setAdapter(stepAdapter, startingStepPosition);
+        return stepAdapter;
+    }
     @Override
     public void onStepSelected(int newStepPosition) {
 

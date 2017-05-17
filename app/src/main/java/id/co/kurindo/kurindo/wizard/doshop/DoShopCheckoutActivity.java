@@ -44,7 +44,11 @@ public class DoShopCheckoutActivity extends AbstractStepperActivity {
     protected AbstractStepAdapter getStepperAdapter() {
         return new MyStepperAdapter(getSupportFragmentManager());
     }
-
+    protected AbstractStepAdapter getStepperAdapter(int startingStepPosition) {
+        stepAdapter = getStepperAdapter();
+        mStepperLayout.setAdapter(stepAdapter, startingStepPosition);
+        return stepAdapter;
+    }
     @Override
     public void onStepSelected(int newStepPosition) {
         //Toast.makeText(this, "onStepSelected! -> " + newStepPosition, Toast.LENGTH_SHORT).show();
@@ -108,7 +112,7 @@ public class DoShopCheckoutActivity extends AbstractStepperActivity {
             }
         }
 
-        return super.onSupportNavigateUp();
+        return false;
     }
 
     @Override

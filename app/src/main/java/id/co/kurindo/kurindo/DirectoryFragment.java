@@ -1,14 +1,24 @@
 package id.co.kurindo.kurindo;
 
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -32,10 +42,14 @@ import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.map.LocationService;
+import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.Shop;
+import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadShopTask;
 import id.co.kurindo.kurindo.util.DummyContent;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 
 /**
@@ -48,7 +62,11 @@ public class DirectoryFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     ArrayList<Shop> shops = new ArrayList<>();
     private ListenableAsyncTask loadShopTask;
-    private ListenableAsyncTask loadNewsTask;
+    //private ListenableAsyncTask loadNewsTask;
+
+    TextView tvLocation;
+    TextView tvChangeLocation;
+    int location = 0;
 
     int counter = 0;
     Context context;
@@ -63,14 +81,22 @@ public class DirectoryFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.directory_layout, null);
         //loadNews();
-        loadNewsDummy();
+        loadDummyShops();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
         mRecyclerView.setLayoutManager(new GridLayoutManager(context, 3));
         mRecyclerView.setHasFixedSize(true);
 
 
-        //mAdapter = new GalleryAdapter(context, data);
+        tvLocation = (TextView) view.findViewById(R.id.tvLocation);
+        tvChangeLocation = (TextView) view.findViewById(R.id.tvChangeLocation);
+        tvChangeLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupWindow("Ganti Lokasi", R.array.pilih_lokasi_array, R.drawable.kirim_dalam_kotaa);
+            }
+        });
+                //mAdapter = new GalleryAdapter(context, data);
         mAdapter = new ShopAdapter(context, shops);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -97,11 +123,29 @@ public class DirectoryFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        //if(counter % 9 == 1) load_shops_location();
         counter++;
-        if(counter % 9 == 1) load_shops_location();
+        getActivity().registerReceiver(receiver, new IntentFilter(LocationService.LOCATION_CHANGED));
     }
 
-    private void loadNewsDummy() {
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(receiver);
+    }
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                if(counter % 9 == 1) {
+                    load_shops_location();
+                    counter++;
+                }
+            }
+        }
+    };
+    private void loadDummyShops() {
         shops.clear();
         shops.addAll(DummyContent.SHOPS);
     }
@@ -112,7 +156,7 @@ public class DirectoryFragment extends BaseFragment {
             @Override
             public void onPostExecute(Object o) {
                 List<Shop> shopList = (List<Shop>)o;
-                Log.i("loadShopTask","shopList size:"+shopList.size());
+                LogUtil.logI("loadShopTask","shopList size:"+shopList.size());
                 if(shopList != null && shopList.size() > 0){
                     shops.clear();
                     for (int i = 0; i < shopList.size(); i++) {
@@ -130,17 +174,32 @@ public class DirectoryFragment extends BaseFragment {
     public void load_shops_location(){
         String URI = AppConfig.URL_SHOP_LOCATIONBASED_LIST;
         Map<String, String> params = new HashMap<String, String>();
-        params.put("city", (ViewHelper.getInstance().getLastAddress()==null? "Balikpapan": ViewHelper.getInstance().getLastAddress().getKabupaten() ));
+
+        TUser user = db.getUserAddressByType(AppConfig.HOMEBASE);
+        Address address = user.getAddress();
+        if(location == 0) address= ViewHelper.getInstance().getLastAddress();
+        if(address != null){
+            params.put("city", address.getKabupaten());
+            //params.put("kec", address.getKecamatan());
+            //params.put("kab", address.getKabupaten());
+            //params.put("prop", address.getPropinsi());
+            tvLocation.setText("Area : "+address.toStringKecKab());
+        }else{
+            String defaultCity = "Kota Balikpapan";
+            params.put("city", defaultCity);
+            tvLocation.setText("Area: "+defaultCity);
+        }
         addRequest("request_locationbased_shop", Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "request_locationbased_shop Response: " + response.toString());
+                LogUtil.logD(TAG, "request_locationbased_shop Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     String message = jObj.getString("message");
                     boolean ok = "OK".equalsIgnoreCase(message);
                     if (ok) {
-                        shops.clear();
+                        //shops.clear();
+                        loadDummyShops();
                         ParserUtil parser= new ParserUtil();
 
                         JSONArray datas = jObj.getJSONArray("data");
@@ -176,7 +235,7 @@ public class DirectoryFragment extends BaseFragment {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-                Log.e(TAG, "request_locationbased_shop Error: " + volleyError.getMessage());
+                LogUtil.logE(TAG, "request_locationbased_shop Error: " + volleyError.getMessage());
                 //Toast.makeText(getActivity(),volleyError.getMessage(), Toast.LENGTH_LONG).show();
             }
         }, params, getKurindoHeaders());
@@ -192,7 +251,7 @@ public class DirectoryFragment extends BaseFragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "LoadShopTask Response: " + response.toString());
+                LogUtil.logD(TAG, "LoadShopTask Response: " + response.toString());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -230,12 +289,60 @@ public class DirectoryFragment extends BaseFragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "LoadShopTask Error: " + error.getMessage());
-                Toast.makeText(getActivity(),error.getMessage(), Toast.LENGTH_LONG).show();
+                LogUtil.logE(TAG, "LoadShopTask Error: " + error.getMessage());
+                Toast.makeText(getActivity(),""+error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(cityReq);
+    }
+
+
+
+    protected void showPopupWindow(String title, int arrayResourceId, int imageResourceId) {
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getActivity());
+        // Include dialog.xml file
+        dialog.setContentView(R.layout.popup_spinner);
+        // Set dialog title
+        dialog.setTitle("Popup Dialog");
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, arrayResourceId, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner spinner = (Spinner) dialog.findViewById(R.id.spinnerDialog);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                location = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        // set values for custom dialog components - text, image and button
+        ImageView image = (ImageView) dialog.findViewById(R.id.imageDialog);
+        if(imageResourceId == 0) imageResourceId  = R.drawable.icon_syarat_ketentuan;
+        image.setImageResource(imageResourceId);
+        TextView textTitleDialog = (TextView) dialog.findViewById(R.id.textTitleDialog);
+        if(title != null) textTitleDialog.setText(title);
+
+        dialog.show();
+
+        ImageButton declineButton = (ImageButton) dialog.findViewById(R.id.btncancelcat);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                load_shops_location();
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
     }
 }

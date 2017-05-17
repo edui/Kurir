@@ -8,6 +8,8 @@ import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
+import id.co.kurindo.kurindo.TOrderShowActivity;
+import id.co.kurindo.kurindo.helper.DoServiceHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
 public class DoWashActivity extends AbstractStepperActivity {
@@ -22,7 +24,11 @@ public class DoWashActivity extends AbstractStepperActivity {
     protected AbstractStepAdapter getStepperAdapter() {
         return new MyStepperAdapter(getSupportFragmentManager());
     }
-
+    protected AbstractStepAdapter getStepperAdapter(int startingStepPosition) {
+        stepAdapter = getStepperAdapter();
+        mStepperLayout.setAdapter(stepAdapter, startingStepPosition);
+        return stepAdapter;
+    }
     @Override
     public void onStepSelected(int newStepPosition) {
 
@@ -33,6 +39,8 @@ public class DoWashActivity extends AbstractStepperActivity {
 
     @Override
     public void onCompleted(View completeButton) {
+        showActivity(TOrderShowActivity.class);
+        DoServiceHelper.getInstance().clearOrder();
 
         finish();
     }
@@ -52,7 +60,7 @@ public class DoWashActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return new DoWashForm1();
+                    return DoWashForm1.newInstance();
                 case 1:
                     return new DoWashAddressForm();
                 default:
@@ -65,4 +73,5 @@ public class DoWashActivity extends AbstractStepperActivity {
             return 2;
         }
     }
+
 }

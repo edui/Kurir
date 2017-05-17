@@ -37,11 +37,11 @@ public abstract class AbstractStepperActivity extends BaseActivity implements St
 
     private static final String CURRENT_STEP_POSITION_KEY = "position";
 
-    protected StepperLayout mStepperLayout;
-    protected RightNavigationButton mCompleteNavigationButton;
-    protected RightNavigationButton mNextNavigationButton;
-    protected Button mBackNavigationButton;
-    protected  AbstractStepAdapter stepAdapter;
+    public StepperLayout mStepperLayout;
+    public RightNavigationButton mCompleteNavigationButton;
+    public RightNavigationButton mNextNavigationButton;
+    public Button mBackNavigationButton;
+    public AbstractStepAdapter stepAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +103,7 @@ public abstract class AbstractStepperActivity extends BaseActivity implements St
 
     @Override
     public void onError(VerificationError verificationError) {
-        Toast.makeText(this, "onError! -> " + verificationError.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "VerificationError : " + verificationError.getErrorMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

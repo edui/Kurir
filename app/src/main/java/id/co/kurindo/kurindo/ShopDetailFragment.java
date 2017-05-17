@@ -43,6 +43,7 @@ import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.task.ListenableAsyncTask;
 import id.co.kurindo.kurindo.task.LoadProductTask;
 import id.co.kurindo.kurindo.util.DummyContent;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.help.KurirOpenActivity;
 import id.co.kurindo.kurindo.wizard.help.ShopOpenActivity;
 import id.co.kurindo.kurindo.wizard.help.ShopResellerOpenActivity;
@@ -246,7 +247,7 @@ public class ShopDetailFragment extends BaseFragment {
             @Override
             public void onPostExecute(Object o) {
                 List<Product> dataList = (List<Product>)o;
-                Log.i("loadProducttask","newsList size:"+dataList.size());
+                LogUtil.logI("loadProducttask","newsList size:"+dataList.size());
                 products.clear();
                 if(dataList != null && dataList.size() > 0){
                     for (int i = 0; i < dataList.size(); i++) {

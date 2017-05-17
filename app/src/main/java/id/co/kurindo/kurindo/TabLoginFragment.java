@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,11 +25,16 @@ public class TabLoginFragment  extends Fragment {
     SignupFragment signupFragment;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /**
          *Inflate tab_layout and setup Views.
          */
-        View x =  inflater.inflate(R.layout.tab_layout,null);
+        View x =  inflater.inflate(R.layout.login_tab_layout,null);
         tabLayout = (TabLayout) x.findViewById(R.id.tabs);
         viewPager = (ViewPager) x.findViewById(R.id.viewpager);
 
@@ -37,6 +43,9 @@ public class TabLoginFragment  extends Fragment {
          */
         loginFragment = new LoginPhoneFragment();
         signupFragment = new SignupFragment();
+
+        loginFragment.setArguments(getArguments());
+
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), loginFragment, signupFragment));
 
         /**
@@ -49,19 +58,20 @@ public class TabLoginFragment  extends Fragment {
             @Override
             public void run() {
                 tabLayout.setupWithViewPager(viewPager);
-
+/*
                 for (int i = 0; i < tabLayout.getTabCount(); i++) {
                     int iconId = -1;
                     switch (i) {
                         case 0:
-                            iconId = R.drawable.ic_person_white_18dp;
+                            iconId = R.drawable.ic_person_black;
                             break;
                         case 1:
-                            iconId = R.drawable.ic_person_add_white_18dp;
+                            iconId = R.drawable.ic_person_add_black_18dp;
                             break;
                     }
                     tabLayout.getTabAt(i).setIcon(iconId);
                 }
+*/
             }
         });
 

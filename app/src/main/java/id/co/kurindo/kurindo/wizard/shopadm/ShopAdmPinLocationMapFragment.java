@@ -39,6 +39,7 @@ import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.map.SinglePinLocationMapFragment;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 
 /**
@@ -171,7 +172,7 @@ public class ShopAdmPinLocationMapFragment extends SinglePinLocationMapFragment 
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.d(TAG, "requestDataPengelola Response: " + response.toString());
+                    LogUtil.logD(TAG, "requestDataPengelola Response: " + response.toString());
                     JSONObject jObj = new JSONObject(response);
                     String message = jObj.getString("status");
                     boolean OK = "OK".equalsIgnoreCase(message);

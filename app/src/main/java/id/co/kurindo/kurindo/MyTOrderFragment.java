@@ -22,6 +22,7 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by dwim on 1/6/2017.
@@ -80,7 +81,7 @@ public class MyTOrderFragment extends BaseTOrderMonitoringFragment {
 
                         @Override
                         public void onResponse(String response) {
-                            Log.d(TAG, "MonitorOrder > Check: Response:" + response.toString());
+                            LogUtil.logD(TAG, "MonitorOrder > Check: Response:" + response.toString());
                             //hideDialog();
 
                             try {
@@ -110,7 +111,7 @@ public class MyTOrderFragment extends BaseTOrderMonitoringFragment {
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, "MonitorOrder Error: " + error.getMessage());
+                            LogUtil.logE(TAG, "MonitorOrder Error: " + error.getMessage());
                             Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                             refreshBtn.setVisibility(View.VISIBLE);
@@ -130,11 +131,7 @@ public class MyTOrderFragment extends BaseTOrderMonitoringFragment {
 
                         @Override
                         public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            String api = db.getUserApi();
-                            params.put("Api", api);
-
-                            return params;
+                            return getKurindoHeaders();
                         }
                     };
 

@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -49,6 +50,7 @@ import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.TOrder;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.dosend.AcceptTOrderActivity;
 
 /**
@@ -70,18 +72,22 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
     AppCompatButton refreshBtn;
     TOrder selectedOrder;
 
+    protected Context context;
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View x = inflateAndBind(inflater, container, R.layout.activity_monitor_order1);
-
+        
+        context = getContext();
+        
         mRecyclerView = (RecyclerView) x.findViewById(R.id.list);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context, 1));
         mRecyclerView.setHasFixedSize(true);
         if(session.isPelanggan()){
-            adapter = new MonitorTOrderAdapter(getContext(), orders, this);
+            adapter = new MonitorTOrderAdapter(context, orders, this);
         }else{
-            adapter = new KurirMonitorTOrderAdapter(getContext(), orders, this);//ADMIN&KURIR
+            adapter = new KurirMonitorTOrderAdapter(context, orders, this);//ADMIN&KURIR
         }
         mRecyclerView.setAdapter(adapter);
         progressBar = (ProgressBar) x.findViewById(R.id.progressBar1);
@@ -193,7 +199,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
 
                         @Override
                         public void onResponse(String response) {
-                            Log.d(TAG, "MonitorOrder > BOOKING CANCEL : Response: " + response.toString());
+                            LogUtil.logD(TAG, "MonitorOrder > URL_TORDER_ACTION : Response: " + response.toString());
                             //hideDialog();
 
                             try {
@@ -209,17 +215,17 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
                                         orders.remove(position);
                                     adapter.notifyDataSetChanged();
                                     String msg = jObj.getString("message");
-                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                                     progressBar.setVisibility(View.GONE);
                                 } else {
                                     // Error in login. Get the error message
                                     String errorMsg = jObj.getString("message");
-                                    Toast.makeText(getContext(), ""+errorMsg, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, ""+errorMsg, Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 // JSON error
                                 e.printStackTrace();
-                                Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
 
                             handler.handleMessage(null);
@@ -229,8 +235,8 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e(TAG, "Booking Error: " + error.getMessage());
-                            Toast.makeText(getContext(), "Network Error "+error.getMessage(), Toast.LENGTH_LONG).show();
+                            LogUtil.logE(TAG, "Booking Error: " + error.getMessage());
+                            Toast.makeText(context, "Network Error "+error.getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                             handler.handleMessage(null);
                         }
@@ -248,11 +254,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
                         }
                         @Override
                         public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            String api = db.getUserApi();
-                            params.put("Api", api);
-
-                            return params;
+                            return getKurindoHeaders();
                         }
 
                     };
@@ -340,6 +342,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
         int doCarCount = 0;
         int doMoveCount = 0;
         int doShopCount = 0;
+        int doMartCount = 0;
 
         orders.clear();
 
@@ -447,6 +450,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
             bundle.putInt(AppConfig.KEY_DOCAR, doCarCount);
             bundle.putInt(AppConfig.KEY_DOMOVE, doMoveCount);
             bundle.putInt(AppConfig.KEY_DOSHOP, doShopCount);
+            bundle.putInt(AppConfig.KEY_DOMART, doMartCount);
         }
         return bundle;
     }

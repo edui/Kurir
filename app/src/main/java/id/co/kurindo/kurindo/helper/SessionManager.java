@@ -3,7 +3,6 @@ package id.co.kurindo.kurindo.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import id.co.kurindo.kurindo.app.AppConfig;
 
@@ -89,7 +88,7 @@ public class SessionManager {
         }
         public boolean isShopPic(){
             String role = pref.getString(KEY_ROLE, "client");
-            return (role.equals(AppConfig.KEY_SHOPPIC) || role.equals(AppConfig.KEY_SHOPKEC) || role.equals(AppConfig.KEY_SHOPKAB) || role.equals(AppConfig.KEY_SHOPPROP) || role.equals(AppConfig.KEY_SHOPNEG)) ;
+            return (role.equals(AppConfig.KEY_SHOPPIC) || role.equals(AppConfig.KEY_SHOPKEC) || role.equals(AppConfig.KEY_SHOPKAB) || role.equals(AppConfig.KEY_SHOPPROV) || role.equals(AppConfig.KEY_SHOPNEG)) ;
         }
         public boolean isAgent(){
             String role = pref.getString(KEY_ROLE, "client");
@@ -105,7 +104,7 @@ public class SessionManager {
         }
     public boolean isAdministrator(){
         String role = pref.getString(KEY_ROLE, "client");
-        return (role.equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKEC) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKAB) || role.equalsIgnoreCase(AppConfig.KEY_ADMINPROP) || role.equalsIgnoreCase(AppConfig.KEY_ADMINNEG));
+        return (role.equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKEC) || role.equalsIgnoreCase(AppConfig.KEY_ADMINKAB) || role.equalsIgnoreCase(AppConfig.KEY_ADMINPROV) || role.equalsIgnoreCase(AppConfig.KEY_ADMINNEG));
     }
 
     public boolean isSuperAdministrator(){

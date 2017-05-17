@@ -21,6 +21,7 @@ import java.util.Map;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
+import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
  * Created by dwim on 12/30/2016.
@@ -74,13 +75,16 @@ public class KurindoFirebaseInstanceIdService extends FirebaseInstanceIdService 
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "update_token Response: " + response.toString());
+                LogUtil.logD(TAG, "update_token Response: " + response.toString());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
 
                     String message= jObj.getString("message");
-                    Log.i(TAG, "message "+message);
+                    if(message.equalsIgnoreCase("OK")){
+                        AppConfig.FCM_TOKEN = null;
+                    }
+                    LogUtil.logI(TAG, "message "+message);
 
                 } catch (JSONException e) {
                     // JSON error
@@ -91,7 +95,7 @@ public class KurindoFirebaseInstanceIdService extends FirebaseInstanceIdService 
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "update_token Error: " + error.getMessage());
+                LogUtil.logE(TAG, "update_token Error: " + error.getMessage());
             }
         }) {
 

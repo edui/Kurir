@@ -1,17 +1,11 @@
 package id.co.kurindo.kurindo.wizard.dojek;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.stepstone.stepper.Step;
-import com.stepstone.stepper.VerificationError;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.R;
@@ -19,7 +13,7 @@ import id.co.kurindo.kurindo.TOrderShowActivity;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
-import id.co.kurindo.kurindo.wizard.BaseStepFragment;
+import id.co.kurindo.kurindo.wizard.docar.DoCarForm2;
 
 /**
  * Created by dwim on 2/7/2017.
@@ -40,20 +34,21 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
         super.onCreate(savedInstanceState);
     }
 
+    protected AbstractStepAdapter getStepperAdapter(int startingStepPosition) {
+        stepAdapter = getStepperAdapter();
+        mStepperLayout.setAdapter(stepAdapter, startingStepPosition);
+        return stepAdapter;
+    }
 
-    @Override
     protected AbstractStepAdapter getStepperAdapter() {
-        return new MyStepperAdapter(getSupportFragmentManager(), doType);
+        stepAdapter = new MyStepperAdapter(getSupportFragmentManager(), doType);
+        return stepAdapter;
     }
 
     @Override
     public void onStepSelected(int newStepPosition) {
-        if(newStepPosition == 1){
-            mCompleteNavigationButton.setText("Confirm Order");
-            //mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_spesial_button_background));
-        }else{
-            mNextNavigationButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.ms_default_button_background));
-        }
+        mCompleteNavigationButton.setText("Order "+doType);
+
         step = newStepPosition;
     }
 
@@ -69,9 +64,9 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
         finish();
     }
 
-    private static class MyStepperAdapter extends AbstractStepAdapter {
-        String doType;
-        MyStepperAdapter(FragmentManager fm, String doType) {
+    public static class MyStepperAdapter extends AbstractStepAdapter {
+        public String doType;
+        public MyStepperAdapter(FragmentManager fm, String doType) {
             super(fm);
             this.doType = doType;
         }
@@ -82,9 +77,7 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
                 case 0:
                     return DoJekPinLocationMapFragment.newInstance(doType);
                 case 1:
-                    if(DoSendHelper.getInstance().getDoType().equalsIgnoreCase(AppConfig.KEY_DOCAR))
-                        return new DoCarForm1();
-                    else     return new DoJekFormFragment();
+                    return DoJekFormFragment.newInstance(doType);
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }
@@ -101,15 +94,18 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
         Fragment f = getStepperAdapter().getItem(step);
         if(f != null){
             if(f instanceof DoJekPinLocationMapFragment){
-                if(!((DoJekPinLocationMapFragment) DoJekPinLocationMapFragment.getInstance()).handleBackPressed()) {
+                if(!DoJekPinLocationMapFragment.getInstance().handleBackPressed()) {
                     DoSendHelper.getInstance().clearAll();
                     return super.onSupportNavigateUp();
                 }
+            }else if(f instanceof DoJekFormFragment){
+                super.onBackPressed();
+                return true;
             }else{
                 return super.onSupportNavigateUp();
             }
         }
-        return super.onSupportNavigateUp();
+        return false;
     }
 
     @Override

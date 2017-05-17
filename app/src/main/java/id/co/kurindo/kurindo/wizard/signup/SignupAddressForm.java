@@ -25,8 +25,10 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.map.SinglePinLocationMapFragment;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -36,7 +38,6 @@ import static android.app.Activity.RESULT_OK;
 public class SignupAddressForm extends SinglePinLocationMapFragment {
     private static final String TAG = "SignupAddressForm";
     VerificationError invalid = null;
-    ProgressDialog progressDialog;
 
     @Bind(R.id.tvAlamat)
     TextView tvAlamat;
@@ -81,6 +82,7 @@ public class SignupAddressForm extends SinglePinLocationMapFragment {
     }
 
     private void update_city() {
+        progressBar.show();
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message mesg) {
@@ -93,7 +95,7 @@ public class SignupAddressForm extends SinglePinLocationMapFragment {
         //loop till a runtime exception is triggered.
         try { Looper.loop(); }
         catch(RuntimeException e2) {}
-
+        progressBar.dismiss();
     }
 
     private void update_city(final Handler handler) {
@@ -108,7 +110,7 @@ public class SignupAddressForm extends SinglePinLocationMapFragment {
         addRequest("request_update_city", Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "request_update_city Response: " + response.toString());
+                LogUtil.logD(TAG, "request_update_city Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     String message = jObj.getString("message");
@@ -137,6 +139,7 @@ public class SignupAddressForm extends SinglePinLocationMapFragment {
                         String city = jObj.getString("city");
 
                         if(city == null || city.isEmpty() || city.equalsIgnoreCase("null")){
+                            getActivity().setResult(RESULT_CANCELED);
                         }else{
                             if(tuser != null){
                                 db.onUpgrade(db.getWritableDatabase(), 0, 1);

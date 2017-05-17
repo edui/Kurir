@@ -47,6 +47,7 @@ import id.co.kurindo.kurindo.model.CartItem;
 import id.co.kurindo.kurindo.model.StatusHistory;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static id.co.kurindo.kurindo.R.style.CustomDialog;
@@ -357,7 +358,7 @@ public class StepSummaryFragment extends BaseStepFragment implements Step {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "retrieve_order_history Response: " + response.toString());
+                LogUtil.logD(TAG, "retrieve_order_history Response: " + response.toString());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -386,7 +387,7 @@ public class StepSummaryFragment extends BaseStepFragment implements Step {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Process_order Error: " + error.getMessage());
+                LogUtil.logE(TAG, "Process_order Error: " + error.getMessage());
                 Toast.makeText(getContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
             }

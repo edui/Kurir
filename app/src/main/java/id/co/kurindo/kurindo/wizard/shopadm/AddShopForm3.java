@@ -31,6 +31,7 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.ShopAdmHelper;
 import id.co.kurindo.kurindo.model.Shop;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static id.co.kurindo.kurindo.R.style.CustomDialog;
@@ -115,7 +116,7 @@ public class AddShopForm3 extends BaseStepFragment implements Step {
         params.put("imageBackdrop",ShopAdmHelper.getInstance().getBitmapBackdropString());
         params.put("shop",ShopAdmHelper.getInstance().getShopJson());
 
-        Log.d("gson", ShopAdmHelper.getInstance().getShopJson() );
+        LogUtil.logD("gson", ShopAdmHelper.getInstance().getShopJson() );
 
         String url = AppConfig.URL_SHOP_ADD;
         if(editMode){
@@ -124,7 +125,7 @@ public class AddShopForm3 extends BaseStepFragment implements Step {
             addRequest("request_add_shop", Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d(TAG, "request_add_shop Response: " + response.toString());
+                    LogUtil.logD(TAG, "request_add_shop Response: " + response.toString());
                     try {
                         JSONObject jObj = new JSONObject(response);
                         String message = jObj.getString("message");

@@ -19,9 +19,6 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.lamudi.phonefield.PhoneInputLayout;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
@@ -39,10 +36,9 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.adapter.TUserSpAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.ShopAdmHelper;
-import id.co.kurindo.kurindo.model.Address;
-import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
@@ -107,7 +103,7 @@ public class AddShopForm1 extends BaseStepFragment implements Step {
         pilihPengelola.setVisibility(View.GONE);
         tvInfoPilih.setVisibility(View.GONE);
         TUser u = db.getUser();
-        if(u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR) || u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINKEC) || u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINKAB) || u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINPROP) || u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINNEG)){
+        if(u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINISTRATOR) || u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINKEC) || u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINKAB) || u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINPROV) || u.getRole().equalsIgnoreCase(AppConfig.KEY_ADMINNEG)){
             pilihPengelola.setVisibility(View.VISIBLE);
             tvInfoPilih.setVisibility(View.VISIBLE);
 
@@ -141,7 +137,7 @@ public class AddShopForm1 extends BaseStepFragment implements Step {
         addRequest(tag_string_req , Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, tag_string_req +" > Response:" + response.toString());
+                LogUtil.logD(TAG, tag_string_req +" > Response:" + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
@@ -180,7 +176,7 @@ public class AddShopForm1 extends BaseStepFragment implements Step {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Log.d(tag_string_req, ""+volleyError.getMessage());
+                LogUtil.logD(tag_string_req, ""+volleyError.getMessage());
             }
         }, maps, getKurindoHeaders());
 

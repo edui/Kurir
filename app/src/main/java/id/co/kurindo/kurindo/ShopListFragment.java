@@ -40,6 +40,7 @@ import id.co.kurindo.kurindo.helper.ShopAdmHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.util.DummyContent;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.shopadm.AddShopActivity;
 
@@ -130,7 +131,7 @@ public class ShopListFragment extends BaseFragment {
         addRequest("request_my_shop", Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "request_my_shop Response: " + response.toString());
+                LogUtil.logD(TAG, "request_my_shop Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     String message = jObj.getString("message");
@@ -172,7 +173,7 @@ public class ShopListFragment extends BaseFragment {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-                Log.e(TAG, "LoadShopTask Error: " + volleyError.getMessage());
+                LogUtil.logE(TAG, "LoadShopTask Error: " + volleyError.getMessage());
                 Toast.makeText(getActivity(),volleyError.getMessage(), Toast.LENGTH_LONG).show();
             }
         }, params, getKurindoHeaders());
