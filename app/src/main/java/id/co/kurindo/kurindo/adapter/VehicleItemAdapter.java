@@ -18,6 +18,7 @@ import java.util.List;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.model.DoCarRental;
 import id.co.kurindo.kurindo.model.Vehicle;
 
 /**
@@ -28,9 +29,10 @@ public class VehicleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     Context context;
     List<Vehicle> datas;
     protected OnItemClickListener itemClickListener;
-
-    public VehicleItemAdapter(Context context, List<Vehicle> datas, OnItemClickListener mOnItemClickListener){
+    DoCarRental rental;
+    public VehicleItemAdapter(Context context, DoCarRental rental, List<Vehicle> datas, OnItemClickListener mOnItemClickListener){
         this.context = context;
+        this.rental = rental;
         this.datas = datas;
         this.itemClickListener = mOnItemClickListener;
     }
@@ -70,11 +72,7 @@ public class VehicleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.tvRentalRating.setText(""+v.getRating());
         holder.tvRentalRateTitle.setText("Rental Rating");
         holder.tvCarTitle.setText(v.getName());
-        double price = 0;
-        try {
-            price = Double.parseDouble(v.getTarif());
-        }catch (Exception e){}
-        String priceStr = AppConfig.formatCurrency( price );
+        String priceStr = AppConfig.formatCurrency( (rental == null? 0 : rental.getCalculatePrice(context, v).doubleValue()) );
         holder.tvPrice.setText(priceStr);
 
         holder.ivSpec1.setImageResource(R.drawable.ic_event_black);
@@ -139,7 +137,7 @@ public class VehicleItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             this.ivSpec4= (ImageView) itemView.findViewById(R.id.ivSpec4);
             this.tvSpec3= (TextView) itemView.findViewById(R.id.tvSpec3);
             this.ivSpec3= (ImageView) itemView.findViewById(R.id.ivSpec3);
-            this.tvSpec2= (TextView) itemView.findViewById(R.id.tvSpec1);
+            this.tvSpec2= (TextView) itemView.findViewById(R.id.tvSpec2);
             this.ivSpec2= (ImageView) itemView.findViewById(R.id.ivSpec2);
             this.tvSpec1= (TextView) itemView.findViewById(R.id.tvSpec1);
             this.ivSpec1= (ImageView) itemView.findViewById(R.id.ivSpec1);

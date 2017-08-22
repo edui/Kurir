@@ -19,7 +19,7 @@
             android:layout_height="50dp" android:orientation="vertical" android:layout_marginBottom="2dp">
             <TextView
                 android:layout_width="match_parent"  android:textColor="@color/white" android:gravity="center" android:background="@color/colorPrimary"
-                android:layout_height="wrap_content" android:text="Konfirmasi" android:textStyle="bold" android:padding="5dp"/>
+                android:layout_height="wrap_content" android:text="Konfirmasi Pengguna" android:textStyle="bold" android:padding="5dp"/>
         </LinearLayout>
     </LinearLayout>
     <ScrollView
@@ -62,16 +62,10 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_phone_black" android:visibility="gone"/>
         </com.lamudi.phonefield.PhoneInputLayout>
-        <android.support.design.widget.TextInputLayout android:visibility="gone"
-            android:id="@+id/inlay_email_pengirim"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/input_email_pengirim" style="@style/normalTextStyle"
-                android:drawableLeft="@drawable/ic_email_black"
-                android:hint="Masukkan email" />
-        </android.support.design.widget.TextInputLayout>
+        <EditText
+            android:id="@+id/input_email_pengirim" style="@style/normalTextStyle"
+            android:drawableLeft="@drawable/ic_email_black" android:visibility="gone"
+            android:hint="Masukkan email" />
         <TextView
             style="@style/smallTextStyle" android:visibility="gone"
             android:text="*) Email yang anda masukkan akan digunakan untuk menerima kode verifikasi."/>
@@ -103,11 +97,11 @@
                         android:layout_gravity="left|top"
                         android:padding="2dp"/>
                     <TextView
-                        android:id="@+id/tvOrigin" style="@style/normalTextStyle"  android:gravity="center" android:maxLines="2" android:layout_weight=".8"
+                        android:id="@+id/tvOrigin" style="@style/normalWrapTextStyle"  android:gravity="center" android:maxLines="2" android:layout_weight=".8"
                         android:text="Set Lokasi Penjemputan"/>
                     <ImageView
                         android:id="@+id/ivAddOriginNotes"
-                        android:layout_width="wrap_content" android:layout_weight=".2"
+                        android:layout_width="wrap_content" android:layout_weight=".1"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_description_black_18dp"
                         android:layout_alignParentRight="true"

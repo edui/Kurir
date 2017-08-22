@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:focusable="true" android:focusableInTouchMode="true"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@android:color/white"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:layout_height="wrap_content"  android:orientation="horizontal">
+        <ImageView
+            android:layout_width="60dp" android:gravity="center_vertical|left"
+            android:layout_height="60dp" android:src="@drawable/do_send_icon"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:background="@android:color/white"
+            android:layout_height="match_parent" android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="DO-SEND"  android:textSize="@dimen/header_text_size" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left"
+                android:textStyle="bold"  android:padding="@dimen/common_padding"/>
+            <TextView
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="match_parent" android:textSize="18dp"
+                android:layout_height="wrap_content" android:text="TOTAL : Rp 0" android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/llLayout"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical">
+
+            <TextView
+                style="@style/titleBoldTextStyle"
+                android:text="Alamat Pengiriman" android:layout_margin="5dp">
+            </TextView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_margin">
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:background="@android:color/white"
+                        android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="5dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:text="Pengirim" />
+                        <TextView
+                            android:id="@+id/tvOrigin"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:text="Penerima" />
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rvDestinationList"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+            <TextView
+                style="@style/titleBoldTextStyle"
+                android:text="Informasi Paket" android:layout_margin="5dp">
+            </TextView>
+
+            <LinearLayout
+                android:id="@+id/layoutInfoPaket"
+                android:background="@android:color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_margin="15dp"
+                    android:layout_height="match_parent" android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent" android:gravity="center"
+                        android:layout_height="match_parent" android:text="Berat Kiriman (Kg)"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:weightSum="1" android:gravity="center" android:orientation="horizontal" >
+                        <android.support.v7.widget.AppCompatButton
+                            style="@style/QuantityPickerButtonStyle"
+                            android:text="-" android:textColor="@color/colorPrimary" android:textSize="24dp" android:textAlignment="center"
+                            android:id="@+id/decrementBtn"
+                            />
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/quantityStr" android:layout_weight=".6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <EditText
+                                android:id="@+id/input_berat_barang"
+                                android:layout_width="match_parent" android:gravity="center"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold" android:textSize="18dp" android:textColor="@color/colorPrimaryDark"
+                                android:text="1" />
+                        </android.support.design.widget.TextInputLayout>
+                        <android.support.v7.widget.AppCompatButton
+                            style="@style/QuantityPickerButtonStyle"
+                            android:text="+" android:textColor="@color/colorPrimary" android:textSize="24dp" android:textAlignment="center"
+                            android:id="@+id/incrementBtn" android:hint="Catatan"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/chkViaMobil" android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:text="via Mobil?"
+                    android:layout_width="fill_parent">
+                </CheckBox>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/inlay_info_barang"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/input_info_barang"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_create_black_18dp"
+                        android:gravity="top|left"
+                        android:inputType="textMultiLine"
+                        android:lines="15"
+                        android:minLines="2"
+                        android:scrollHorizontally="false"
+                        android:scrollbars="vertical"
+                        android:hint="Informasi Isi Paket"
+                        android:singleLine="false" />
+                </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/inlay_cod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/input_cod"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_rp"
+                        android:gravity="left"
+                        android:inputType="number"
+                        android:scrollHorizontally="false"
+                        android:scrollbars="none" android:text="0"
+                        android:hint="C O D - Cash On Delivery (Rp)"
+                        />
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jenis Layanan" android:layout_margin="5dp">
+                </TextView>
+                <Spinner
+                    android:id="@+id/input_service_code"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:layout_width="match_parent"  android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tvPickupTimeText" android:layout_weight=".3"
+                            android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Pick-up Time"
+                            android:layout_gravity="center" android:gravity="center"/>
+                        <Switch
+                            android:id="@+id/swChooseTime" android:layout_weight=".4"
+                            android:layout_height="wrap_content" android:layout_gravity="center" android:gravity="center"
+                            android:layout_width="match_parent"/>
+                        <TextView
+                            android:id="@+id/tvDropTimeText" android:layout_weight=".3"
+                            android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Drop Time"
+                            android:layout_gravity="center" android:gravity="center"/>
+
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvPickupTime"
+                        android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"
+                        android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:layout_gravity="center"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"  android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tvBayarOngkir"
+                        android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold"
+                        android:layout_height="wrap_content" android:text="Siapa Bayar Ongkir?" android:gravity="center" android:layout_gravity="center"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tvPengirimBayarText" android:layout_weight=".3"
+                            android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Pengirim"
+                            android:layout_gravity="center" android:gravity="center"/>
+                        <Switch
+                            android:id="@+id/swChooseBayarOngkir" android:layout_weight=".4"
+                            android:layout_height="wrap_content" android:layout_gravity="center" android:gravity="center"
+                            android:layout_width="match_parent"/>
+                        <TextView
+                            android:id="@+id/tvPenerimaBayarText" android:layout_weight=".3"
+                            android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Penerima"
+                            android:layout_gravity="center" android:gravity="center"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_weight="1"/>
+
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:orientation="horizontal" android:layout_marginTop="10dp"
+                    android:layout_width="match_parent" android:layout_marginBottom="12dp"
+                    android:layout_height="wrap_content" android:weightSum="10">
+                    <CheckBox
+                        android:id="@+id/chkAgrement"
+                        android:layout_width="wrap_content" android:text="Saya SETUJU dengan syarat dan ketentuan ini"
+                        android:layout_height="wrap_content" android:layout_weight="7">
+                    </CheckBox>
+
+                    <ImageView android:src="@drawable/ic_info_outline_black_18dp"
+                        android:id="@+id/ivAgrement"
+                        android:layout_width="wrap_content" android:layout_weight="3"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center" />
+                </android.support.v7.widget.LinearLayoutCompat>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

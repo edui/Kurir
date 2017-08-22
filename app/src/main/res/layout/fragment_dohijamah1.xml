@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:focusable="true" android:focusableInTouchMode="true"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -12,14 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"  android:orientation="horizontal">
         <ImageView
-            android:layout_width="80dp" android:gravity="center_vertical|left"
-            android:layout_height="80dp" android:src="@drawable/do_hijamah_icon"/>
+            android:layout_width="60dp" android:gravity="center_vertical|left"
+            android:layout_height="60dp" android:src="@drawable/do_hijamah_icon"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="8dp">
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:text="Manifest DO-HIJAMAH"  android:textSize="@dimen/header_text_size" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left"
+                android:layout_height="wrap_content" android:text="DO-HIJAMAH"  android:textSize="@dimen/header_text_size" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left"
                 android:textStyle="bold"  android:padding="@dimen/common_padding"/>
             <TextView
                 android:id="@+id/tvTotalPrice"
@@ -28,6 +29,9 @@
         </LinearLayout>
 
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent" android:gravity="center" android:layout_gravity="center"
+        android:layout_height="wrap_content" android:text="DO-HIJAMAH adalah layanan personal untuk bekam, terapi dan konsultasi. \nLayanan ini bersifat NDS (Next Day Service), anda pesan hari ini untuk pelayanan hari esok."/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -78,17 +82,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
-                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="2dp">
-                <TextView
-                    android:layout_width="wrap_content" android:layout_weight=".4" android:layout_gravity="center"
-                    android:layout_height="wrap_content" android:text="Lokasi"/>
-                <Spinner
-                    android:id="@+id/pilihLokasi"
-                    android:layout_width="wrap_content" android:layout_weight=".6"
-                    android:layout_height="wrap_content"></Spinner>
-            </LinearLayout>
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="2dp">
                 <TextView
@@ -106,6 +99,76 @@
                     android:scrollbars="vertical"
                     android:hint="Tuliskan permasalahan atau request anda"
                     android:singleLine="false" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1" android:padding="2dp">
+                <TextView
+                    android:layout_width="wrap_content" android:layout_weight=".4" android:layout_gravity="center"
+                    android:layout_height="wrap_content" android:text="Lokasi"/>
+                <Spinner
+                    android:id="@+id/pilihLokasi"
+                    android:layout_width="wrap_content" android:layout_weight=".6"
+                    android:layout_height="wrap_content"></Spinner>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_marginTop="5dp"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <TextView style="@style/titleBoldTextStyle" android:text="Kontak"/>
+                <EditText
+                    android:id="@+id/input_nama_pengirim" style="@style/normalTextStyle"
+                    android:drawableLeft="@drawable/ic_person_black"
+                    android:hint="Masukkan nama" />
+                <com.lamudi.phonefield.PhoneInputLayout
+                    android:id="@+id/input_telepon_pengirim" android:hint="Masukkan Telepon / WA" android:drawableLeft="@drawable/ic_phone_black"
+                    style="@style/normalTextStyle" >
+                    <ImageButton
+                        android:id="@+id/pickcontact"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_phone_black" android:visibility="gone"/>
+                </com.lamudi.phonefield.PhoneInputLayout>
+                <TextView style="@style/normalTextStyle" android:text="Pin Lokasi "/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:background="@android:color/white"
+                    android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+                    <ImageView
+                        android:id="@+id/ivAddOriginIcon"
+                        android:layout_width="wrap_content" android:layout_weight=".1"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/origin_pin"
+                        android:layout_gravity="left|top"
+                        android:padding="2dp"/>
+                    <TextView
+                        android:id="@+id/tvOrigin" style="@style/normalWrapTextStyle"  android:gravity="center" android:maxLines="2" android:layout_weight=".8"
+                        android:text="Klik untuk \nSet Lokasi Anda"/>
+                    <ImageView
+                        android:id="@+id/ivAddOriginNotes"
+                        android:layout_width="wrap_content" android:layout_weight=".1"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_description_black_18dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right|top"
+                        android:padding="2dp"/>
+                </LinearLayout>
+                <EditText
+                    android:id="@+id/etOriginNotes"
+                    android:layout_width="match_parent" android:textSize="10sp"
+                    android:layout_height="wrap_content" android:hint="Add Notes" android:visibility="gone"/>
+                <LinearLayout
+                    android:layout_width="match_parent" android:layout_marginTop="5dp" android:layout_marginBottom="5dp" android:weightSum="1"
+                    android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView
+                        android:layout_weight=".5" style="@style/normalTextStyle"
+                        android:text="Jam Pelayanan"/>
+                    <TextView
+                        android:id="@+id/tvPickupTime"
+                        style="@style/normalTextStyle" android:theme="@style/AppTheme.Button"
+                        android:layout_weight=".5"
+                        android:text="10.00"/>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -107,6 +107,31 @@
                     android:src="@drawable/ic_info_outline_black_18dp" />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llPic"
+                android:visibility="gone"
+                android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center"
+                android:layout_height="wrap_content" android:orientation="horizontal"  android:weightSum="1">
+                <ImageView
+                    android:id="@+id/ivPic"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:scaleType="fitCenter" android:layout_gravity="center"
+                    android:src="@drawable/icon_kurirkurindo"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tvPic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:text="Nama PIC"/>
+                    <TextView
+                        android:id="@+id/tvPlat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:text="Plat Nomor"/>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -142,7 +167,7 @@
                 android:textSize="@dimen/header_text_size"
                 android:textStyle="bold"/>
             <TextView
-                android:id="@+id/tvPembeli"
+                android:id="@+id/tvPembeli" android:autoLink="phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="" />
@@ -152,6 +177,7 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
+        android:id="@+id/cvLayoutProduk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_margin">
@@ -241,6 +267,7 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
+        android:id="@+id/cvLayoutPengiriman"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_margin">

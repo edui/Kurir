@@ -5,8 +5,10 @@ package id.co.kurindo.kurindo.wizard.docar;
  */
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +17,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -42,6 +46,7 @@ import id.co.kurindo.kurindo.helper.DoCarHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.map.DataParser;
 import id.co.kurindo.kurindo.map.LocationMapViewsActivity;
+import id.co.kurindo.kurindo.map.LocationService;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.DoCarRental;
 import id.co.kurindo.kurindo.model.Vehicle;
@@ -63,6 +68,23 @@ public class DoCarForm4 extends BaseStepFragment implements Step {
     @Bind(R.id.list)
     RecyclerView list;
 
+    @Bind(R.id.ivRental1)
+    ImageView ivRental1;
+    @Bind(R.id.tvRental1)
+    TextView tvRental1;
+    @Bind(R.id.ivRental2)
+    ImageView ivRental2;
+    @Bind(R.id.tvRental2)
+    TextView tvRental2;
+    @Bind(R.id.ivRental3)
+    ImageView ivRental3;
+    @Bind(R.id.tvRental3)
+    TextView tvRental3;
+    @Bind(R.id.ivRental4)
+    ImageView ivRental4;
+    @Bind(R.id.tvRental4)
+    TextView tvRental4;
+
     VehicleItemAdapter adapter;
 
     List<Vehicle> datas = new ArrayList<>();
@@ -74,27 +96,61 @@ public class DoCarForm4 extends BaseStepFragment implements Step {
         View v = inflateAndBind(inflater, container, R.layout.fragment_docar4);
         context = getContext();
         progressDialog = new ProgressDialog(context);
+        setup_adapter();
+        setup_pesanan();
+        return v;
+    }
 
+    private void setup_pesanan() {
+        ivRental1.setImageResource(R.drawable.destination_pin);
+        ivRental2.setImageResource(R.drawable.ic_event_note_black_18dp);
+        ivRental3.setImageResource(R.drawable.ic_access_time_black_18dp);
+        //ivRental4.setImageResource(R.drawable.ic_access_time_black_18dp);
+
+        DoCarRental rental = DoCarHelper.getInstance().getRental();
+        if(rental != null){
+            tvRental1.setText(rental.getActivity() + " "+rental.getCity());
+            tvRental2.setText(rental.displayDate(true));
+            tvRental3.setText(rental.getDurasi());
+            tvRental4.setText(rental.getFasilitas());
+        }
+    }
+
+    private void setup_adapter() {
         list.setLayoutManager(new GridLayoutManager(context, 1));
         list.setHasFixedSize(true);
-        datas = AppConfig.getDoCarRentalServices();
-        adapter = new VehicleItemAdapter(context, datas, new VehicleItemAdapter.OnItemClickListener() {
+        //datas = AppConfig.getDoCarRentalServices();
+        DoCarRental rental = DoCarHelper.getInstance().getRental();
+        adapter = new VehicleItemAdapter(context, rental, datas, new VehicleItemAdapter.OnItemClickListener() {
             @Override
             public void onButtonViewPesanClick(View view, int position) {
                 DoCarHelper.getInstance().getRental().setVehicle(datas.get(position));
                 //((BaseActivity) getActivity()).showActivity(DoCarRentalActivity.class);
                 AbstractStepperActivity activity= (AbstractStepperActivity) getActivity();
                 activity.mStepperLayout.onTabClicked(activity.mStepperLayout.getCurrentStepPosition()+1);
+                next = true;
             }
         });
         list.setAdapter(adapter);
-        return v;
     }
-
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            next  = false;
+        }
+    };
     @Override
     public void onResume() {
         super.onResume();
         //adapter.notifyDataSetChanged();
+        getActivity().registerReceiver(receiver, new IntentFilter(DoCarForm3.DOCAR_SEARCH_CHANGED));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(receiver);
     }
 
     private void retrieve_cars() {
@@ -108,6 +164,7 @@ public class DoCarForm4 extends BaseStepFragment implements Step {
                 }
             }
             if(city != null){
+                progressDialog.show();
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("city", city);
                 params.put("type", AppConfig.KEY_DOCAR);
@@ -143,12 +200,14 @@ public class DoCarForm4 extends BaseStepFragment implements Step {
                             e.printStackTrace();
                             LogUtil.logE(TAG, "onResponse Error: " + e.getMessage());
                         }
+                        progressDialog.dismiss();
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         LogUtil.logE(TAG, "logToServer Error: " + error.getMessage());
+                        progressDialog.dismiss();
                     }
                 }, params, getKurindoHeaders());
             }
@@ -169,6 +228,8 @@ public class DoCarForm4 extends BaseStepFragment implements Step {
 
     @Override
     public void onSelected() {
+        setup_adapter();
+        setup_pesanan();
         if(!next) retrieve_cars();
 
     }

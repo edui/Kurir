@@ -1,11 +1,13 @@
 package id.co.kurindo.kurindo;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -49,7 +52,11 @@ import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.helper.ViewHelper;
+import id.co.kurindo.kurindo.model.DoMart;
 import id.co.kurindo.kurindo.model.TOrder;
+import id.co.kurindo.kurindo.notification.CompletedOrderPopupActivity;
+import id.co.kurindo.kurindo.notification.NewOrderPopupActivity;
+import id.co.kurindo.kurindo.notification.NewOrderPopupFragment;
 import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.dosend.AcceptTOrderActivity;
 
@@ -62,6 +69,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
     private static final int REQUEST_PACKET_LIST =0;
     public static final int ACCEPTED_REQUEST_CODE = 1500;
     public static final int REJECTED_REQUEST_CODE = 1999;
+    private static final int SEARCH_KURINDO = 200;
 
     MonitorTOrderAdapter adapter;
     RecyclerView mRecyclerView;
@@ -165,7 +173,18 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
                         action_order(selectedOrder, position, status, selectedOrder.getStatus(), handler);
                     }
                 };
-                showConfirmationDialog("Confirm Status","Anda Yakin akan merubah status order '"+selectedOrder.getAwb()+"' menjadi '"+AppConfig.getOrderStatusText(status)+"' ?", YesClickListener, null);
+                DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        handler.handleMessage(null);
+                    }
+                };
+
+                String text = "Anda Yakin akan merubah status order '"+selectedOrder.getAwb()+"' menjadi '"+AppConfig.getOrderStatusText(status)+"' ?";
+                if(selectedOrder.getService_type().equalsIgnoreCase(AppConfig.KEY_DOMART) && status.equalsIgnoreCase(AppConfig.KEY_KUR500)){
+                    text = "Apakah harga CHARGE (parkir/do-mart fee) sudah anda update? "+ text;
+                }
+                showConfirmationDialog("Confirm Status", text, YesClickListener, NoClickListener);
 
                 // loop till a runtime exception is triggered.
                 try { Looper.loop(); }
@@ -174,6 +193,23 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
 
         }
     }
+
+    @Override
+    public void onSearchKurirButtonClick(View view, int position) {
+        selectedOrder = orders.get(position);
+        ViewHelper.getInstance().setOrder(selectedOrder);
+        Intent intent = new Intent(context, NewOrderPopupActivity.class);
+        startActivityForResult(intent, SEARCH_KURINDO);
+    }
+
+    @Override
+    public void onTestimoniButtonClick(View view, int position) {
+        selectedOrder = orders.get(position);
+        ViewHelper.getInstance().setOrder(selectedOrder);
+        Intent intent = new Intent(context, CompletedOrderPopupActivity.class);
+        startActivityForResult(intent, SEARCH_KURINDO);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ((requestCode == ACCEPTED_REQUEST_CODE ||requestCode == REJECTED_REQUEST_CODE )&& resultCode == Activity.RESULT_OK) {
@@ -184,10 +220,14 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
                 this.selectedOrder = order;
                 adapter.notifyItemChanged(position);
             }
+        }else if(requestCode == SEARCH_KURINDO && resultCode == Activity.RESULT_OK){
+            adapter.notifyDataSetChanged();
         }
+
     }
 
     private void action_order(final TOrder p, final int position, final String status, final String statusBefore, final Handler handler) {
+
         if(getActivity() != null){
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -280,16 +320,25 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
 
     @Override
     public void onWaButtonClick(View view, int position) {
-        cara1();
+        selectedOrder = orders.get(position);
+        String phone = selectedOrder.getBuyer().getPhone();
+        if(session.isPelanggan() && selectedOrder.getPic() != null)
+            phone = selectedOrder.getPic().getPhone();
+        Uri uri = Uri.parse("https://api.whatsapp.com/send?phone="+phone+"&text=Orderan "+selectedOrder.getService_type()+", Awb:"+ selectedOrder.getAwb());
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+        //AppConfig.onWaCall(context, phone, phone);
     }
-    private void cara2(){
-        boolean isWhatsappInstalled = whatsappInstalledOrNot("com.whatsapp");
-        if (isWhatsappInstalled) {
-            Uri uri = Uri.parse("smsto:" + "6282110056018");
+/*
+    private void cara2(int position){
+        PackageInfo info= getWhatsappInstalled("com.whatsapp");
+        selectedOrder = orders.get(position);
+        if (info != null) {
+            Uri uri = Uri.parse("smsto:" + ""+selectedOrder.getBuyer().getPhone());
             Intent sendIntent = new Intent(Intent.ACTION_SENDTO, uri);
             sendIntent.putExtra(Intent.EXTRA_TEXT, "Hai Good Morning");
-            sendIntent.setType("text/plain");
-            sendIntent.setPackage("com.whatsapp");
+            sendIntent.setStatus("text/plain");
+            sendIntent.setPackage(info.packageName);
             startActivity(sendIntent);
         } else {
             Toast.makeText(getActivity(), "WhatsApp not Installed",Toast.LENGTH_SHORT).show();
@@ -303,7 +352,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
         try {
 
             Intent waIntent = new Intent(Intent.ACTION_SEND);
-            waIntent.setType("text/plain");
+            waIntent.setStatus("text/plain");
             String text = "YOUR TEXT HERE";
 
             PackageInfo info=pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
@@ -331,7 +380,15 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
         return app_installed;
     }
 
-
+    private PackageInfo getWhatsappInstalled(String uri) {
+        PackageManager pm = getActivity().getPackageManager();
+        try {
+            return  pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+        } catch (PackageManager.NameNotFoundException e) {
+        }
+        return null;
+    }
+*/
     public static Bundle parseOrders(List<TOrder> orders, JSONObject jObj) throws JSONException {
         Bundle bundle = null;
         int doSendCount = 0;
@@ -412,7 +469,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
                 order.setPic(pic);
                 order.setProducts(items);
 /*                try{
-                    Set<Recipient> recipients = gson.fromJson(data.getString("recipients"), new TypeToken<LinkedHashSet<Recipient>>(){}.getType());
+                    Set<Recipient> recipients = gson.fromJson(data.getString("recipients"), new TypeToken<LinkedHashSet<Recipient>>(){}.getStatus());
                     /*Set<Recipient> recipients = new LinkedHashSet<Recipient>();
                     JSONArray recps = data.getJSONArray("recipients");
                     for (int j = 0; j < recps.length(); j++) {
@@ -435,7 +492,7 @@ public abstract class BaseTOrderMonitoringFragment extends BaseFragment implemen
                             packets.add(packet);
                         }catch (Exception e){}
                     }
-                    //Set<Packet> packets = gson.fromJson(data.getString("packets"), new TypeToken<LinkedHashSet<Packet>>(){}.getType());
+                    //Set<Packet> packets = gson.fromJson(data.getString("packets"), new TypeToken<LinkedHashSet<Packet>>(){}.getStatus());
                     order.setPackets(packets);
                 }catch (Exception e){e.printStackTrace();}
             */

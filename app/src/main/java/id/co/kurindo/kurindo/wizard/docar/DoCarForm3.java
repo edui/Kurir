@@ -7,6 +7,7 @@ package id.co.kurindo.kurindo.wizard.docar;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -90,11 +91,14 @@ public class DoCarForm3 extends BaseStepFragment implements Step {
     private boolean mulai;
     private boolean selesai;
     SimpleDateFormat sdf = AppConfig.getDateFormat();
+    Intent intent;
+    public static final String DOCAR_SEARCH_CHANGED = "DOCAR_SEARCH_CHANGED";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getContext();
+        intent = new Intent(DOCAR_SEARCH_CHANGED);
     }
 
     @Nullable
@@ -102,7 +106,6 @@ public class DoCarForm3 extends BaseStepFragment implements Step {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_docar3);
         progressBar = new ProgressDialogCustom(context);
-
         DoCarHelper.getInstance().addRental();
         setupAdapter();
         setupDate();
@@ -122,11 +125,12 @@ public class DoCarForm3 extends BaseStepFragment implements Step {
                     case R.id.radio_12jam:
                         durasi = getString(R.string.label_12jam);
                         break;
-                    case R.id.radio_allin:
+                    case R.id.radio_fullday:
                         durasi = getString(R.string.label_fullday);
                         break;
                 }
                 DoCarHelper.getInstance().getRental().setDurasi(durasi);
+                context.sendBroadcast(intent);
             }
         });
         rdGroupDurasi.check(R.id.radio_12jam);
@@ -147,6 +151,7 @@ public class DoCarForm3 extends BaseStepFragment implements Step {
                         break;
                 }
                 DoCarHelper.getInstance().getRental().setFasilitas(fasilitas);
+                context.sendBroadcast(intent);
             }
         });
         rdGroupFasilitas.check(R.id.radio_tanpabbm);
@@ -201,7 +206,7 @@ public class DoCarForm3 extends BaseStepFragment implements Step {
                 end = a;
             }
             DoCarHelper.getInstance().getRental().setDateRange(start.getTime(), end.getTime());
-
+            context.sendBroadcast(intent);
         }
     };
 
@@ -214,6 +219,7 @@ public class DoCarForm3 extends BaseStepFragment implements Step {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String [] tujuan = getResources().getStringArray(R.array.docar_tujuan_array);
                 DoCarHelper.getInstance().getRental().setActivity(tujuan[position]);
+                context.sendBroadcast(intent);
             }
 
             @Override
@@ -234,6 +240,7 @@ public class DoCarForm3 extends BaseStepFragment implements Step {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(cities.length >= position)
                     DoCarHelper.getInstance().getRental().setCity(cities[position]);
+                context.sendBroadcast(intent);
             }
 
             @Override
@@ -303,6 +310,7 @@ public class DoCarForm3 extends BaseStepFragment implements Step {
 
     @Override
     public void onSelected() {
+        DoCarHelper.getInstance().addRental();
 
     }
 

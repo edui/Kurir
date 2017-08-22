@@ -3,10 +3,14 @@ package id.co.kurindo.kurindo.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
 
 public class CartItem implements Parcelable{
+    @Expose
     private Product product;
+    @Expose
     private Integer quantity;
     public CartItem(){
 

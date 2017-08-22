@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +96,25 @@ public class SignupFragment extends BaseFragment {
     EditText _nikText;
     @Bind(R.id.input_layout_kurir)
     LinearLayoutCompat _kurirLayout;
+
+
+
+    @Bind(R.id.chkDoSend)
+    CheckBox chkDoSend;
+    @Bind(R.id.chkDoJek)
+    CheckBox chkDoJek;
+    @Bind(R.id.chkDoMart)
+    CheckBox chkDoMart;
+    @Bind(R.id.chkDoShop)
+    CheckBox chkDoShop;
+    @Bind(R.id.chkDoCar)
+    CheckBox chkDoCar;
+    @Bind(R.id.chkDoMove)
+    CheckBox chkDoMove;
+    @Bind(R.id.chkDoWash)
+    CheckBox chkDoWash;
+    @Bind(R.id.chkDoService)
+    CheckBox chkDoService;
 
     private SessionManager session;
     private SQLiteHandler db;
@@ -170,6 +190,7 @@ public class SignupFragment extends BaseFragment {
 
         setup_gender_list();
         //setup_city_list();
+        setup_checkbox(v);
 
         _phoneText.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
         _phoneText.setHint(R.string.telepon);
@@ -215,6 +236,116 @@ public class SignupFragment extends BaseFragment {
         });
     }
 
+    private void setup_checkbox(View v) {
+        chkDoSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCheckboxClicked(v);
+            }
+        });
+        chkDoJek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCheckboxClicked(v);
+            }
+        });
+        chkDoMart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCheckboxClicked(v);
+            }
+        });
+        chkDoShop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCheckboxClicked(v);
+            }
+        });
+        chkDoCar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCheckboxClicked(v);
+            }
+        });
+        chkDoMove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCheckboxClicked(v);
+            }
+        });
+        chkDoWash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCheckboxClicked(v);
+            }
+        });
+        chkDoService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCheckboxClicked(v);
+            }
+        });
+
+        chkDoSend.setChecked(true);
+        chkDoJek.setChecked(true);
+    }
+
+    HashMap<String,String> fiturMap = new HashMap<>();
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+        switch (view.getId()){
+            case R.id.chkDoSend:
+                if(checked)
+                    fiturMap.put(AppConfig.KEY_DOSEND, AppConfig.KEY_DOSEND);
+                else
+                    fiturMap.remove(AppConfig.KEY_DOSEND);
+                break;
+            case R.id.chkDoJek:
+                if(checked)
+                    fiturMap.put(AppConfig.KEY_DOJEK, AppConfig.KEY_DOJEK);
+                else
+                    fiturMap.remove(AppConfig.KEY_DOJEK);
+                break;
+            case R.id.chkDoMart:
+                if(checked)
+                    fiturMap.put(AppConfig.KEY_DOMART, AppConfig.KEY_DOMART);
+                else
+                    fiturMap.remove(AppConfig.KEY_DOMART);
+                break;
+            case R.id.chkDoShop:
+                if(checked)
+                    fiturMap.put(AppConfig.KEY_DOSHOP, AppConfig.KEY_DOSHOP);
+                else
+                    fiturMap.remove(AppConfig.KEY_DOSHOP);
+                break;
+            case R.id.chkDoCar:
+                if(checked)
+                    fiturMap.put(AppConfig.KEY_DOCAR, AppConfig.KEY_DOCAR);
+                else
+                    fiturMap.remove(AppConfig.KEY_DOCAR);
+                break;
+            case R.id.chkDoMove:
+                if(checked)
+                    fiturMap.put(AppConfig.KEY_DOMOVE, AppConfig.KEY_DOMOVE);
+                else
+                    fiturMap.remove(AppConfig.KEY_DOMOVE);
+                break;
+            case R.id.chkDoWash:
+                if(checked)
+                    fiturMap.put(AppConfig.KEY_DOWASH, AppConfig.KEY_DOWASH);
+                else
+                    fiturMap.remove(AppConfig.KEY_DOWASH);
+                break;
+            case R.id.chkDoService:
+                if(checked)
+                    fiturMap.put(AppConfig.KEY_DOSERVICE, AppConfig.KEY_DOSERVICE);
+                else
+                    fiturMap.remove(AppConfig.KEY_DOSERVICE);
+                break;
+        }
+    }
 
     private void setup_city_list() {
         /*
@@ -388,6 +519,18 @@ public class SignupFragment extends BaseFragment {
                 if(role.equalsIgnoreCase(AppConfig.KEY_KURIR)){
                     params.put("form-nik", _nikText.getText().toString());
                     params.put("form-simc", _simcText.getText().toString());
+
+                    String fiturs = "";
+                    Iterator it = fiturMap.entrySet().iterator();
+                    int i=0;
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry)it.next();
+                        if(i >0)
+                            fiturs += ",";
+                        fiturs += pair.getKey();
+                        i++;
+                    }
+                    params.put("services", fiturs);
                 }else{
                     params.put("form-nik", "");
                     params.put("form-simc", "");

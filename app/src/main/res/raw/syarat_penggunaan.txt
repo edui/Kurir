@@ -16,9 +16,9 @@ Pengertian
 
 1.2 Pengguna adalah pelanggan yang mendownload, mengakses, meregistrasi, mendaftar atau memanfaatkan software KurirKurindo untuk membuat pesanan pengiriman barang melalui aplikasi.
 
-1.3 Mitra Driver KurirKurindo adalah Mitra Driver yang telah bekerjasama dengan KurirKurindo untuk memenuhi kebutuhan pemesanan dari pengguna melalui aplikasi.
+1.3 Mitra Driver KurirKurindo adalah Mitra Driver yang telah bekerjasama dengan KurirKurindo untuk memenuhi kebutuhan pemesanan dari user melalui aplikasi.
 
-1.4 Layanan Aplikasi KurirKurindo adalah pengoperasian oleh para Mitra Driver KurirKurindo untuk mengantarkan / mendistribusikan barang-barang permintaan dari pengguna melalui aplikasi Software KurirKurindo dan menyediakan informasi-informasi seperti lokasi pengangkutan barang, penurunan barang, harga estimasi, waktu yang tercantum di halaman aplikasi pengguna dan berbagai informasi terkait untuk memudahkan pengguna menggunakan aplikasi.
+1.4 Layanan Aplikasi KurirKurindo adalah pengoperasian oleh para Mitra Driver KurirKurindo untuk mengantarkan / mendistribusikan barang-barang permintaan dari user melalui aplikasi Software KurirKurindo dan menyediakan informasi-informasi seperti lokasi pengangkutan barang, penurunan barang, harga estimasi, waktu yang tercantum di halaman aplikasi user dan berbagai informasi terkait untuk memudahkan user menggunakan aplikasi.
 
 1.5 Barang adalah item, paket, parsel, kontainer yang bersifat legal dapat berjumlah satu atau jamak yang diangkut dengan cara layanan dari mitra Driver KurirKurindo.
 
@@ -94,7 +94,7 @@ Jaminan
 
 Kewajiban Kami
 
-6.1 Kami KurirKurindo tidak bertanggung jawab atas kerusakan atau kerugian yang timbul akibat pengemasan barang yang tidak sesuai atau tidak sempurna dari pengguna
+6.1 Kami KurirKurindo tidak bertanggung jawab atas kerusakan atau kerugian yang timbul akibat pengemasan barang yang tidak sesuai atau tidak sempurna dari user
 
 6.2 Kami tidak bertanggungjawab atas setiap cedera, kerusakan, kerugian atau kematian yang disebabkan oleh Mitra Driver kami atau kerugian akibat pelanggaran lalu lintas atau tindakan kriminal yang dilakukan Mitra Driver karena mereka hanya mitra kerja kami bukan pegawai, agen ataupun perwakilan dari perusahaan kami.
 

@@ -216,13 +216,13 @@ public class ShopAdmPinLocationMapFragment extends SinglePinLocationMapFragment 
     }
 
     static ShopAdmPinLocationMapFragment instance;
-    public static Fragment newInstance() {
+    public static ShopAdmPinLocationMapFragment newInstance() {
         if (instance == null) {
             instance = new ShopAdmPinLocationMapFragment();
         }
         return instance;
     }
-    public static Fragment getInstance() {
+    public static ShopAdmPinLocationMapFragment getInstance() {
         return instance;
     }
 

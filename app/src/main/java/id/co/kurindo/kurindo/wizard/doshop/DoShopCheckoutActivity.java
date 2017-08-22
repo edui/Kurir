@@ -28,6 +28,7 @@ import com.stepstone.stepper.adapter.AbstractStepAdapter;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.TOrderShowActivity;
 import id.co.kurindo.kurindo.helper.DoShopHelper;
+import id.co.kurindo.kurindo.notification.NewOrderPopupActivity;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
 public class DoShopCheckoutActivity extends AbstractStepperActivity {
@@ -65,6 +66,7 @@ public class DoShopCheckoutActivity extends AbstractStepperActivity {
     @Override
     public void onCompleted(View completeButton) {
         showActivity(TOrderShowActivity.class);
+        showActivity(NewOrderPopupActivity.class);
         DoShopHelper.getInstance().clearAll();
         CartHelper.getCart().clear();
         finish();

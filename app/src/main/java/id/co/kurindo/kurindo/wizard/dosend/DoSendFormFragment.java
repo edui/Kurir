@@ -73,6 +73,7 @@ import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static android.widget.Toast.LENGTH_SHORT;
@@ -118,6 +119,15 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     TextView tvDropTimeText;
     @Bind(R.id.swChooseTime)
     Switch swChooseTime;
+
+    @Bind(R.id.tvBayarOngkir)
+    TextView tvBayarOngkir;
+    @Bind(R.id.tvPengirimBayarText)
+    TextView tvPengirimBayarText;
+    @Bind(R.id.tvPenerimaBayarText)
+    TextView tvPenerimaBayarText;
+    @Bind(R.id.swChooseBayarOngkir)
+    Switch swChooseBayarOngkir;
 
     @Bind(R.id.chkAgrement)
     CheckBox chkAgrement;
@@ -219,6 +229,23 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 {
                     tvPickupTimeText.setBackgroundResource(R.color.orange);
                     tvDropTimeText.setBackgroundResource(R.color.cardview_light_background);
+                }
+            }
+        });
+
+        swChooseBayarOngkir.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                boolean on = isChecked;
+                if(on)
+                {
+                    tvPengirimBayarText.setBackgroundResource(R.color.cardview_light_background);
+                    tvPenerimaBayarText.setBackgroundResource(R.color.orange);
+                }
+                else
+                {
+                    tvPengirimBayarText.setBackgroundResource(R.color.orange);
+                    tvPenerimaBayarText.setBackgroundResource(R.color.cardview_light_background);
                 }
             }
         });
@@ -540,7 +567,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     }
 
     private void place_an_order(Handler handler) {
-        Log.d(TAG, "place_an_order");
+        LogUtil.logD(TAG, "place_an_order");
 
         progressBar.setIndeterminate(true);
         progressBar.setMessage("Sedang memproses pesanan anda....");
@@ -609,6 +636,11 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             order.setPickup(AppConfig.formatPickup(hour, minute, serviceCode));
             order.setDroptime(null);
         }
+        if(swChooseBayarOngkir.isChecked()){
+            order.setDibayar(AppConfig.PENERIMA);
+        }else{
+            order.setDibayar(AppConfig.PENGIRIM);
+        }
 
         TUser user = db.toTUser(db.getUserDetails());
         order.setBuyer(user);
@@ -627,7 +659,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         Gson gson = builder.create();
 
         String orderStr = gson.toJson(DoSendHelper.getInstance().getOrder());
-        Log.d(TAG, "place_an_order: "+orderStr);
+        LogUtil.logD(TAG, "place_an_order: "+orderStr);
         params.put("order", orderStr);
 
         process_order(params, handler);
@@ -638,7 +670,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
         addRequest("request_dosend_order", Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "request_dosend_order Response: " + response.toString());
+                LogUtil.logD(TAG, "request_dosend_order Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
@@ -704,7 +736,13 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 place_an_order(handler);
             }
         };
-        showConfirmationDialog("Konfirmasi","Anda akan memesan layanan "+doType+"?", YesClickListener, null);
+        DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handler.handleMessage(null);
+            }
+        };
+        showConfirmationDialog("Konfirmasi","Anda akan memesan layanan "+doType+"?", YesClickListener, NoClickListener);
 
         // loop till a runtime exception is triggered.
         try { Looper.loop(); }
@@ -722,7 +760,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             String alamatPengirim = _alamatPengirimText.getText().toString();
             //String kotaPengirim = _kotaPengirimText.getText().toString();
 
-            if (namaPengirim.isEmpty() || namaPengirim.length() < 4 ) {
+            if (namaPengirim.isEmpty() || namaPengirim.length() < 2 ) {
                 _namaPengirimText.setError("Tuliskan nama Pengirim");
                 valid = false;
             } else {
@@ -736,7 +774,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 valid = false;
             }
 
-            if (alamatPengirim.isEmpty() || alamatPengirim.length() < 4 ) {
+            if (alamatPengirim.isEmpty() || alamatPengirim.length() < 2 ) {
                 _alamatPengirimText.setError("Tuliskan alamat Pengirim");
                 valid = false;
             } else {
@@ -757,7 +795,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             String alamatPenerima = _alamatPenerimaText.getText().toString();
             //String kotaPenerima = _kotaPenerimaText.getText().toString();
 
-            if (namaPenerima.isEmpty() || namaPenerima.length() < 4 ) {
+            if (namaPenerima.isEmpty() || namaPenerima.length() < 2 ) {
                 _namaPenerimaText.setError("Tuliskan nama Penerima");
                 valid = false;
             } else {
@@ -771,7 +809,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
                 valid = false;
             }
 
-            if (alamatPenerima.isEmpty() || alamatPenerima.length() < 4 ) {
+            if (alamatPenerima.isEmpty() || alamatPenerima.length() < 2 ) {
                 _alamatPenerimaText.setError("Tuliskan alamat Penerima");
                 valid = false;
             } else {
@@ -802,7 +840,7 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
             _beratBarangText.setError(null);
         }
 
-        if (infoBarang.isEmpty() || infoBarang.length() < 4 ) {
+        if (infoBarang.isEmpty() || infoBarang.length() < 2 ) {
             _infoBarangText.setError("Tuliskan informasi barang");
             valid = false;
         } else {
@@ -829,6 +867,9 @@ public class DoSendFormFragment extends BaseStepFragment implements Step {
     private void updateUI() {
         swChooseTime.setChecked(true);
         swChooseTime.toggle();
+
+        swChooseBayarOngkir.setChecked(true);
+        swChooseBayarOngkir.toggle();
 
         doType = DoSendHelper.getInstance().getDoType();
         ivProductImage.setImageResource((doType.equalsIgnoreCase(AppConfig.KEY_DOSEND)? R.drawable.do_send_icon : R.drawable.do_move_icon));

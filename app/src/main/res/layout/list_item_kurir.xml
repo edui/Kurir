@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="wrap_content" android:weightSum="1"
     android:orientation="horizontal" android:gravity="left"
     android:padding="5dp" >
     <RadioButton
@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent" android:layout_weight=".23"
         android:layout_height="wrap_content"
         android:orientation="vertical" android:gravity="left"
         android:padding="5dp" >
@@ -21,7 +21,7 @@
             android:textSize="12sp" />
         <TextView
             android:id="@+id/telepon_text"
-            android:layout_width="match_parent"
+            android:layout_width="match_parent" android:autoLink="phone"
             android:layout_height="wrap_content" android:padding="2dp"
             android:textSize="12sp" />
         <TextView
@@ -44,14 +44,73 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:padding="2dp"
             android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+            <LinearLayout
+                android:layout_weight=".5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/chkDoSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_dosend" />
+                <CheckBox
+                    android:id="@+id/chkDoJek"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_dojek"/>
+                <CheckBox
+                    android:id="@+id/chkDoMart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_domart"/>
+                <CheckBox
+                    android:id="@+id/chkDoShop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_doshop"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight=".5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <CheckBox
+                    android:id="@+id/chkDoCar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_docar"/>
+                <CheckBox
+                    android:id="@+id/chkDoMove"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_domove"/>
+                <CheckBox
+                    android:id="@+id/chkDoWash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_dowash"/>
+                <CheckBox
+                    android:id="@+id/chkDoService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_doservice"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" android:orientation="vertical">
         <ImageButton
             android:id="@+id/approvedBtn"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:background="@color/white" android:layout_margin="5dp"
             android:src="@drawable/yes" android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/removeBtn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/ic_delete_sweep_black_18dp"/>
+        <ImageButton
+            android:id="@+id/callBtn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:background="@color/white" android:layout_margin="5dp"
+            android:src="@drawable/ic_phone_black"/>
     </LinearLayout>
 </LinearLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:background="@color/white"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 <LinearLayout
@@ -107,7 +108,58 @@ android:layout_height="wrap_content">
                 android:inputType="text"
                 android:hint="Nomor SIM C" />
         </android.support.design.widget.TextInputLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Layanan yang diminati." style="@style/titleBoldTextStyle"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+            <LinearLayout
+                android:layout_weight=".5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/chkDoSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_dosend" />
+                <CheckBox
+                    android:id="@+id/chkDoJek"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_dojek"/>
+                <CheckBox
+                    android:id="@+id/chkDoMart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_domart"/>
+                <CheckBox
+                    android:id="@+id/chkDoShop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_doshop"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight=".5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <CheckBox
+                    android:id="@+id/chkDoCar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_docar"/>
+                <CheckBox
+                    android:id="@+id/chkDoMove"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_domove"/>
+                <CheckBox
+                    android:id="@+id/chkDoWash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_dowash"/>
+                <CheckBox
+                    android:id="@+id/chkDoService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="@string/label_doservice"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal" android:layout_marginTop="20dp"

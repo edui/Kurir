@@ -36,8 +36,10 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.LoginActivity;
@@ -51,6 +53,7 @@ import id.co.kurindo.kurindo.helper.DoShopHelper;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.CartItem;
+import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
@@ -91,6 +94,8 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
     boolean inputBaruPenerima = true;
     Context context;
     private static final String LAYOUT_RESOURCE_ID_ARG_KEY = "messageResourceId";
+    Set<CartItem> products;
+    BigDecimal totalPrice;
 
     private static DoShopFormFragment newInstance(@LayoutRes int layoutResId) {
         Bundle args = new Bundle();
@@ -134,7 +139,13 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
         lvRecipientItems.setLayoutManager(new GridLayoutManager(getContext(), 1));
         lvRecipientItems.setHasFixedSize(true);
         List<TPacket> packets = new ArrayList<>();
-        if(order != null && order.getPackets().size() > 0) packets.addAll( order.getPackets());
+        if(order != null && order.getPackets().size() > 0) {
+            packets.addAll( order.getPackets());
+            for (TPacket p : packets) {
+                products.add(DoShopHelper.getInstance().addCartItem(AppConfig.KEY_DOSEND, p.getBiaya().doubleValue()));
+                totalPrice = totalPrice.add(p.getBiaya());
+            }
+        }
         //tvPengiriman.setVisibility(View.VISIBLE);
         TPacketViewAdapter adapter = new TPacketViewAdapter(getContext(), packets, order);
         lvRecipientItems.setAdapter(adapter);
@@ -144,9 +155,9 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
         lvCartItems.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         lvCartItems.setHasFixedSize(true);
 
-        final Cart cart = CartHelper.getCart();
+        //final Cart cart = CartHelper.getCart();
         //tvTotalPrice = (TextView) v.findViewById(R.id.tvTotalPrice);
-        tvTotalPrice.setText(AppConfig.formatCurrency(order.getTotalPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+        tvTotalPrice.setText(AppConfig.formatCurrency(totalPrice.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
 
         CartViewAdapter cartAdapter = new CartViewAdapter(getActivity(), getCartItemsPlusHeader() );
         lvCartItems.setAdapter(cartAdapter);
@@ -161,7 +172,8 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
         ci.setProduct(null);
         ci.setQuantity(0);
         cartItems.add(ci);//headers
-        if(order != null && order.getProducts() != null) cartItems.addAll(order.getProducts());
+        //if(order != null && order.getProducts() != null) cartItems.addAll(order.getProducts());
+        cartItems.addAll(products);
 
         return cartItems;
     }
@@ -226,7 +238,8 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
 
         TUser user = db.getUser();
         order.setBuyer(user);
-
+        order.setProducts(products);
+        order.setTotalPrice(totalPrice);
         String orderStr = gson.toJson(DoShopHelper.getInstance().getOrder());
         //Log.d(TAG, "place_an_order: "+orderStr);
         params.put("order", orderStr);
@@ -268,10 +281,29 @@ public class DoShopFormFragment extends BaseStepFragment implements Step{
     @Override
     public void onSelected() {
         order = DoShopHelper.getInstance().getOrder();
-        setup_products();
+        products = new LinkedHashSet<>();
+        totalPrice = new BigDecimal(0);
+
+        validatedItemChart();
         setup_shipping_form();
         setup_shipping();
+        setup_products();
         updateUI();
+    }
+
+    private void validatedItemChart() {
+        Set<Shop> shops = DoShopHelper.getInstance().getShops();
+        HashMap<Integer, Shop> map = new HashMap<Integer, Shop>(shops.size());
+        for (Shop shop : shops) {
+            map.put(shop.getId(), shop);
+        }
+        Set<CartItem> carts = DoShopHelper.getInstance().getCartItems();
+        for (CartItem item : carts){
+            if(map.get(item.getProduct().getShopid()) != null){
+                products.add(item);
+                totalPrice = totalPrice.add( item.getProduct().getPrice().multiply(new BigDecimal(item.getQuantity())) );
+            }
+        }
     }
 
     private void updateUI() {

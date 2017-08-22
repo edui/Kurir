@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:focusable="true" android:focusableInTouchMode="true"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@android:color/white"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:layout_height="wrap_content"  android:orientation="horizontal">
+        <ImageView
+            android:layout_width="60dp" android:gravity="center_vertical|left"
+            android:layout_height="60dp" android:src="@drawable/do_send_icon"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:background="@android:color/white"
+            android:layout_height="match_parent" android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="DO-SEND"  android:textSize="@dimen/header_text_size" android:gravity="center_vertical|left" android:layout_gravity="center_vertical|left"
+                android:textStyle="bold"  android:padding="@dimen/common_padding"/>
+            <TextView
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="match_parent" android:textSize="18dp"
+                android:layout_height="wrap_content" android:text="TOTAL : Rp 0" android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/llLayout"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical">
+
+            <TextView
+                style="@style/titleBoldTextStyle"
+                android:text="Pengirim" android:layout_margin="5dp">
+            </TextView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_margin">
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:background="@android:color/white"
+                        android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="5dp">
+                        <EditText
+                            android:id="@+id/input_nama_pengirim" style="@style/smallTextStyle"
+                            android:drawableLeft="@drawable/ic_person_black" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+                            android:hint="Masukkan Nama Pengirim" />
+                        <com.lamudi.phonefield.PhoneInputLayout
+                            android:id="@+id/input_telepon_pengirim" android:hint="Masukkan Telepon / WA" android:drawableLeft="@drawable/ic_phone_black"
+                            style="@style/smallTextStyle" android:layout_marginLeft="5dp" android:layout_marginRight="5dp">
+                        </com.lamudi.phonefield.PhoneInputLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Lokasi Pengirim" android:layout_margin="5dp">
+                        </TextView>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:background="@android:color/white"
+                            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+                            <ImageView
+                                android:id="@+id/ivAddOriginIcon"
+                                android:layout_width="wrap_content" android:layout_weight=".1"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/origin_pin"
+                                android:layout_gravity="left|top"
+                                android:padding="2dp"/>
+                            <TextView
+                                android:id="@+id/tvOrigin"
+                                android:layout_width="wrap_content" android:layout_weight=".8" android:lines="2" android:maxLines="2"
+                                android:layout_height="40dp" android:text="Set Lokasi Anda" android:gravity="fill|center_vertical|left" android:layout_gravity="fill|center_vertical|left" />
+                            <ImageView
+                                android:id="@+id/ivAddOriginNotes"
+                                android:layout_width="wrap_content" android:layout_weight=".2"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_description_black_18dp"
+                                android:layout_alignParentRight="true"
+                                android:layout_gravity="right|top"
+                                android:padding="2dp"/>
+                        </LinearLayout>
+                        <EditText
+                            android:id="@+id/etOriginNotes"
+                            android:layout_width="match_parent" android:textSize="10sp"
+                            android:layout_height="wrap_content" android:hint="Tambah Catatan" android:visibility="gone"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+            <TextView
+                style="@style/titleBoldTextStyle"
+                android:text="Penerima" android:layout_margin="5dp">
+            </TextView>
+
+            <LinearLayout
+                android:id="@+id/layoutDestination"
+                android:background="@android:color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btnAddItem"
+                    android:layout_width="wrap_content" android:background="@color/colorPrimary" android:textColor="@color/white"
+                    android:layout_height="wrap_content" android:text="Tambah Alamat Tujuan" android:layout_margin="10dp" android:padding="5dp"/>
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

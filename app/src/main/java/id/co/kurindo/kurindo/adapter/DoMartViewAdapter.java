@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
@@ -69,7 +70,7 @@ public class DoMartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             //final Cart cart = CartHelper.getCart();
             final DoMart item = getItem(position);
             VHItem holder = (VHItem) vholder;
-            if(item.getOrigin() != null && item.getOrigin().getAddress() != null){
+            if(!item.getType().equalsIgnoreCase(AppConfig.KEY_CHARGE) && item.getOrigin() != null && item.getOrigin().getAddress() != null){
                 String location = "Lokasi\n"+item.getOrigin().getAddress().toStringFormatted();
                 location += (item.getOrigin().getAddress().getNotes()==null? "" : "\n"+item.getOrigin().getAddress().getNotes());
                 holder.tvLocation.setText(location);
@@ -83,6 +84,7 @@ public class DoMartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             String price = AppConfig.formatCurrency(item.getPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             if(item.getQty() < 0) price ="Dihitung sesuai aslinya.";
             holder.tvPrice.setText(price);
+            holder.btnUpdateHarga.setVisibility(View.GONE);
         }
     }
 
@@ -95,13 +97,14 @@ public class DoMartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TextView tvLocation;
         TextView tvNotes;
         TextView tvPrice;
-        //ImageButton ibPriceUpdate;
+        Button btnUpdateHarga;
 
         public VHItem(View itemView) {
             super(itemView);
             tvLocation = (TextView) itemView.findViewById(R.id.tvLocation);
             tvNotes = (TextView) itemView.findViewById(R.id.tvNotes);
             tvPrice = (TextView) itemView.findViewById(R.id.tvPrice);
+            btnUpdateHarga= (Button) itemView.findViewById(R.id.btnUpdateHarga);
         }
     }
 

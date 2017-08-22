@@ -13,6 +13,8 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.TOrderShowActivity;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
+import id.co.kurindo.kurindo.notification.NewOrderPopupActivity;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
 /**
@@ -65,6 +67,7 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
     @Override
     public void onCompleted(View completeButton) {
         showActivity(TOrderShowActivity.class);
+        showActivity(NewOrderPopupActivity.class);
         ((DoSendPinLocationMapFragment)DoSendPinLocationMapFragment.getInstance()).resetAll();
         finish();
     }
@@ -116,7 +119,7 @@ public class DoSendOrderActivity extends AbstractStepperActivity {
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
+        LogUtil.logD(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
         Fragment f = getStepperAdapter().getItem(step);
         if(f != null){
             if(f instanceof DoSendPinLocationMapFragment){

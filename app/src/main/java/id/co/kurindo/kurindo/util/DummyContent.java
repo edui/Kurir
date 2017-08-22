@@ -9,6 +9,7 @@ import java.util.Map;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.model.Address;
+import id.co.kurindo.kurindo.model.Help;
 import id.co.kurindo.kurindo.model.News;
 import id.co.kurindo.kurindo.model.Product;
 import id.co.kurindo.kurindo.model.Shop;
@@ -30,6 +31,9 @@ public class DummyContent {
     public static final List<Shop> SHOPS = new ArrayList<>();
 
     public static final List<News> NEWS= new ArrayList<>();
+
+    public static final List<Help> HELPS = new ArrayList<>();
+
     /**
      * A map of sample items. Key: sample ID; Value: Item.
      */
@@ -39,9 +43,16 @@ public class DummyContent {
     public static final Map<String, News> NEWS_MAP = new HashMap<>(5);
     public static final Map<String, List<Product>> PRODUCT_MAP = new HashMap<>(5);
 
+    public static final Map<String, Help> HELP_MAP = new HashMap<>();
+
     public static Shop shop;
 
     static {
+        addHelp(new Help("Help0", "Sekilas Kurindo", "Penjelasan singkat tentang Kurindo", "icon_kurirkurindo.png"));
+        addHelp(new Help("Help1", "Layanan Kurindo", "Penjelasan singkat tentang layananan Kurindo", "syarat_ketentuan.png"));
+        addHelp(new Help("Help2", "FAQ", "Hal-hal yang sering ditanyakan", "kerjasama_berlangganan.png"));
+        addHelp(new Help("Help3", "User Guide", "Petunjuk penggunaan aplikasi", "kirim_dalam_kotaa.png"));
+
         addItem(new DummyItem("1", R.drawable.banner_mobile_application_0, "Quote #1", "Steve Jobs", "Focusing is about saying No."));
         addItem(new DummyItem("2", R.drawable.banner_mobile_application_0, "Quote #2", "Napoleon Hill","A quitter never wins and a winner never quits."));
         addItem(new DummyItem("3", R.drawable.banner_mobile_application_0, "Quote #3", "Pablo Picaso", "Action is the foundational key to all success."));
@@ -85,7 +96,7 @@ public class DummyContent {
         */
 
         //Shop shop = new Shop(3, "BURYAMI001", "BURYAMI", "Bubur Ayam Istimewa\nDiolah dari bahan segar dan bumbu rempah asli & sehat, Non MSG", "buryami_iconshop.png", "buryami_bannershop.png", "0811542188", "Jl. Syarifudin Yoes \ndepan HER Guesthouse (seberang Pelangi B Point)\nOpen at 06.30 - 11.00", "OPEN", "BPN02", "Balikpapan Tengah & Kota");
-        Shop shop = new Shop(3, "BURYAMI001", "BURYAMI", "Bubur Ayam Istimewa\nDiolah dari bahan segar dan bumbu rempah asli & sehat, Non MSG", "buryami_iconshop.png", "buryami_bannershop.png", "OPEN");
+        /*Shop shop = new Shop(3, "BURYAMI001", "BURYAMI", "Bubur Ayam Istimewa\nDiolah dari bahan segar dan bumbu rempah asli & sehat, Non MSG", "buryami_iconshop.png", "buryami_bannershop.png", "OPEN");
         List<Product> products = new ArrayList<>();
         Product p11 = new Product(12, "BURYAMI010", "Bubur Ayam Komplit", "Bubur Ayam Komplit", R.drawable.buryami010, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p11);
@@ -99,17 +110,18 @@ public class DummyContent {
         shop.setPic(u);
         addShop(shop);
         addProduct(shop.getId(),products);
+        */
 
         //shop = new Shop(4, "HONEYMOON001", "HONEYMOON", "","honeymoon_iconshop.png", "honeymoon_bannershop.png", "Info dan pemesanan: 0812-5630-2990", "Balikpapan Regency\nCastarica JE3 02", "OPEN");
-        shop = new Shop(4, "HONEYMOON001", "HONEYMOON", "","honeymoon_iconshop.png", "honeymoon_bannershop.png", "OPEN");
-        products = new ArrayList<>();
+        Shop shop = new Shop(4, "HONEYMOON001", "HONEYMOON", "","honeymoon_iconshop.png", "honeymoon_bannershop.png", "OPEN");
+        List<Product> products = new ArrayList<>();
         Product p = new Product(13, "HONEYMOON001", "Madu Premium", "Madu Premium", R.drawable.honeymoon001, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
         p = new Product(14, "HONEYMOON002", "Madu Organik", "Madu Organik", R.drawable.honeymoon002, "10.000", "1", "0", "AVAILABLE", "1-dec-2016");
         products.add(p);
         //shop.setProducts(products);
-        u = new TUser();
-        addr = new Address();
+        TUser u = new TUser();
+        Address addr = new Address();
         addr.setLocation(new LatLng(-0.3420503,117.429754));
         u.setAddress(addr);
         shop.setPic(u);
@@ -154,6 +166,11 @@ public class DummyContent {
         addNews(n);
         n = new News(9, "DO-Client", "DO-Client", "DO-Client", R.drawable.banner_doclient);
         addNews(n);
+    }
+
+    private static void addHelp(Help help) {
+        HELP_MAP.put(help.getId(), help);
+        HELPS.add(help);
     }
 
     private static void addItem(DummyItem item) {

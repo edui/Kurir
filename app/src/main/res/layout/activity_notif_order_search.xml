@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="wrap_content" android:layout_gravity="center" android:layout_margin="10dp"
+        android:layout_height="80dp" android:src="@drawable/icon_kurindo"/>
+
+    <LinearLayout
+        android:id="@+id/layoutContent" android:background="@drawable/rounded_corner_map_white" android:layout_margin="10dp" style="@style/normalTextStyle"
+        android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center_horizontal"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <ImageView
+            android:id="@+id/splash" android:scaleType="fitCenter"
+            android:layout_width="wrap_content" android:layout_gravity="left" android:layout_marginBottom="10dp"
+            android:layout_height="80dp" android:src="@drawable/icon_kurirkurindo"/>
+        <TextView
+            android:id="@+id/tvTitle" android:textColor="@color/black"
+            android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center" style="@style/titleBoldTextStyle"
+            android:layout_height="wrap_content" android:text="Sedang Mencarikan Kurir"/>
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_margin="5dp"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+            <ImageView
+                android:id="@+id/ivServiceType"
+                android:layout_width="wrap_content" android:layout_gravity="center"
+                android:layout_height="80dp" android:src="@drawable/do_send_icon"/>
+            <ImageView
+                android:id="@+id/ivServiceCode"
+                android:layout_width="wrap_content" android:layout_gravity="center"
+                android:layout_height="80dp" android:src="@drawable/icon_sds"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_margin="5dp" android:weightSum="1"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:gravity="center"
+                android:id="@+id/tvOrigin" style="@style/titleBoldTextStyle" android:textColor="@color/black"
+                android:layout_width="match_parent" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:text="Dari "/>
+            <TextView android:gravity="center"
+                android:id="@+id/tvDestination" style="@style/titleBoldTextStyle" android:textColor="@color/black"
+                android:layout_width="match_parent" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:text="Ke "/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_margin="5dp"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvRemark" style="@style/titleBoldTextStyle" android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Catatan"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:layout_weight=".5"
+            android:background="@drawable/rounded_corner_map_reject"
+            android:text="CANCEL Order" />
+
+        <Button
+            android:id="@+id/btnHide"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:layout_weight=".5"
+            android:background="@drawable/rounded_corner_map_accept"
+            android:text="Tunggu Reponse KURIR" />
+    </LinearLayout>
+
+</LinearLayout>

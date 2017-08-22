@@ -873,7 +873,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         mMap.clear();
         if(destination != null && destination.getAddress() != null && destination.getAddress().getLocation() != null){
             String title = "Destination";
-            String snippet = (destination.getName() != null ? destination.toStringFormatted() : "");
+            String snippet = (destination.getName() != null ? destination.toStringAddressFormatted() : "");
             destinationMarker = mMap.addMarker(
                     new MarkerOptions()
                             .position(destination.getAddress().getLocation())
@@ -883,7 +883,7 @@ public class MapsActivity extends KurindoActivity implements OnMapReadyCallback,
         }
         if(origin != null && origin.getAddress() != null && origin.getAddress().getLocation() != null){
             String title = "Origin";
-            String snippet = (origin.getName() != null ? origin.toStringFormatted() : "");
+            String snippet = (origin.getName() != null ? origin.toStringAddressFormatted() : "");
             originMarker = mMap.addMarker(
                     new MarkerOptions()
                             .position(origin.getAddress().getLocation())

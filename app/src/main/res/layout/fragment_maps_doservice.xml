@@ -127,7 +127,7 @@
                 <TextView
                     android:id="@+id/ivPriceInfo"
                     android:layout_width="wrap_content" android:gravity="center_vertical|left" android:textColor="@color/white" android:padding="10dp"
-                    android:layout_height="match_parent" android:text="Do-Service (2 unit) : Rp 200.000" android:layout_weight=".9"/>
+                    android:layout_height="match_parent" android:text="Info" android:layout_weight=".9"/>
                 <ImageView
                     android:id="@+id/ivSwitchInfo"
                     android:layout_width="wrap_content" android:layout_weight=".1" android:layout_gravity="center" android:gravity="center_vertical|right" android:textColor="@color/white"
@@ -212,7 +212,7 @@
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/agrement_layout"
+                android:id="@+id/agrement_layout" android:visibility="gone"
                 android:orientation="horizontal" android:layout_marginTop="5dp"
                 android:layout_width="match_parent" android:layout_marginBottom="6dp"
                 android:layout_height="wrap_content" android:weightSum="10">

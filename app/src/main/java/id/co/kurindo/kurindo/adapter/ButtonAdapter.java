@@ -26,7 +26,6 @@ import id.co.kurindo.kurindo.model.ImageModel;
  * Created by DwiM on 11/9/2016.
  */
 public class ButtonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
     Context context;
     List<ImageModel> data = new ArrayList<>();
 

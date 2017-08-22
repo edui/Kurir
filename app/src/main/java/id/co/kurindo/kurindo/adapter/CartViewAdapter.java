@@ -82,7 +82,7 @@ public class CartViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ((VHItem) holder).tvName.setText(cartItem.getProduct().getName() );
                 ((VHItem) holder).tvUnitPrice.setText(AppConfig.formatCurrency(cartItem.getProduct().getPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
                 ((VHItem) holder).tvQuantity.setText(String.valueOf(cartItem.getQuantity()));
-                ((VHItem) holder).tvPrice.setText(AppConfig.formatCurrency(cartItem.getProduct().getTotalPrice().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+                ((VHItem) holder).tvPrice.setText(AppConfig.formatCurrency(cartItem.getProduct().getPrice().multiply(new BigDecimal(cartItem.getQuantity())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
                 if(cartItem.getProduct().getNotes() == null || cartItem.getProduct().getNotes().isEmpty()){
                     ((VHItem) holder).tvNotes.setVisibility(View.GONE);
                 }else{

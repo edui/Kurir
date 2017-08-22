@@ -3,7 +3,11 @@ package id.co.kurindo.kurindo.wizard.dowash;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,6 +28,8 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
@@ -33,6 +41,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -40,9 +49,11 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoServiceHelper;
+import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.DoService;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPrice;
+import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
@@ -86,6 +97,8 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
     @Bind(R.id.spLokasi)
     Spinner spLokasi;
 
+    TUser origin = new TUser();
+
     //BigDecimal price1;
     //BigDecimal price2;
 
@@ -115,6 +128,11 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
     DoService do2;
     String layanan;
 
+    @Bind(R.id.chkAgrement)
+    CheckBox chkAgrement;
+    @Bind(R.id.ivAgrement)
+    ImageView ivAgrement;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,8 +151,8 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
         createDo1();
         createDo2();
         tvMinBeratInfo.setText("(Min "+AppConfig.MIN_WEIGHT_DOWASH+" Kg)");
-        retrieve_price();
-        radioGroupService_OnClick();
+        //retrieve_price();
+        //radioGroupService_OnClick();
 
         radioGroupService.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -148,6 +166,12 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spLokasi.setAdapter(adapter);
 
+        ivAgrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupWindow("Kurindo \nService Agreement", R.raw.snk_file, R.drawable.icon_syarat_ketentuan);
+            }
+        });
 
         return v;
     }
@@ -176,11 +200,15 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
         }
     }
 
-    private void retrieve_price() {
+    private void retrieve_price(final Handler handler) {
+
         progressBar.show();
         final String tag_string_Req = "retrieve_price";
         String url = AppConfig.URL_PRICE_REQUEST;
         final HashMap<String, String> params = new HashMap();
+        if(origin != null){
+            params.put("city", origin.getAddress().getKabupaten());
+        }
         params.put("do-type", AppConfig.KEY_DOWASH);
         addRequest(tag_string_Req, Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -209,6 +237,7 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
                     //invalid = new VerificationError("Json error: " + e.getMessage());
                 }
                 progressBar.dismiss();
+                handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -216,6 +245,7 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
                 e.printStackTrace();
                 Toast.makeText(context, "Network Error. Gagal menyiapkan harga.", Toast.LENGTH_SHORT).show();
                 progressBar.dismiss();
+                handler.handleMessage(null);
             }
         }, params, getKurindoHeaders());
     }
@@ -415,6 +445,7 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
         /*if(layanan.equalsIgnoreCase(getString( R.string.label_flash ))){
             add = 6;
         }*/
+        int selectedHour = hour;
         int now = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         if(hour < now) hour = now;
         //tvDay.setText("Hari Ini");
@@ -428,6 +459,8 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
             start.set(Calendar.HOUR_OF_DAY, hour);
             start.add(Calendar.DATE, 1);
             tvDay.setText("Besok");
+        }else{
+            hour = selectedHour;
         }
         end = start;
         tvPickupTime.setText(AppConfig.pad(hour)+":"+AppConfig.pad(minute));
@@ -463,6 +496,32 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
     }
 
     @Override
+    public void onSelected() {
+        origin = DoServiceHelper.getInstance().getOrder().getPlace();
+
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message mesg) {
+                throw new RuntimeException("RuntimeException");
+            }
+        };
+
+        retrieve_price(handler);
+
+        // loop till a runtime exception is triggered.
+        try { Looper.loop(); }
+        catch(RuntimeException e2) { }
+
+        radioGroupService_OnClick();
+
+        if(!next) {
+            setup_button();
+            DoServiceHelper.getInstance().clearOrder();
+        }
+
+    }
+
+    @Override
     public VerificationError verifyStep() {
 
         if(do1.getQty() < 3) return new VerificationError("DO-WASH melayani minimal 3 Kg cucian.");
@@ -482,15 +541,100 @@ public class DoWashForm1 extends BaseStepFragment implements Step {
         do1.setLocation(spLokasi.getSelectedItem().toString());
         do2.setLocation(spLokasi.getSelectedItem().toString());
 
+
+        order.setPlace(origin);
+
+        if(!chkAgrement.isChecked()) {
+            return new VerificationError("Anda belum menyetujui syarat dan ketentuan kami");
+        }
+
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message mesg) {
+                throw new RuntimeException("RuntimeException");
+            }
+        };
+
+        DialogInterface.OnClickListener YesClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                place_an_order(handler);
+            }
+        };
+        DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handler.handleMessage(null);
+            }
+        };
+
+        showConfirmationDialog("Konfirmasi Pesanan","Konfirmasi, Anda akan menggunakan layanan "+ AppConfig.KEY_DOWASH+" ?", YesClickListener, NoClickListener);
+
+        // loop till a runtime exception is triggered.
+        try { Looper.loop(); }
+        catch(RuntimeException e2) { }
         return null;
     }
 
-    @Override
-    public void onSelected() {
-        if(!next) {
-            setup_button();
-            DoServiceHelper.getInstance().clearOrder();
-        }
+    private void place_an_order(Handler handler) {
+        progressBar.setMessage("Sedang memproses Pesanan....");
+        progressBar.show();
+
+        //TOrder order = DoServiceHelper.getInstance().getOrder();
+        //order.setPlace(origin);
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting(); builder.serializeNulls();
+        Gson gson = builder.create();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("user_agent", AppConfig.USER_AGENT);
+
+        String orderStr = gson.toJson(DoServiceHelper.getInstance().getOrder());
+        LogUtil.logD(TAG, "place_an_order: "+orderStr);
+        params.put("order", orderStr);
+        process_order(params, handler);
+    }
+
+
+    private void process_order(Map<String, String> params, final Handler handler) {
+        String url = AppConfig.URL_DOSEND_ORDER;
+        addRequest("request_service_order", Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                LogUtil.logD(TAG, "request_service_order Response: " + response.toString());
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                    if(OK){
+                        String awb = jObj.getString("awb");
+                        String status = jObj.getString("order_status");
+                        String statusText = jObj.getString("order_status_text");
+
+                        DoServiceHelper.getInstance().getOrder().setAwb(awb);
+                        DoServiceHelper.getInstance().getOrder().setStatus(status);
+                        DoServiceHelper.getInstance().getOrder().setStatusText(statusText);
+
+                        ViewHelper.getInstance().setOrder(DoServiceHelper.getInstance().getOrder());
+
+                        invalid = null;
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                    invalid = new VerificationError("Json error: " + e.getMessage());
+                }
+                progressBar.dismiss();
+                handler.handleMessage(null);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
+                progressBar.dismiss();
+                handler.handleMessage(null);
+            }
+        }, params, getKurindoHeaders());
     }
 
 

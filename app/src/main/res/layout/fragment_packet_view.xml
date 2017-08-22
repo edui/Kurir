@@ -22,7 +22,7 @@
             <TextView
                 android:id="@+id/text_berat_paket"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="wrap_content" android:autoLink="phone"
                 android:textSize="14dp" android:textColor="@color/white"
                 android:text="Berat paket" android:layout_weight=".4"
                 />
@@ -150,9 +150,21 @@
         android:layout_width="match_parent" android:layout_margin="2dp" android:background="@color/white"
         android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btnLihatRute" android:visibility="gone"
-            android:layout_width="wrap_content" android:layout_gravity="center"
+            android:id="@+id/btnViewRoute" android:visibility="gone" android:layout_weight=".25"
+            android:layout_width="wrap_content" android:layout_gravity="center" android:textSize="11dp"
             android:layout_height="wrap_content" android:text="Lihat Rute" android:textColor="@color/white" android:background="@drawable/rounded_corner_map_primary" android:padding="10dp"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnStartRoute" android:visibility="gone" android:layout_weight=".25"
+            android:layout_width="wrap_content" android:layout_gravity="center" android:textSize="11dp"
+            android:layout_height="wrap_content" android:text="Navigate" android:textColor="@color/white" android:background="@drawable/rounded_corner_map_primary" android:padding="10dp"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnViewOrigin" android:visibility="gone" android:layout_weight=".25"
+            android:layout_width="wrap_content" android:layout_gravity="center" android:textSize="11dp"
+            android:layout_height="wrap_content" android:text="Origin" android:textColor="@color/white" android:background="@drawable/rounded_corner_map_primary" android:padding="10dp"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnViewDestination" android:visibility="gone" android:layout_weight=".25"
+            android:layout_width="wrap_content" android:layout_gravity="center" android:textSize="11dp"
+            android:layout_height="wrap_content" android:text="Destination" android:textColor="@color/white" android:background="@drawable/rounded_corner_map_primary" android:padding="10dp"/>
     </LinearLayout>
 
 </LinearLayout>

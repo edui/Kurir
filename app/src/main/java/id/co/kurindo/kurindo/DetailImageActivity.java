@@ -13,9 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DepthPageTransformer;
 import id.co.kurindo.kurindo.model.ImageModel;
 
@@ -199,7 +201,19 @@ public class DetailImageActivity extends AppCompatActivity {
 
                 final ImageView imageView = (ImageView) rootView.findViewById(R.id.detail_image);
 
-                Glide.with(getActivity()).load(url).thumbnail(0.1f).into(imageView);
+                String banner = url.substring(0,url.length()-4);
+                int resId = getActivity().getResources().getIdentifier(banner, "drawable", getActivity().getPackageName());
+                if(resId == 0){
+                    Glide.with(getActivity()).load(url)
+                            .thumbnail(0.5f)
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .placeholder(R.drawable.placeholder)
+                            //.listener(drawableStrGlideListener())
+                            .into(imageView);
+                }else{
+                    imageView.setImageResource(resId);
+                }
 
                 return rootView;
             }

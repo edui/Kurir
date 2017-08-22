@@ -43,8 +43,8 @@
                     android:layout_width="match_parent">
                     <TextView
                         android:id="@+id/tvOrigin"
-                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="1" android:maxLines="1" android:inputType="text"
-                        android:layout_height="wrap_content" android:text="Set Lokasi Anda" android:layout_gravity="center_vertical" />
+                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="2" android:maxLines="2"
+                        android:layout_height="40dp" android:text="@string/set_lokasi" android:gravity="fill|center_vertical|left" android:layout_gravity="fill|center_vertical|left" />
                     <id.co.kurindo.kurindo.map.ClearableAutoCompleteTextView
                         android:id="@+id/tvOriginAutoComplete"
                         android:layout_width="match_parent"
@@ -90,8 +90,8 @@
                     android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
                     <TextView
                         android:id="@+id/tvDestination"
-                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="1" android:maxLines="1" android:inputType="text"
-                        android:layout_height="wrap_content" android:text="Set Tujuan Anda" android:layout_gravity="center_vertical"/>
+                        android:layout_width="match_parent" android:layout_weight=".2" android:lines="2" android:maxLines="2"
+                        android:layout_height="40dp" android:text="@string/set_tujuan" android:gravity="fill|center_vertical|left" android:layout_gravity="fill|center_vertical|left" />
                     <id.co.kurindo.kurindo.map.ClearableAutoCompleteTextView
                         android:id="@+id/tvDestinationAutoComplete"
                         android:layout_width="match_parent"

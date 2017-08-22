@@ -21,7 +21,7 @@
         android:id="@+id/list"
         android:layout_margin="10dp"
         android:layout_width="match_parent" android:visibility="gone"
-        android:layout_height="250dp"
+        android:layout_height="match_parent"
         android:padding="1dp" android:divider="#b5b5b5" android:dividerHeight="1dp"
         android:listSelector="@drawable/states_selector_list" android:background="@drawable/list_border"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

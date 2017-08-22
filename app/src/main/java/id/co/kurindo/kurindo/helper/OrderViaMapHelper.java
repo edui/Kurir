@@ -89,7 +89,7 @@ public class OrderViaMapHelper {
     }
 
     public void addNewProduct(String code, double price) {
-        if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND) || code.equalsIgnoreCase(AppConfig.KEY_DOJEK) || code.equalsIgnoreCase(AppConfig.KEY_DOCAR) || code.equalsIgnoreCase(AppConfig.KEY_DOMOVE)){
+        if(code.equalsIgnoreCase(AppConfig.KEY_DOSEND) || code.equalsIgnoreCase(AppConfig.KEY_DOJEK) || code.equalsIgnoreCase(AppConfig.KEY_DOCAR) || code.equalsIgnoreCase(AppConfig.KEY_DOMOVE)|| code.equalsIgnoreCase(AppConfig.KEY_DOHIJAMAH)){
             Set items = new LinkedHashSet<>();
             items.add(addCartItem(code, price));
             order.setProducts(items);
@@ -113,6 +113,15 @@ public class OrderViaMapHelper {
 
     public CartItem addCartItem(String code, double price){
         Product p = new Product();
+
+        p.setId(code.equalsIgnoreCase(AppConfig.KEY_DOSEND)?1:
+                        (code.equalsIgnoreCase(AppConfig.KEY_DOJEK)?3:
+                                (code.equalsIgnoreCase(AppConfig.KEY_DOCAR)? 2:
+                                        (code.equalsIgnoreCase(AppConfig.KEY_DOMOVE)?7:
+                                                (code.equalsIgnoreCase(AppConfig.KEY_DOWASH)?4:
+                                                        (code.equalsIgnoreCase(AppConfig.KEY_DOSERVICE)?5:
+                                                                (code.equalsIgnoreCase(AppConfig.KEY_DOHIJAMAH)?6:0)
+                                                        ))))));
         p.setCode(code);
         p.setName(code);
         p.setShopid(1);
@@ -120,7 +129,7 @@ public class OrderViaMapHelper {
         p.setQuantity(1);
         p.setPrice(new BigDecimal(price));
         p.setWeight(new BigDecimal(1));
-        p.setPrice(order.getTotalPrice());
+        //p.setPrice(order.getTotalPrice());
         CartItem item = new CartItem();
         item.setProduct(p);
         item.setQuantity(p.getQuantity());

@@ -130,8 +130,6 @@ public class DoCarForm5 extends BaseStepFragment implements Step {
     ImageView ivRental4;
     @Bind(R.id.tvRental4)
     TextView tvRental4;
-    @Bind(R.id.tvRental5)
-    TextView tvRental5;
 
     @Bind(R.id.tvTotalPrice)
     TextView tvTotalPrice;
@@ -187,14 +185,16 @@ public class DoCarForm5 extends BaseStepFragment implements Step {
         ivRental1.setImageResource(R.drawable.destination_pin);
         tvRental1.setText(rental.getActivity());
         ivRental2.setImageResource(R.drawable.ic_event_note_black_18dp);
-        tvRental2.setText(rental.getDateRange());
+        tvRental2.setText(rental.displayDate(true));
         ivRental3.setImageResource(R.drawable.ic_access_time_black_18dp);
         tvRental3.setText(rental.getDurasi());
         //ivRental4.setImageResource(R.drawable.ic_access_time_black_18dp);
         tvRental4.setText(rental.getFasilitas());
-        tvRental5.setText(rental.getNotes());
 
-        tvTotalPrice.setText(AppConfig.formatCurrency(rental.getCalculatePrice().doubleValue()));
+        tvTotalPrice.setText(AppConfig.formatCurrency( rental == null ? 0 : rental.getCalculatePrice(context, rental.getVehicle()).doubleValue()));
+        tvIncludeBiayaDetail.setText(AppConfig.getIncludeBiaya(context, rental.getFasilitas(), AppConfig.KEY_DOCAR));
+        tvExcludeBiayaDetail.setText(AppConfig.getExcludeBiaya(context, rental.getFasilitas(), AppConfig.KEY_DOCAR));
+        tvRule.setText(AppConfig.getRule(context, rental.getDurasi(), rental.getActivity(), AppConfig.KEY_DOCAR));
     }
 
     private void setup_ulasan() {

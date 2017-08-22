@@ -2,8 +2,8 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearpopup"
     android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:background="@color/gray"
+    android:layout_height="350dp"
+    android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     android:padding="3dp" >
 
@@ -27,19 +27,36 @@
         android:background="@android:color/white" >
         <ImageView
             android:id="@+id/imageDialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_margin="10dp" android:layout_gravity="center"/>
         <LinearLayout
-            android:layout_width="match_parent" android:orientation="vertical" android:layout_marginBottom="5dp"
+            android:layout_width="match_parent" android:orientation="vertical" android:layout_marginBottom="2dp" android:padding="5dp"
             android:layout_height="wrap_content"
-            android:background="@android:color/darker_gray" >
-            <Spinner
-                android:id="@+id/spinnerDialog"
+            android:background="@android:color/white" >
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" android:text="@string/label_price_update"/>
+            <TextView
+                android:id="@+id/tvChargeItem"
+                style="@style/normalBoldTextStyle"
+                android:text="Charge"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+                <TextView
+                    android:layout_width="match_parent" android:layout_weight=".6"
+                    android:layout_height="wrap_content" android:text="Harga Actual"/>
+                <EditText
+                    android:id="@+id/etPrice"
+                    android:layout_width="match_parent" android:layout_weight=".4" android:inputType="number"
+                    android:layout_height="wrap_content" android:hint="Harga actual"/>
             </LinearLayout>
-
+            <Button
+                android:id="@+id/btnUpdateHarga"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Update"/>
+        </LinearLayout>
     </LinearLayout>
     </ScrollView>
     </LinearLayout>

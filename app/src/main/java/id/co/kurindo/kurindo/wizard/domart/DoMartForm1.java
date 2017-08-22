@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.lamudi.phonefield.PhoneInputLayout;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
@@ -99,6 +100,11 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
     protected Spinner _serviceCodeText;
     protected PacketServiceAdapter packetServiceAdapter;
 
+
+    @Bind(R.id.input_telepon_penerima)
+    PhoneInputLayout phoneInput;
+    @Bind(R.id.input_nama_penerima)
+    EditText inputnamaPenerima;
     @Bind(R.id.tvDestination)
     protected TextView tvDestination;
     @Bind(R.id.ivAddDestinationNotes)
@@ -122,12 +128,8 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
 
     @Bind(R.id.tvPickupTime)
     TextView tvPickupTime;
-    @Bind(R.id.tvPickupTimeText)
-    TextView tvPickupTimeText;
     @Bind(R.id.tvDropTimeText)
     TextView tvDropTimeText;
-    @Bind(R.id.swChooseTime)
-    Switch swChooseTime;
 
     int hour;
     int minute;
@@ -142,6 +144,9 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
 
         context = getContext();
         progressBar = new ProgressDialogCustom(context);
+
+        phoneInput.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
+        phoneInput.setHint(R.string.telepon);
 
         packetServiceAdapter = new PacketServiceAdapter(context, AppConfig.getPacketServiceList(AppConfig.KEY_DOMART), 1);
         _serviceCodeText.setAdapter(packetServiceAdapter);
@@ -159,24 +164,6 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
             }
         });
 
-        swChooseTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                boolean on = isChecked;
-                if(on)
-                {
-                    tvPickupTimeText.setBackgroundResource(R.color.cardview_light_background);
-                    tvDropTimeText.setBackgroundResource(R.color.orange);
-                }
-                else
-                {
-                    tvPickupTimeText.setBackgroundResource(R.color.orange);
-                    tvDropTimeText.setBackgroundResource(R.color.cardview_light_background);
-                }
-            }
-        });
-        swChooseTime.setChecked(true);
-        swChooseTime.toggle();
         return v;
     }
     private void cek_with_calendar_time() {
@@ -402,7 +389,7 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
                 runnable =new Runnable() {
                     @Override
                     public void run() {
-                        data.setEstHarga(s.toString());
+                        data.setPrice_estimate(new BigDecimal( s.toString() ));
                         calculate_price();
                     }
                 };
@@ -512,6 +499,8 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
                 TUser origin = ViewHelper.getInstance().getTUser();
                 if(origin != null && origin.getAddress() != null){
                     tvDestination.setText(origin.getAddress().toStringFormatted());
+                    phoneInput.setPhoneNumber(origin.getPhone());
+                    inputnamaPenerima.setText(origin.getName());
                     DoMartHelper.getInstance().getOrder().setPlace(origin);
                     ViewHelper.getInstance().setTUser(null);
                 }
@@ -551,15 +540,15 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
             return invalid;
         }
         TOrder order = DoMartHelper.getInstance().getOrder();
+        order.getPlace().setFirstname(inputnamaPenerima.getText().toString());
+        order.getPlace().setPhone(phoneInput.getPhoneNumber());
+        order.getPlace().getAddress().setNotes(etDestinationNotes.getText().toString());
+
         Calendar start = Calendar.getInstance();
         start.add(Calendar.DATE, 1);
         start.set(Calendar.HOUR_OF_DAY, hour);
         start.set(Calendar.MINUTE, minute);
-        if(swChooseTime.isChecked()){
-            order.setDroptime(AppConfig.getDateTimeServerFormat().format( start.getTime() ));
-        }else{
-            order.setPickup(AppConfig.getDateTimeServerFormat().format( start.getTime() ));
-        }
+        order.setDroptime(AppConfig.getDateTimeServerFormat().format( start.getTime() ));
 
         next = true;
         return null;
@@ -628,10 +617,9 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
             total = new BigDecimal(0);
             for (int i = 0; i < datas.length; i++) {
                 DoMart data = (DoMart) datas[i];
-                BigDecimal sub = new BigDecimal(data.getEstHarga());
-                total = total.add(sub);
-                data.setPrice_unit(sub);
-                data.setPrice(sub);
+                total = total.add(data.getPrice_estimate());
+                data.setPrice_unit(data.getPrice_estimate());
+                data.setPrice(data.getPrice_estimate());
             }
             order.setTotalPrice(total);
             order.setTotalQuantity(datas.length);
@@ -673,9 +661,13 @@ public class DoMartForm1 extends BaseStepFragment implements Step {
             invalid = new VerificationError("Anda belum menentukan alamat tujuan.");
             valid = false;
             return valid;
+        }else if(!phoneInput.isValid()) {
+            invalid = new VerificationError("Nomor Telepon / WA tidak valid.");
+            valid = false;
+            return valid;
         }
 
-        return valid;
+            return valid;
     }
 
 

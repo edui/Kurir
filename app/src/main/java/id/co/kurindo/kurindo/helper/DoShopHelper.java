@@ -25,6 +25,7 @@ public class DoShopHelper extends OrderViaMapHelper {
     Set<Shop> shops;
     Set<Product> products;
     Set<Route> routes;
+    Set<Shop> tempShops;
 
     static DoShopHelper helper;
 
@@ -35,6 +36,14 @@ public class DoShopHelper extends OrderViaMapHelper {
 
     public Set<Shop> getShops() {
         return shops;
+    }
+
+    public Set<Shop> getTempShops() {
+        return tempShops;
+    }
+
+    public void setTempShops(Set<Shop> tempShops) {
+        this.tempShops = tempShops;
     }
 
     public void setShops(Set<Shop> shops) {
@@ -69,7 +78,11 @@ public class DoShopHelper extends OrderViaMapHelper {
 
     public void addShop(Shop shop) {
         if(shops == null) shops = new LinkedHashSet<>();
-        if(shop != null) shops.add(shop);
+        if(tempShops == null) tempShops = new LinkedHashSet<>();
+        if(shop != null) {
+            shops.add(shop);
+            tempShops.add(shop);
+        }
     }
 
     public void addRoute(Route route) {
@@ -105,7 +118,7 @@ public class DoShopHelper extends OrderViaMapHelper {
     }
 
 
-    private Set<CartItem> getCartItems() {
+    public Set<CartItem> getCartItems() {
         Set<CartItem> cartItems = new LinkedHashSet<>();
         Map<Saleable, Integer> itemMap = CartHelper.getCart().getItemWithQuantity();
         for (Map.Entry<Saleable, Integer> entry : itemMap.entrySet()) {
@@ -114,7 +127,6 @@ public class DoShopHelper extends OrderViaMapHelper {
             cartItem.setQuantity(entry.getValue());
             cartItems.add(cartItem);
         }
-
         return cartItems;
     }
 

@@ -39,5 +39,10 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical|left"
         android:text=""/>
-
+    <Button
+        android:id="@+id/btnUpdateHarga"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:text="Update Harga"
+        android:gravity="center_vertical|right" android:layout_gravity="right|center_vertical" android:visibility="gone"
+        />
 </LinearLayout>

@@ -56,6 +56,23 @@
                             android:background="@android:color/white"
                             android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="5dp">
                             <TextView
+                                style="@style/titleBoldTextStyle"
+                                android:text="Tujuan Pengiriman" android:layout_margin="5dp">
+                            </TextView>
+                            <EditText
+                                android:id="@+id/input_nama_penerima" style="@style/normalTextStyle"
+                                android:drawableLeft="@drawable/ic_person_black" android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+                                android:hint="Masukkan nama" />
+                            <com.lamudi.phonefield.PhoneInputLayout
+                                android:id="@+id/input_telepon_penerima" android:hint="Masukkan Telepon / WA" android:drawableLeft="@drawable/ic_phone_black"
+                                style="@style/normalTextStyle" android:layout_marginLeft="5dp" android:layout_marginRight="5dp">
+                                <ImageButton
+                                    android:id="@+id/pickcontact"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_phone_black" android:visibility="gone"/>
+                            </com.lamudi.phonefield.PhoneInputLayout>
+                            <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Lokasi Tujuan" android:layout_margin="5dp">
@@ -104,24 +121,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:background="@android:color/white"
-                            android:layout_height="wrap_content" android:orientation="horizontal">
-                            <TextView
-                                android:id="@+id/tvPickupTimeText" android:layout_weight=".3"
-                                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Pick-up Time"
-                                android:layout_gravity="center" android:gravity="center"/>
-                            <Switch
-                                android:id="@+id/swChooseTime" android:layout_weight=".4"
-                                android:layout_height="wrap_content" android:layout_gravity="center" android:gravity="center"
-                                android:layout_width="match_parent"/>
-                            <TextView
-                                android:id="@+id/tvDropTimeText" android:layout_weight=".3"
-                                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Drop Time"
-                                android:layout_gravity="center" android:gravity="center"/>
-
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvDropTimeText"
+                            android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Drop Time"
+                            android:layout_gravity="center" android:gravity="center"/>
                         <TextView
                             android:id="@+id/tvPickupTime"
                             android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"

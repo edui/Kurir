@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
+import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
@@ -46,7 +47,10 @@ public class AcceptTOrderActivity extends AbstractStepperActivity {
     }
 
     protected AbstractStepAdapter getStepperAdapter() {
-        stepAdapter = new MyStepperAdapter(getSupportFragmentManager());
+        if(AppController.session.isAdministrator())
+            stepAdapter = new AdminStepperAdapter(getSupportFragmentManager());
+        else
+            stepAdapter = new MyStepperAdapter(getSupportFragmentManager());
         return stepAdapter;
     }
 
@@ -88,6 +92,28 @@ public class AcceptTOrderActivity extends AbstractStepperActivity {
             switch (position) {
                 case 0:
                     return new StepAcceptTOrderFragment();
+                default:
+                    throw new IllegalArgumentException("Unsupported position: " + position);
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
+    }
+
+    private static class AdminStepperAdapter extends AbstractStepAdapter {
+
+        AdminStepperAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment createStep(int position) {
+            switch (position) {
+                case 0:
+                    return new TabAcceptFragment();
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }

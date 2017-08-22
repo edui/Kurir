@@ -3,13 +3,18 @@ package id.co.kurindo.kurindo.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import id.co.kurindo.kurindo.app.AppConfig;
 
 /**
  * Created by dwim on 2/9/2017.
@@ -23,6 +28,8 @@ public class TOrder implements Parcelable{
     @Expose
     private String service_type;
     @Expose
+    private String sub_type;
+    @Expose
     private String service_code;
     @Expose
     private String payment;
@@ -30,6 +37,9 @@ public class TOrder implements Parcelable{
     private String status;
     @Expose
     private String statusText;
+
+    private float rating;
+    private String testimoni;
 
     private String created_date;
     private String created_by;
@@ -41,6 +51,9 @@ public class TOrder implements Parcelable{
     private String pickup;
     @Expose
     private String droptime;
+
+    @Expose
+    private String dibayar;
 
     @Expose
     private BigDecimal totalPrice = BigDecimal.ZERO;
@@ -152,6 +165,13 @@ public class TOrder implements Parcelable{
         this.pembeli = buyer;
     }
 
+    public String getSub_type() {
+        return sub_type;
+    }
+
+    public void setSub_type(String sub_type) {
+        this.sub_type = sub_type;
+    }
 
     public String getService_type() {
         return service_type;
@@ -339,6 +359,30 @@ public class TOrder implements Parcelable{
         this.marts = marts;
     }
 
+    public String getDibayar() {
+        return dibayar;
+    }
+
+    public void setDibayar(String dibayar) {
+        this.dibayar = dibayar;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public String getTestimoni() {
+        return testimoni;
+    }
+
+    public void setTestimoni(String testimoni) {
+        this.testimoni = testimoni;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -376,5 +420,55 @@ public class TOrder implements Parcelable{
 
     public DoCarRental getDocar() {
         return docar;
+    }
+
+    public Date getPickupDate(){
+        try {
+            return AppConfig.getDateTimeServerFormat().parse(pickup);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new Date();
+    }
+
+    public String formatPickup(){
+        return AppConfig.getDateTimeServerFormat().format(getPickupDate());
+    }
+
+    public LatLng getLocation(){
+        if(getService_type().equalsIgnoreCase(AppConfig.KEY_DOWASH)
+                || getService_type().equalsIgnoreCase(AppConfig.KEY_DOSERVICE)
+                || getService_type().equalsIgnoreCase(AppConfig.KEY_DOHIJAMAH) ){
+            if(getPlace() != null && getPlace().getAddress() != null)
+                return getPlace().getAddress().getLocation();
+        }else if(getService_type().equalsIgnoreCase(AppConfig.KEY_DOCAR) && getDocar() != null ){
+            if(getDocar().getUser() != null && getDocar().getUser().getAddress() != null)
+                return getDocar().getUser().getAddress().getLocation();
+        }else if(getService_type().equalsIgnoreCase(AppConfig.KEY_DOSEND)
+                || getService_type().equalsIgnoreCase(AppConfig.KEY_DOJEK)
+                || getService_type().equalsIgnoreCase(AppConfig.KEY_DOCAR)
+                || getService_type().equalsIgnoreCase(AppConfig.KEY_DOMOVE)
+                || getService_type().equalsIgnoreCase(AppConfig.KEY_DOSHOP)){
+            if(getPackets() != null && getPackets().size() > 0){
+                for (TPacket p :    getPackets()) {
+                    if(p.getOrigin() != null && p.getOrigin().getAddress() !=null)
+                        return p.getOrigin().getAddress().getLocation();
+                }
+            }
+        }else if(getService_type().equalsIgnoreCase(AppConfig.KEY_DOMART)){
+            if(getMarts() != null && getMarts().size() > 0){
+                for (DoMart m : getMarts()){
+                    if(m.getOrigin() != null && m.getOrigin().getAddress() != null)
+                        return m.getOrigin().getAddress().getLocation();
+                }
+            }
+        }
+        return new LatLng(0,0);
+    }
+
+    public String getLocationStr(){
+        LatLng loc = getLocation();
+        if(loc == null) return "-6.170166,106.831375";
+        return loc.latitude+","+loc.longitude;
     }
 }

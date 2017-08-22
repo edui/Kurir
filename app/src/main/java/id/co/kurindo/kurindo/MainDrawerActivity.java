@@ -1,9 +1,14 @@
 package id.co.kurindo.kurindo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.KurindoBaseDrawerActivity;
@@ -20,10 +25,13 @@ public class MainDrawerActivity extends KurindoBaseDrawerActivity {
 
     @Override
     protected void onDestroy() {
+
         super.onDestroy();
+
         boolean autoLogin = session.isAutoLoggedIn(); //autoLogin=false;
         session.setLogin(autoLogin);
-        finish();
+
+        //finish();
 
         /*
         if(counter == 0){
@@ -60,6 +68,5 @@ public class MainDrawerActivity extends KurindoBaseDrawerActivity {
         if (intent.hasExtra("click_action")) {
             AppConfig.startActivity(intent.getStringExtra("click_action"), intent.getExtras(), this);
         }
-
     }
 }

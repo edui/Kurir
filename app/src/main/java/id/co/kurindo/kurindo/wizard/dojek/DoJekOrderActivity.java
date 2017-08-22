@@ -12,6 +12,7 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.TOrderShowActivity;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DoSendHelper;
+import id.co.kurindo.kurindo.notification.NewOrderPopupActivity;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 import id.co.kurindo.kurindo.wizard.docar.DoCarForm2;
 
@@ -60,7 +61,8 @@ public class DoJekOrderActivity extends AbstractStepperActivity {
     @Override
     public void onCompleted(View completeButton) {
         showActivity(TOrderShowActivity.class);
-        ((DoJekPinLocationMapFragment)DoJekPinLocationMapFragment.getInstance()).resetAll();
+        showActivity(NewOrderPopupActivity.class);
+        DoJekPinLocationMapFragment.getInstance().resetAll();
         finish();
     }
 

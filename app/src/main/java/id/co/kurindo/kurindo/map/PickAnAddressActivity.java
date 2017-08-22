@@ -187,7 +187,7 @@ public class PickAnAddressActivity extends KurindoActivity implements OnMapReady
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
 
-        showAddressLayout();
+        //showAddressLayout();
 
         mPlaceArrayAdapter = new PlaceArrayAdapter(mContext, android.R.layout.simple_list_item_1, BOUNDS_ID, null);
         mOriginAutoCompleteTextView.setAdapter(mPlaceArrayAdapter);
@@ -445,6 +445,7 @@ public class PickAnAddressActivity extends KurindoActivity implements OnMapReady
         ViewHelper.getInstance().setTUser(origin);
         ViewHelper.getInstance().setId(id);
         Intent intent = new Intent();
+        intent.putExtra("type", type);
         intent.putExtra("id", id);
         setResult(RESULT_OK, intent);
         finish();

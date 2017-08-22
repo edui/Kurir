@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearpopup"
+    android:layout_width="fill_parent"
+    android:layout_height="350dp"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical"
+    android:padding="3dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent" android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:background="@android:color/white" >
+        <TextView
+            android:id="@+id/textTitleDialog"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp" android:text="Kurindo \nEnd User License Agreement" android:background="@color/colorPrimary"
+            android:textColor="#FFF" android:gravity="center" android:textStyle="bold"/>
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    <LinearLayout
+        android:layout_width="match_parent" android:orientation="vertical" android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white" >
+        <ImageView
+            android:id="@+id/imageDialog"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp" android:layout_gravity="center"/>
+        <LinearLayout
+            android:layout_width="match_parent" android:orientation="vertical" android:layout_marginBottom="2dp" android:padding="5dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white" >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="@string/label_location_filter"/>
+            <RadioGroup
+                android:id="@+id/radio_group_service" android:gravity="left|center_vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="2dp" android:layout_marginBottom="2dp"
+                android:orientation="vertical">
+                <RadioButton android:id="@+id/radio_current"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_usecurrent" android:checked="true"
+                    />
+
+                <RadioButton android:id="@+id/radio_homebase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_homebase"
+                    />
+                <RadioButton android:id="@+id/radio_others"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_other_location"
+                    />
+            </RadioGroup>
+            <TextView
+                android:id="@+id/tvLocationPopup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="@string/label_set_location"/>
+        </LinearLayout>
+        <Button
+            android:id="@+id/btnChoose"
+            android:background="@drawable/rounded_corner_map_accept" android:layout_margin="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Choose"/>
+    </LinearLayout>
+    </ScrollView>
+    </LinearLayout>
+    <ImageButton
+        android:id="@+id/btncancelcat"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_highlight_off_black_18dp" />
+
+</RelativeLayout>

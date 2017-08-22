@@ -6,6 +6,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -20,9 +21,10 @@ public class TabFragment extends Fragment {
     public static ViewPager viewPager;
     public static int int_items = 3 ;
     HomeFragment homeFragment;
-    DirectoryFragment directoryFragment;
+    public DirectoryFragment directoryFragment;
     NewsFragment newsFragment;
     int counter = 0;
+    PagerAdapter pagerAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -33,13 +35,13 @@ public class TabFragment extends Fragment {
             tabLayout = (TabLayout) x.findViewById(R.id.tabs);
             viewPager = (ViewPager) x.findViewById(R.id.viewpager);
 
-        HomeFragment homeFragment  = new HomeFragment();
-        final DirectoryFragment directoryFragment = new DirectoryFragment();
-        NewsFragment newsFragment = new NewsFragment();
+        homeFragment  = new HomeFragment();
+        directoryFragment = new DirectoryFragment();
+        newsFragment = new NewsFragment();
         /**
          *Set an Apater for the View Pager
          */
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager(), homeFragment, directoryFragment, newsFragment));
+        viewPager.setAdapter(getAdapter());
 
         /**
          * Now , this is a workaround ,
@@ -87,6 +89,13 @@ public class TabFragment extends Fragment {
         });
         return x;
 
+    }
+
+    public PagerAdapter getAdapter() {
+        if(pagerAdapter == null){
+            pagerAdapter= new MyAdapter(getChildFragmentManager(), homeFragment, directoryFragment, newsFragment);
+        }
+        return pagerAdapter;
     }
 
     class MyAdapter extends FragmentPagerAdapter{

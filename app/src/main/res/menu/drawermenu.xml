@@ -56,6 +56,9 @@
                 <item android:title="Calon KURIR"
                     android:id="@+id/nav_item_admin_daftar_kurir"
                     android:icon="@drawable/ic_person_black"/>
+                <item android:title="Map KURIR"
+                    android:id="@+id/nav_item_admin_map_kurir"
+                    android:icon="@drawable/ic_motorcycle_black"/>
             </menu>
         </item>
     </group>

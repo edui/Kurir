@@ -3,6 +3,7 @@ package id.co.kurindo.kurindo.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 
 /**
@@ -15,6 +16,7 @@ public class TUser implements Parcelable, Cloneable {
     @Expose
     private String lastname;
 
+    @Expose
     private String email;
     @Expose
     private String phone;
@@ -23,13 +25,19 @@ public class TUser implements Parcelable, Cloneable {
     @Expose
     private Address address;
 
+    private LatLng last;
+
     private String role;
     private String nik;
     private String simc;
+    private String skills;
 
     private boolean active;
     private boolean approved;
     private String created_at;
+
+    private String pickup_time;
+    private String drop_time;
 
     private String api_key;
 
@@ -194,11 +202,50 @@ public class TUser implements Parcelable, Cloneable {
         this.api_key = api_key;
     }
 
+    public LatLng getLast() {
+        return last;
+    }
+
+    public void setLast(LatLng last) {
+        this.last = last;
+    }
+
+    public String getPickup_time() {
+        return pickup_time;
+    }
+
+    public void setPickup_time(String pickup_time) {
+        this.pickup_time = pickup_time;
+    }
+
+    public String getDrop_time() {
+        return drop_time;
+    }
+
+    public void setDrop_time(String drop_time) {
+        this.drop_time = drop_time;
+    }
+
+    public String getSkills() {
+        return skills;
+    }
+
+    public void setSkills(String skills) {
+        this.skills = skills;
+    }
+
     public String toStringFormatted(){
         String formatted = "";
         formatted += getName();
         if(phone != null) formatted += ", "+phone;
         if(email != null) formatted += ", "+email;
+        return formatted;
+    }
+    public String toStringAddressFormatted(){
+        String formatted = "";
+        if(getName() != null) formatted += getName();
+        if(phone != null) formatted += ", "+phone+"\n";
+        if(getAddress() != null) formatted += getAddress().toStringKecKab();
         return formatted;
     }
 

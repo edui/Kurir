@@ -11,7 +11,7 @@
     <string name="label_agent">Agen</string>
     <string name="label_client">Pelanggan</string>
 
-    <string name="pref_settings_autologin_key">pref_settings_autologin</string>
+    <string name="pref_settings_autologin_key">isAutoLoggedIn</string>
     <string name="pref_settings_autologin_title">Auto Login</string>
     <string name="pref_settings_autologin_description">User automatically login when application started.</string>
 
@@ -67,7 +67,7 @@
         <item>Herbal</item>
     </string-array>
     <string-array name="dohijamah_layanan_array">
-        <item></item>
+        <item>-Pilih-</item>
         <item>Bekam</item>
         <item>Fisioterapi</item>
         <item>Konsultasi</item>
@@ -110,8 +110,6 @@
     <string-array name="docar_tujuan_array">
         <item>City Tour</item>
         <item>Dalam Kota</item>
-        <item>Luar Kota</item>
-        <item>Shuttle - Antar Jemput</item>
     </string-array>
 
     <string name="title_activity_maps">Map</string>
@@ -164,7 +162,7 @@
     <string name="label_shopres">Reseller Toko</string>
     <string name="dowash_type1">KAOS - KEMEJA - CELANA</string>
     <string name="dowash_type2">SPREI - BED COVER- GORDYN</string>
-    <string name="packet">Packet Pengiriman</string>
+    <string name="packet">Paket Pengiriman</string>
     <string name="location_address">Alamat Lokasi</string>
     <string name="detail">Detail</string>
     <string name="label_docar_shuttle">Shuttle - Antar -Jemput</string>
@@ -202,4 +200,36 @@
     <string name="label_tunai">Tunai</string>
     <string name="label_transfer_uangmuka">Transfer Uang Muka (25%)</string>
     <string name="label_transfer_semua">Transfer Semua</string>
+    <string name="data_pengguna">Data Pengguna</string>
+    <string name="nama">Nama</string>
+    <string name="label_other_location">Tentukan lokasi lainnya</string>
+    <string name="label_homebase">Gunakan my Homebase</string>
+    <string name="label_usecurrent">Gunakan lokasi terakhir</string>
+    <string name="label_location_filter">Filter berdasarkan lokasi</string>
+    <string name="label_set_location">Set Lokasi Anda</string>
+    <string name="set_lokasi">Klik di sini \nSet Lokasi Anda</string>
+    <string name="set_tujuan">Klik di sini \nSet Tujuan Anda</string>
+    <string name="profile">Profil</string>
+    <string name="profile_desc">Setting profil meliputi akun, gambar, kontak</string>
+    <string name="label_sopir">Sopir</string>
+    <string name="label_bbm">bahan bakar</string>
+    <string name="label_makan_sopir">Makan Sopir</string>
+    <string name="label_parkir">parkir</string>
+    <string name="label_toll">tol</string>
+    <string name="label_rule_city_tour">Penggunaan mobil melebihi batas wilayah dalam kota (city tour) akan berakibat pada penambahan sejumlah biaya yang besarannya ditentukan oleh rental masing-masing.</string>
+    <string name="kriteria_pencarian">Kriteria Pencarian</string>
+    <string name="label_price_update">Update Harga</string>
+    <string name="label_doservice">DO-SERVICE</string>
+    <string name="label_dowash">DO-WASH</string>
+    <string name="label_domove">DO-MOVE</string>
+    <string name="label_docar">DO-CAR</string>
+    <string name="label_doshop">DO-SHOP</string>
+    <string name="label_domart">DO-MART</string>
+    <string name="label_dojek">DO-JEK</string>
+    <string name="label_dosend">DO-SEND</string>
+    <string name="label_reasonp1">Tidak ada respon dari KURIR maupun ADMIN</string>
+    <string name="label_reasonp2">Coba-coba aplikasi saja</string>
+    <string name="label_reasonp3">Order tidak lengkap/salah. Ingin membuat order lagi.</string>
+    <string name="label_reasonp4">Butuh cepat, sudah dapat kurir lainnya</string>
+    <string name="label_all">All</string>
 </resources>

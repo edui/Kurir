@@ -31,21 +31,43 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
-            android:id="@+id/llLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp" android:layout_marginBottom="2dp">
-            <TextView
-                android:layout_width="match_parent" android:gravity="center" android:layout_gravity="center"
-                android:layout_height="wrap_content" android:text="Layanan DO-SERVICE adalah NDS (Next Day Service). \nAnda pesan hari ini, untuk pelayanan hari esok.\nTentukan jam Pelayanan yang anda inginkan. "/>
-            <TextView
-                android:id="@+id/tvPickupTime"
-                android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"
-                android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:layout_gravity="center"/>
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/llLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp" android:layout_marginBottom="2dp">
+                <TextView
+                    android:layout_width="match_parent" android:gravity="center" android:layout_gravity="center"
+                    android:layout_height="wrap_content" android:text="Layanan DO-SERVICE adalah NDS (Next Day Service). \nAnda pesan hari ini, untuk pelayanan hari esok.\nTentukan jam Pelayanan yang anda inginkan. "/>
+                <TextView
+                    android:id="@+id/tvPickupTime"
+                    android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"
+                    android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:layout_gravity="center"/>
 
-            <Button
-                android:id="@+id/btnAddItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:text="Add Item"/>
+                <Button
+                    android:id="@+id/btnAddItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Add Item"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/agrement_layout"
+                android:orientation="horizontal" android:layout_marginTop="5dp"
+                android:layout_width="match_parent" android:layout_marginBottom="6dp"
+                android:layout_height="wrap_content" android:weightSum="10">
+                <CheckBox
+                    android:id="@+id/chkAgrement"
+                    android:layout_width="wrap_content" android:text="Saya SETUJU dengan syarat dan ketentuan ini"
+                    android:layout_height="wrap_content" android:layout_weight="7">
+                </CheckBox>
+
+                <ImageView android:src="@drawable/ic_info_outline_black_18dp"
+                    android:id="@+id/ivAgrement"
+                    android:layout_width="wrap_content" android:layout_weight="3"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

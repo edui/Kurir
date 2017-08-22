@@ -5,19 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +41,7 @@ import id.co.kurindo.kurindo.base.BaseFragment;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.map.LocationService;
+import id.co.kurindo.kurindo.map.PickAnAddressActivity;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TUser;
@@ -52,11 +51,14 @@ import id.co.kurindo.kurindo.util.DummyContent;
 import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by DwiM on 11/9/2016.
  */
 public class DirectoryFragment extends BaseFragment {
     private static final String TAG = "DirectoryFragment";
+    private static final int PICKUP_LOCATION = 2;
 
     ShopAdapter mAdapter;
     RecyclerView mRecyclerView;
@@ -64,9 +66,10 @@ public class DirectoryFragment extends BaseFragment {
     private ListenableAsyncTask loadShopTask;
     //private ListenableAsyncTask loadNewsTask;
 
+    TextView tvLocationPopup;
     TextView tvLocation;
     TextView tvChangeLocation;
-    int location = 0;
+    int location = R.id.radio_current;
 
     int counter = 0;
     Context context;
@@ -125,19 +128,19 @@ public class DirectoryFragment extends BaseFragment {
         super.onResume();
         //if(counter % 9 == 1) load_shops_location();
         counter++;
-        getActivity().registerReceiver(receiver, new IntentFilter(LocationService.LOCATION_CHANGED));
+        context.registerReceiver(receiver, new IntentFilter(LocationService.LOCATION_CHANGED));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(receiver);
+        context.unregisterReceiver(receiver);
     }
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
-            if (bundle != null) {
+            if (bundle != null && location == R.id.radio_current) {
                 if(counter % 9 == 1) {
                     load_shops_location();
                     counter++;
@@ -177,7 +180,13 @@ public class DirectoryFragment extends BaseFragment {
 
         TUser user = db.getUserAddressByType(AppConfig.HOMEBASE);
         Address address = user.getAddress();
-        if(location == 0) address= ViewHelper.getInstance().getLastAddress();
+        if(location == R.id.radio_current) address= ViewHelper.getInstance().getLastAddress();
+        if(location == R.id.radio_others) {
+            TUser vuser = ViewHelper.getInstance().getTUser();
+            if(vuser != null) {
+                address = vuser.getAddress();
+            }
+        }
         if(address != null){
             params.put("city", address.getKabupaten());
             //params.put("kec", address.getKecamatan());
@@ -299,31 +308,61 @@ public class DirectoryFragment extends BaseFragment {
     }
 
 
-
+    Dialog dialog = null;
     protected void showPopupWindow(String title, int arrayResourceId, int imageResourceId) {
 
         // Create custom dialog object
-        final Dialog dialog = new Dialog(getActivity());
+        dialog = new Dialog(getActivity());
         // Include dialog.xml file
-        dialog.setContentView(R.layout.popup_spinner);
+        dialog.setContentView(R.layout.popup_location);
         // Set dialog title
         dialog.setTitle("Popup Dialog");
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, arrayResourceId, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner spinner = (Spinner) dialog.findViewById(R.id.spinnerDialog);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                location = position;
-            }
+        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, arrayResourceId, android.R.layout.simple_spinner_item);
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        tvLocationPopup = (TextView) dialog.findViewById(R.id.tvLocationPopup);
+        tvLocationPopup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                if(location == R.id.radio_others){
+                    Intent intent = new Intent(context, PickAnAddressActivity.class);
+                    intent.putExtra("type", AppConfig.PICKUP_LOCATION);
+                    intent.putExtra("id", ""+1);
+                    startActivityForResult(intent, AppConfig.PICKUP_LOCATION);
+                }
             }
         });
+        RadioGroup rgService = (RadioGroup) dialog.findViewById(R.id.radio_group_service);
+        rgService.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Address address = null;
+                switch (checkedId){
+                    case R.id.radio_current:
+                        location = R.id.radio_current;
+                        address= ViewHelper.getInstance().getLastAddress();
+                        break;
+                    case R.id.radio_homebase:
+                        TUser user = db.getUserAddressByType(AppConfig.HOMEBASE);
+                        address = user.getAddress();
+                        location = R.id.radio_homebase;
+                        break;
+                    case R.id.radio_others:
+                        location = R.id.radio_others;
+                        tvLocationPopup.setText("Klik untuk Set Area");
+                        tvLocationPopup.setBackgroundColor(Color.GREEN);
+                        break;
+                }
+                if(address != null){
+                    tvLocationPopup.setText("Area : "+address.toStringKecKab());
+                    tvLocationPopup.setBackgroundColor(Color.CYAN);
+                }
+            }
+        });
+        rgService.clearCheck();
+        rgService.check(location);
+
         // set values for custom dialog components - text, image and button
         ImageView image = (ImageView) dialog.findViewById(R.id.imageDialog);
         if(imageResourceId == 0) imageResourceId  = R.drawable.icon_syarat_ketentuan;
@@ -333,6 +372,15 @@ public class DirectoryFragment extends BaseFragment {
 
         dialog.show();
 
+        Button btnChoose = (Button) dialog.findViewById(R.id.btnChoose);
+        btnChoose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                load_shops_location();
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
         ImageButton declineButton = (ImageButton) dialog.findViewById(R.id.btncancelcat);
         // if decline button is clicked, close the custom dialog
         declineButton.setOnClickListener(new View.OnClickListener() {
@@ -344,5 +392,19 @@ public class DirectoryFragment extends BaseFragment {
             }
         });
 
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode == AppConfig.PICKUP_LOCATION) {
+            if (resultCode == RESULT_OK) {
+                TUser origin = ViewHelper.getInstance().getTUser();
+                if (origin != null && origin.getAddress() != null) {
+                    tvLocationPopup.setText("Area : "+origin.getAddress().toStringKecKab());
+                    tvLocationPopup.setBackgroundColor(Color.CYAN);
+                    tvLocationPopup.invalidate();
+                }
+            }
+        }
     }
 }

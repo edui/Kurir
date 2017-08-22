@@ -47,8 +47,9 @@ public class KurirLamaFragment extends BaseKurirFragment{
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater,container,savedInstanceState);
+        check_kurir();
 
-        textView.setText("Kurir...");
+        //textView.setText("Kurir...");
 
 
         return rootView;
@@ -65,13 +66,16 @@ public class KurirLamaFragment extends BaseKurirFragment{
                 final String param = params[0].toString();
                 progressBar.setVisibility(View.VISIBLE);
 
-                String URI = AppConfig.URL_LIST_KURIR_LOCATIONBASED;
+                //String URI = AppConfig.URL_LIST_USER_LASTLOCATION;
+                String URI = AppConfig.URL_LIST_USER_LOCATION_CITY;
                 //URI = URI.replace("/{type}", "/"+param);
 
                 final String tag_string_req = "req_monitor_kurir_old";
                 HashMap<String, String > maps = new HashMap<>();
-                maps.put("form-type", "json");
+                maps.put("form-typ e", "json");
                 maps.put("type", param);
+
+                maps.put("city", city);
                 addRequest(tag_string_req , Request.Method.POST, URI, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -125,6 +129,7 @@ public class KurirLamaFragment extends BaseKurirFragment{
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         LogUtil.logD(tag_string_req, "Network Error "+volleyError.getMessage());
+                        progressBar.setVisibility(View.GONE);
                     }
                 }, maps, getKurindoHeaders());
             }

@@ -170,6 +170,7 @@ public class ProductFragment extends BaseFragment {
                 DoShopHelper.getInstance().addShop(shop);
                 Intent intent = new Intent(getActivity(), ShoppingCartActivity.class);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
     }

@@ -18,6 +18,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,8 +37,6 @@ import com.android.volley.VolleyError;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import com.lamudi.phonefield.PhoneInputLayout;
@@ -99,6 +100,8 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
 
     @Bind(R.id.rg_cara_bayar)
     RadioGroup rgCaraBayar;
+    @Bind(R.id.tvTotalPrice)
+    TextView tvTotalPrice;
 
     @Bind(R.id.tvOrigin)
     protected TextView tvOrigin;
@@ -108,7 +111,6 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
     protected EditText etOriginNotes;
     protected TUserAdapter tUserAdapter;
     protected ArrayList<TUser> data = new ArrayList<>();
-    private static final int PICKUP_LOCATION = 1;
 
 
     @Nullable
@@ -117,7 +119,7 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
         View v = inflateAndBind(inflater, container, R.layout.fragment_docar6);
         context = getContext();
         progressDialog= new ProgressDialogCustom(context);
-        cek_with_calendar_time();
+        //cek_with_calendar_time();
         setup_vehicle();
         return v;
     }
@@ -126,6 +128,7 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
         Calendar c = Calendar.getInstance();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
+        check_time(hour, minute);
     }
 
     private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
@@ -147,15 +150,16 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
 
         Calendar c = Calendar.getInstance();
         c.setTime(DoCarHelper.getInstance().getRental().getStartDate());
-        c.set(Calendar.HOUR, hour);
+        c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
         Calendar d = Calendar.getInstance();
         d.setTime(DoCarHelper.getInstance().getRental().getEndDate());
-        d.set(Calendar.HOUR, hour);
+        d.set(Calendar.HOUR_OF_DAY, hour);
         d.set(Calendar.MINUTE, minute);
 
         DoCarHelper.getInstance().getRental().setDateRange(c.getTime(), d.getTime());
-
+        //rentalViewAdapter.notifyDataSetChanged();
+        setup_vehicle();
     }
 
     @OnClick(R.id.tvPickupTime)
@@ -176,9 +180,9 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
     @OnClick(R.id.tvOrigin)
     public void onClick_tvOrigin(){
         Intent intent = new Intent(context, PickAnAddressActivity.class);
-        intent.putExtra("type", PICKUP_LOCATION);
+        intent.putExtra("type", AppConfig.PICKUP_LOCATION);
         intent.putExtra("id", ""+1);
-        startActivityForResult(intent, PICKUP_LOCATION);
+        startActivityForResult(intent, AppConfig.PICKUP_LOCATION);
     }
     @Override
     public int getName() {
@@ -208,7 +212,14 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
                 place_an_order(handler);
             }
         };
-        showConfirmationDialog("Konfirmasi Pesanan","Konfirmasi, Data yang Anda masukkan sudah benar?\nAnda akan menggunakan layanan "+ AppConfig.KEY_DOCAR+". ", YesClickListener, null);
+        DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handler.handleMessage(null);
+            }
+        };
+
+        showConfirmationDialog("Konfirmasi Pesanan","Konfirmasi, Data yang Anda masukkan sudah benar?\nAnda akan menggunakan layanan "+ AppConfig.KEY_DOCAR+". ", YesClickListener, NoClickListener);
 
         // loop till a runtime exception is triggered.
         try { Looper.loop(); }
@@ -240,9 +251,12 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
         Map<String, String> params = new HashMap<>();
         params.put("user_agent", AppConfig.USER_AGENT);
         DoCarRental rental = DoCarHelper.getInstance().getRental();
-
-        TOrder order = DoCarHelper.getInstance().addDoCarOrder(AppConfig.PACKET_NDS, rental.getCalculatePrice().doubleValue());
+        rental.getUser().setFirstname(inputnamaPengirim.getText().toString());
+        rental.getUser().setPhone(phoneInput.getPhoneNumber());
+        rental.getUser().getAddress().setNotes(etOriginNotes.getText().toString());
+        TOrder order = DoCarHelper.getInstance().addDoCarOrder(AppConfig.PACKET_NDS, AppConfig.KEY_RENTAL, rental.getCalculatePrice(context, rental.getVehicle()).doubleValue());
         order.setDocar(rental);
+        order.setPlace(rental.getUser());
         order.setPickup(rental.getStart_date());
 
         String orderStr = gson.toJson(order);
@@ -350,6 +364,8 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
     private void setup_user_info() {
         phoneInput.setDefaultCountry(AppConfig.DEFAULT_COUNTRY);
         phoneInput.setHint(R.string.telepon);
+        DoCarRental rental = DoCarHelper.getInstance().getRental();
+        tvTotalPrice.setText(AppConfig.formatCurrency( rental == null ? 0 : rental.getCalculatePrice(context, rental.getVehicle()).doubleValue()));
     }
 
     @Override
@@ -358,18 +374,42 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if(requestCode == PICKUP_LOCATION) {
+        if(requestCode == AppConfig.PICKUP_LOCATION) {
             if (resultCode == RESULT_OK) {
                 TUser origin = ViewHelper.getInstance().getTUser();
                 if (origin != null && origin.getAddress() != null) {
-                    tvOrigin.setText(origin.getAddress().toStringFormatted());
-                    DoCarHelper.getInstance().getRental().setPengguna(origin);
+                    DoCarRental rental  = DoCarHelper.getInstance().getRental();
+                    if(in_coverageArea(origin, rental)){
+                        tvOrigin.setText(origin.getAddress().toStringFormatted());
+                        DoCarHelper.getInstance().getRental().setUser(origin);
+                        if(origin.getAddress().getNotes() != null && !origin.getAddress().getNotes().isEmpty()){
+                            etOriginNotes.setText(origin.getAddress().getNotes());
+                            etOriginNotes.setVisibility(View.VISIBLE);
+                        }else{
+                            etOriginNotes.setText("");
+                            etOriginNotes.setVisibility(View.GONE);
+                        }
+                    }else{
+                        Toast.makeText(context, "Lokasi anda di luar jangkauan mobil ini.", Toast.LENGTH_SHORT).show();
+                        DoCarHelper.getInstance().getRental().setUser(null);
+                        tvOrigin.setText("Set Lokasi Penjemputan");
+                        etOriginNotes.setText("");
+                        etOriginNotes.setVisibility(View.GONE);
+                    }
                     //add to
                     ViewHelper.getInstance().setTUser(null);
                 }
 
             }
         }
+    }
+
+    private boolean in_coverageArea(TUser origin, DoCarRental rental) {
+        boolean inrange = false;
+        inrange = inrange  || (origin.getAddress().getKecamatan().equalsIgnoreCase(rental.getVehicle().getKota()));
+        inrange = inrange  || (origin.getAddress().getKabupaten().equalsIgnoreCase(rental.getVehicle().getKota()));
+        inrange = inrange  || (origin.getAddress().getPropinsi().equalsIgnoreCase(rental.getVehicle().getKota()));
+        return inrange;
     }
 
     protected void showPopupWindow(String title, int imageResourceId) {
@@ -391,10 +431,12 @@ public class DoCarForm6 extends BaseStepFragment implements Step {
             @Override
             public void onItemClick(View view, int position) {
                 TUser p = data.get(position);
+                DoCarHelper.getInstance().getRental().setUser(p);
                 tvOrigin.setText(p.getAddress().toStringFormatted());
                 if(p.getAddress().getNotes() != null && !p.getAddress().getNotes().isEmpty()) {
                     etOriginNotes.setText(p.getAddress().getNotes());
                     etOriginNotes.setVisibility(View.VISIBLE);
+                    DoCarHelper.getInstance().getRental().getUser().getAddress().setNotes(p.getAddress().getNotes());
                 }
                 dialog.dismiss();
             }

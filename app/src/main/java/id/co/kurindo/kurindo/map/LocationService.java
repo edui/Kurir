@@ -3,6 +3,9 @@ package id.co.kurindo.kurindo.map;
 /**
  * Created by DwiM on 5/11/2017.
  */
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +15,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
@@ -34,6 +38,7 @@ import java.util.Map;
 
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.firebase.KurindoFirebaseMessagingService;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Address;
@@ -60,11 +65,15 @@ public class LocationService extends Service
     {
         super.onCreate();
         intent = new Intent(LOCATION_CHANGED);
+
+        Notification notification = new Notification();
+        startForeground(1, notification);
+        LogUtil.logV(TAG, "onCreate ");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtil.logE("LocationService", "onStartCommand");
+        LogUtil.logV(TAG, "onStartCommand "+flags);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -74,7 +83,52 @@ public class LocationService extends Service
 
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, INTERVAL_MINUTES, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, INTERVAL_MINUTES, 0, listener);
-        return super.onStartCommand(intent, flags, startId);
+
+        if (intent == null) {
+            cleanupAndStopServiceRightAway();
+            LogUtil.logV("START_NOT_STICKY", "onStartCommand");
+            return START_NOT_STICKY;
+        }
+        return START_STICKY;
+    }
+
+    private void cleanupAndStopServiceRightAway() {
+        // Add your code here to cleanup the service
+
+        // Add your code to perform any recovery required
+        // for recovering from your previous crash
+
+        // Request to stop the service right away at the end
+        stopSelf();
+    }
+
+
+
+    @Override
+    public void onDestroy() {
+        // handler.removeCallbacks(sendUpdatesToUI);
+        LogUtil.logV("STOP_SERVICE", "DONE");
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.removeUpdates(listener);
+        Intent intent = new Intent(getApplicationContext(), LocationService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 1000, pendingIntent);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        LogUtil.logV("STOP_SERVICE", "onTaskRemoved1");
+        Intent intent = new Intent(getApplicationContext(), LocationService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 1000, pendingIntent);
+        LogUtil.logV("STOP_SERVICE", "onTaskRemoved2");
+        super.onTaskRemoved(rootIntent);
+        LogUtil.logV("STOP_SERVICE", "onTaskRemoved3");
     }
 
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
@@ -129,18 +183,6 @@ public class LocationService extends Service
         return provider1.equals(provider2);
     }
 
-
-
-    @Override
-    public void onDestroy() {
-        // handler.removeCallbacks(sendUpdatesToUI);
-        super.onDestroy();
-        LogUtil.logV("STOP_SERVICE", "DONE");
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.removeUpdates(listener);
-    }
 
     @Nullable
     @Override

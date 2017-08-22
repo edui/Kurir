@@ -48,6 +48,7 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import id.co.kurindo.kurindo.R;
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.base.KurindoActivity;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.Route;
@@ -160,11 +161,11 @@ public class LocationMapViewsActivity extends KurindoActivity implements OnMapRe
         finish();
     }
     public void moveCameraToLocation(LatLng location, float zoom){
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(70).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(AppConfig.DEFAULT_TILT_MAP).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
     public void moveCameraToLocation(LatLng location){
-        moveCameraToLocation(location, 19f);
+        moveCameraToLocation(location, AppConfig.DEFAULT_ZOOM_MAP);
     }
     public void onClick(View v) {
         //TODO

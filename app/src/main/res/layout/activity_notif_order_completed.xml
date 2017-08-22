@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:focusable="true" android:focusableInTouchMode="true"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <ImageView
+        android:layout_width="wrap_content" android:layout_gravity="center" android:layout_margin="15dp"
+        android:layout_height="80dp" android:src="@drawable/icon_kurindo"/>
+
+    <LinearLayout
+        android:id="@+id/layoutContent" android:background="@drawable/rounded_corner_map_white" android:layout_margin="5dp"
+        android:layout_width="match_parent" android:layout_gravity="center"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvTitle" android:textColor="@color/black" style="@style/titleBoldTextStyle"
+            android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center"
+            android:layout_height="wrap_content" android:text="Order Completed"/>
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_margin="5dp" android:gravity="center" android:layout_gravity="center"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+            <ImageView
+                android:id="@+id/ivServiceType"
+                android:layout_width="wrap_content" android:layout_gravity="center"
+                android:layout_height="60dp" android:src="@drawable/do_send_icon"/>
+            <ImageView
+                android:id="@+id/ivServiceCode"
+                android:layout_width="wrap_content" android:layout_gravity="center"
+                android:layout_height="60dp" android:src="@drawable/icon_sds"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_gravity="center"
+            android:layout_width="match_parent" android:layout_margin="5dp" android:weightSum="1"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:gravity="center"
+                android:id="@+id/tvOrigin" android:textColor="@color/black"
+                android:layout_width="wrap_content" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:text="Dari "/>
+            <TextView android:gravity="center"
+                android:id="@+id/tvDestination" android:textColor="@color/black"
+                android:layout_width="wrap_content" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:text="Ke "/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_margin="5dp" android:weightSum="1"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:gravity="center"
+                android:id="@+id/tvPrice" android:textColor="@color/black"
+                android:layout_width="match_parent" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:text="Ongkos"/>
+            <TextView android:gravity="center"
+                android:id="@+id/tvCod" android:textColor="@color/black"
+                android:layout_width="match_parent" android:layout_weight=".5"
+                android:layout_height="wrap_content" android:text="COD"/>
+        </LinearLayout>
+        <LinearLayout android:gravity="center" android:layout_gravity="center"
+            android:layout_width="wrap_content" android:layout_margin="5dp"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvRemark" android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="Ongkos"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_marginBottom="5dp"  android:layout_gravity="center" android:gravity="center_horizontal"
+            android:layout_height="wrap_content" android:orientation="vertical" >
+            <TextView android:textColor="@color/black"
+                android:layout_width="match_parent" android:gravity="center" style="@style/normalBoldTextStyle" android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content" android:text="Terima kasih telah menggunakan jasa kami. \nJazakumullah Khoiron Katsiro. \nMohon dapat memberikan Nilai pelayanan kami"/>
+            <RatingBar
+                android:id="@+id/rbRatingKurir"
+                android:layout_width="wrap_content" android:gravity="center" android:background="@color/gray"
+                android:layout_height="wrap_content" android:layout_marginBottom="10dp"
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:rating="5" />
+            <TextView android:textColor="@color/black"
+                android:layout_width="match_parent" android:gravity="center" style="@style/normalBoldTextStyle"
+                android:layout_height="wrap_content" android:text="Testimoni"/>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+                <EditText android:textColor="@color/black" android:background="@color/colorPrimary"
+                    android:id="@+id/etTestimoni" android:minLines="2" android:maxLines="6"
+                    android:layout_width="match_parent" style="@style/normalTextStyle"
+                    android:layout_height="wrap_content" android:hint="Tuliskan Testimoni anda"/>
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_gravity="center" android:gravity="center" android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="1">
+        <Button
+            android:id="@+id/btnDismis"
+            android:layout_width="match_parent" android:layout_weight=".5" android:background="@drawable/rounded_corner_map_reject" android:layout_margin="5dp"
+            android:layout_height="wrap_content" android:text="Nanti saja" />
+        <Button
+            android:id="@+id/btnAccept"
+            android:layout_width="match_parent" android:layout_weight=".5" android:background="@drawable/rounded_corner_map_accept" android:layout_margin="5dp"
+            android:layout_height="wrap_content" android:text="Kirim" />
+    </LinearLayout>
+
+</LinearLayout>

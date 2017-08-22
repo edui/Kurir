@@ -105,8 +105,16 @@ public class LocationViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                        }
                    });
                }
-               holder.tvPickupTime.setText(order.getPickup()==null?"Call Pembeli":order.getPickup());
-               holder.tvDropTime.setText(order.getDroptime()==null?"":order.getDroptime());
+               if(order.getPickup() == null && order.getDroptime() == null){
+                   holder.tvPickupTimeText.setText("Pickup / Drop Time");
+                   holder.tvPickupTime.setText("Call Pembeli");
+               }else if(order.getPickup() != null){
+                   holder.tvPickupTimeText.setText("Pickup Time");
+                   holder.tvPickupTime.setText(order.getPickup());
+               }else if(order.getDroptime() != null){
+                   holder.tvPickupTimeText.setText("Drop Time");
+                   holder.tvPickupTime.setText(order.getDroptime());
+               }
 
            }
 
@@ -134,8 +142,8 @@ public class LocationViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ImageView ivServiceCodeIcon;
         ImageView ivServiceIcon;
 
+        TextView tvPickupTimeText;
         TextView tvPickupTime;
-        TextView tvDropTime;
         AppCompatButton btnLihatRute;
 
         public MyItemHolder(View itemView) {
@@ -150,8 +158,8 @@ public class LocationViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
              _awbText = (TextView) itemView.findViewById(R.id.awbTextView);
 
+            tvPickupTimeText= (TextView) itemView.findViewById(R.id.tvPickupTimeText);
             tvPickupTime= (TextView) itemView.findViewById(R.id.tvPickupTime);
-            tvDropTime= (TextView) itemView.findViewById(R.id.tvDropTime);
             _statusText = (TextView )itemView.findViewById(R.id.statusTextView)    ;
             barcodeView = (ImageView) itemView.findViewById(R.id.resi_qrcode)  ;
             ivServiceCodeIcon = (ImageView) itemView.findViewById(R.id.service_code_icon)  ;

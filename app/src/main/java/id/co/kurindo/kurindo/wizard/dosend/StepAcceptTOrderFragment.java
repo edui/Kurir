@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,21 +12,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
@@ -38,19 +33,19 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
-import id.co.kurindo.kurindo.adapter.TUserAdapter;
+import id.co.kurindo.kurindo.adapter.TKurirAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.ViewHelper;
-import id.co.kurindo.kurindo.model.Address;
-import id.co.kurindo.kurindo.model.City;
 import id.co.kurindo.kurindo.model.TOrder;
+import id.co.kurindo.kurindo.model.TPacket;
 import id.co.kurindo.kurindo.model.TUser;
-import id.co.kurindo.kurindo.model.User;
 import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
@@ -69,7 +64,7 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
     LinearLayout layoutReject;
     @Bind(R.id.list)
     RecyclerView mRecyclerView;
-    TUserAdapter mUserAdapter;
+    TKurirAdapter mUserAdapter;
     ArrayList<TUser> data = new ArrayList<>();
     TUser user;
     TOrder order;
@@ -77,14 +72,18 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
     Context context;
     private ProgressDialog progressBar;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getContext();
+        progressBar = new ProgressDialogCustom(context);
+        progressBar.show();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflateAndBind(inflater, container, R.layout.fragment_accept_order);
-
-        context = getContext();
-        setupProgressbar();
-
         //order = ((AcceptOrderActivity)getActivity()).getOrder();
         order = ViewHelper.getInstance().getOrder();
         layoutReject.setVisibility(View.GONE);
@@ -93,23 +92,13 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
         setup_list();
         return v;
     }
-    private void setupProgressbar() {
-        progressBar = new ProgressDialog(context);
-        progressBar.setCancelable(true);
-        //progressBar.setTitle("Kurindo");
-        progressBar.setMessage("Loading...");
-        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-        //progressBar.setProgressStyle(R.style.ProgressBar);
-    }
     private void setup_list() {
         data.clear();
-        request_list_kurir("KURIR");
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setVisibility(View.VISIBLE);
-        mUserAdapter = new TUserAdapter(getContext(), data);
+        mUserAdapter = new TKurirAdapter(getContext(), data, null);
         mRecyclerView.setAdapter(mUserAdapter);
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
                 new RecyclerItemClickListener.OnItemClickListener() {
@@ -121,20 +110,35 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
                     }
                 }));
 
-        request_list_kurir("ADMIN");
+        /*final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message mesg) {
+                throw new RuntimeException();
+            }
+        };*/
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                request_list_kurir("KURIR,ADMIN");
+            }
+        });
+
+        /*try { Looper.loop(); }
+        catch(RuntimeException e2) {}
+        */
+
     }
 
-    private void request_list_kurir(String...params) {
-        progressBar.show();
-        final String param = params[0].toString();
-        //String param2 = null;
-        //if(params.length > 1) param2 = params[1].toString();
-        String URI = AppConfig.URL_LIST_KURIR_LOCATIONBASED;
+    private void request_list_kurir(String param) {
+
+        String URI = AppConfig.URL_LIST_USER_SKILLLOCATIONBASED;
         //URI = URI.replace("{type}", param);
         final String tag_string_req = "req_list_kurir";
         HashMap<String, String > maps = new HashMap<>();
         maps.put("form-type", "json");
         maps.put("type", param);
+        maps.put("location", order.getLocationStr());
+        maps.put("do-type", order.getService_type());
         addRequest(tag_string_req , Request.Method.POST, URI, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -154,9 +158,26 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
                             City city = gson.fromJson(datas.getString(j),City.class);
                             addr.setCity(city);
                             */
-                            data.add(recipient);
+                            boolean add = true;
+                            if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOJEK)){
+                                if(recipient.getGender() != null) {
+                                    Set<TPacket> packets = order.getPackets();
+                                    if(packets != null){
+                                        for(TPacket p : packets){
+                                            if(p.getOrigin() != null && !recipient.getGender().equalsIgnoreCase(p.getOrigin().getGender())){
+                                                add = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if(add){
+                                data.add(recipient);
+                            }
                         }
                         mUserAdapter.notifyDataSetChanged();
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -199,7 +220,13 @@ public class StepAcceptTOrderFragment extends BaseStepFragment implements Step {
                 verify[0] = place_order(handler);
             }
         };
-        showConfirmationDialog("Konfirmasi","Pesanan ini akan di-delegasikan ke Kurir tersebut?", YesClickListener, null);
+        DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handler.handleMessage(null);
+            }
+        };
+        showConfirmationDialog("Konfirmasi","Pesanan ini akan di-delegasikan ke Kurir tersebut?", YesClickListener, NoClickListener);
 
         // loop till a runtime exception is triggered.
         try { Looper.loop(); }

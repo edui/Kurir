@@ -15,6 +15,8 @@ public class MapUtils {
     private static String direction = "https://maps.googleapis.com/maps/api/directions/json?";
     private static String geocode = "https://maps.googleapis.com/maps/api/geocode/json?";
 
+    public static String show_direction = "https://www.google.com/maps/dir/?api=1&";
+    public static String show_panorama = "https://www.google.com/maps/@?api=1&map_action=pano&";
 
     public static String formatDistance(double distance) {
         String dist = Math.abs(distance) + " M";

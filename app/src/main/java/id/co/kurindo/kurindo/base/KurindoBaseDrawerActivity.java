@@ -2,16 +2,21 @@ package id.co.kurindo.kurindo.base;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.List;
 
 import id.co.kurindo.kurindo.AdminMonitorOrderActivity;
 import id.co.kurindo.kurindo.BranchActivity;
 import id.co.kurindo.kurindo.BuildConfig;
+import id.co.kurindo.kurindo.DirectoryFragment;
 import id.co.kurindo.kurindo.KerjasamaActivity;
 import id.co.kurindo.kurindo.KurirActivity;
 import id.co.kurindo.kurindo.LoginActivity;
@@ -22,9 +27,11 @@ import id.co.kurindo.kurindo.SettingsActivity;
 import id.co.kurindo.kurindo.ShopPicActivity;
 import id.co.kurindo.kurindo.ShoppingCartActivity;
 import id.co.kurindo.kurindo.TabFragment;
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.SQLiteHandler;
 import id.co.kurindo.kurindo.helper.SessionManager;
 import id.co.kurindo.kurindo.helper.ShopAdmHelper;
+import id.co.kurindo.kurindo.map.MapUserActivity;
 import id.co.kurindo.kurindo.wizard.help.HowToUseActivity;
 import id.co.kurindo.kurindo.wizard.dosend.DoSendOrderActivity;
 import id.co.kurindo.kurindo.wizard.help.minat.KurindoOpenActivity;
@@ -38,6 +45,7 @@ import id.co.kurindo.kurindo.wizard.shopadm.AddShopActivity;
 
 public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
     private static final int REQUEST_ADD_SHOP = 1;
+    private static final int PICKUP_LOCATION = 2;
     protected SessionManager session;
     protected SQLiteHandler db;
     protected AppCompatButton loginBtn;
@@ -110,18 +118,22 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
                 showActivity(KerjasamaActivity.class, bundle);
                 break;
             case R.id.nav_item_kurir_monitor_paket:
-                bundle.putString("extra", "KURIR");
+                bundle.putString("extra", AppConfig.KEY_KURIR);
                 showActivity(AdminMonitorOrderActivity.class, bundle);
                 //showActivity(MonitorPacketActivity.class);
                 break;
             case R.id.nav_item_admin_monitor_paket_kurir:
                 showActivity(MonitorOrderActivity.class);
                 break;
+            case R.id.nav_item_admin_map_kurir:
+                bundle.putString("type", AppConfig.KEY_KURIR);
+                showActivity(MapUserActivity.class);
+                break;
             case R.id.nav_item_admin_daftar_kurir:
                 showActivity(KurirActivity.class);
                 break;
             case R.id.nav_item_admin_monitor:
-                bundle.putString("extra", "ADMIN");
+                bundle.putString("extra", AppConfig.KEY_ADMINISTRATOR);
                 showActivity(AdminMonitorOrderActivity.class, bundle);
                 break;
             case R.id.nav_item_admin_manage:
@@ -131,7 +143,7 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
                 showActivity(ShopPicActivity.class);
                 break;
             case R.id.nav_item_history_order:
-                bundle.putString("extra", "PELANGGAN");
+                bundle.putString("extra", AppConfig.KEY_PELANGGAN);
                 showActivity(MonitorOrderActivity.class, bundle);
                 break;
 
@@ -278,6 +290,7 @@ public class KurindoBaseDrawerActivity extends BaseDrawerActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ADD_SHOP) {
             if (resultCode == RESULT_OK) {
                 ShopAdmHelper.getInstance().setShop(null);

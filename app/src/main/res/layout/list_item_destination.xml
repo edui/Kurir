@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" android:gravity="left" android:weightSum="1"
+    android:paddingLeft="5dp" android:paddingRight="5dp" android:paddingTop="5dp">
+    <LinearLayout
+        android:layout_width="wrap_content" android:layout_weight=".3"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <ImageButton
+            android:id="@+id/btnEdit"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content" android:src="@drawable/composea"/>
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp" android:src="@drawable/destination_pin"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content" android:layout_weight=".5"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" android:gravity="left"
+        android:padding="5dp" >
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="2dp"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/address_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="2dp"
+            android:textSize="12sp" />
+    </LinearLayout>
+    <ImageButton
+        android:id="@+id/btnDelete" android:layout_weight=".2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:src="@drawable/ic_delete_forever_black_18dp"/>
+</LinearLayout>

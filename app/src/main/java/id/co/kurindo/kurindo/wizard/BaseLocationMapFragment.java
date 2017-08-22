@@ -117,6 +117,7 @@ public class BaseLocationMapFragment
     protected  final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     protected  static String TAG = "BaseLocationMapFragment";
     protected Context mContext;
+    protected SupportMapFragment mapFragment;
 
     @Bind(R.id.locationMarkertext)
     protected TextView mLocationMarkerText;
@@ -220,7 +221,6 @@ public class BaseLocationMapFragment
     protected Spinner _serviceCodeText;
     protected PacketServiceAdapter packetServiceAdapter;
 
-    protected SupportMapFragment mapFragment;
     protected boolean inDoSendCoverageArea = true;
     protected boolean inDoMoveCoverageArea = true;
     protected boolean inDoJekCoverageArea = true;
@@ -331,8 +331,7 @@ public class BaseLocationMapFragment
             }
         });
 
-        afterOnCreateView();
-        //mResultReceiver = new MapsActivity.AddressResultReceiver(new Handler());
+       //mResultReceiver = new MapsActivity.AddressResultReceiver(new Handler());
 
         if (checkPlayServices()) {
             // If this check succeeds, proceed with normal processing.
@@ -363,6 +362,8 @@ public class BaseLocationMapFragment
         }
         cek_with_calendar_time();
         //_serviceCodeText.setSelection(1);
+        afterOnCreateView();
+
         return view;
 
     }
@@ -838,7 +839,7 @@ public class BaseLocationMapFragment
     }
 
 
-    private void requestAddress(LatLng latLng) {
+    public void requestAddress(LatLng latLng) {
         //progressBar.setVisibility(View.VISIBLE);
         final Handler handler = new Handler() {
             @Override
@@ -1238,7 +1239,7 @@ public class BaseLocationMapFragment
         mMap.clear();
         if(destination != null && destination.getAddress() != null && destination.getAddress().getLocation() != null){
             String title = "Destination";
-            String snippet = (destination.getName() != null ? destination.toStringFormatted() : "");
+            String snippet = (destination.getName() != null ? destination.toStringAddressFormatted() : "");
             destinationMarker = mMap.addMarker(
                     new MarkerOptions()
                             .position(destination.getAddress().getLocation())
@@ -1248,7 +1249,7 @@ public class BaseLocationMapFragment
         }
         if(origin != null && origin.getAddress() != null && origin.getAddress().getLocation() != null){
             String title = "Origin";
-            String snippet = (origin.getName() != null ? origin.toStringFormatted() : "");
+            String snippet = (origin.getName() != null ? origin.toStringAddressFormatted() : "");
             originMarker = mMap.addMarker(
                     new MarkerOptions()
                             .position(origin.getAddress().getLocation())

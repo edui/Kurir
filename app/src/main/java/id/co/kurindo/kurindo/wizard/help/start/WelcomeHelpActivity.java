@@ -24,7 +24,7 @@ public class WelcomeHelpActivity extends AbstractStepperActivity {
     @Override
     public void onStepSelected(int newStepPosition) {
         super.onStepSelected(newStepPosition);
-        mCompleteNavigationButton.setText("Start");
+        //mCompleteNavigationButton.setText("Finish");
     }
 
     @Override

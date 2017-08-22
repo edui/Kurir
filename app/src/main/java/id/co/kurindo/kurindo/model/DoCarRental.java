@@ -1,11 +1,14 @@
 package id.co.kurindo.kurindo.model;
 
+import android.content.Context;
+
 import com.google.gson.annotations.Expose;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 
+import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
 
 /**
@@ -33,7 +36,7 @@ public class DoCarRental {
     private String payment;
 
     @Expose
-    private TUser pengguna;
+    private TUser user;
 
     private int rating;
     private String review;
@@ -108,13 +111,39 @@ public class DoCarRental {
         this.vehicle = vehicle;
     }
 
-    public BigDecimal getCalculatePrice() {
+    public BigDecimal getVehiclePrice(Context context, Vehicle vehicle){
         if(vehicle != null){
-            price = new BigDecimal(Double.parseDouble(vehicle.getTarif()==null? "0" : vehicle.getTarif() ));
-            price =  price.multiply(new BigDecimal( getDays() ));
+            double tarif = 0;
+            double sopir = 0;
+            double bbm = 0;
+            double lainnya = 0;
+            try {
+                if(getDurasi().equalsIgnoreCase(context.getString(R.string.label_fullday))){
+                    tarif = vehicle.getTarif_24();
+                    sopir = vehicle.getTarif_sopir_24();
+                    bbm = vehicle.getTarif_bbm_24();
+                    lainnya = vehicle.getTarif_lainnya_24();
+                }else{
+                    tarif = vehicle.getTarif();
+                    sopir = vehicle.getTarif_sopir();
+                    bbm = vehicle.getTarif_bbm();
+                    lainnya = vehicle.getTarif_lainnya();
+                }
+                if(getFasilitas().equalsIgnoreCase(context.getString(R.string.label_tanpabbm))){
+                    bbm = 0;
+                    lainnya = 0;
+                }else if(getFasilitas().equalsIgnoreCase(context.getString(R.string.label_bbminclude))){
+                    lainnya = 0;
+                }
+            }catch (Exception e){}
+
+            BigDecimal price = new BigDecimal((tarif+sopir+bbm+lainnya));
             return price;
         }
         return new BigDecimal(0);
+    }
+    public BigDecimal getCalculatePrice(Context context, Vehicle vehicle) {
+        return  price =  getVehiclePrice(context, vehicle).multiply(new BigDecimal( getDays() ));
     }
 
     public void setDateRange(Date startDate, Date endDate) {
@@ -137,8 +166,17 @@ public class DoCarRental {
         }
         return new Date();
     }
-    public String displayStartDate(){
-        return AppConfig.getDateFormat().format(getStartDate());
+    public String displayStartDate(boolean shortFormat){
+        if(shortFormat){
+            return AppConfig.getDateFormat().format(getStartDate());
+        }
+        return AppConfig.getDateTimeFormat().format(getStartDate());
+    }
+    public String displayEndDate(boolean shortFormat){
+        if(shortFormat){
+            return AppConfig.getDateFormat().format(getEndDate());
+        }
+        return AppConfig.getDateTimeFormat().format(getEndDate());
     }
     public long getDays()  {
         long days = 0;
@@ -165,12 +203,13 @@ public class DoCarRental {
         return payment;
     }
 
-    public void setPengguna(TUser pengguna) {
-        this.pengguna = pengguna;
+    public void setUser(TUser user) {
+        this.user = user;
     }
 
-    public TUser getPengguna() {
-        return pengguna;
+    public TUser getUser() {
+        if(user == null) user = new TUser();
+        return user;
     }
 
     public int getRating() {
@@ -197,4 +236,8 @@ public class DoCarRental {
         this.price = price;
     }
 
+    public String displayDate(boolean shortFormat) {
+        if(getDays() > 1) return displayStartDate(shortFormat) + " - "+displayEndDate(shortFormat);
+        else return displayStartDate(shortFormat);
+    }
 }

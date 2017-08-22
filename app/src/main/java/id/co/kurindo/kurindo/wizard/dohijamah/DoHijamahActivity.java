@@ -8,6 +8,10 @@ import android.view.View;
 
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
+import id.co.kurindo.kurindo.TOrderShowActivity;
+import id.co.kurindo.kurindo.app.AppConfig;
+import id.co.kurindo.kurindo.helper.DoHijamahHelper;
+import id.co.kurindo.kurindo.notification.NewOrderPopupActivity;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 import id.co.kurindo.kurindo.wizard.domart.DoMartForm1;
 
@@ -33,14 +37,16 @@ public class DoHijamahActivity extends AbstractStepperActivity {
 
     @Override
     public void onStepSelected(int newStepPosition) {
-        mCompleteNavigationButton.setText("Dalam Pengembangan");
+        mCompleteNavigationButton.setText("Order "+ AppConfig.KEY_DOHIJAMAH);
 
         step = newStepPosition;
     }
 
     @Override
     public void onCompleted(View completeButton) {
-
+        showActivity(TOrderShowActivity.class);
+        showActivity(NewOrderPopupActivity.class);
+        DoHijamahHelper.getInstance().clearAll();
         finish();
     }
 

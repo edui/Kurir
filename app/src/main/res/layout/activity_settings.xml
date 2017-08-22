@@ -4,6 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <include layout="@layout/include_toolbar" />
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_margin="5dp" android:padding="5dp"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/llProfile"
+            android:layout_width="match_parent" android:layout_margin="5dp"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView style="@style/titleTextStyle" android:text="@string/profile"/>
+            <TextView style="@style/normalTextStyle" android:text="@string/profile_desc"/>
+        </LinearLayout>
+    </LinearLayout>
     <fragment android:name="id.co.kurindo.kurindo.SettingsActivity$SettingsFragment"
         android:id="@+id/settings_fragment"
         android:layout_width="match_parent"

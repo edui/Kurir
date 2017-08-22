@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,7 +126,7 @@ public class AddShopForm1 extends BaseStepFragment implements Step {
     }
 
     private void load_user() {
-        String URI = AppConfig.URL_LIST_KURIR_LOCATIONBASED;
+        String URI = AppConfig.URL_LIST_USER_SKILLLOCATIONBASED;
         //URI = URI.replace("/{type}", "/"+param);
 
         final String tag_string_req = "req_shoppic_list";

@@ -9,17 +9,25 @@ import id.co.kurindo.kurindo.app.AppConfig;
  */
 
 public class DoMart {
+    private int id;
     private String type = AppConfig.KEY_DOMART;
     private String awb;
     private String notes;
-    private String estHarga;
-    private String actHarga;
     private int qty = 1;
     private TUser origin;
     private String unit = "unit";
     private BigDecimal price_unit;
     private BigDecimal price;
     private BigDecimal discount;
+    private BigDecimal price_estimate;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getType() {
         return type;
@@ -45,12 +53,12 @@ public class DoMart {
         this.notes = notes;
     }
 
-    public String getEstHarga() {
-        return estHarga;
+    public BigDecimal getPrice_estimate() {
+        return price_estimate;
     }
 
-    public void setEstHarga(String estHarga) {
-        this.estHarga = estHarga;
+    public void setPrice_estimate(BigDecimal price_estimate) {
+        this.price_estimate = price_estimate;
     }
 
     public TUser getOrigin() {
@@ -91,14 +99,6 @@ public class DoMart {
 
     public void setPrice_unit(BigDecimal price_unit) {
         this.price_unit = price_unit;
-    }
-
-    public String getActHarga() {
-        return actHarga;
-    }
-
-    public void setActHarga(String actHarga) {
-        this.actHarga = actHarga;
     }
 
     public int getQty() {

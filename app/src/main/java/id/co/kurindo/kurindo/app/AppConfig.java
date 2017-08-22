@@ -1,13 +1,17 @@
 package id.co.kurindo.kurindo.app;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -25,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.model.PacketService;
 import id.co.kurindo.kurindo.model.Vehicle;
 
@@ -34,14 +39,14 @@ import id.co.kurindo.kurindo.model.Vehicle;
 public class AppConfig {
     public static String API_VERSION = "v1";
 
-    //public static String BASE_HOST = "https://kurindo.id";//+"/"+API_VERSION;
+    public static String BASE_HOST = "https://kurindo.id";//+"/"+API_VERSION;
     //public static String BASE_HOST = "http://10.0.2.2/kurindo";
     //public static String BASE_HOST = "http://192.168.43.25/kurindo";
-    public static String BASE_HOST = "http://172.30.3.58/kurindo";
+    //public static String BASE_HOST = "http://172.30.3.58/kurindo";
     public static String API_HOST = BASE_HOST+"/"+API_VERSION;
     public static String HOST = API_HOST;
     //public static String API_HOST = HOST;
-    public static String USER_AGENT = "KURINDROID";
+    public static String USER_AGENT = "KURINDOID"+API_VERSION;
 
     public static String FCM_TOKEN = null;
     public static String SECRET_KEY = "AIzaSyCIVhOu83YxppEIlQEtqV0KCEW-JFDWAKA-KURINDROID";
@@ -57,7 +62,7 @@ public class AppConfig {
     public static String URL_SHOP_ADD =API_HOST + "/shop/add";
     public static String URL_SHOP_UPDATE=API_HOST + "/shop/update";
     public static String URL_SHOP_LOCATIONBASED_LIST = HOST + "/shop/locationbased/list";
-    public static String URL_SHOP_CITYBASED = HOST + "/shop/citybased/";
+    public static String URL_SHOP_CITYBASED = HOST + "/shop/citybased";
 
     public static String URL_SHOP_PRODUCT_ADD =API_HOST + "/shop/product/add";
     public static String URL_SHOP_PRODUCT_UPDATE=API_HOST + "/shop/product/update";
@@ -73,12 +78,18 @@ public class AppConfig {
     public static String URL_REGISTER_FCM = HOST + "/refresh/newfirebase";
     public static String URL_MINAT_FORM = HOST + "/minat";
 
-    public static String URL_LIST_KURIR_LOCATIONBASED = HOST + "/tusers/online";
+    public static String URL_LIST_USER_SKILLLOCATIONBASED = HOST + "/tusers/online";
     public static String URL_LIST_NEWKURIR_LOCATIONBASED = HOST + "/tusers/new";
+    public static String URL_LIST_USER_LASTLOCATION = HOST + "/tusers/location/last";
+    public static String URL_LIST_USER_LOCATION = HOST + "/tusers/location";
+    public static String URL_LIST_USER_LOCATION_CITY = HOST + "/tusers/location/city";
 
     public static String URL_USER_CITY_UPDATE =   API_HOST + "/tuser/city/update";
     public static  String URL_ACCOUNT_STATUS_P = HOST + "/tuser/status";
     public static String URL_KURIR_APPROVED =  HOST + "/tuser/kurir/approved";
+    public static String URL_KURIR_UPDATED =  HOST + "/tuser/kurir/updated";
+    public static String URL_KURIR_DELETED =  HOST + "/tuser/kurir/deleted";
+    public static String URL_KURIR_REJECTED =  HOST + "/tuser/kurir/rejected";
 
     public static  String URL_SENT_MESSAGE = HOST + "/send_message";
     public static  String URL_SENT_KERJASAMA= HOST + "/message/kerjasama";
@@ -91,7 +102,10 @@ public class AppConfig {
     public static String URL_TORDER_MYTASKS = API_HOST + "/torder/myjob";
     public static String URL_TORDER_ADDPIC = API_HOST + "/torder/addpic";;
     public static String URL_TORDER_REJECT = API_HOST + "/torder/reject";
+    public static String URL_TORDER_CANCELED = API_HOST + "/torder/canceled";
     public static String URL_TORDER_RETRIEVE_AWB = API_HOST + "/torder/awb";
+    public static String URL_UPDATE_HARGA = API_HOST + "/do/price/update";
+    public static String URL_DO_TESTIMONI = API_HOST + "/do/testimoni";
 
     public static String URL_PRICE_REQUEST = API_HOST + "/tariff/do";
     public static String URL_NEWS= HOST + "/news";
@@ -177,6 +191,7 @@ public class AppConfig {
     public static final String KEY_DOWASH = "DO-WASH";
     public static final String KEY_DOSERVICE = "DO-SERVICE";
     public static final String KEY_DOHIJAMAH = "DO-HIJAMAH";
+    public static final String KEY_DOCLIENT = "DO-CLIENT";
     public static final String KEY_DOCAR = "DO-CAR";
     public static final String KEY_DOMOVE = "DO-MOVE";
     public static final String KEY_DOSHOP = "DO-SHOP";
@@ -191,6 +206,8 @@ public class AppConfig {
     public static final String CLOSED = "CLOSED";
     public static final String OPEN = "OPEN";
     public static final String ISI_SALDO = "ISI SALDO";
+    public static final int PICKUP_LOCATION = 1000;
+
     public static int MAX_DOSEND_COVERAGE_KM = 35000;
     public static int MAX_DOMOVE_COVERAGE_KM = 150000;
     public static int MAX_DOJEK_COVERAGE_KM = 50000;
@@ -222,6 +239,8 @@ public class AppConfig {
     public static String DOMOVE_ENGKEL_BOX = "ENGKEL_BOX";
 
     public static BigDecimal DOMART_FEE = new BigDecimal(2500);
+    public static String PENERIMA = "PENERIMA";
+    public static String PENGIRIM = "PENGIRIM";
 
     public static boolean isNightService(String service){
         return service.equalsIgnoreCase(PACKET_ENS) || service.equalsIgnoreCase(PACKET_NNS);
@@ -356,12 +375,17 @@ public class AppConfig {
         return Resources.getSystem().getIdentifier(resourceName, type, null);
     }
 
+    private static String userUrl =BASE_HOST+"/img/user/";
     private static String bannerUrl =BASE_HOST+"/img/banner/";
     private static String shopUrl =BASE_HOST+"/img/shop/";
     private static String vehicleUrl =BASE_HOST+"/img/vehicle/";
 
     public static String urlBannerImage(String banner) {
         return bannerUrl+""+banner;
+    }
+
+    public static String urlUserImage(String image) {
+        return userUrl + ""+image;
     }
 
     public static String urlShopImage(String image) {
@@ -556,4 +580,86 @@ public class AppConfig {
         return datas;
     }
 
+    public static void onWaCall(Context context, String phone, String message){
+        Uri uri = Uri.parse("smsto:" + phone);
+        Intent sendIntent = new Intent(Intent.ACTION_SENDTO, uri);
+        //Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sendIntent.setType("text/plain");
+
+        PackageManager pm = context.getPackageManager();
+        final  List<ResolveInfo> matches = pm.queryIntentActivities(sendIntent, 0);
+        boolean temWhatsapp = false;
+        for (final ResolveInfo info : matches){
+            if(info.activityInfo.packageName.startsWith("com.whatsapp")){
+                final ComponentName name = new ComponentName(info.activityInfo.applicationInfo.packageName, info.activityInfo.name);
+                sendIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+                sendIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK);
+                sendIntent.setComponent(name);
+                temWhatsapp = true;
+                break;
+            }
+        }
+        if(temWhatsapp){
+            context.startActivity(sendIntent);
+        }else{
+            Toast.makeText(context, "WhatsApp not Installed", Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
+    public static String getIncludeBiaya(Context context, String fasilitas, String keyDocar) {
+        StringBuilder sb = new StringBuilder();
+        if(fasilitas.equalsIgnoreCase(context.getString(R.string.label_tanpabbm))){
+            sb.append(context.getString(R.string.label_sopir));
+        }else if(fasilitas.equalsIgnoreCase(context.getString(R.string.label_bbminclude))){
+            sb.append(context.getString(R.string.label_bbm));
+        }else if(fasilitas.equalsIgnoreCase(context.getString(R.string.label_allin))){
+            sb.append(context.getString(R.string.label_sopir));
+            sb.append(", "+context.getString(R.string.label_bbm));
+            sb.append(", "+context.getString(R.string.label_makan_sopir));
+            sb.append(", "+context.getString(R.string.label_parkir));
+            sb.append(", "+context.getString(R.string.label_toll));
+        }
+        return sb.toString();
+    }
+
+    public static String getExcludeBiaya(Context context,String fasilitas, String keyDocar) {
+        StringBuilder sb = new StringBuilder();
+        if(fasilitas.equalsIgnoreCase(context.getString(R.string.label_tanpabbm))){
+            sb.append(context.getString(R.string.label_bbm));
+            sb.append(", "+context.getString(R.string.label_makan_sopir));
+            sb.append(", "+context.getString(R.string.label_parkir));
+            sb.append(", "+context.getString(R.string.label_toll));
+        }else if(fasilitas.equalsIgnoreCase(context.getString(R.string.label_bbminclude))){
+            sb.append(context.getString(R.string.label_makan_sopir));
+            sb.append(", "+context.getString(R.string.label_parkir));
+            sb.append(", "+context.getString(R.string.label_toll));
+        }else if(fasilitas.equalsIgnoreCase(context.getString(R.string.label_allin))){
+            sb.append("");
+        }
+        return sb.toString();
+    }
+
+    public static String getRule(Context context, String durasi, String activity, String keyDocar) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(context.getString(R.string.label_rule_city_tour));
+        return sb.toString();
+    }
+
+
+    public static int taskID;
+    public static Intent keepInApp;
+
+    public static boolean isAdmin(String role) {
+        return role == null? false : role.equalsIgnoreCase(KEY_ADMINISTRATOR)
+                || role.equalsIgnoreCase(KEY_ADMINNEG)
+                || role.equalsIgnoreCase(KEY_ADMINPROV)
+                || role.equalsIgnoreCase(KEY_ADMINKAB)
+                || role.equalsIgnoreCase(KEY_ADMINKEC) ;
+    }
+
+    public static boolean isKurir(String role) {
+        return role == null ? false : role.equalsIgnoreCase(KEY_KURIR);
+    }
 }

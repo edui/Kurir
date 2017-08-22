@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -101,6 +102,7 @@ import id.co.kurindo.kurindo.model.Route;
 import id.co.kurindo.kurindo.model.Shop;
 import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.util.LogUtil;
+import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
 import static android.app.Activity.RESULT_OK;
@@ -138,6 +140,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
     TUserAdapter tUserAdapter;
     ArrayList<TUser> data = new ArrayList<>();
 
+    @Bind(R.id.tvOriginValidated)
+    TextView tvOriginValidated;
     @Bind(R.id.tvOrigin)
     TextView tvOrigin;
     @Bind(R.id.tvDestination)
@@ -432,6 +436,10 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             showAddressLayout();
             refreshMap();
             if(!canDrawRoute()) moveCameraToLocation( place.getLatLng());
+            if(destinationChanged) {
+                onClick_tvDestination();
+                destinationMode = true;
+            }
         }
     };
 
@@ -540,18 +548,18 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         originMode = !destinationMode;
         showPopupWindow("Daftar Lokasi", R.drawable.destination_pin);
     }
+    boolean validateShop = false;
 
     @OnClick(R.id.locationMarkertext)
     public void onClick_mLocationMarkerText(){
         LatLng location = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        if(destinationMode){
-            destination.getAddress().setLocation( location );
-            //tvDestination.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
-            destinationChanged = true;
-        }else {
-            origin.getAddress().setLocation( location );
-            //tvOrigin.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
+        if(!destinationMode){
+            destinationMode = true;
         }
+        destination.getAddress().setLocation( location );
+        //tvDestination.setText("Lat. "+ mLastLocation.getLatitude()+ ", "+mLastLocation.getLongitude());
+        destinationChanged = true;
+        validateShop = true;
         requestAddress(location);
 
         mLocationMarkerText.setVisibility(View.GONE);
@@ -643,7 +651,9 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                             //destination = address.getLocation();
                             //if(origin.getAddress().getLocation() != null) destinationMode = false;
                             destinationMode= false;
-                            search_shop_by_destination(shopIdStr, destination);
+                            if(validateShop){
+                                search_shop_by_destination(shopIdStr, destination, handler);
+                            }
                         }
                     }
                 }catch (Exception e){
@@ -653,9 +663,12 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                     }else if(destinationMode){
                         if(origin.getAddress().getLocation() != null) destinationMode = false;
                     }
+                    handler.handleMessage(null);
                 }
-                handler.handleMessage(null);
-                refreshMap();
+                if(!validateShop) {
+                    handler.handleMessage(null);
+                    refreshMap();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -670,6 +683,66 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             }
         }, null, null);
     }
+    private void requestAddress2(LatLng latLng) {
+        progressBar.show();
+        requestAddress2(latLng, handler);
+        try { Looper.loop(); }
+        catch(RuntimeException e2) { }
+        progressBar.dismiss();
+    }
+    private void requestAddress2(LatLng latLng, final Handler handler) {
+        String url = MapUtils.getGeocodeUrl(latLng);
+        addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //Log.d(TAG, "requestAddress Response: " + response.toString());
+                List<List<HashMap<String, String>>> routes = null;
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                    if(OK){
+                        DataParser parser = new DataParser();
+                        Address address = parser.parseAddress(jObj);
+                        if(originMode){
+                            tvOrigin.setText(address.getFormattedAddress());
+                            address.setLocation(origin.getAddress().getLocation());
+                            origin.setAddress(  address );
+                            //origin = address.getLocation();
+                            //if(destination.getAddress().getLocation() != null) originMode= false;
+                            originMode= false;
+                        }else if(destinationMode){
+                            tvDestination.setText(address.getFormattedAddress());
+                            address.setLocation(destination.getAddress().getLocation());
+                            destination.setAddress( address );
+                            //destination = address.getLocation();
+                            //if(origin.getAddress().getLocation() != null) destinationMode = false;
+                            destinationMode= false;
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    if(originMode){
+                        if(destination.getAddress().getLocation() != null) originMode= false;
+                    }else if(destinationMode){
+                        if(origin.getAddress().getLocation() != null) destinationMode = false;
+                    }
+                }
+                handler.handleMessage(null);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                if(originMode){
+                    if(destination.getAddress().getLocation() != null) originMode= false;
+                }else if(destinationMode){
+                    if(origin.getAddress().getLocation() != null) destinationMode = false;
+                }
+                handler.handleMessage(null);
+            }
+        }, null, null);
+    }
+
     private void requestAddress_inBackground(LatLng latLng) {
         String url = MapUtils.getGeocodeUrl(latLng);
         addRequest("request_geocode_address", Request.Method.GET, url, new Response.Listener<String>() {
@@ -727,16 +800,19 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
 
             DataParser parser = new DataParser();
             Set<Route> routes = DoShopHelper.getInstance().getRoutes();
-            for(Route r : routes){
-                PolylineOptions lineOptions = parser.drawRoutes(r.getRoutes());
+            if(routes != null){
+                for(Route r : routes){
+                    PolylineOptions lineOptions = parser.drawRoutes(r.getRoutes());
 
-                // Drawing polyline in the Google Map for the i-th route
-                if(lineOptions != null) {
-                    mMap.addPolyline(lineOptions);
-                }else {
-                    LogUtil.logD("drawRoutes","without Polylines drawn");
+                    // Drawing polyline in the Google Map for the i-th route
+                    if(lineOptions != null) {
+                        mMap.addPolyline(lineOptions);
+                    }else {
+                        LogUtil.logD("drawRoutes","without Polylines drawn");
+                    }
                 }
             }
+
 
             //String snippet = originMarker.getSnippet();
             //originMarker.setSnippet(snippet + "\nEst. Distance :"+ route.getDistance().getText());
@@ -792,6 +868,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
 
     public void handleNext(){
         int dist = 0;
+        inDoSendCoverageArea = true;
+        inDoMoveCoverageArea = true;
         try{
             dist = Integer.parseInt(route.getDistance().getValue());
         }catch (Exception e){}
@@ -810,6 +888,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         }else{
             DoShopHelper.getInstance().addRoute(route);
             requestprice();
+            try { Looper.loop(); }
+            catch(RuntimeException e2) { }
         }
     }
     private void reDrawRoute() {
@@ -828,14 +908,13 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                             route = parser.parseRoutes(jObj);
                             route.setOrigin(origin);
                             route.setDestination(destination);
-
                             handleNext();
 
                         }
                     }catch (Exception e){
                         e.printStackTrace();
-                        handler.handleMessage(null);
                     }
+                    handler.handleMessage(null);
                 }
             };
             Response.ErrorListener responseErrorListener = new Response.ErrorListener() {
@@ -869,8 +948,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         builder.excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
 
-        Address originAddr = DoSendHelper.getInstance().getOrigin().getAddress() ;
-        Address destinationAddr = DoSendHelper.getInstance().getDestination().getAddress() ;
+        Address originAddr = DoShopHelper.getInstance().getOrigin().getAddress() ;
+        Address destinationAddr = DoShopHelper.getInstance().getDestination().getAddress() ;
 
         HashMap<String, String> params = new HashMap();
         //params.put("origin", origin.getName());//TODO json origin
@@ -991,7 +1070,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         mMap.clear();
         if(destination != null && destination.getAddress() != null && destination.getAddress().getLocation() != null){
             String title = "Destination";
-            String snippet = (destination.getName() != null ? destination.toStringFormatted() : "");
+            String snippet = (destination.getName() != null ? destination.toStringAddressFormatted() : "");
             destinationMarker = mMap.addMarker(
                     new MarkerOptions()
                             .position(destination.getAddress().getLocation())
@@ -1004,7 +1083,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         if(origin != null && origin.getAddress() != null && origin.getAddress().getLocation() != null){
             String title = "Origin";
             for (Shop shop: DoShopHelper.getInstance().getShops()) {
-                String snippet = (shop.getName() != null ? shop.getName() : (shop.getPic() != null && shop.getPic().getAddress().toStringFormatted() != null ? shop.getPic().getAddress().toStringFormatted() : ""));
+                String snippet = (shop.getName() != null ? shop.getName() : (shop.getPic() != null && shop.getPic().getAddress().toStringFormatted() != null ? shop.getPic().toStringAddressFormatted() : ""));
                 originMarker = mMap.addMarker(
                         new MarkerOptions()
                                 .position(shop.getPic().getAddress().getLocation())
@@ -1144,7 +1223,8 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                 if(destination.getAddress().getLocation() == null) {
                     destination.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
                     destinationMode = true;
-                    requestAddress(destination.getAddress().getLocation());
+                    requestAddress2(destination.getAddress().getLocation());
+                    destinationMode = true;
                     changeMap(mLastLocation);
                 }else{
                     moveCameraToLocation( destination.getAddress().getLocation());
@@ -1345,7 +1425,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
     protected void showPopupWindow(String title, int imageResourceId) {
         data.clear();
         data.addAll(db.getAddressList());
-
+        final TUser[] p = {null};
         // Create custom dialog object
         final Dialog dialog = new Dialog(getActivity());
         // Include dialog.xml file
@@ -1356,6 +1436,19 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             @Override
             public void onDismiss(DialogInterface dialog) {
                 if(destinationMode){
+                    if(p[0] != null){
+                        destination = p[0];
+                        tvDestination.setText(p[0].getAddress().toStringFormatted());
+                        if(p[0].getAddress().getNotes() != null && !p[0].getAddress().getNotes().isEmpty()) {
+                            etDestinationNotes.setText(p[0].getAddress().getNotes());
+                            etDestinationNotes.setVisibility(View.VISIBLE);
+                        }
+                        validateShop = true;
+                        requestAddress(p[0].getAddress().getLocation());
+
+                        if(!canDrawRoute()) moveCameraToLocation( p[0].getAddress().getLocation());
+                        destinationChanged = true;
+                    }
                     destinationMode = false;
                     showAddressLayout();
                     refreshMap();
@@ -1373,20 +1466,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
         list.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                TUser p = data.get(position);
-                if(destinationMode){
-                    destination = p;
-                    tvDestination.setText(p.getAddress().toStringFormatted());
-                    if(p.getAddress().getNotes() != null && !p.getAddress().getNotes().isEmpty()) {
-                        etDestinationNotes.setText(p.getAddress().getNotes());
-                        etDestinationNotes.setVisibility(View.VISIBLE);
-                    }
-                    //Location l = new Location("Destination");
-                    //l.setLatitude(p.getAddress().getLocation().latitude);
-                    //l.setLongitude(p.getAddress().getLocation().longitude);
-                    //changeMap(l);
-                    //destinationMode = false;
-                }
+                p[0] = data.get(position);
                 dialog.dismiss();
             }
         }));
@@ -1460,8 +1540,30 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
 
     @Override
     public void onSelected()  {
+        if(!canDrawRoute()){
+            setup_tvOrigin();
+            onClick_tvDestination();
+        }
+    }
+
+    private void setup_tvOriginValidated(Set<Shop> excluded) {
+        int i=0;
+        String t ="";
+        for (Shop shop : excluded) {
+            if(i>0) {
+                t+= " | ";
+            }
+            t += shop.getName();
+            i++;
+        }
+        tvOriginValidated.setText(t);
+        tvOriginValidated.setPaintFlags(tvOriginValidated.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        tvOriginValidated.setVisibility((i>0?View.VISIBLE:View.GONE));
+    }
+    private void setup_tvOrigin() {
         String t = ""; int i=0;
-        Set<Shop> shops = DoShopHelper.getInstance().getShops();
+        Set<Shop> shops = DoShopHelper.getInstance().getTempShops();
+        if(next) shops = DoShopHelper.getInstance().getShops();
         shopIdStr = "";
         String message = "";
         for (Shop shop : shops) {
@@ -1472,27 +1574,32 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
             //origin = shop.getPic();
             //origin.setLastname(shop.getName());
             //waypoints.add(shop.getAddress().getLocation());
-            shopIdStr +=""+shop.getId();
             if(i>0) {
                 t+= " | ";
                 shopIdStr += "|";
-                message += ", ";
+                message += " , ";
             }
+            shopIdStr +=""+shop.getId();
             t += shop.getName();
             i++;
         }
-        if(!next) Toast.makeText(mContext, "Ada Toko ( "+message+" )yang tidak memiliki alamat. Coba tentukan alamat tujuan lainnya.", LENGTH_SHORT).show();
+        if(!next) Toast.makeText(mContext, "Toko ( "+message+" ) tidak memiliki alamat. Coba tentukan alamat tujuan lainnya.", LENGTH_SHORT).show();
 
         tvOrigin.setText(t);
-        onClick_tvDestination();
+        tvOriginValidated.setVisibility(View.GONE);
     }
 
-    private void search_shop_by_destination(String shopStr, TUser destination) {
+    private void search_shop_by_destination(final String shopStr, final TUser destination, final Handler handler) {
         String tag_request = "search_shop_by_destination";
         String url = AppConfig.URL_SHOP_CITYBASED;
         HashMap<String, String> params = new HashMap();
-        params.put("shops", shopStr);
         params.put("city", destination.getAddress().getKabupaten());
+        params.put("kab", destination.getAddress().getKabupaten());
+        params.put("prop", destination.getAddress().getPropinsi());
+        //loop foreach shop to validate location
+        //if found another shop set shop and refresh map
+        //if no shop found then notify
+        params.put("shops", shopStr);
         addRequest(tag_request, POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -1501,8 +1608,27 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                     JSONObject jObj = new JSONObject(response);
                     String message =jObj.getString("message");
                     if(message.equalsIgnoreCase("OK")){
+                        ParserUtil parser = new ParserUtil();
                         JSONArray jArr = jObj.getJSONArray("data");
-                        showMap();
+                        Set<Shop> newshops = new LinkedHashSet<Shop>();
+                        Set<Shop> excludeshops = new LinkedHashSet<Shop>();
+                        Set<Shop> shops = DoShopHelper.getInstance().getTempShops();
+                        HashMap<Integer, Shop> map = new HashMap<Integer, Shop>(jArr.length());
+                        for (int i = 0; i < jArr.length(); i++) {
+                            Shop shop = parser.parserTShop(jArr.getJSONObject(i));
+                            newshops.add(shop);
+                            map.put(shop.getId(),shop);
+                            origin = shop.getPic();
+                            next = true;
+                        }
+                        for (Shop shop : shops) {
+                            if(map.get(shop.getId()) == null) excludeshops.add(shop);
+                        }
+                        DoShopHelper.getInstance().getShops().clear();
+                        DoShopHelper.getInstance().getShops().addAll(newshops);
+                        setup_tvOrigin();
+                        setup_tvOriginValidated(excludeshops);
+                        //refreshMap();
                     }else{
                         Toast.makeText(mContext, ""+message, Toast.LENGTH_SHORT).show();
                     }
@@ -1510,6 +1636,7 @@ public class DoShopPinLocationMapFragment extends BaseStepFragment implements St
                     e.printStackTrace();
                     Toast.makeText(mContext, "Error "+e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+                if(handler != null)handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
             @Override

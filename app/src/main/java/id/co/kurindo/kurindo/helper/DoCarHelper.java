@@ -25,6 +25,7 @@ public class DoCarHelper extends OrderViaMapHelper{
     public void clearAll() {
         rental=null;
         super.clearAll();
+        helper = null;
     }
     public DoCarRental addRental(){
         if(rental == null){
@@ -37,10 +38,11 @@ public class DoCarHelper extends OrderViaMapHelper{
         return rental;
     }
 
-    public TOrder addDoCarOrder(String serviceCode, double price) {
+    public TOrder addDoCarOrder(String serviceCode, String subtype, double price) {
         addOrder(AppConfig.CASH_PAYMENT, serviceCode, price);
         //addNewProduct(AppConfig.KEY_DOCAR);
         order.setService_type(AppConfig.KEY_DOCAR);
+        order.setSub_type(subtype);
         return order;
     }
 

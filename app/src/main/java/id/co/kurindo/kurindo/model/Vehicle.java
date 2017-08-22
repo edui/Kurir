@@ -36,7 +36,21 @@ public class Vehicle {
     @Expose(serialize = false)
     private String transmisi;
     @Expose(serialize = false)
-    private String tarif;
+    private int tarif;
+    @Expose(serialize = false)
+    private int tarif_24;
+    @Expose(serialize = false)
+    private int tarif_sopir;
+    @Expose(serialize = false)
+    private int tarif_sopir_24;
+    @Expose(serialize = false)
+    private int tarif_bbm;
+    @Expose(serialize = false)
+    private int tarif_bbm_24;
+    @Expose(serialize = false)
+    private int tarif_lainnya;
+    @Expose(serialize = false)
+    private int tarif_lainnya_24;
     @Expose(serialize = false)
     private int ac;
     @Expose(serialize = false)
@@ -159,12 +173,68 @@ public class Vehicle {
         this.bbm = bbm;
     }
 
-    public String getTarif() {
+    public int getTarif() {
         return tarif;
     }
 
-    public void setTarif(String tarif) {
+    public void setTarif(int tarif) {
         this.tarif = tarif;
+    }
+
+    public int getTarif_24() {
+        return tarif_24;
+    }
+
+    public void setTarif_24(int tarif_24) {
+        this.tarif_24 = tarif_24;
+    }
+
+    public int getTarif_sopir() {
+        return tarif_sopir;
+    }
+
+    public void setTarif_sopir(int tarif_sopir) {
+        this.tarif_sopir = tarif_sopir;
+    }
+
+    public int getTarif_sopir_24() {
+        return tarif_sopir_24;
+    }
+
+    public void setTarif_sopir_24(int tarif_sopir_24) {
+        this.tarif_sopir_24 = tarif_sopir_24;
+    }
+
+    public int getTarif_bbm() {
+        return tarif_bbm;
+    }
+
+    public void setTarif_bbm(int tarif_bbm) {
+        this.tarif_bbm = tarif_bbm;
+    }
+
+    public int getTarif_bbm_24() {
+        return tarif_bbm_24;
+    }
+
+    public void setTarif_bbm_24(int tarif_bbm_24) {
+        this.tarif_bbm_24 = tarif_bbm_24;
+    }
+
+    public int getTarif_lainnya() {
+        return tarif_lainnya;
+    }
+
+    public void setTarif_lainnya(int tarif_lainnya) {
+        this.tarif_lainnya = tarif_lainnya;
+    }
+
+    public int getTarif_lainnya_24() {
+        return tarif_lainnya_24;
+    }
+
+    public void setTarif_lainnya_24(int tarif_lainnya_24) {
+        this.tarif_lainnya_24 = tarif_lainnya_24;
     }
 
     public int getAc() {

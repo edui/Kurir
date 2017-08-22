@@ -167,6 +167,11 @@ public class Address implements Parcelable{
         this.location = location;
     }
 
+    public String getLocationStr(){
+        LatLng loc = getLocation();
+        if(loc == null) return "-6.170166,106.831375";
+        return loc.latitude+","+loc.longitude;
+    }
     public String getFormattedAddress() {
         return formattedAddress;
     }

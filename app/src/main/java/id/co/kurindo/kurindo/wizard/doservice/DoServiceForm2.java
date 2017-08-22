@@ -3,9 +3,11 @@ package id.co.kurindo.kurindo.wizard.doservice;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
@@ -21,7 +23,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,6 +35,8 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
@@ -42,6 +48,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import butterknife.Bind;
@@ -50,9 +57,12 @@ import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoServiceHelper;
+import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.model.DoService;
 import id.co.kurindo.kurindo.model.TOrder;
 import id.co.kurindo.kurindo.model.TPrice;
+import id.co.kurindo.kurindo.model.TUser;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.util.ParserUtil;
 import id.co.kurindo.kurindo.wizard.BaseStepFragment;
 
@@ -109,6 +119,15 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
     Context context;
 
     boolean next = false;
+    TUser origin = new TUser();
+
+    @Bind(R.id.agrement_layout)
+    LinearLayout agrement_layout;
+
+    @Bind(R.id.chkAgrement)
+    CheckBox chkAgrement;
+    @Bind(R.id.ivAgrement)
+    ImageView ivAgrement;
 
     @Nullable
     @Override
@@ -117,8 +136,16 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
 
         context = getContext();
         progressBar = new ProgressDialogCustom(context);
+
         setup_spinner();
-        retrieve_price();
+
+        ivAgrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupWindow("Kurindo \nService Agreement", R.raw.snk_file, R.drawable.icon_syarat_ketentuan);
+            }
+        });
+
         return v;
     }
     private void request_services() {
@@ -157,11 +184,12 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
             }
         }, params, getKurindoHeaders());
     }
-    private void retrieve_price() {
+    private void retrieve_price(final Handler handler) {
         progressBar.show();
         final String tag_string_Req = "retrieve_price";
         String url = AppConfig.URL_PRICE_REQUEST;
         final HashMap<String, String> params = new HashMap();
+        params.put("city", origin.getAddress().getKabupaten());
         params.put("do-type", AppConfig.KEY_DOSERVICE);
         addRequest(tag_string_Req, Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -187,6 +215,7 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
                     Toast.makeText(context, "Daftar harga tidak tersedia.", Toast.LENGTH_SHORT).show();
                 }
                 progressBar.dismiss();
+                handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -616,12 +645,116 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
         order.setPickup(AppConfig.getDateTimeServerFormat().format( start.getTime() ));
         order.setDroptime(null);
 
-        next = true;
+        //next = true;
+
+        if(!chkAgrement.isChecked()) {
+            return new VerificationError("Anda belum menyetujui syarat dan ketentuan kami");
+        }
+
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message mesg) {
+                throw new RuntimeException("RuntimeException");
+            }
+        };
+
+        DialogInterface.OnClickListener YesClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                place_an_order(handler);
+            }
+        };
+        DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handler.handleMessage(null);
+            }
+        };
+
+        showConfirmationDialog("Konfirmasi Pesanan","Konfirmasi, Anda akan menggunakan layanan "+AppConfig.KEY_DOSERVICE+" ?", YesClickListener, NoClickListener);
+
+        // loop till a runtime exception is triggered.
+        try { Looper.loop(); }
+        catch(RuntimeException e2) { }
         return null;
+    }
+
+    private void place_an_order(Handler handler) {
+        progressBar.setMessage("Sedang memproses Pesanan....");
+        progressBar.show();
+
+        TOrder order = DoServiceHelper.getInstance().getOrder();
+        order.setPlace(origin);
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting(); builder.serializeNulls();
+        Gson gson = builder.create();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("user_agent", AppConfig.USER_AGENT);
+
+        String orderStr = gson.toJson(DoServiceHelper.getInstance().getOrder());
+        LogUtil.logD(TAG, "place_an_order: "+orderStr);
+        params.put("order", orderStr);
+        process_order(params, handler);
+    }
+
+
+    private void process_order(Map<String, String> params, final Handler handler) {
+        String url = AppConfig.URL_DOSEND_ORDER;
+        addRequest("request_service_order", Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                LogUtil.logD(TAG, "request_service_order Response: " + response.toString());
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean OK = "OK".equalsIgnoreCase(jObj.getString("status"));
+                    if(OK){
+                        String awb = jObj.getString("awb");
+                        String status = jObj.getString("order_status");
+                        String statusText = jObj.getString("order_status_text");
+
+                        DoServiceHelper.getInstance().getOrder().setAwb(awb);
+                        DoServiceHelper.getInstance().getOrder().setStatus(status);
+                        DoServiceHelper.getInstance().getOrder().setStatusText(statusText);
+
+                        ViewHelper.getInstance().setOrder(DoServiceHelper.getInstance().getOrder());
+
+                        invalid = null;
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                    invalid = new VerificationError("Json error: " + e.getMessage());
+                }
+                progressBar.dismiss();
+                handler.handleMessage(null);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                invalid = new VerificationError("NetworkError : " + volleyError.getMessage());
+                progressBar.dismiss();
+                handler.handleMessage(null);
+            }
+        }, params, getKurindoHeaders());
     }
 
     @Override
     public void onSelected() {
+        origin = DoServiceHelper.getInstance().getOrder().getPlace();
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message mesg) {
+                throw new RuntimeException("RuntimeException");
+            }
+        };
+
+        retrieve_price(handler);
+        // loop till a runtime exception is triggered.
+        try { Looper.loop(); }
+        catch(RuntimeException e2) { }
+
         if(!next){
             baseLayout.removeView(btnAddItem);
             cek_with_calendar_time();
@@ -629,6 +762,7 @@ public class DoServiceForm2 extends BaseStepFragment implements Step {
             generateForm(item++);
             baseLayout.addView(btnAddItem);
         }
+
     }
 
     @Override

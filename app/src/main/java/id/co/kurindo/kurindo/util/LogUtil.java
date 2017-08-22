@@ -11,6 +11,8 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,6 +111,21 @@ public class LogUtil {
         }
     }
 
+    public static void logE(String tag, Throwable throwable) {
+        if (LOGGING_ENABLED) {
+            Log.e(tag, getStackTrace(throwable));
+        }
+    }
+    public static String getStackTrace(Throwable e) {
+        try {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            return "\r\n" + sw.toString() + "\r\n";
+        } catch (Exception e2) {
+            return "bad getErrorInfoFromException";
+        }
+    }
     public static void logToServer(final String tag, final String activity, final String user) {
         String tag_string_req = "req_logToServer_"+tag;
         StringRequest strReq = new StringRequest(Request.Method.POST,

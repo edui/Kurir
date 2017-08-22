@@ -76,7 +76,6 @@ public class DoServiceForm1 extends BaseStepFragment implements Step {
 
         progressDialog = new ProgressDialog(getActivity(), CustomDialog);
 
-        retrieve_price();
         return v;
     }
 
@@ -248,6 +247,7 @@ public class DoServiceForm1 extends BaseStepFragment implements Step {
 
     @Override
     public void onSelected() {
+        retrieve_price();
         setup_spinner();
         setup_button();
     }

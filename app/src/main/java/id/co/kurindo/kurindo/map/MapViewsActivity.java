@@ -119,13 +119,15 @@ public class MapViewsActivity extends KurindoActivity implements OnMapReadyCallb
         if(order != null){
             if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOMART)){
                 for(DoMart dom : order.getMarts()){
-                    origin = dom.getOrigin();
-                    if(waypoints == null){
-                        waypoints = new ArrayList<>();
+                    if(dom.getType().equalsIgnoreCase(AppConfig.KEY_DOMART)){
+                        origin = dom.getOrigin();
+                        if(waypoints == null){
+                            waypoints = new ArrayList<>();
+                        }
+                        waypoints.add(dom.getOrigin());
                     }
-                    waypoints.add(dom.getOrigin());
                 }
-                destination = ViewHelper.getInstance().getOrder().getPlace();
+                destination = order.getPlace();
             }else{
                 if(ViewHelper.getInstance().getPacket() != null && ViewHelper.getInstance().getPacket().getDestination() != null && ViewHelper.getInstance().getPacket().getOrigin() != null){
                     origin = ViewHelper.getInstance().getPacket().getOrigin();
@@ -189,6 +191,7 @@ public class MapViewsActivity extends KurindoActivity implements OnMapReadyCallb
     }
 
     private boolean canDrawRoute() {
+        if(origin == null || destination ==null) return false;
         return (origin.getAddress() != null && origin.getAddress().getLocation() != null && origin.getAddress() != null && destination.getAddress().getLocation() != null);
     }
 
@@ -198,11 +201,11 @@ public class MapViewsActivity extends KurindoActivity implements OnMapReadyCallb
         finish();
     }
     public void moveCameraToLocation(LatLng location, float zoom){
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(70).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(location).zoom(zoom).tilt(AppConfig.DEFAULT_TILT_MAP).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
     public void moveCameraToLocation(LatLng location){
-        moveCameraToLocation(location, 19f);
+        moveCameraToLocation(location, AppConfig.DEFAULT_ZOOM_MAP);
     }
     public void onClick(View v) {
         //TODO

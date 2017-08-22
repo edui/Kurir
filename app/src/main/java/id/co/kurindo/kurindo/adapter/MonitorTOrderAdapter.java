@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -258,16 +259,19 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
         });
 
+        holder.kur310Btn.setImageResource(R.drawable.status03_0_icon);
         holder.kur310Btn.setVisibility(View.VISIBLE);
         holder.kur310Btn.setEnabled(false);
 
         holder.kur100Btn.setVisibility(View.GONE);
         holder.kur101Btn.setVisibility(View.GONE);
         holder.kur200Btn.setVisibility(View.GONE);
+        holder.kur350Btn.setVisibility(View.GONE);
 
         holder.kur400Btn.setVisibility(View.GONE);
         holder.kur400Btn.setEnabled(false);
 
+        holder.kur500Btn.setImageResource(R.drawable.status04_0_icon);
         holder.kur500Btn.setVisibility(View.VISIBLE);
         holder.kur500Btn.setEnabled(false);
     }
@@ -300,6 +304,8 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.kur350Btn.setVisibility(View.GONE);
         holder.kur400Btn.setVisibility(View.GONE);
         holder.kur500Btn.setVisibility(View.GONE);
+
+        holder.waBtn.setVisibility(View.VISIBLE);
     }
 
     protected void setup_status_kur100(MyItemHolder holder, TOrder order, final int position) {
@@ -320,6 +326,7 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.kur300Btn.setVisibility(View.GONE);
         holder.kur310Btn.setVisibility(View.GONE);
         holder.kur200Btn.setVisibility(View.GONE);
+        holder.waBtn.setVisibility(View.GONE);
     }
 
     protected void setupTextAndStatus(MyItemHolder holder, TOrder order, int position) {
@@ -331,13 +338,15 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.namaPengirimText.setText(nama);
         holder.teleponPengirimText.setText(order.getBuyer() ==null? "": order.getBuyer().getPhone());
         String orderAt = "di ";
-        if(order.getPlace() != null && order.getPlace().getAddress() != null){
-            orderAt += order.getPlace().getAddress().getKecamatan();
+        if(order.getDocar() != null && order.getDocar().getUser() != null) {
+            orderAt += order.getDocar().getUser().getAddress().toStringKecKab();
+        }else if(order.getPlace() != null && order.getPlace().getAddress() != null){
+            orderAt += order.getPlace().getAddress().toStringKecKab();
         }else if(order.getPackets() != null && !order.getPackets().isEmpty()){
             List l = new ArrayList(order.getPackets());
             TPacket p = (TPacket) l.get(0);
             if(p != null && p.getOrigin() != null && p.getOrigin().getAddress() != null){
-                orderAt += p.getOrigin().getAddress().getKecamatan();
+                orderAt += p.getOrigin().getAddress().toStringKecKab();
             }
         }
         holder.kotaAsalText.setText(orderAt);
@@ -355,7 +364,7 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     protected void setupUpdateBtn(MyItemHolder holder, TOrder order, final int position) {
-        if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR999)){
+        if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR999) || order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR900) ){
             holder.updateBtn.setImageResource(R.drawable.reject_booking_icon);
         }else if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR500)){
             holder.updateBtn.setImageResource(R.drawable.completed_icon);
@@ -369,6 +378,40 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
         });
 
+        //holder.waBtn.setVisibility(View.GONE);
+        holder.waBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemClickListener.onWaButtonClick(v, position);
+            }
+        });
+        holder.searchKurirBtn.setVisibility(View.GONE);
+        if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR100)) {
+            holder.searchKurirBtn.setVisibility(View.VISIBLE);
+            holder.searchKurirBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onSearchKurirButtonClick(v, position);
+                }
+            });
+        }
+        holder.testimoniBtn.setVisibility(View.GONE);
+        holder.rbRating.setVisibility(View.GONE);
+        if(order.getStatus().equalsIgnoreCase(AppConfig.KEY_KUR500) ){
+            if(order.getRating() == 0){
+                holder.rbRating.setVisibility(View.GONE);
+                holder.testimoniBtn.setVisibility(View.VISIBLE);
+                holder.testimoniBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        itemClickListener.onTestimoniButtonClick(v, position);
+                    }
+                });
+            }else{
+                holder.rbRating.setRating(order.getRating());
+                holder.rbRating.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void setupServiceIcon(MyItemHolder holder, TOrder order, int position) {
@@ -378,7 +421,7 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.item_service.setImageResource(R.drawable.do_wash_icon);
         }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOCAR)) {
             holder.item_service.setImageResource(R.drawable.do_car_icon);
-        }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSEND) || order.getService_type().equalsIgnoreCase("KURIR")) {
+        }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOSEND) ) {
             holder.item_service.setImageResource(R.drawable.do_send_icon);
         }else if(order.getService_type().equalsIgnoreCase(AppConfig.KEY_DOMOVE)) {
             holder.item_service.setImageResource(R.drawable.do_move_icon);
@@ -432,7 +475,9 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
         protected ImageButton kur500Btn;
 
         protected ImageButton waBtn;
-
+        protected ImageButton searchKurirBtn;
+        protected ImageButton testimoniBtn;
+        RatingBar rbRating;
         public MyItemHolder(View itemView) {
             super(itemView);
             this.awbText= (TextView) itemView.findViewById(R.id.tv_awb);
@@ -458,7 +503,9 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
             this.kur500Btn = (ImageButton) itemView.findViewById(R.id.kur500Btn);
 
             this.waBtn= (ImageButton) itemView.findViewById(R.id.waBtn);
-
+            this.searchKurirBtn = (ImageButton) itemView.findViewById(R.id.searchKurirBtn);
+            this.testimoniBtn = (ImageButton) itemView.findViewById(R.id.testimoniBtn);
+            this.rbRating= (RatingBar) itemView.findViewById(R.id.rbRating);
         }
     }
 
@@ -466,5 +513,7 @@ public class MonitorTOrderAdapter extends RecyclerView.Adapter<RecyclerView.View
         void onPickButtonClick(View view, int position, String status);
         void onUpdateButtonClick(View view, int position);
         void onWaButtonClick(View view, int position);
+        void onSearchKurirButtonClick(View view, int position);
+        void onTestimoniButtonClick(View view, int position);
     }
 }

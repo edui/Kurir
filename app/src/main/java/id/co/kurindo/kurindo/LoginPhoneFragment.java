@@ -524,8 +524,15 @@ public class LoginPhoneFragment extends BaseFragment {
         progressBar.setIndeterminate(true);
         progressBar.setMessage("Processing activation....");
         progressBar.show();
-
-        activation_process();
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message mesg) {
+                throw new RuntimeException("RuntimeException");
+            }
+        };
+        activation_process(handler);
+        try { Looper.loop(); }
+        catch(RuntimeException e2) { }
     }
 
     private boolean validateActivation() {
@@ -567,7 +574,7 @@ public class LoginPhoneFragment extends BaseFragment {
         _activationButton.setEnabled(true);
     }
 
-    private void activation_process() {
+    private void activation_process(final Handler handler) {
         String tag_string_req = "req_activation";
 
         final String phone = _activationPhoneText.getPhoneNumber();
@@ -669,6 +676,7 @@ public class LoginPhoneFragment extends BaseFragment {
                     _activationButton.setEnabled(true);
                 }
                 progressBar.dismiss();
+                handler.handleMessage(null);
             }
         }, new Response.ErrorListener() {
 
@@ -678,6 +686,7 @@ public class LoginPhoneFragment extends BaseFragment {
                 Toast.makeText(context,error.getMessage(), Toast.LENGTH_LONG).show();
                 _activationButton.setEnabled(true);
                 progressBar.dismiss();
+                handler.handleMessage(null);
             }
         }) {
 
@@ -811,14 +820,22 @@ public class LoginPhoneFragment extends BaseFragment {
                         Toast.makeText(context, "Incorrect Account or Password.", Toast.LENGTH_LONG).show();
                         _loginButton.setEnabled(true);
                     } else {
-                        boolean active= jObj.getBoolean("active");
-                        boolean approved= jObj.getBoolean("approved");
+                        boolean active = false;
+                        boolean approved = false;
+                        boolean _null = false;
+                        try {
+                            active= jObj.getBoolean("active");
+                            approved= jObj.getBoolean("approved");
+                        }catch (Exception e){
+                            _null = true;
+                        }
 
                         // Error in login. Get the error message
                         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
                         _loginButton.setEnabled(true);
 
-                        if(!active && !message.equalsIgnoreCase("Invalid Account.")){
+                        if(_null){
+                        }else if(!active && !message.equalsIgnoreCase("Invalid Account.")){
                             showActivationLayout(phone);
                         }
                         /*else

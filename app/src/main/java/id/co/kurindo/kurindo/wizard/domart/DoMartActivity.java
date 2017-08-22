@@ -11,10 +11,8 @@ import com.stepstone.stepper.adapter.AbstractStepAdapter;
 import id.co.kurindo.kurindo.TOrderShowActivity;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DoMartHelper;
-import id.co.kurindo.kurindo.helper.DoServiceHelper;
+import id.co.kurindo.kurindo.notification.NewOrderPopupActivity;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
-import id.co.kurindo.kurindo.wizard.doservice.DoServiceAddressForm;
-import id.co.kurindo.kurindo.wizard.doservice.DoServiceForm1;
 
 import static id.co.kurindo.kurindo.util.LogUtil.makeLogTag;
 
@@ -47,6 +45,7 @@ public class DoMartActivity extends AbstractStepperActivity {
     @Override
     public void onCompleted(View completeButton) {
         showActivity(TOrderShowActivity.class);
+        showActivity(NewOrderPopupActivity.class);
         DoMartHelper.getInstance().clearOrder();
         finish();
     }

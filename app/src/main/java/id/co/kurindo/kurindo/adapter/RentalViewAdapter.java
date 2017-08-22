@@ -64,11 +64,7 @@ public class RentalViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.thumbnail.invalidate();
 
         holder.tvCarTitle.setText(v.getName());
-        double price = 0;
-        try {
-            price = Double.parseDouble(v.getTarif());
-        }catch (Exception e){}
-        String priceStr = AppConfig.formatCurrency( price );
+        String priceStr = AppConfig.formatCurrency( r.getCalculatePrice(context, v).doubleValue() );
 
         holder.ivRental1.setImageResource(R.drawable.destination_pin);
         holder.tvRental1.setText(r.getActivity());

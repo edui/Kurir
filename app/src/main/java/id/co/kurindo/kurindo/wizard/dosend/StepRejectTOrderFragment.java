@@ -141,7 +141,13 @@ public class StepRejectTOrderFragment extends BaseStepFragment implements Step {
                 verify[0] = place_order(handler);
             }
         };
-        showConfirmationDialog("Konfirmasi","Pesanan ini akan ditolak. Anda yakin?", YesClickListener, null);
+        DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handler.handleMessage(null);
+            }
+        };
+        showConfirmationDialog("Konfirmasi","Pesanan ini akan ditolak. Anda yakin?", YesClickListener, NoClickListener);
 
         // loop till a runtime exception is triggered.
         try { Looper.loop(); }
@@ -152,7 +158,7 @@ public class StepRejectTOrderFragment extends BaseStepFragment implements Step {
     }
 
     private VerificationError place_order(final Handler handler) {
-        String tag_string_req = "req_place_order";
+        String tag_string_req = "req_order_rejected";
         final VerificationError[] verify = {null};
         progressBar.show();
 

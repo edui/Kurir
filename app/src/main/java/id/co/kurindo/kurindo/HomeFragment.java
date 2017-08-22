@@ -15,9 +15,7 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import id.co.kurindo.kurindo.adapter.ButtonAdapter;
@@ -25,7 +23,6 @@ import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
 import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseDrawerActivity;
-import id.co.kurindo.kurindo.base.KurindoBaseDrawerActivity;
 import id.co.kurindo.kurindo.base.RecyclerItemClickListener;
 import id.co.kurindo.kurindo.map.MapsActivity;
 import id.co.kurindo.kurindo.model.ImageModel;
@@ -217,6 +214,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                         if(model.getDrawable() == R.drawable.do_send_icon){
                             bundle.putString("do_type", AppConfig.KEY_DOSEND);
                             ((BaseActivity)getActivity()).showActivity(DoSendOrderActivity.class, bundle);
+                            //((BaseActivity)getActivity()).showActivity(DoSendModeActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_move_icon) {
                             bundle.putString("do_type", AppConfig.KEY_DOMOVE);
                             ((BaseActivity)getActivity()).showActivity(DoMoveActivity.class, bundle);
@@ -229,6 +227,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                         }else if(model.getDrawable() == R.drawable.do_wash_icon){
                             bundle.putString("do_type", AppConfig.KEY_DOWASH);
                             ((BaseActivity)getActivity()).showActivity(DoWashActivity.class, bundle);
+                            //((BaseActivity)getActivity()).showActivity(DoWashModeActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_service_icon){
                             bundle.putString("do_type", AppConfig.KEY_DOSERVICE);
                             ((BaseActivity)getActivity()).showActivity(DoServiceActivity.class, bundle);
@@ -240,6 +239,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             ((BaseActivity)getActivity()).showActivity(DoMartActivity.class, bundle);
                         }else if(model.getDrawable() == R.drawable.do_others_icon){
                             ((BaseDrawerActivity)getActivity()).openDrawer();
+                            //((BaseActivity)getActivity()).showActivity(NewOrderPopupActivity.class, bundle);
                         }else{
                             bundle.putString("class", "kerjasama");
                             ((BaseActivity)getActivity()).showActivity(KerjasamaActivity.class, bundle);
@@ -275,7 +275,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             Product product = new Product();
                             product.setId(1);
                             product.setShopid(1);
-                            product.setType("A");
+                            product.setStatus("A");
                             product.setName("Ojek Antar");
                             product.setDescription(
                                     "- Tarif per KM Rp 1500, (acuan GoogleMaps)\n" +
@@ -295,7 +295,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             Product product = new Product();
                             product.setId(4);
                             product.setShopid(1);
-                            product.setType("A");
+                            product.setStatus("A");
                             product.setName("Jasa Cuci");
                             product.setCode(AppConfig.KEY_DOWASH);
                             product.setDescription(
@@ -315,7 +315,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             Product product = new Product();
                             product.setId(5);
                             product.setShopid(1);
-                            product.setType("A");
+                            product.setStatus("A");
                             product.setName("Servis AC");
                             product.setCode(AppConfig.KEY_DOSERVICE);
                             product.setDescription(
@@ -336,7 +336,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             Product product = new Product();
                             product.setId(6);
                             product.setShopid(1);
-                            product.setType("A");
+                            product.setStatus("A");
                             product.setName("Terapi Hijamah");
                             product.setCode(AppConfig.KEY_DOHIJAMAH);
                             product.setDescription("");
@@ -352,7 +352,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             Product product = new Product();
                             product.setId(2);
                             product.setShopid(1);
-                            product.setType("A");
+                            product.setStatus("A");
                             product.setName("Rental Mobil");
                             product.setCode(AppConfig.KEY_DOCAR);
                             product.setDescription(
@@ -374,7 +374,7 @@ public class HomeFragment extends Fragment implements  BaseSliderView.OnSliderCl
                             Product product = new Product();
                             product.setId(7);
                             product.setShopid(1);
-                            product.setType("A");
+                            product.setStatus("A");
                             product.setName("Jasa Pindah");
                             product.setCode(AppConfig.KEY_DOMOVE);
                             product.setDescription(

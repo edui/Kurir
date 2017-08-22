@@ -71,7 +71,6 @@ import id.co.kurindo.kurindo.adapter.DoMartViewAdapter;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.helper.DoMartHelper;
-import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.map.DataParser;
 import id.co.kurindo.kurindo.map.MapUtils;
@@ -168,7 +167,14 @@ public class DoMartForm2 extends BaseStepFragment implements Step, OnMapReadyCal
                 place_an_order(handler);
             }
         };
-        showConfirmationDialog("Konfirmasi Pesanan","Konfirmasi, Data yang Anda masukkan sudah benar?\nAnda akan menggunakan layanan "+ AppConfig.KEY_DOMART+". ", YesClickListener, null);
+        DialogInterface.OnClickListener NoClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handler.handleMessage(null);
+            }
+        };
+
+        showConfirmationDialog("Konfirmasi Pesanan","Konfirmasi, Data yang Anda masukkan sudah benar?\nAnda akan menggunakan layanan "+ AppConfig.KEY_DOMART+". ", YesClickListener, NoClickListener);
 
         // loop till a runtime exception is triggered.
         try { Looper.loop(); }
@@ -309,8 +315,8 @@ public class DoMartForm2 extends BaseStepFragment implements Step, OnMapReadyCal
         builder.excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
 
-        Address originAddr = DoSendHelper.getInstance().getOrigin().getAddress() ;
-        Address destinationAddr = DoSendHelper.getInstance().getDestination().getAddress() ;
+        Address originAddr = origin.getAddress() ;
+        Address destinationAddr = DoMartHelper.getInstance().getOrder().getPlace().getAddress() ;
         HashMap<String, String> params = new HashMap();
         //params.put("origin", origin.getAddress().getKecamatan());//TODO json origin
         //params.put("destination", order.getPlace().getAddress().getKecamatan()); //TODO json destination
@@ -382,7 +388,7 @@ public class DoMartForm2 extends BaseStepFragment implements Step, OnMapReadyCal
         DoMart doMart = new DoMart();
         doMart.setType(AppConfig.KEY_DOSEND);
         doMart.setNotes(AppConfig.KEY_DOSEND+" : Biaya Kirim (Jarak "+AppConfig.formatKm(distance.doubleValue())+")");
-        doMart.setEstHarga(tariff.toString());
+        doMart.setPrice_estimate(new BigDecimal( tariff.toString() ));
         doMart.setPrice_unit(tariff);
         doMart.setQty(1);
         doMart.setPrice(tariff);
@@ -395,7 +401,7 @@ public class DoMartForm2 extends BaseStepFragment implements Step, OnMapReadyCal
         doMart.setType(AppConfig.KEY_CHARGE);
         TPrice price = DoMartHelper.getInstance().getPriceMaps().get("NORMAL");
         doMart.setNotes(AppConfig.KEY_CHARGE+" : Biaya Antri/Belanja\nTarif : "+(price==null? AppConfig.formatCurrency(AppConfig.DOMART_FEE.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()) : AppConfig.formatCurrency(price.getPrice1().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()))+"/jam");
-        doMart.setEstHarga("0");
+        doMart.setPrice_estimate(new BigDecimal(0));
         doMart.setPrice_unit(new BigDecimal(0));
         doMart.setQty(-1);
         doMart.setPrice(new BigDecimal(0));
@@ -406,7 +412,7 @@ public class DoMartForm2 extends BaseStepFragment implements Step, OnMapReadyCal
         DoMart doMart = new DoMart();
         doMart.setType(AppConfig.KEY_CHARGE);
         doMart.setNotes(AppConfig.KEY_CHARGE+" : Parkir");
-        doMart.setEstHarga("0");
+        doMart.setPrice_estimate(new BigDecimal(0));
         doMart.setPrice_unit(new BigDecimal(0));
         doMart.setQty(-1);
         doMart.setPrice(new BigDecimal(0));
@@ -529,7 +535,7 @@ public class DoMartForm2 extends BaseStepFragment implements Step, OnMapReadyCal
             for(DoMart mart : services){
                 if(mart.getOrigin() != null && mart.getOrigin().getAddress()!=null){
                     String title = "Toko "+(mart.getOrigin().getAddress().getNotes()==null? (char) ('0' + i++):mart.getOrigin().getAddress().getNotes());
-                    String snippet = (mart.getOrigin().getName() != null ? mart.getOrigin().toStringFormatted() : "");
+                    String snippet = (mart.getOrigin().getName() != null ? mart.getOrigin().toStringAddressFormatted() : "");
                     originMarker = mMap.addMarker(
                             new MarkerOptions()
                                     .position(mart.getOrigin().getAddress().getLocation())
@@ -543,7 +549,7 @@ public class DoMartForm2 extends BaseStepFragment implements Step, OnMapReadyCal
         TOrder order = DoMartHelper.getInstance().getOrder();
         if(order!= null){
             String title = "Tujuan "+(order.getPlace()==null || order.getPlace().getAddress() == null ||order.getPlace().getAddress().getNotes()==null?"":order.getPlace().getAddress().getNotes());
-            String snippet = (order.getPlace().getName() != null ? order.getPlace().toStringFormatted() : "");
+            String snippet = (order.getPlace().getName() != null ? order.getPlace().toStringAddressFormatted() : "");
             destinationMarker = mMap.addMarker(
                     new MarkerOptions()
                             .position(order.getPlace().getAddress().getLocation())

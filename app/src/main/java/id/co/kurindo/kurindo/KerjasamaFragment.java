@@ -1,6 +1,7 @@
 package id.co.kurindo.kurindo;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,7 +33,9 @@ import java.util.Map;
 import butterknife.Bind;
 import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.app.AppController;
+import id.co.kurindo.kurindo.base.BaseActivity;
 import id.co.kurindo.kurindo.base.BaseFragment;
+import id.co.kurindo.kurindo.comp.ProgressDialogCustom;
 import id.co.kurindo.kurindo.util.LogUtil;
 
 /**
@@ -51,6 +54,17 @@ public class KerjasamaFragment extends BaseFragment {
     @Bind(R.id.btn_notify)
     Button _notifyButton;
 
+    Context context;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getContext();
+
+        progressDialog = new ProgressDialogCustom(context);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,8 +76,6 @@ public class KerjasamaFragment extends BaseFragment {
                 send_message();
             }
         });
-
-        progressDialog = new ProgressDialog(getActivity(),R.style.AppTheme);
 
         return rootView ;
     }
@@ -119,20 +131,20 @@ public class KerjasamaFragment extends BaseFragment {
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
 
-                        Toast.makeText(getContext(), "Message successfully sent.!", Toast.LENGTH_LONG).show();
-                        ((MainDrawerActivity)getActivity()).showFragment(HomeFragment.class);
+                        Toast.makeText(context, "Message successfully sent.!", Toast.LENGTH_LONG).show();
+                        ((BaseActivity)getActivity()).showFragment(HomeFragment.class);
                     } else {
 
                         // message
                         String errorMsg = jObj.getString("message");
-                        Toast.makeText(getContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context,
+                                ""+errorMsg, Toast.LENGTH_LONG).show();
                         _notifyButton.setEnabled(true);
 
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     _notifyButton.setEnabled(true);
                 }
 
@@ -143,8 +155,8 @@ public class KerjasamaFragment extends BaseFragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 LogUtil.logE(TAG, "Sending Message Error: " + error.getMessage());
-                Toast.makeText(getContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context,
+                        ""+error.getMessage(), Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }
         }) {

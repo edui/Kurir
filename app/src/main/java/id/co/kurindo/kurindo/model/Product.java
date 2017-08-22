@@ -8,18 +8,26 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import com.android.tonyvu.sc.model.Saleable;
+import com.google.gson.annotations.Expose;
 
 public class Product implements Saleable, Parcelable{
     private static final long serialVersionUID = -4073256626483275668L;
 
+    @Expose
     private int id;
+    @Expose
     private String category;
+    @Expose
     private String type = "P";
+    @Expose
     private String code;
+    @Expose
     private String name;
     private String description;
     private String imageName;
+    @Expose
     private BigDecimal price = new BigDecimal(0);
+    @Expose
     private Integer quantity = new Integer(0);
     private BigDecimal discount = new BigDecimal(0);
     private BigDecimal weight = new BigDecimal(1);
@@ -27,8 +35,11 @@ public class Product implements Saleable, Parcelable{
     private String created;
     private int drawable;
     private ArrayList images;
+    @Expose
     private int shopid = 1;
+    @Expose
     private String notes="";
+    @Expose
     private String unit="pcs";
 
     public Product() {
@@ -266,7 +277,7 @@ public class Product implements Saleable, Parcelable{
         this.unit = unit;
     }
     public BigDecimal getTotalPrice(){
-        return getPrice().multiply(new BigDecimal(getQuantity().intValue()));
+        return getPrice().multiply(new BigDecimal(getQuantity()));
     }
     ///*
     @Override

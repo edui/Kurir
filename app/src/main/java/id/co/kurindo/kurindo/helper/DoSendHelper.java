@@ -22,6 +22,7 @@ public class DoSendHelper extends OrderViaMapHelper{
     String doMoveType;
 
     static DoSendHelper helper;
+    Set<TUser> destinations;
 
     public static DoSendHelper getInstance(){
         if(helper == null) helper = new DoSendHelper();
@@ -49,7 +50,15 @@ public class DoSendHelper extends OrderViaMapHelper{
         super.clearAll();
         clearRoutes();
     }
-
+    public TUser addDestination(){
+        TUser p = new TUser();
+        if(destinations== null){
+            destinations = new LinkedHashSet<>();
+        }
+        destinations.add(p);
+        destination = p;
+        return p;
+    }
     public void addDoSendOrder(String payment, String serviceCode, String distance, double price){
         addDoSendOrder(payment, serviceCode, distance, price, 1);
     }
@@ -57,9 +66,11 @@ public class DoSendHelper extends OrderViaMapHelper{
         addOrder(payment, serviceCode, price);
         addNewProduct(AppConfig.KEY_DOSEND, price);
         order.setService_type(AppConfig.KEY_DOSEND);
-        packet.setDistance(Double.parseDouble( distance ));
-        packet.setBerat_asli(new BigDecimal( beratkiriman ));
-        packet.setBerat_kiriman((int)beratkiriman);
+        if(packet != null){
+            packet.setDistance(Double.parseDouble( distance ));
+            packet.setBerat_asli(new BigDecimal( beratkiriman ));
+            packet.setBerat_kiriman((int)beratkiriman);
+        }
     }
 
     public void addDoJekOrder(String payment, String serviceCode, String distanceStr, double price) {
@@ -70,7 +81,7 @@ public class DoSendHelper extends OrderViaMapHelper{
         try {
             distance = Double.parseDouble( distanceStr );
         }catch (Exception e){}
-        packet.setDistance(distance);
+        if(packet != null) packet.setDistance(distance);
     }
 
     public void addDoCarOrder(String payment, String serviceCode, String distanceStr, double price) {
@@ -98,5 +109,16 @@ public class DoSendHelper extends OrderViaMapHelper{
 
     public String getDoMoveType() {
         return doMoveType;
+    }
+
+    public TUser find(TUser packet) {
+        for (TUser p : destinations) {
+            if(p.equals(packet)) return p;
+        }
+        return null;
+    }
+
+    public void updateOrigin(TUser origin) {
+        this.origin = origin;
     }
 }

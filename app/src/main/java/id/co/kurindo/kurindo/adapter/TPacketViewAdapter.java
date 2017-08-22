@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.zxing.BarcodeFormat;
 
 import java.util.ArrayList;
@@ -146,11 +147,37 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.barcodeView.setImageBitmap(AppConfig.encodeContentsToBarcode(data, BarcodeFormat.QR_CODE));
 
            if(order.getStatus() != null){
-               holder.btnLihatRute.setVisibility(View.VISIBLE);
-               holder.btnLihatRute.setOnClickListener(new View.OnClickListener() {
+               holder.btnViewRoute.setVisibility(View.VISIBLE);
+               holder.btnViewRoute.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View v) {
                        if(itemClickListener != null) itemClickListener.onViewRouteButtonClick(v, position,  packet);
+                   }
+               });
+
+               holder.btnStartRoute.setVisibility(View.VISIBLE);
+               holder.btnStartRoute.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       if(itemClickListener != null) itemClickListener.onStartNavigateButtonClick(v, position,  packet);
+                   }
+               });
+
+               holder.btnViewOrigin.setVisibility(View.VISIBLE);
+               holder.btnViewOrigin.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       LatLng location = packet.getOrigin().getAddress().getLocation();
+                       if(itemClickListener != null) itemClickListener.onViewPanoramaButtonClick(v, position,  location);
+                   }
+               });
+
+               holder.btnViewDestination.setVisibility(View.VISIBLE);
+               holder.btnViewDestination.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       LatLng location = packet.getDestination().getAddress().getLocation();
+                       if(itemClickListener != null) itemClickListener.onViewPanoramaButtonClick(v, position,  location);
                    }
                });
            }
@@ -159,7 +186,7 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                holder.tvPickupTime.setText("Call Pembeli");
            }else if(order.getPickup()!=null ){
                holder.tvPickupTimeText.setText("Pickup Time");
-               holder.tvPickupTime.setText(order.getPickup());
+               holder.tvPickupTime.setText(order.formatPickup());
            }else if(order.getDroptime() != null){
                holder.tvPickupTimeText.setText("Drop Time");
                holder.tvPickupTime.setText(order.getDroptime());
@@ -199,7 +226,10 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         TextView tvPickupTime;
         TextView tvPickupTimeText;
-        AppCompatButton btnLihatRute;
+        AppCompatButton btnViewRoute;
+        AppCompatButton btnStartRoute;
+        AppCompatButton btnViewOrigin;
+        AppCompatButton btnViewDestination;
 
         public MyItemHolder(View itemView) {
             super(itemView);
@@ -228,13 +258,17 @@ public class TPacketViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             barcodeView = (ImageView) itemView.findViewById(R.id.resi_qrcode)  ;
             ivServiceCodeIcon = (ImageView) itemView.findViewById(R.id.service_code_icon)  ;
             ivServiceIcon = (ImageView) itemView.findViewById(R.id.service_icon) ;
-            btnLihatRute= (AppCompatButton) itemView.findViewById(R.id.btnLihatRute) ;
-
+            btnViewRoute= (AppCompatButton) itemView.findViewById(R.id.btnViewRoute) ;
+            btnStartRoute= (AppCompatButton) itemView.findViewById(R.id.btnStartRoute) ;
+            btnViewOrigin= (AppCompatButton) itemView.findViewById(R.id.btnViewOrigin) ;
+            btnViewDestination= (AppCompatButton) itemView.findViewById(R.id.btnViewDestination) ;
 
         }
     }
     public interface OnItemClickListener {
         void onViewRouteButtonClick(View view, int position, TPacket packet);
+        void onViewPanoramaButtonClick(View view, int position, LatLng location);
+        void onStartNavigateButtonClick(View view, int position, TPacket packet);
     }
 
 }

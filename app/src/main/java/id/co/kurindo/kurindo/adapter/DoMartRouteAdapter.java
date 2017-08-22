@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
@@ -57,6 +58,7 @@ public class DoMartRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }else if(order.getService_code().equalsIgnoreCase(AppConfig.PACKET_NNS)) {
                 holder.ivServiceCodeIcon.setImageResource(R.drawable.icon_nns);
             }
+            holder.tvAlamatLokasi.setText(order.getPlace().toStringAddressFormatted());
             holder.btnLihatRute.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -75,11 +77,13 @@ public class DoMartRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     class VHItem extends RecyclerView.ViewHolder {
         ImageView ivServiceCodeIcon;
         AppCompatButton btnLihatRute;
+        TextView tvAlamatLokasi;
 
         public VHItem(View itemView) {
             super(itemView);
             ivServiceCodeIcon = (ImageView) itemView.findViewById(R.id.ivServiceCodeIcon);
             btnLihatRute = (AppCompatButton) itemView.findViewById(R.id.btnLihatRute);
+            tvAlamatLokasi = (TextView) itemView.findViewById(R.id.tvAlamatLokasi);
         }
     }
 

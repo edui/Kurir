@@ -188,7 +188,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
         initialize();
         progressBar = new ProgressDialogCustom(mContext);
 
-        showAddressLayout();
+        //showAddressLayout();
 
         tUserAdapter = new TUserAdapter(getContext(), data);
 
@@ -252,6 +252,7 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
                     onClick_tvOrigin();
                 }
             });
+            etOriginNotes = (EditText) view.findViewById(R.id.etOriginNotes);
 
             ivIconOrigin = (ImageView) view.findViewById(R.id.iconOrigin);
             ivIconOrigin.setOnClickListener(new View.OnClickListener() {
@@ -414,13 +415,17 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     }
 
     protected void showAddressLayout() {
-        tvOrigin.setVisibility(View.VISIBLE);
-        ivAddOriginNotes.setVisibility(View.VISIBLE);
-        mOriginAutoCompleteTextView.setVisibility(View.GONE);
+        if(tvOrigin != null ){
 
-        originLayout.setVisibility(View.VISIBLE);
-        locationMarkerLayout.setVisibility(View.GONE);
-        infoLayout.setVisibility(View.VISIBLE);
+            tvOrigin.setVisibility(View.VISIBLE);
+            ivAddOriginNotes.setVisibility(View.VISIBLE);
+            mOriginAutoCompleteTextView.setVisibility(View.GONE);
+
+            originLayout.setVisibility(View.VISIBLE);
+            locationMarkerLayout.setVisibility(View.GONE);
+            infoLayout.setVisibility(View.VISIBLE);
+
+        }
     }
 
     private void changeMarkerIcon(){
@@ -499,10 +504,14 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     }
 
     protected void hidepanel(boolean hide) {
-        infoLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
-        orderLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
-        serviceLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
-        //buttonAddOrder.setVisibility((hide ? View.GONE : View.VISIBLE));
+        if(infoLayout != null){
+
+            infoLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
+            orderLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
+            serviceLayout.setVisibility((hide ? View.GONE : View.VISIBLE));
+            //buttonAddOrder.setVisibility((hide ? View.GONE : View.VISIBLE));
+
+        }
     }
 
     private void requestAddress(LatLng latLng) {
@@ -700,7 +709,16 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
             if(origin.getAddress().getLocation() == null) {
                 origin.getAddress().setLocation( new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()) );
                 originMode= true;
-                requestAddress(origin.getAddress().getLocation(), null);
+                final Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message mesg) {
+                        throw new RuntimeException("RuntimeException");
+                    }
+                };
+
+                requestAddress(origin.getAddress().getLocation(), handler);
+                try { Looper.loop(); }
+                catch(RuntimeException e2) {}
             }
             changeMap(mLastLocation);
             reDrawMarker();
@@ -975,14 +993,14 @@ public class SinglePinLocationMapFragment extends BaseStepFragment
     }
 
     static SinglePinLocationMapFragment instance ;
-    protected static Fragment newInstance() {
+    protected static SinglePinLocationMapFragment newInstance() {
         if (instance == null) {
             instance = new SinglePinLocationMapFragment();
         }
         return instance;
     }
 
-    protected static Fragment getInstance() {
+    public static SinglePinLocationMapFragment getInstance() {
         return instance;
     }
 

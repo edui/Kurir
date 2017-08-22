@@ -20,17 +20,29 @@
                 android:layout_width="match_parent" android:layout_weight=".5"
                 android:layout_height="match_parent" android:orientation="vertical" android:gravity="center_vertical|right" android:layout_gravity="center_vertical|left">
                 <ImageView
-                    android:id="@+id/service_icon"
+                    android:id="@+id/service_icon" android:visibility="gone"
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:scaleType="centerCrop" android:layout_gravity="center"
                     android:src="@drawable/do_send_icon"/>
                 <ImageView
                     android:id="@+id/service_code_icon"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:scaleType="centerCrop" android:layout_gravity="center"
                     android:src="@drawable/icon_nds"/>
+                <LinearLayout
+                    android:layout_width="wrap_content" android:layout_marginTop="5dp"
+                    android:layout_height="wrap_content" android:orientation="vertical" android:layout_gravity="center" android:gravity="center">
+                    <TextView
+                        android:id="@+id/tvPickupTimeText"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Pick-up Time"
+                        android:layout_gravity="center" android:gravity="center"/>
+                    <TextView
+                        android:id="@+id/tvPickupTime"
+                        android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"
+                        android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:layout_gravity="center"/>
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent" android:layout_weight=".5"
@@ -58,20 +70,6 @@
                     />
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content" android:layout_marginTop="10dp"
-            android:layout_height="wrap_content" android:orientation="vertical" android:layout_gravity="center" android:gravity="center">
-            <TextView
-                android:id="@+id/tvPickupTimeText"
-                android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Pick-up Time"
-                android:layout_gravity="center" android:gravity="center"/>
-            <TextView
-                android:id="@+id/tvPickupTime"
-                android:layout_width="wrap_content" android:textSize="20sp" android:textStyle="bold" android:theme="@style/AppTheme.Button"
-                android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:layout_gravity="center"/>
-        </LinearLayout>
-
-
 
     </LinearLayout>
     <include layout="@layout/fragment_packet_view" />

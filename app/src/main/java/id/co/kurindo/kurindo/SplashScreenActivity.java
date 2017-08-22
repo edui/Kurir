@@ -46,6 +46,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         session = new SessionManager(this);
         Intent locationService = new Intent(getApplicationContext(), LocationService.class);
         getApplicationContext().startService(locationService);
+        LogUtil.logV(TAG, "onCreate");
 
         Thread timer = new Thread() {
             public void run(){

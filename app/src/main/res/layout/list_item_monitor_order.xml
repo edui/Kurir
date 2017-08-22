@@ -49,7 +49,7 @@
         <TextView
             android:id="@+id/tv_telepon_pengirim"
             style="style/TextAppearance.Medium"  android:textStyle="bold"
-            android:layout_width="wrap_content"
+            android:layout_width="wrap_content" android:autoLink="phone"
             android:layout_height="wrap_content" />
 
         <TextView
@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:orientation="vertical">
             <ImageButton
-                android:id="@+id/updateBtn"
+                android:id="@+id/updateBtn" android:scaleType="fitCenter"
                 android:layout_width="wrap_content" android:background="@color/white"
                 android:layout_height="wrap_content" android:layout_margin="5dp"
                 android:src="@drawable/detail_order_40"/>
@@ -96,10 +96,28 @@
                 android:layout_height="wrap_content" android:layout_margin="5dp"
                 android:src="@drawable/booking_order_40" android:visibility="gone"/>
             <ImageButton
-                android:id="@+id/waBtn"
-                android:layout_width="wrap_content" android:background="@color/white"
+                android:id="@+id/waBtn" android:scaleType="fitCenter"
+                android:layout_width="60dp" android:background="@color/white"
+                android:layout_height="60dp" android:layout_margin="5dp"
+                android:src="@drawable/whatsapp" />
+            <ImageButton
+                android:id="@+id/searchKurirBtn"
+                android:layout_width="70dp" android:scaleType="fitCenter" android:background="@color/white"
+                android:layout_height="70dp" android:layout_margin="5dp"
+                android:src="@drawable/icon_kurirkurindo" />
+            <ImageButton
+                android:id="@+id/testimoniBtn"
+                android:layout_width="70dp" android:scaleType="fitCenter" android:background="@color/white"
+                android:layout_height="70dp" android:layout_margin="5dp"
+                android:src="@drawable/ic_thumb_up_black_18dp" />
+            <RatingBar
+                android:id="@+id/rbRating"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content" android:gravity="center" android:background="@color/gray"
                 android:layout_height="wrap_content" android:layout_margin="5dp"
-                android:src="@drawable/ic_phone_black" android:visibility="gone"/>
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:rating="5" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout

@@ -5,9 +5,9 @@
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/tvWelcomeTitle1"
-        style="@style/titleBigBoldTextStyle"
-        android:layout_marginTop="5dp" android:gravity="center"
-        android:text="Daftar Petunjuk Aplikasi"/>
+        style="@style/titleBoldTextStyle"
+        android:layout_margin="10dp" android:gravity="center"
+        android:text="Bantuan"/>
 <android.support.v7.widget.RecyclerView
     android:id="@+id/list"
     android:layout_width="match_parent"

@@ -9,11 +9,14 @@ import android.view.View;
 import com.stepstone.stepper.adapter.AbstractStepAdapter;
 
 import id.co.kurindo.kurindo.TOrderShowActivity;
+import id.co.kurindo.kurindo.app.AppConfig;
 import id.co.kurindo.kurindo.helper.DoServiceHelper;
+import id.co.kurindo.kurindo.notification.NewOrderPopupActivity;
+import id.co.kurindo.kurindo.util.LogUtil;
 import id.co.kurindo.kurindo.wizard.AbstractStepperActivity;
 
 public class DoWashActivity extends AbstractStepperActivity {
-    private static final String TAG = "AddProductActivity";
+    private static final String TAG = "DoWashActivity";
     int step = -1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +35,7 @@ public class DoWashActivity extends AbstractStepperActivity {
     @Override
     public void onStepSelected(int newStepPosition) {
 
-        mCompleteNavigationButton.setText("Confirm Order");
+        mCompleteNavigationButton.setText("Order "+ AppConfig.KEY_DOWASH);
 
         step = newStepPosition;
     }
@@ -40,6 +43,7 @@ public class DoWashActivity extends AbstractStepperActivity {
     @Override
     public void onCompleted(View completeButton) {
         showActivity(TOrderShowActivity.class);
+        showActivity(NewOrderPopupActivity.class);
         DoServiceHelper.getInstance().clearOrder();
 
         finish();
@@ -60,9 +64,9 @@ public class DoWashActivity extends AbstractStepperActivity {
         public Fragment createStep(int position) {
             switch (position) {
                 case 0:
-                    return DoWashForm1.newInstance();
-                case 1:
                     return new DoWashAddressForm();
+                case 1:
+                    return DoWashForm1.newInstance();
                 default:
                     throw new IllegalArgumentException("Unsupported position: " + position);
             }
@@ -74,4 +78,39 @@ public class DoWashActivity extends AbstractStepperActivity {
         }
     }
 
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        Fragment f = getStepperAdapter().getItem(step);
+        if(f != null){
+            if(f instanceof DoWashAddressForm){
+                DoServiceHelper.getInstance().clearOrder();
+                super.onBackPressed();
+                finish();
+                return true;
+            }else if(f instanceof DoWashForm1){
+                super.onBackPressed();
+                return true;
+            }else{
+                return super.onSupportNavigateUp();
+            }
+        }
+        return false;
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        //LogUtil.logD(TAG,"@@@@@@ back stack entry count : " + getSupportFragmentManager().getBackStackEntryCount());
+        Fragment f = getStepperAdapter().getItem(step);
+        if(f != null){
+            if(f instanceof DoWashAddressForm){
+                DoServiceHelper.getInstance().clearOrder();
+                super.onBackPressed();
+                finish();
+            }else{
+                super.onBackPressed();
+            }
+        }
+    }
 }

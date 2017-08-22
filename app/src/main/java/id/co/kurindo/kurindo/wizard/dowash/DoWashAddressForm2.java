@@ -1,20 +1,18 @@
-package id.co.kurindo.kurindo.wizard.doservice;
+package id.co.kurindo.kurindo.wizard.dowash;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -26,31 +24,26 @@ import com.stepstone.stepper.VerificationError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
 import id.co.kurindo.kurindo.R;
 import id.co.kurindo.kurindo.app.AppConfig;
-import id.co.kurindo.kurindo.helper.DoSendHelper;
 import id.co.kurindo.kurindo.helper.DoServiceHelper;
 import id.co.kurindo.kurindo.helper.ViewHelper;
 import id.co.kurindo.kurindo.map.SinglePinLocationMapFragment;
 import id.co.kurindo.kurindo.model.Address;
 import id.co.kurindo.kurindo.model.DoService;
 import id.co.kurindo.kurindo.model.TOrder;
-import id.co.kurindo.kurindo.model.TUser;
 import id.co.kurindo.kurindo.util.LogUtil;
-
-import static id.co.kurindo.kurindo.R.style.CustomDialog;
 
 /**
  * Created by dwim on 3/15/2017.
  */
 
-public class DoServiceAddressForm extends SinglePinLocationMapFragment {
-    private static final String TAG = "DoServiceAddressForm";
+public class DoWashAddressForm2 extends SinglePinLocationMapFragment {
+    private static final String TAG = "DoWashAddressForm";
     VerificationError invalid = null;
 
     @Bind(R.id.tvAlamat)
@@ -144,7 +137,7 @@ public class DoServiceAddressForm extends SinglePinLocationMapFragment {
                 place_an_order(handler);
             }
         };
-        showConfirmationDialog("Konfirmasi Pesanan","Konfirmasi, Anda akan menggunakan layanan "+AppConfig.KEY_DOSERVICE+" ?", YesClickListener, null);
+        showConfirmationDialog("Konfirmasi Pesanan","Konfirmasi, Anda akan menggunakan layanan "+ AppConfig.KEY_DOWASH+" ?", YesClickListener, null);
 
         // loop till a runtime exception is triggered.
         try { Looper.loop(); }
@@ -154,7 +147,7 @@ public class DoServiceAddressForm extends SinglePinLocationMapFragment {
     }
 
     private void place_an_order(Handler handler) {
-        Log.d(TAG, "place_an_order");
+        LogUtil.logD(TAG, "place_an_order");
 
         progressBar.setMessage("Sedang memproses Pesanan....");
         progressBar.show();
@@ -220,7 +213,7 @@ public class DoServiceAddressForm extends SinglePinLocationMapFragment {
     public void onSelected() {
         updateUI();
         TOrder order = DoServiceHelper.getInstance().getOrder();
-        String price = AppConfig.KEY_DOSERVICE +" ( "+order.getTotalQuantity()+" unit ) : "+AppConfig.formatCurrency( order.getTotalPrice().doubleValue() );
+        String price = AppConfig.KEY_DOWASH +" ( "+order.getTotalQuantity()+" Kg ) : "+AppConfig.formatCurrency( order.getTotalPrice().doubleValue() );
         tvPriceInfo.setText(price);
 
         StringBuilder layanan = new StringBuilder();
@@ -250,5 +243,17 @@ public class DoServiceAddressForm extends SinglePinLocationMapFragment {
     @Override
     public void onError(@NonNull VerificationError error) {
 
+    }
+
+    protected static DoWashAddressForm2 instance ;
+    protected static DoWashAddressForm2 newInstance() {
+        if (instance == null) {
+            instance = new DoWashAddressForm2();
+        }
+        return instance;
+    }
+
+    public static DoWashAddressForm2 getInstance() {
+        return instance;
     }
 }
